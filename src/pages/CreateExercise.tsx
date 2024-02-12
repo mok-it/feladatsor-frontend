@@ -1,6 +1,6 @@
 import { Box, Card, CardHeader, Grid, TextField } from "@mui/material";
-import { useState } from "react";
-import Latex from "react-latex";
+import React, { useState } from "react";
+import { KaTeX } from "../components/Katex";
 
 export const CreateExercise = () => {
   const [exerciseDescription, setExerciseDescription] = useState("");
@@ -9,9 +9,9 @@ export const CreateExercise = () => {
       <Grid item xs={12}>
         <Card>
           <CardHeader title="Feladat létrehozása" />
-          <Box pt={3}>
-            <Grid container gap={2}>
-              <Grid item xs={5}>
+          <Box p={2}>
+            <Grid container spacing={2}>
+              <Grid item xs={6}>
                 <TextField
                   id="outlined-required"
                   label="Feladat szöveg"
@@ -27,7 +27,7 @@ export const CreateExercise = () => {
                 />
               </Grid>
               <Grid item xs={6}>
-                <Latex displayMode children={exerciseDescription} />
+                <KaTeX texExpression={exerciseDescription} />
               </Grid>
             </Grid>
           </Box>
