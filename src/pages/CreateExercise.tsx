@@ -1,4 +1,4 @@
-import { Box, Card, CardHeader, Grid, TextField } from "@mui/material";
+import { Box, Card, CardHeader, Divider, Grid, TextField } from "@mui/material";
 import React, { useState } from "react";
 import { KaTeX } from "../components/Katex";
 
@@ -20,13 +20,15 @@ export const CreateExercise = () => {
                     setExerciseDescription(event.target.value)
                   }
                   minRows={4}
-                  maxRows={8}
+                  maxRows={13}
                   margin="none"
                   multiline
                   fullWidth
                 />
               </Grid>
               <Grid item xs={6}>
+                <KaTeX texExpression={"$\\LaTeX{}$ fordítás"} />
+                <Divider sx={{ m: 1, mb: 2 }} />
                 <KaTeX texExpression={exerciseDescription} />
               </Grid>
             </Grid>
