@@ -28,7 +28,7 @@ export const Sidebar = () => {
     >
       <Box sx={{ width: drawerWidth }} role="presentation" pt={2}>
         <Typography width="100%" textAlign="center">
-          <b>FE</b>ladata <b>BE</b>küldő
+          <b>FE</b>ladat <b>BE</b>küldő
         </Typography>
         <Stack gap={1} sx={{ p: 2 }}>
           {pages.map((page) => {
