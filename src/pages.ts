@@ -5,6 +5,7 @@ import { CreateExercise } from "./pages/CreateExercise";
 import { IoNewspaperOutline, IoSearch } from "react-icons/io5";
 import { FaRegUser } from "react-icons/fa";
 import { FaPencil } from "react-icons/fa6";
+import { ExerciseListPage } from "./pages/ExerciseListPage";
 
 interface Page {
   name: string;
@@ -28,8 +29,8 @@ export const pages: Page[] = [
   },
   {
     name: "Feladatok",
-    path: "/exercises",
-    component: HomePage,
+    path: "/list-exercises",
+    component: ExerciseListPage,
     icon: IoSearch,
   },
   {
