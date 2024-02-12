@@ -1,25 +1,30 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { Box, Stack } from "@mui/material";
+import React from "react";
+import ThemeProvider from "./theme";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { pages } from "./pages";
+import { Sidebar } from "./components/Sidebar";
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <ThemeProvider>
+      <BrowserRouter basename="/">
+        <Stack direction="row">
+          <Sidebar />
+          <Box p={4} m={2} width="100%">
+            <Routes>
+              {pages.map((page) => (
+                <Route
+                  key={page.name}
+                  path={page.path}
+                  element={<page.component />}
+                />
+              ))}
+            </Routes>
+          </Box>
+        </Stack>
+      </BrowserRouter>
+    </ThemeProvider>
   );
 }
 
