@@ -1,6 +1,5 @@
 import { Box, Stack } from "@mui/material";
-import React from "react";
-import ThemeProvider from "./theme";
+import { ThemeProvider } from "./theme";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { pages } from "./pages";
 import { Sidebar } from "./components/Sidebar";

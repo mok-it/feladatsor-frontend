@@ -8,7 +8,6 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
-import React from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { pages } from "../pages";
 import { alpha } from "@mui/material/styles";

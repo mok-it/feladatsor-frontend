@@ -1,5 +1,5 @@
 import { Box, Card, CardHeader, Divider, Grid, TextField } from "@mui/material";
-import React, { useState } from "react";
+import { useState } from "react";
 import { KaTeX } from "../components/Katex";
 
 export const CreateExercise = () => {

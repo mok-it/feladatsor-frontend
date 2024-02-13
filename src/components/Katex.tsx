@@ -1,5 +1,4 @@
 import "katex/dist/katex.min.css";
-import React from "react";
 import Latex from "react-latex";
 import { useTheme } from "@mui/material";
 
