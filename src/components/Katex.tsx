@@ -1,6 +1,6 @@
 import "katex/dist/katex.min.css";
 import Latex from "react-latex";
-import { useTheme } from "@mui/material";
+import {useTheme} from "@mui/material";
 
 type KaTexProps = {
   texExpression: string;
