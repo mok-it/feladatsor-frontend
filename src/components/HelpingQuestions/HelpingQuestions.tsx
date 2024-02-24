@@ -12,11 +12,7 @@ export type HelpingQuestionData = {
   label: string;
 };
 export default function HelpingQuestions() {
-  const [helpingQuestions, setHelpingQuestions] = React.useState<HelpingQuestionData[]>([
-    { id: "1", label: "Your first question here"},
-    { id: "2", label: "Learn Next.js" },
-    { id: "3", label: "Learn React Query"}
-  ])
+  const [helpingQuestions, setHelpingQuestions] = React.useState<HelpingQuestionData[]>([])
   const handleUpdateHelpingQuestion = (updatedHelpingQuestion: HelpingQuestionData) => {
     const newHelpingQuestions = helpingQuestions.map((helpingQuestion) =>
       helpingQuestion.id === updatedHelpingQuestion.id ? updatedHelpingQuestion : helpingQuestion
