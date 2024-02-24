@@ -1,8 +1,8 @@
-import Accordion from '@mui/material/Accordion';
-import AccordionSummary from '@mui/material/AccordionSummary';
-import AccordionDetails from '@mui/material/AccordionDetails';
-import Typography from '@mui/material/Typography';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import Accordion from "@mui/material/Accordion";
+import AccordionSummary from "@mui/material/AccordionSummary";
+import AccordionDetails from "@mui/material/AccordionDetails";
+import Typography from "@mui/material/Typography";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import React from "react";
 import HelpingQuestion from "./HelpingQuestion.tsx";
 import HelpingQuestionComposer from "./HelpingQuestionComposer.tsx";
@@ -12,23 +12,23 @@ export type HelpingQuestionData = {
   label: string;
 };
 export default function HelpingQuestions() {
-  const [helpingQuestions, setHelpingQuestions] = React.useState<HelpingQuestionData[]>([])
+  const [helpingQuestions, setHelpingQuestions] = React.useState<HelpingQuestionData[]>([]);
   const handleUpdateHelpingQuestion = (updatedHelpingQuestion: HelpingQuestionData) => {
     const newHelpingQuestions = helpingQuestions.map((helpingQuestion) =>
       helpingQuestion.id === updatedHelpingQuestion.id ? updatedHelpingQuestion : helpingQuestion
-    )
-    setHelpingQuestions(newHelpingQuestions)
-  }
+    );
+    setHelpingQuestions(newHelpingQuestions);
+  };
 
   const handleDeleteHelpingQuestion = (id: string) => {
-    const newHelpingQuestions = helpingQuestions.filter((helpingQuestion) => helpingQuestion.id !== id)
-    setHelpingQuestions(newHelpingQuestions)
-  }
+    const newHelpingQuestions = helpingQuestions.filter((helpingQuestion) => helpingQuestion.id !== id);
+    setHelpingQuestions(newHelpingQuestions);
+  };
 
   const handleAddHelpingQuestion = (newHelpingQuestion: HelpingQuestionData) => {
-    const newHelpingQuestions = [...helpingQuestions, newHelpingQuestion]
-    setHelpingQuestions(newHelpingQuestions)
-  }
+    const newHelpingQuestions = [...helpingQuestions, newHelpingQuestion];
+    setHelpingQuestions(newHelpingQuestions);
+  };
 
   return (
     <div>
@@ -55,6 +55,6 @@ export default function HelpingQuestions() {
         </AccordionDetails>
       </Accordion>
     </div>
-  )
+  );
 }
 
