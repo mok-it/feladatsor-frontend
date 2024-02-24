@@ -62,10 +62,16 @@ export const CreateExercise = () => {
 const tags = ["Geometria", "Algebra"];
 
 const CreateExerciseForm = () => {
+  const clearForm = () => {
+    setShowSuccessDialog(false);
+    setValues(createExerciseInitialValue);
+  };
+
   const {
     values,
     setFieldValue: setFormikFieldValues,
     submitForm,
+    setValues,
   } = useFormikContext<ExerciseInput>();
 
   const [showSuccessDialog, setShowSuccessDialog] = useState(false);
@@ -225,9 +231,9 @@ const CreateExerciseForm = () => {
       </Grid>
       <AlertDialog
         description={"Sikeresen elküldve"}
-        handleClose={() => setShowSuccessDialog(false)}
-        secondaryClick={() => setShowSuccessDialog(false)}
-        primaryClick={() => setShowSuccessDialog(false)}
+        handleClose={() => clearForm()}
+        secondaryClick={() => clearForm()}
+        primaryClick={() => clearForm()}
         open={showSuccessDialog}
       />
       ;
