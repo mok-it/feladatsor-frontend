@@ -1,25 +1,27 @@
 import Chip from "@mui/material/Chip";
 import Autocomplete from "@mui/material/Autocomplete";
 import TextField from "@mui/material/TextField";
-import Stack from "@mui/material/Stack";
 
 type MultiSelectProps = {
   items: string[];
-  onchange: (value: string[]) => void;
+  onChange: (value: string[]) => void;
 };
 
 export const MultiSelect = (props: MultiSelectProps) => (
-  <Stack spacing={3} sx={{ width: 500 }}>
-    <Autocomplete
-      multiple
-      id="tags-filled"
-      options={props.items.map((option) => option)}
-      renderTags={(value: readonly string[], getTagProps) =>
-        value.map((option: string, index: number) => (
-          <Chip variant="outlined" label={option} {...getTagProps({ index })} />
-        ))
-      }
-      renderInput={(params) => <TextField {...params} />}
-    />
-  </Stack>
+  <Autocomplete
+    multiple
+    options={props.items.map((option) => option)}
+    renderTags={(value: readonly string[], getTagProps) =>
+      value.map((option: string, index: number) => (
+        <Chip variant="outlined" label={option} {...getTagProps({ index })} />
+      ))
+    }
+    slotProps={{
+      paper: {
+        elevation: 3,
+      },
+    }}
+    onChange={(_, value) => props.onChange(value)}
+    renderInput={(params) => <TextField {...params} />}
+  />
 );

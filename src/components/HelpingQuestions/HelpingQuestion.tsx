@@ -1,28 +1,26 @@
 import * as React from "react";
 import { HelpingQuestionData } from "./HelpingQuestions.tsx";
 import { IconButton, InputAdornment, TextField } from "@mui/material";
-import { Delete, Edit, Save } from "@mui/icons-material";
+import { MdOutlineDelete } from "react-icons/md";
 
 type HelpingQuestionProps = {
   helpingQuestion: HelpingQuestionData;
   handleUpdateHelpingQuestion: (question: HelpingQuestionData) => void;
   handleDeleteHelpingQuestion: (id: string) => void;
 };
-export default function HelpingQuestion({
-                                          helpingQuestion,
-                                          handleUpdateHelpingQuestion,
-                                          handleDeleteHelpingQuestion
-                                        }: HelpingQuestionProps) {
-  const [editing, setEditing] = React.useState(false);
+export const HelpingQuestion = ({
+  helpingQuestion,
+  handleUpdateHelpingQuestion,
+  handleDeleteHelpingQuestion,
+}: HelpingQuestionProps) => {
+  const handleEditHelpingQuestion = (e: React.ChangeEvent<HTMLInputElement>) =>
+    handleUpdateHelpingQuestion({
+      ...helpingQuestion,
+      label: e.target.value,
+    });
 
-  const handleEditClick = () => setEditing(!editing);
-
-  const handleEditHelpingQuestion = (e: React.ChangeEvent<HTMLInputElement>) => handleUpdateHelpingQuestion({
-    ...helpingQuestion,
-    label: e.target.value
-  });
-
-  const handleDeleteClick = () => handleDeleteHelpingQuestion(helpingQuestion.id);
+  const handleDeleteClick = () =>
+    handleDeleteHelpingQuestion(helpingQuestion.id);
   return (
     <TextField
       fullWidth
@@ -31,22 +29,14 @@ export default function HelpingQuestion({
       InputProps={{
         endAdornment: (
           <InputAdornment position="end">
-            <IconButton edge="end"
-                        onClick={handleEditClick}
-            >
-              {editing ? <Save /> : <Edit />}
+            <IconButton edge="end" onClick={handleDeleteClick}>
+              <MdOutlineDelete />
             </IconButton>
-            {!editing && (
-              <IconButton edge="end"
-                          onClick={handleDeleteClick}>
-                <Delete />
-              </IconButton>
-            )}
           </InputAdornment>
-        )
+        ),
       }}
       value={helpingQuestion.label}
       onChange={handleEditHelpingQuestion}
     />
   );
-}
+};
