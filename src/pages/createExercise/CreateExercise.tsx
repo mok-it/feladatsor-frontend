@@ -9,7 +9,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { PropsWithChildren } from "react";
+import { PropsWithChildren, useState } from "react";
 import { KaTeX } from "../../components/Katex.tsx";
 import { MultiSelect } from "../../components/MultiSelect.tsx";
 import { HelpingQuestions } from "@/components/HelpingQuestions/HelpingQuestions.tsx";
@@ -24,6 +24,7 @@ import {
 import { Leaves } from "@/util/objectLeavesType.ts";
 import { createExerciseInitialValue } from "@/pages/createExercise/createExerciseInitialValue.ts";
 import { toBase64 } from "@/util/toBase64.ts";
+import { AlertDialog } from "@/components/Dialog.tsx";
 
 const Section = (props: PropsWithChildren<{ text: string }>) => {
   return (
@@ -67,6 +68,8 @@ const CreateExerciseForm = () => {
     submitForm,
   } = useFormikContext<ExerciseInput>();
 
+  const [showSuccessDialog, setShowSuccessDialog] = useState(false);
+
   const setFieldValue = <T extends Leaves<ExerciseInput>>(
     field: T,
     values: ExerciseInput[T],
@@ -89,6 +92,7 @@ const CreateExerciseForm = () => {
             <Button
               onClick={() => {
                 submitForm();
+                setShowSuccessDialog(true);
               }}
               variant="contained"
               color="success"
@@ -219,6 +223,14 @@ const CreateExerciseForm = () => {
           </Box>
         </Card>
       </Grid>
+      <AlertDialog
+        description={"Sikeresen elküldve"}
+        handleClose={() => setShowSuccessDialog(false)}
+        secondaryClick={() => setShowSuccessDialog(false)}
+        primaryClick={() => setShowSuccessDialog(false)}
+        open={showSuccessDialog}
+      />
+      ;
     </Grid>
   );
 };
