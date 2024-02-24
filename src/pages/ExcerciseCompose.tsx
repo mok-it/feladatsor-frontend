@@ -25,7 +25,6 @@ export type FakeId = { fakeId: string };
 const mock: Exercise & FakeId = {
   __typename: "Exercise",
   fakeId: "24-0123-4567",
-  name: "name",
   checks: [],
   difficulty: [
     { ageGroup: "KOALA", difficulty: 10, __typename: "ExerciseDifficulty" },
@@ -36,10 +35,21 @@ const mock: Exercise & FakeId = {
   ],
   helpingQuestions: [],
   history: [],
-  similarExercises: [],
   id: "1",
   description: "description",
   solution: "solution",
+  alternativeDifficultyExercises: [],
+  sameLogicExercises: [],
+  comments: [],
+  solutionOptions: [],
+  status: "CREATED",
+  tags: [],
+  elaboration: "elaboration",
+  elaborationImage: null,
+  exerciseImage: null,
+  isCompetitionFinal: false,
+  solveIdea: "",
+  source: "source",
   createdBy: {
     __typename: "User",
     id: "1",
@@ -77,19 +87,19 @@ const ExerciseCompose: FC = () => {
   });
   const allItems = useMemo(
     () => flatten(flatten(values(groups).map((group) => values(group)))),
-    [groups]
+    [groups],
   );
 
   const [active, setActive] = useState<Active | null>(null);
   const activeItem = useMemo(
     () => allItems.find((item) => item?.id === active?.id),
-    [active, allItems]
+    [active, allItems],
   );
   const sensors = useSensors(
     useSensor(PointerSensor),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
-    })
+    }),
   );
 
   const replace = useCallback(
@@ -99,7 +109,7 @@ const ExerciseCompose: FC = () => {
       fromIndex: number,
       toGroup: ExerciseAgeGroup,
       toLevel: number,
-      toIndex: number | null
+      toIndex: number | null,
     ) => {
       if (
         fromGroup === toGroup &&
@@ -140,7 +150,7 @@ const ExerciseCompose: FC = () => {
         });
       }
     },
-    [setGroups]
+    [setGroups],
   );
 
   return (
@@ -166,7 +176,7 @@ const ExerciseCompose: FC = () => {
                 fromIndex,
                 toGroup,
                 +toLevel,
-                toIndex
+                toIndex,
               );
             }
             setActive(null);

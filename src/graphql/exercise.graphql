@@ -2,7 +2,6 @@
 query selectExercises {
   exercises(take: 10, skip: 0) {
     id
-    name
     description
     exerciseImage
     solution
@@ -19,10 +18,6 @@ query selectExercises {
       exercise {
         id
       }
-    }
-    similarExercises {
-      id
-      name
     }
     checks {
       id
