@@ -4,8 +4,9 @@ import { HomePage } from "./pages/HomePage";
 import { CreateExercise } from "./pages/CreateExercise";
 import { IoNewspaperOutline, IoSearch } from "react-icons/io5";
 import { FaRegUser } from "react-icons/fa";
-import { FaPencil } from "react-icons/fa6";
+import { FaPencil, FaPeopleGroup } from "react-icons/fa6";
 import { ExerciseListPage } from "./pages/ExerciseListPage";
+import { RoleConfig } from "@/pages/RoleConfig.tsx";
 
 interface Page {
   name: string;
@@ -45,4 +46,10 @@ export const pages: Page[] = [
     component: HomePage,
     icon: FaPencil,
   },
+  {
+    name: "Felhasználók",
+    path: "/users",
+    component: RoleConfig,
+    icon: FaPeopleGroup,
+  }
 ];
