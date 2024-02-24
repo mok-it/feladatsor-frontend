@@ -1,11 +1,11 @@
-import { blueGrey, brown } from "@mui/material/colors";
-import Radio from "@mui/material/Radio";
-import { Grid, Stack, Switch, Typography } from "@mui/material";
-import { ageGroupTexts } from "@/types/ageGroupTexts.ts";
 import {
   ExerciseAgeGroup,
   ExerciseDifficultyInput,
 } from "@/generated/graphql.tsx";
+import { ageGroupTexts } from "@/types/ageGroupTexts.ts";
+import { Grid, Stack, Switch, Typography } from "@mui/material";
+import Radio from "@mui/material/Radio";
+import { blueGrey, brown } from "@mui/material/colors";
 import { ChangeEvent, useEffect, useState } from "react";
 
 type CategoryDifficultySelectProps = {

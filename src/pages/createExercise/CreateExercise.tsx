@@ -1,37 +1,34 @@
+import { CategoryDifficultySelect } from "@/components/CategoryDifficultySelect.tsx";
+import { HelpingQuestions } from "@/components/HelpingQuestions/HelpingQuestions.tsx";
+import { SimpleAccordion } from "@/components/SimpleAccordion.tsx";
+import { UploadWithPreview } from "@/components/UploadWithPreview.tsx";
+import {
+  ExerciseInput,
+  useCreateExerciseMutation,
+} from "@/generated/graphql.tsx";
+import { createExerciseInitialValue } from "@/pages/createExercise/createExerciseInitialValue.ts";
+import { Leaves } from "@/util/objectLeavesType.ts";
+import { toBase64 } from "@/util/toBase64.ts";
 import {
   Box,
   Button,
   Card,
-  CardHeader,
-  Divider,
   Grid,
   Stack,
   TextField,
   Typography,
 } from "@mui/material";
+import { Formik, useFormikContext } from "formik";
 import { PropsWithChildren } from "react";
 import { KaTeX } from "../../components/Katex.tsx";
 import { MultiSelect } from "../../components/MultiSelect.tsx";
-import { HelpingQuestions } from "@/components/HelpingQuestions/HelpingQuestions.tsx";
-import { UploadWithPreview } from "@/components/UploadWithPreview.tsx";
-import { SimpleAccordion } from "@/components/SimpleAccordion.tsx";
-import { CategoryDifficultySelect } from "@/components/CategoryDifficultySelect.tsx";
-import { Formik, useFormikContext } from "formik";
-import {
-  ExerciseInput,
-  useCreateExerciseMutation,
-} from "@/generated/graphql.tsx";
-import { Leaves } from "@/util/objectLeavesType.ts";
-import { createExerciseInitialValue } from "@/pages/createExercise/createExerciseInitialValue.ts";
-import { toBase64 } from "@/util/toBase64.ts";
 
 const Section = (props: PropsWithChildren<{ text: string }>) => {
   return (
-    <>
+    <Stack gap={1}>
       <Typography>{props.text}</Typography>
-      <Divider sx={{ m: 1, mb: 2 }} />
       {props.children}
-    </>
+    </Stack>
   );
 };
 
@@ -75,120 +72,114 @@ const CreateExerciseForm = () => {
     return setFormikFieldValues(field, values, shouldValidate);
   };
   return (
-    <Grid container gap={3}>
-      <Grid item xs={12}>
-        <Card>
-          <Stack
-            width="100%"
-            direction="row"
-            alignItems="baseline"
-            justifyContent="space-between"
-            pr={2}
-          >
-            <CardHeader title="Feladat létrehozása" />
-            <Button
-              onClick={() => {
-                submitForm();
-              }}
-              variant="contained"
-              color="success"
-            >
-              Beküldés
-            </Button>
-          </Stack>
-          <Box p={2}>
-            <Grid container spacing={2}>
-              <Grid item xs={6}>
-                <Section text="Feladat leírása">
-                  <TextField
-                    id="outlined-required"
-                    value={values.description}
-                    onChange={(event) =>
-                      setFieldValue("description", event.target.value)
-                    }
-                    minRows={10}
-                    maxRows={13}
-                    margin="none"
-                    multiline
-                    fullWidth
-                  />
-                </Section>
-              </Grid>
-              <Grid item xs={6}>
-                <KaTeX textExpression={"$\\LaTeX{}$ fordítás"} />
-                <Divider sx={{ m: 1, mb: 2 }} />
-                <KaTeX textExpression={values.description} />
-              </Grid>
-            </Grid>
-            <Box mt={2}>
-              <Typography>Ábra feltöltés</Typography>
-              <UploadWithPreview
-                onChange={async (file) => {
-                  if (!file) return setFieldValue("exerciseImage", null);
-                  setFieldValue("exerciseImage", await toBase64(file));
-                }}
-              />
-            </Box>
+    <Box pb={16}>
+      <Stack
+        width="100%"
+        direction="row"
+        alignItems="baseline"
+        justifyContent="space-between"
+        pr={2}
+        pt={2}
+      >
+        <Typography variant="h4" m={2}>
+          Feladat léterhozása
+        </Typography>
+        <Button
+          onClick={() => {
+            submitForm();
+          }}
+          variant="contained"
+          color="success"
+        >
+          Beküldés
+        </Button>
+      </Stack>
 
-            <Grid container spacing={2} mt={2}>
-              <Grid item xs={6}>
-                <Section text="Feladat megoldása">
-                  <TextField
-                    id="outlined-required"
-                    value={values.solution}
-                    onChange={(event) =>
-                      setFieldValue("solution", event.target.value)
-                    }
-                    margin="none"
-                    multiline
-                    maxRows={1}
-                    fullWidth
-                  />
-                  <SimpleAccordion summary="File feltöltés">
-                    <Box mt={2}>
-                      <UploadWithPreview
-                        onChange={async (file) => {
-                          if (!file)
-                            return setFieldValue("solutionImage", null);
-                          setFieldValue("solutionImage", await toBase64(file));
-                        }}
-                      />
-                    </Box>
-                  </SimpleAccordion>
-                </Section>
-              </Grid>
-              <Grid item xs={6}>
-                <Section text="Ötlet a megoldáshoz (opcionális)">
-                  <TextField
-                    id="outlined-required"
-                    value={values.solveIdea}
-                    onChange={(event) =>
-                      setFieldValue("solveIdea", event.target.value)
-                    }
-                    maxRows={1}
-                    margin="none"
-                    multiline
-                    fullWidth
-                  />
-                  <SimpleAccordion summary="File feltöltés">
-                    <Box mt={2}>
-                      <UploadWithPreview
-                        onChange={async (file) => {
-                          if (!file)
-                            return setFieldValue("solveIdeaImage", null);
-                          setFieldValue("solveIdeaImage", await toBase64(file));
-                        }}
-                      />
-                    </Box>
-                  </SimpleAccordion>
-                </Section>
-              </Grid>
+      <Card>
+        <Box p={2}>
+          <Grid container spacing={2}>
+            <Grid item xs={6}>
+              <Section text="Feladat leírása">
+                <TextField
+                  id="outlined-required"
+                  value={values.description}
+                  onChange={(event) =>
+                    setFieldValue("description", event.target.value)
+                  }
+                  minRows={10}
+                  maxRows={13}
+                  margin="none"
+                  multiline
+                  fullWidth
+                />
+              </Section>
             </Grid>
+            <Grid item xs={6}>
+              <KaTeX textExpression={"$\\LaTeX{}$ fordítás"} />
+              <KaTeX textExpression={values.description} />
+            </Grid>
+            <Grid item xs={12}>
+              <Section text="Feladat képe">
+                <UploadWithPreview
+                  onChange={async (file) => {
+                    if (!file) return setFieldValue("exerciseImage", null);
+                    setFieldValue("exerciseImage", await toBase64(file));
+                  }}
+                />
+              </Section>
+            </Grid>
+            <Grid item xs={6}>
+              <Section text="Feladat megoldása">
+                <TextField
+                  id="outlined-required"
+                  value={values.solution}
+                  onChange={(event) =>
+                    setFieldValue("solution", event.target.value)
+                  }
+                  margin="none"
+                  multiline
+                  maxRows={1}
+                  fullWidth
+                />
+                <SimpleAccordion summary="File feltöltés">
+                  <UploadWithPreview
+                    onChange={async (file) => {
+                      if (!file) return setFieldValue("solutionImage", null);
+                      setFieldValue("solutionImage", await toBase64(file));
+                    }}
+                  />
+                </SimpleAccordion>
+              </Section>
+            </Grid>
+            <Grid item xs={6}>
+              <Section text="Ötlet a megoldáshoz (opcionális)">
+                <TextField
+                  id="outlined-required"
+                  value={values.solveIdea}
+                  onChange={(event) =>
+                    setFieldValue("solveIdea", event.target.value)
+                  }
+                  maxRows={1}
+                  margin="none"
+                  multiline
+                  fullWidth
+                />
+                <SimpleAccordion summary="File feltöltés">
+                  <UploadWithPreview
+                    onChange={async (file) => {
+                      if (!file) return setFieldValue("solveIdeaImage", null);
+                      setFieldValue("solveIdeaImage", await toBase64(file));
+                    }}
+                  />
+                </SimpleAccordion>
+              </Section>
+            </Grid>
+          </Grid>
 
-            <Grid container spacing={2} mt={2}>
-              <Grid item xs={6}>
+          <Grid container spacing={2} mt={2}>
+            <Grid item xs={6}>
+              <Stack spacing={1}>
                 <Typography>Címkék, alcímkék</Typography>
-                <Divider sx={{ m: 1, mb: 2 }} />
                 <MultiSelect
                   items={tags}
                   onChange={(items) => {
@@ -196,29 +187,28 @@ const CreateExerciseForm = () => {
                     setFieldValue("tags", items);
                   }}
                 />
-              </Grid>
-              <Grid item xs={6}>
-                <Typography>Korcsoport szerinti nehézség</Typography>
-                <Divider sx={{ m: 1, mb: 2 }} />
-                <CategoryDifficultySelect
-                  values={values.difficulty}
-                  onChange={(value) => {
-                    setFieldValue("difficulty", value);
-                  }}
-                />
-              </Grid>
+              </Stack>
             </Grid>
-            <HelpingQuestions
-              onChange={(value) => {
-                setFieldValue(
-                  "helpingQuestions",
-                  value.map((v) => v.label),
-                );
-              }}
-            />
-          </Box>
-        </Card>
-      </Grid>
-    </Grid>
+            <Grid item xs={6}>
+              <Typography>Korcsoport szerinti nehézség</Typography>
+              <CategoryDifficultySelect
+                values={values.difficulty}
+                onChange={(value) => {
+                  setFieldValue("difficulty", value);
+                }}
+              />
+            </Grid>
+          </Grid>
+          <HelpingQuestions
+            onChange={(value) => {
+              setFieldValue(
+                "helpingQuestions",
+                value.map((v) => v.label),
+              );
+            }}
+          />
+        </Box>
+      </Card>
+    </Box>
   );
 };
