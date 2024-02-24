@@ -11,6 +11,7 @@ import { useState } from "react";
 import { KaTeX } from "../components/Katex";
 import { UploadDialog } from "../components/UploadDialog";
 import { MultiSelect } from "../components/MultiSelect";
+import HelpingQuestions from "../components/HelpingQuestions/HelpingQuestions.tsx";
 
 export const CreateExercise = () => {
   const [exerciseDescription, setExerciseDescription] = useState("");
@@ -105,6 +106,7 @@ export const CreateExercise = () => {
               <Typography>Címkék</Typography>
               <MultiSelect items={tags} onchange={() => {}} />
             </Box>
+            <HelpingQuestions />
           </Box>
         </Card>
       </Grid>
