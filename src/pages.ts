@@ -1,16 +1,19 @@
-import { HiOutlineHome } from "react-icons/hi";
+import { FC } from "react";
 import { IconType } from "react-icons";
-import { HomePage } from "./pages/HomePage";
-import { CreateExercise } from "./pages/CreateExercise";
-import { IoNewspaperOutline, IoSearch } from "react-icons/io5";
 import { FaRegUser } from "react-icons/fa";
 import { FaPencil } from "react-icons/fa6";
+import { HiOutlineHome } from "react-icons/hi";
+import { IoNewspaperOutline, IoSearch } from "react-icons/io5";
+import { MdDashboard } from "react-icons/md";
+import { CreateExercise } from "./pages/CreateExercise";
+import ExerciseCompose from "./pages/ExcerciseCompose";
 import { ExerciseListPage } from "./pages/ExerciseListPage";
+import { HomePage } from "./pages/HomePage";
 
 interface Page {
   name: string;
   path: string;
-  component: () => JSX.Element;
+  component: (() => JSX.Element) | FC;
   icon: IconType;
 }
 
@@ -44,5 +47,11 @@ export const pages: Page[] = [
     path: "/check-exercise",
     component: HomePage,
     icon: FaPencil,
+  },
+  {
+    name: "Feladatsor",
+    path: "/exercise-compose",
+    component: ExerciseCompose,
+    icon: MdDashboard,
   },
 ];
