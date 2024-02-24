@@ -93,7 +93,7 @@ const DifficultySelector = (props: {
         step={1}
         marks
         min={0}
-        max={10}
+        max={4}
         valueLabelDisplay="auto"
       />
       {props.isLastRow && (

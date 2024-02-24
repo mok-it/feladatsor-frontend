@@ -9,14 +9,16 @@ import {
 } from "@mui/material";
 import { useState } from "react";
 import { KaTeX } from "../components/Katex";
-import { UploadDialog } from "../components/UploadDialog";
 import { MultiSelect } from "../components/MultiSelect";
 import HelpingQuestions from "../components/HelpingQuestions/HelpingQuestions.tsx";
+import { UploadWithPreview } from "@/components/UploadWithPreview.tsx";
+import { AccordionExpandIcon } from "@/components/AccordionExpandIcon.tsx";
+import { CategoryDifficultySelect } from "@/components/CategoryDifficultySelect.tsx";
 
 export const CreateExercise = () => {
   const [exerciseDescription, setExerciseDescription] = useState("");
 
-  const [exerciseSolution, setExerciseSolution] = useState("")
+  const [exerciseSolution, setExerciseSolution] = useState("");
 
   return (
     <Grid container gap={3}>
@@ -34,7 +36,7 @@ export const CreateExercise = () => {
                   onChange={(event) =>
                     setExerciseDescription(event.target.value)
                   }
-                  minRows={4}
+                  minRows={10}
                   maxRows={13}
                   margin="none"
                   multiline
@@ -47,11 +49,9 @@ export const CreateExercise = () => {
                 <KaTeX texExpression={exerciseDescription} />
               </Grid>
             </Grid>
-
             <Box mt={2}>
-              <Typography>Feladat fájl feltöltése</Typography>
-              <UploadDialog setFile={(file) => {
-                console.log(file)}} />
+              <Typography>Ábra feltöltés</Typography>
+              <UploadWithPreview />
             </Box>
 
             <Grid container spacing={2} mt={2}>
@@ -64,21 +64,20 @@ export const CreateExercise = () => {
                   onChange={(event) => setExerciseSolution(event.target.value)}
                   margin="none"
                   multiline
-                  maxRows={3}
+                  maxRows={1}
                   fullWidth
+                />
+                <AccordionExpandIcon
+                  summary={"file feltöltés"}
+                  details={
+                    <Box mt={2}>
+                      <UploadWithPreview />
+                    </Box>
+                  }
                 />
               </Grid>
               <Grid item xs={6}>
-                <Typography>Feladat megoldás feltöltése</Typography>
-                <Divider sx={{ m: 1, mb: 2 }} />
-                <UploadDialog setFile={(file) => {
-                  console.log(file)}} />
-              </Grid>
-            </Grid>
-
-            <Grid container spacing={2} mt={2}>
-              <Grid item xs={6}>
-                <Typography>Feladat megoldásának kifejtése</Typography>
+                <Typography>Ötlet a megoldáshoz (opcionális)</Typography>
                 <Divider sx={{ m: 1, mb: 2 }} />
                 <TextField
                   id="outlined-required"
@@ -86,20 +85,32 @@ export const CreateExercise = () => {
                   onChange={(event) =>
                     setExerciseDescription(event.target.value)
                   }
-                  minRows={4}
-                  maxRows={13}
+                  maxRows={1}
                   margin="none"
                   multiline
                   fullWidth
                 />
+                <AccordionExpandIcon
+                  summary={"file feltöltés"}
+                  details={
+                    <Box mt={2}>
+                      <UploadWithPreview />
+                    </Box>
+                  }
+                />
+              </Grid>
+            </Grid>
+
+            <Grid container spacing={2} mt={2}>
+              <Grid item xs={6}>
+                <Typography>Címkék, alcímkék</Typography>
+                <Divider sx={{ m: 1, mb: 2 }} />
+                <MultiSelect items={tags} onchange={() => {}} />
               </Grid>
               <Grid item xs={6}>
-                <Typography>
-                  Feladat megoldás kifejtésének feltöltése
-                </Typography>
+                <Typography>Korcsoport szerinti nehézség</Typography>
                 <Divider sx={{ m: 1, mb: 2 }} />
-                <UploadDialog setFile={(file) => {
-                  console.log(file)}} />
+                <CategoryDifficultySelect />
               </Grid>
             </Grid>
             <Box mt={2}>

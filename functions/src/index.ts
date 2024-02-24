@@ -1,17 +1,19 @@
-/**
- * Import function triggers from their respective submodules:
- *
- * import {onCall} from "firebase-functions/v2/https";
- * import {onDocumentWritten} from "firebase-functions/v2/firestore";
- *
- * See a full list of supported triggers at https://firebase.google.com/docs/functions
- */
+import { initializeApp } from "firebase-admin/app";
+import { getAuth } from "firebase-admin/auth";
+import { onRequest } from "firebase-functions/v2/https";
 
+initializeApp();
 
-// Start writing functions
-// https://firebase.google.com/docs/functions/typescript
-
-// export const helloWorld = onRequest((request, response) => {
-//   logger.info("Hello logs!", {structuredData: true});
-//   response.send("Hello from Firebase!");
-// });
+export const verifyIdToken = onRequest(
+  { region: "europe-west1" },
+  (req, res) => {
+    const token = req.body.token as string;
+    getAuth()
+      .verifyIdToken(token)
+      .then(() => {
+        res.status(200).send({ valid: true });
+      })
+      .catch(() => {
+        res.status(401).send({ valid: false });
+      });
+  });
