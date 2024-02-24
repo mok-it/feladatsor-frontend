@@ -7,13 +7,13 @@ import { ThemeProvider } from "./theme";
 import { userAtom } from "./util/atoms";
 
 function App() {
-
   const user = useAtomValue(userAtom);
 
-  if (!user) {
-    return (
-      <Login />
-    );
+  if (user === undefined) {
+    return null;
+  }
+  if (user === null) {
+    return <Login />;
   }
 
   return (
