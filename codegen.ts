@@ -10,7 +10,11 @@ const config: CodegenConfig = {
   verbose: true,
   documents: "src/**/*.graphql",
   generates: {
+    "./src/generated/graphql.schema.json": {
+      plugins: ["introspection"],
+    },
     "src/generated/graphql.tsx": {
+      schema: "./schema.graphql",
       plugins: [
         "typescript",
         "typescript-operations",
