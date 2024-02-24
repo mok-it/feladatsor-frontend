@@ -1,3 +1,13 @@
-mutation login ($userName: String!, $password: String!){
-    login(name: $userName, password: $password){token, user {id}}
+mutation loginWithGoogle($googleToken: String!) {
+  loginWithGoogle(googleToken: $googleToken) {
+    user {
+      id
+      email
+      name
+      userName
+      createdAt
+      updatedAt
+    }
+    token
+  }
 }
