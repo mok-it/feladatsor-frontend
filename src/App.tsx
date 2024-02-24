@@ -1,15 +1,18 @@
 import { useAtomValue } from "jotai";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
+import "./App.css";
 import Layout from "./Layout";
 import { pages } from "./pages";
 import Login from "./pages/Login";
 import { userAtom } from "./util/atoms";
-import "./App.css";
 
 function App() {
   const user = useAtomValue(userAtom);
 
-  if (!user) {
+  if (user === undefined) {
+    return null;
+  }
+  if (user === null) {
     return <Login />;
   }
 
