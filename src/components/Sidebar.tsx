@@ -1,4 +1,4 @@
-import { userAtom } from "@/util/atoms";
+import { tokenAtom, userAtom } from "@/util/atoms";
 import { auth } from "@/util/firebase";
 import {
   alpha,
@@ -33,12 +33,14 @@ export const Sidebar = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const setUser = useSetAtom(userAtom);
+  const setToken = useSetAtom(tokenAtom);
 
   const signOut = useCallback(() => {
     firebaseSignout(auth).then(() => {
-      setUser(undefined);
+      setUser(null);
+      setToken(null);
     });
-  }, [setUser]);
+  }, [setUser, setToken]);
 
   return (
     <Drawer

@@ -11,9 +11,9 @@ export const userAtom = atomWithStorage<User | null | undefined>(
 );
 type User = Omit<Omit<TotalUser, "exercises">, "__typename">;
 
-const tokenStore = createJSONStorage<string | undefined>(() => sessionStorage);
-export const tokenAtom = atomWithStorage<string | undefined>(
+const tokenStore = createJSONStorage<string | null>(() => sessionStorage);
+export const tokenAtom = atomWithStorage<string | null>(
   "jwtToken",
-  undefined,
+  null,
   tokenStore,
 );
