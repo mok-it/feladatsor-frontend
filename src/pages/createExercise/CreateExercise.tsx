@@ -1,4 +1,5 @@
 import { CategoryDifficultySelect } from "@/components/CategoryDifficultySelect.tsx";
+import { AlertDialog } from "@/components/Dialog.tsx";
 import { HelpingQuestions } from "@/components/HelpingQuestions/HelpingQuestions.tsx";
 import { SimpleAccordion } from "@/components/SimpleAccordion.tsx";
 import { UploadWithPreview } from "@/components/UploadWithPreview.tsx";
@@ -19,7 +20,7 @@ import {
   Typography,
 } from "@mui/material";
 import { Formik, useFormikContext } from "formik";
-import { PropsWithChildren } from "react";
+import { PropsWithChildren, useState } from "react";
 import { KaTeX } from "../../components/Katex.tsx";
 import { MultiSelect } from "../../components/MultiSelect.tsx";
 
@@ -64,6 +65,8 @@ const CreateExerciseForm = () => {
     submitForm,
   } = useFormikContext<ExerciseInput>();
 
+  const [showSuccessDialog, setShowSuccessDialog] = useState(false);
+
   const setFieldValue = <T extends Leaves<ExerciseInput>>(
     field: T,
     values: ExerciseInput[T],
@@ -73,6 +76,13 @@ const CreateExerciseForm = () => {
   };
   return (
     <Box pb={16}>
+      <AlertDialog
+        description={"Sikeresen elküldve"}
+        handleClose={() => setShowSuccessDialog(false)}
+        secondaryClick={() => setShowSuccessDialog(false)}
+        primaryClick={() => setShowSuccessDialog(false)}
+        open={showSuccessDialog}
+      />
       <Stack
         width="100%"
         direction="row"
@@ -87,6 +97,7 @@ const CreateExerciseForm = () => {
         <Button
           onClick={() => {
             submitForm();
+            setShowSuccessDialog(true);
           }}
           variant="contained"
           color="success"
@@ -94,7 +105,6 @@ const CreateExerciseForm = () => {
           Beküldés
         </Button>
       </Stack>
-
       <Card>
         <Box p={2}>
           <Grid container spacing={2}>
