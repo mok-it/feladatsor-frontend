@@ -23,12 +23,6 @@ export default function HelpingQuestion({
   });
 
   const handleDeleteClick = () => handleDeleteHelpingQuestion(helpingQuestion.id);
-
-  /*
-  type="text"
-              value={helpingQuestion.label}
-              onChange={handleEditHelpingQuestion}
-   */
   return (
     <TextField
       fullWidth
