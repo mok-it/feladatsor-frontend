@@ -3,19 +3,26 @@ import {
   Card,
   CardHeader,
   Divider,
+  FormControlLabel,
   Grid,
+  IconButton,
+  Slider,
+  Stack,
+  Switch,
   TextField,
   Typography,
 } from "@mui/material";
-import { useState } from "react";
+import React, { useState } from "react";
 import { KaTeX } from "../components/Katex";
 import { UploadDialog } from "../components/UploadDialog";
 import { MultiSelect } from "../components/MultiSelect";
+import { BiPlus } from "react-icons/bi";
 
 export const CreateExercise = () => {
   const [exerciseDescription, setExerciseDescription] = useState("");
 
-  const [exerciseSolution, setExerciseSolution] = useState("")
+  const [exerciseSolution, setExerciseSolution] = useState("");
+  const [value, setValue] = React.useState(0);
 
   return (
     <Grid container gap={3}>
@@ -49,8 +56,11 @@ export const CreateExercise = () => {
 
             <Box mt={2}>
               <Typography>Feladat fájl feltöltése</Typography>
-              <UploadDialog setFile={(file) => {
-                console.log(file)}} />
+              <UploadDialog
+                setFile={(file) => {
+                  console.log(file);
+                }}
+              />
             </Box>
 
             <Grid container spacing={2} mt={2}>
@@ -70,8 +80,11 @@ export const CreateExercise = () => {
               <Grid item xs={6}>
                 <Typography>Feladat megoldás feltöltése</Typography>
                 <Divider sx={{ m: 1, mb: 2 }} />
-                <UploadDialog setFile={(file) => {
-                  console.log(file)}} />
+                <UploadDialog
+                  setFile={(file) => {
+                    console.log(file);
+                  }}
+                />
               </Grid>
             </Grid>
 
@@ -97,18 +110,69 @@ export const CreateExercise = () => {
                   Feladat megoldás kifejtésének feltöltése
                 </Typography>
                 <Divider sx={{ m: 1, mb: 2 }} />
-                <UploadDialog setFile={(file) => {
-                  console.log(file)}} />
+                <UploadDialog
+                  setFile={(file) => {
+                    console.log(file);
+                  }}
+                />
               </Grid>
             </Grid>
-            <Box mt={2}>
-              <Typography>Címkék</Typography>
-              <MultiSelect items={tags} onchange={() => {}} />
-            </Box>
+            <Stack gap={4}>
+              <Box mt={2}>
+                <Typography>Címkék</Typography>
+                <MultiSelect items={tags} onchange={() => {}} />
+              </Box>
+              <Box>
+                <Typography>Korcsoport szerinti nehézség</Typography>
+                <Divider sx={{ m: 1, mb: 2 }} />
+                <Grid container xs={12} md={6}>
+                  <DifficultySelector
+                    ageGroup={"Koala"}
+                    difficulty={value}
+                    setDifficulty={(value) => setValue(value)}
+                    onNewRowClick={() => {}}
+                    isLastRow={true}
+                  />
+                </Grid>
+              </Box>
+            </Stack>
           </Box>
         </Card>
       </Grid>
     </Grid>
+  );
+};
+
+const DifficultySelector = (props: {
+  ageGroup: string;
+  difficulty: number;
+  setDifficulty: (difficulty: number) => void;
+  onNewRowClick: () => void;
+  isLastRow: boolean;
+}) => {
+  return (
+    <Stack direction="row" gap={2} alignItems="center" sx={{ flexGrow: 1 }}>
+      <FormControlLabel
+        control={<Switch defaultChecked />}
+        label={props.ageGroup}
+      />
+      <Slider
+        name={"Nehézség"}
+        sx={{ width: "100%" }}
+        value={props.difficulty}
+        onChange={(_, value) => props.setDifficulty(value as number)}
+        step={1}
+        marks
+        min={0}
+        max={4}
+        valueLabelDisplay="auto"
+      />
+      {props.isLastRow && (
+        <IconButton color="primary" onClick={() => props.onNewRowClick()}>
+          <BiPlus />
+        </IconButton>
+      )}
+    </Stack>
   );
 };
 
