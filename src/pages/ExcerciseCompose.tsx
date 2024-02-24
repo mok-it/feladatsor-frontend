@@ -1,5 +1,5 @@
-import AgeContainer from "@/components/compose/AgeContainer";
 import ExerciseCard from "@/components/compose/ExerciseCard";
+import ExerciseContainer from "@/components/compose/ExerciseContainer";
 import { SortableItem } from "@/components/compose/SortableItem";
 import { SortableOverlay } from "@/components/compose/SortableOverlay";
 import { Exercise, ExerciseAgeGroup } from "@/generated/graphql";
@@ -13,84 +13,120 @@ import {
   useSensors,
 } from "@dnd-kit/core";
 import { sortableKeyboardCoordinates } from "@dnd-kit/sortable";
-import { Divider } from "@mui/material";
-import { Stack } from "@mui/system";
+import { Divider, Typography } from "@mui/material";
+import { Box, Stack } from "@mui/system";
 import dayjs from "dayjs";
-import { entries, flatten, values } from "lodash";
+import { entries, flatten, random, union, values } from "lodash";
 import { FC, useCallback, useMemo, useState } from "react";
 import { useImmer } from "use-immer";
 
-export type FakeId = { fakeId: string };
+export type LocalExerciseProps = { fakeId: string };
+export type ExerciseCopy = {
+  id: string;
+  data: Exercise & LocalExerciseProps;
+};
 
-const mock: Exercise & FakeId = {
-  __typename: "Exercise",
-  fakeId: "24-0123-4567",
-  checks: [],
-  difficulty: [
-    { ageGroup: "KOALA", difficulty: 10, __typename: "ExerciseDifficulty" },
-    { ageGroup: "MEDVEBOCS", difficulty: 8, __typename: "ExerciseDifficulty" },
-    { ageGroup: "KISMEDVE", difficulty: 4, __typename: "ExerciseDifficulty" },
-    { ageGroup: "NAGYMEDVE", difficulty: 2, __typename: "ExerciseDifficulty" },
-    { ageGroup: "JEGESMEDVE", difficulty: 1, __typename: "ExerciseDifficulty" },
-  ],
-  helpingQuestions: [],
-  history: [],
+const mock: ExerciseCopy = {
   id: "1",
-  description: "description",
-  solution: "solution",
-  alternativeDifficultyExercises: [],
-  sameLogicExercises: [],
-  comments: [],
-  solutionOptions: [],
-  status: "CREATED",
-  tags: [],
-  elaboration: "elaboration",
-  elaborationImage: null,
-  exerciseImage: null,
-  isCompetitionFinal: false,
-  solveIdea: "",
-  source: "source",
-  createdBy: {
-    __typename: "User",
+  data: {
+    __typename: "Exercise",
+    fakeId: "24-0123-4567",
+    checks: [],
+    difficulty: [
+      { ageGroup: "KOALA", difficulty: 10, __typename: "ExerciseDifficulty" },
+      {
+        ageGroup: "MEDVEBOCS",
+        difficulty: 8,
+        __typename: "ExerciseDifficulty",
+      },
+      { ageGroup: "KISMEDVE", difficulty: 4, __typename: "ExerciseDifficulty" },
+      {
+        ageGroup: "NAGYMEDVE",
+        difficulty: 2,
+        __typename: "ExerciseDifficulty",
+      },
+      {
+        ageGroup: "JEGESMEDVE",
+        difficulty: 1,
+        __typename: "ExerciseDifficulty",
+      },
+    ],
+    helpingQuestions: [],
+    history: [],
     id: "1",
-    name: "name",
-    email: "email",
-    exercises: [],
-    updatedAt: dayjs().toISOString(),
+    description: "description",
+    solution: "solution",
+    alternativeDifficultyExercises: [],
+    sameLogicExercises: [],
+    comments: [],
+    solutionOptions: [],
+    status: "CREATED",
+    tags: [],
+    elaboration: "elaboration",
+    elaborationImage: null,
+    exerciseImage: null,
+    isCompetitionFinal: false,
+    solveIdea: "",
+    source: "source",
+    createdBy: {
+      __typename: "User",
+      id: "1",
+      name: "name",
+      email: "email",
+      exercises: [],
+      updatedAt: dayjs().toISOString(),
+      createdAt: dayjs().toISOString(),
+      userName: "userName",
+    },
     createdAt: dayjs().toISOString(),
-    userName: "userName",
+    updatedAt: dayjs().toISOString(),
   },
-  createdAt: dayjs().toISOString(),
-  updatedAt: dayjs().toISOString(),
 };
 
 const mock2 = {
-  ...mock,
+  data: {
+    ...mock.data,
+    fakeId: "ab-2837-1234",
+  },
   id: "2",
-  fakeId: "a-1",
 };
 const mock3 = {
-  ...mock,
+  data: {
+    ...mock.data,
+    fakeId: "ku-2837-1234",
+  },
   id: "3",
-  fakeId: "b-2",
 };
 
 const ExerciseCompose: FC = () => {
+  const [talon, setTalon] = useImmer<ExerciseCopy[]>([mock, mock2, mock3]);
   const [groups, setGroups] = useImmer<{
-    [key in ExerciseAgeGroup]: { [key in number]?: (Exercise & FakeId)[] };
+    [key in ExerciseAgeGroup]: {
+      [key in number]?: ExerciseCopy[];
+    };
   }>({
-    KOALA: { 0: [mock], 1: [], 2: [], 3: [] },
-    MEDVEBOCS: { 0: [mock2], 1: [], 2: [], 3: [] },
-    KISMEDVE: { 0: [mock3], 1: [], 2: [], 3: [] },
+    KOALA: { 0: [], 1: [], 2: [], 3: [] },
+    MEDVEBOCS: { 0: [], 1: [], 2: [], 3: [] },
+    KISMEDVE: { 0: [], 1: [], 2: [], 3: [] },
     NAGYMEDVE: { 0: [], 1: [], 2: [], 3: [] },
     JEGESMEDVE: { 0: [], 1: [], 2: [], 3: [] },
   });
   const allItems = useMemo(
-    () => flatten(flatten(values(groups).map((group) => values(group)))),
-    [groups],
+    () =>
+      union(
+        talon,
+        flatten(flatten(values(groups).map((group) => values(group)))),
+      ),
+    [groups, talon],
   );
-
-  const [active, setActive] = useState<Active | null>(null);
+  const [lastTalonInsert, setLastTalonInsert] = useState<{
+    group: ExerciseAgeGroup;
+    level: number;
+    index: number;
+  } | null>(null);
+  const [active, setActive] = useState<
+    (Active & { preventCopy?: boolean }) | null
+  >(null);
   const activeItem = useMemo(
     () => allItems.find((item) => item?.id === active?.id),
     [active, allItems],
@@ -100,6 +136,45 @@ const ExerciseCompose: FC = () => {
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
     }),
+  );
+
+  const insertExercise = useCallback(
+    (toGroup: ExerciseAgeGroup, toLevel: number, toIndex: number | null) => {
+      if (!activeItem) return;
+      if (lastTalonInsert) {
+        setGroups((draft) => {
+          draft[lastTalonInsert.group][lastTalonInsert.level]?.splice(
+            lastTalonInsert.index,
+            1,
+          );
+        });
+      }
+      console.log("insert", toGroup, toLevel, toIndex);
+      const newId = activeItem.id.split("/")[0] + "/" + random(10000, 99999);
+
+      setTalon((draft) => {
+        // update the talon item id
+        const index = draft.findIndex((item) => item.id === activeItem.id);
+        draft[index].id = newId;
+      });
+
+      setGroups((draft) => {
+        const temp = draft[toGroup][toLevel];
+        if (!temp) return;
+        if (toIndex === null) {
+          temp.push(activeItem);
+        } else {
+          temp.splice(toIndex, 0, activeItem);
+        }
+        draft[toGroup][toLevel] = temp;
+      });
+      setLastTalonInsert({
+        group: toGroup,
+        level: toLevel,
+        index: toIndex ?? 0,
+      });
+    },
+    [activeItem, lastTalonInsert, setGroups, setTalon],
   );
 
   const replace = useCallback(
@@ -120,20 +195,18 @@ const ExerciseCompose: FC = () => {
       if (fromGroup === toGroup && fromlevel === toLevel) {
         setGroups((draft) => {
           const temp = draft[fromGroup][fromlevel];
-          const item = temp?.[fromIndex];
-          if (!item) return;
+          if (!activeItem) return;
           temp?.splice(fromIndex, 1);
           if (toIndex === null) {
-            temp?.push(item);
+            temp?.push(activeItem);
           } else {
-            temp?.splice(toIndex, 0, item);
+            temp?.splice(toIndex, 0, activeItem);
           }
           draft[fromGroup][fromlevel] = temp;
         });
       } else {
         setGroups((draft) => {
-          const item = draft[fromGroup][fromlevel]?.[fromIndex];
-          if (!item) return;
+          if (!activeItem) return;
 
           const tempFrom = draft[fromGroup][fromlevel];
           const tempTo = draft[toGroup][toLevel];
@@ -141,35 +214,39 @@ const ExerciseCompose: FC = () => {
           tempFrom?.splice(fromIndex, 1);
 
           if (!toIndex) {
-            tempTo?.push(item);
+            tempTo?.push(activeItem);
           } else {
-            tempTo?.splice(toIndex, 0, item);
+            tempTo?.splice(toIndex, 0, activeItem);
           }
+
           draft[fromGroup][fromlevel] = tempFrom;
           draft[toGroup][toLevel] = tempTo;
         });
       }
     },
-    [setGroups],
+    [activeItem, setGroups],
   );
 
   return (
-    <>
+    <Stack direction={"row"} gap={2}>
       <DndContext
         sensors={sensors}
         onDragStart={({ active }) => {
+          console.log("active", active.id);
           setActive(active);
         }}
         onDragEnd={({ active, over }) => {
+          console.log("onDragEnd");
           if (!active || !over) return;
           try {
             const fromId = active.data.current?.sortable?.containerId;
             const toId = over.data.current?.sortable?.containerId ?? over.id;
+            if (toId === "talon") return;
             const [fromGroup, fromlevel] = fromId.split("-");
             const [toGroup, toLevel] = toId.split("-");
-            if (fromId === toId) {
-              const fromIndex: number = active.data.current?.sortable.index;
-              const toIndex: number = over.data.current?.sortable.index;
+            const fromIndex: number = active.data.current?.sortable.index;
+            const toIndex: number = over.data.current?.sortable.index;
+            if (fromId === toId && fromId !== "talon") {
               replace(
                 fromGroup,
                 +fromlevel,
@@ -178,29 +255,63 @@ const ExerciseCompose: FC = () => {
                 +toLevel,
                 toIndex,
               );
+            } else if (fromId === "talon") {
+              insertExercise(toGroup, +toLevel, toIndex);
             }
-            setActive(null);
+          } catch (e) {
+            console.log("error", e);
+          }
+          setActive(null);
+          setLastTalonInsert(null);
+        }}
+        onDragCancel={() => {
+          setActive(null);
+          setLastTalonInsert(null);
+        }}
+        onDragOver={({ active: newActive, over }) => {
+          console.log("onDragOver", newActive, over);
+          try {
+            if (!newActive || !newActive.data.current || !over) return;
+            const fromId = newActive.data.current?.sortable.containerId;
+            const toId = over.data.current?.sortable.containerId ?? over.id;
+            if (toId === "talon") return;
+            const [fromGroup, fromlevel] = fromId.split("-");
+            const [toGroup, toLevel] = toId.split("-");
+            if (fromGroup === toGroup && fromlevel === toLevel) {
+              return;
+            }
+            const fromIndex = newActive.data.current?.sortable.index;
+            const toIndex = over.data.current?.sortable.index || null;
+            console.log(fromId, toId, fromIndex, toIndex);
+            if (fromId !== "talon") {
+              replace(
+                fromGroup,
+                +fromlevel,
+                fromIndex,
+                toGroup,
+                +toLevel,
+                toIndex,
+              );
+            } else {
+              insertExercise(toGroup, +toLevel, toIndex);
+            }
           } catch (e) {
             console.log("error", e);
           }
         }}
-        onDragCancel={() => {
-          setActive(null);
-        }}
-        onDragOver={({ active, over }) => {
-          if (!active || !active.data.current || !over) return;
-          const fromId = active.data.current?.sortable.containerId;
-          const toId = over.data.current?.sortable.containerId ?? over.id;
-          const [fromGroup, fromlevel] = fromId.split("-");
-          const [toGroup, toLevel] = toId.split("-");
-          if (fromGroup === toGroup && fromlevel === toLevel) {
-            return;
-          }
-          const fromIndex = active.data.current?.sortable.index;
-          const toIndex = over.data.current?.sortable.index || null;
-          replace(fromGroup, +fromlevel, fromIndex, toGroup, +toLevel, toIndex);
-        }}
       >
+        <Box flexGrow={0}>
+          <Typography variant="subtitle1" textAlign={"center"} mt={2}>
+            Talon
+          </Typography>
+          <ExerciseContainer
+            isTalon
+            ageGroup={null}
+            id={`talon`}
+            level={0}
+            items={talon}
+          />
+        </Box>
         <Stack
           direction={"column"}
           alignItems={"stretch"}
@@ -215,11 +326,17 @@ const ExerciseCompose: FC = () => {
               gap={2}
               divider={<Divider orientation={"vertical"} />}
             >
-              <Stack width={120} alignItems={"end"} justifyContent={"center"}>
+              <Stack
+                width={120}
+                alignItems={"end"}
+                justifyContent={"center"}
+                paddingTop={level === 0 ? 5 : 0}
+              >
                 {levels[level].name}
               </Stack>
               {entries(groups).map(([key, items]) => (
-                <AgeContainer
+                <ExerciseContainer
+                  isTalon={false}
                   key={key}
                   ageGroup={key as ExerciseAgeGroup}
                   id={`${key}-${level}`}
@@ -229,16 +346,16 @@ const ExerciseCompose: FC = () => {
               ))}
             </Stack>
           ))}
-          <SortableOverlay>
-            {activeItem && (
-              <SortableItem id={activeItem.id}>
-                <ExerciseCard exercise={activeItem} />
-              </SortableItem>
-            )}
-          </SortableOverlay>
         </Stack>
+        <SortableOverlay>
+          {activeItem && (
+            <SortableItem id={activeItem.id}>
+              <ExerciseCard exercise={activeItem} />
+            </SortableItem>
+          )}
+        </SortableOverlay>
       </DndContext>
-    </>
+    </Stack>
   );
 };
 
