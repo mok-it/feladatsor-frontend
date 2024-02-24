@@ -41,6 +41,12 @@ export default function HelpingQuestionComposer({ handleAddHelpingQuestion }: He
       }}
       value={label}
       onChange={handleUpdateLabel}
+      onKeyUp={(event) => {
+        if (event.key === 'Enter') {
+          handleAddHelpingQuestionClick();
+          event.preventDefault();
+        }
+      }}
     />
   );
 }
