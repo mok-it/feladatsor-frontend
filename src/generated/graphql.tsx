@@ -238,6 +238,11 @@ export type CreateExerciseMutationVariables = Exact<{
 
 export type CreateExerciseMutation = { __typename: 'Mutation', createExercise: { __typename: 'Exercise', id: string } };
 
+export type SelectExercisesQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type SelectExercisesQuery = { __typename: 'Query', exercises: Array<{ __typename: 'Exercise', id: string, description: string, exerciseImage?: string | null, solution: string, elaboration?: string | null, elaborationImage?: string | null, helpingQuestions: Array<string>, source?: string | null, createdAt: string, updatedAt: string, difficulty: Array<{ __typename: 'ExerciseDifficulty', difficulty: number, ageGroup: ExerciseAgeGroup }>, history: Array<{ __typename: 'ExerciseHistory', id: string, exercise: { __typename: 'Exercise', id: string } }>, checks: Array<{ __typename: 'ExerciseCheck', id: string, type: ExerciseCheckType, user: { __typename: 'User', id: string, name: string } }>, createdBy: { __typename: 'User', id: string, name: string } }> };
+
 export type LoginWithGoogleMutationVariables = Exact<{
   googleToken: Scalars['String']['input'];
 }>;
@@ -279,6 +284,76 @@ export function useCreateExerciseMutation(baseOptions?: Apollo.MutationHookOptio
 export type CreateExerciseMutationHookResult = ReturnType<typeof useCreateExerciseMutation>;
 export type CreateExerciseMutationResult = Apollo.MutationResult<CreateExerciseMutation>;
 export type CreateExerciseMutationOptions = Apollo.BaseMutationOptions<CreateExerciseMutation, CreateExerciseMutationVariables>;
+export const SelectExercisesDocument = gql`
+    query selectExercises {
+  exercises(take: 10, skip: 0) {
+    id
+    description
+    exerciseImage
+    solution
+    elaboration
+    elaborationImage
+    helpingQuestions
+    source
+    difficulty {
+      difficulty
+      ageGroup
+    }
+    history {
+      id
+      exercise {
+        id
+      }
+    }
+    checks {
+      id
+      user {
+        id
+        name
+      }
+      type
+    }
+    createdBy {
+      id
+      name
+    }
+    createdAt
+    updatedAt
+  }
+}
+    `;
+
+/**
+ * __useSelectExercisesQuery__
+ *
+ * To run a query within a React component, call `useSelectExercisesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSelectExercisesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useSelectExercisesQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useSelectExercisesQuery(baseOptions?: Apollo.QueryHookOptions<SelectExercisesQuery, SelectExercisesQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<SelectExercisesQuery, SelectExercisesQueryVariables>(SelectExercisesDocument, options);
+      }
+export function useSelectExercisesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SelectExercisesQuery, SelectExercisesQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<SelectExercisesQuery, SelectExercisesQueryVariables>(SelectExercisesDocument, options);
+        }
+export function useSelectExercisesSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<SelectExercisesQuery, SelectExercisesQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<SelectExercisesQuery, SelectExercisesQueryVariables>(SelectExercisesDocument, options);
+        }
+export type SelectExercisesQueryHookResult = ReturnType<typeof useSelectExercisesQuery>;
+export type SelectExercisesLazyQueryHookResult = ReturnType<typeof useSelectExercisesLazyQuery>;
+export type SelectExercisesSuspenseQueryHookResult = ReturnType<typeof useSelectExercisesSuspenseQuery>;
+export type SelectExercisesQueryResult = Apollo.QueryResult<SelectExercisesQuery, SelectExercisesQueryVariables>;
 export const LoginWithGoogleDocument = gql`
     mutation loginWithGoogle($googleToken: String!) {
   loginWithGoogle(googleToken: $googleToken) {
