@@ -14,7 +14,6 @@ export const MultiSelect = (props: MultiSelectProps) => (
       multiple
       id="tags-filled"
       options={props.items.map((option) => option)}
-      freeSolo
       renderTags={(value: readonly string[], getTagProps) =>
         value.map((option: string, index: number) => (
           <Chip variant="outlined" label={option} {...getTagProps({ index })} />

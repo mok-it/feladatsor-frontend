@@ -19,7 +19,9 @@ export type Scalars = {
 
 export type Exercise = {
   __typename: 'Exercise';
+  alternativeDifficultyExercises: Array<Exercise>;
   checks: Array<ExerciseCheck>;
+  comments: Array<ExerciseComment>;
   createdAt: Scalars['String']['output'];
   createdBy: User;
   description: Scalars['String']['output'];
@@ -30,10 +32,14 @@ export type Exercise = {
   helpingQuestions: Array<Scalars['String']['output']>;
   history: Array<ExerciseHistory>;
   id: Scalars['ID']['output'];
-  name: Scalars['String']['output'];
-  similarExercises: Array<Exercise>;
+  isCompetitionFinal?: Maybe<Scalars['Boolean']['output']>;
+  sameLogicExercises: Array<Exercise>;
   solution: Scalars['String']['output'];
+  solutionOptions: Array<Scalars['String']['output']>;
+  solveIdea?: Maybe<Scalars['String']['output']>;
   source?: Maybe<Scalars['String']['output']>;
+  status: ExerciseStatus;
+  tags: Array<Tag>;
   updatedAt: Scalars['String']['output'];
 };
 
@@ -49,6 +55,7 @@ export type ExerciseCheck = {
   createdAt: Scalars['String']['output'];
   exercise: Exercise;
   id: Scalars['ID']['output'];
+  role: ExerciseCheckRole;
   type: ExerciseCheckType;
   updatedAt: Scalars['String']['output'];
   user: User;
@@ -59,15 +66,34 @@ export type ExerciseCheckInput = {
   type: ExerciseCheckType;
 };
 
+export type ExerciseCheckRole =
+  | 'EXAMINER'
+  | 'LECTOR'
+  | 'PROFESSIONAL';
+
 export type ExerciseCheckType =
   | 'CHANGE_REQUIRED'
   | 'GOOD'
   | 'TO_DELETE';
 
+export type ExerciseComment = {
+  __typename: 'ExerciseComment';
+  comment: Scalars['String']['output'];
+  createdAt: Scalars['String']['output'];
+  id: Scalars['ID']['output'];
+  updatedAt: Scalars['String']['output'];
+  user: User;
+};
+
 export type ExerciseDifficulty = {
   __typename: 'ExerciseDifficulty';
   ageGroup: ExerciseAgeGroup;
   difficulty: Scalars['Int']['output'];
+};
+
+export type ExerciseDifficultyInput = {
+  ageGroup: ExerciseAgeGroup;
+  difficulty: Scalars['Int']['input'];
 };
 
 export type ExerciseHistory = {
@@ -77,15 +103,35 @@ export type ExerciseHistory = {
 };
 
 export type ExerciseInput = {
+  alternativeDifficultyParent?: InputMaybe<Scalars['ID']['input']>;
+  createdAt: Scalars['String']['input'];
   description: Scalars['String']['input'];
+  difficulty: Array<ExerciseDifficultyInput>;
   elaboration?: InputMaybe<Scalars['String']['input']>;
   elaborationImage?: InputMaybe<Scalars['String']['input']>;
   exerciseImage?: InputMaybe<Scalars['String']['input']>;
   helpingQuestions: Array<Scalars['String']['input']>;
-  name: Scalars['String']['input'];
+  id?: InputMaybe<Scalars['ID']['input']>;
+  isCompetitionFinal?: InputMaybe<Scalars['Boolean']['input']>;
+  sameLogicParent?: InputMaybe<Scalars['ID']['input']>;
   solution: Scalars['String']['input'];
+  solutionOptions: Array<Scalars['String']['input']>;
+  solveIdea?: InputMaybe<Scalars['String']['input']>;
   source?: InputMaybe<Scalars['String']['input']>;
+  status: ExerciseStatus;
+  tags: Array<InputMaybe<Scalars['ID']['input']>>;
+  updatedAt: Scalars['String']['input'];
 };
+
+export type ExerciseSearchQuery = {
+  queryStr?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type ExerciseStatus =
+  | 'APPROVED'
+  | 'CREATED'
+  | 'DELETED'
+  | 'DRAFT';
 
 export type LoginResponse = {
   __typename: 'LoginResponse';
@@ -98,6 +144,7 @@ export type Mutation = {
   createExercise: Exercise;
   createExerciseCheck: ExerciseCheck;
   login?: Maybe<LoginResponse>;
+  loginWithGoogle?: Maybe<LoginResponse>;
   register: User;
 };
 
@@ -118,6 +165,11 @@ export type MutationLoginArgs = {
 };
 
 
+export type MutationLoginWithGoogleArgs = {
+  googleToken: Scalars['String']['input'];
+};
+
+
 export type MutationRegisterArgs = {
   data: UserRegisterInput;
 };
@@ -127,6 +179,7 @@ export type Query = {
   exercise?: Maybe<Exercise>;
   exercises: Array<Exercise>;
   exercisesCount: Scalars['Int']['output'];
+  searchExercises: Array<Exercise>;
   user?: Maybe<User>;
   users: Array<User>;
 };
@@ -143,8 +196,22 @@ export type QueryExercisesArgs = {
 };
 
 
+export type QuerySearchExercisesArgs = {
+  query?: InputMaybe<ExerciseSearchQuery>;
+};
+
+
 export type QueryUserArgs = {
   id: Scalars['ID']['input'];
+};
+
+export type Tag = {
+  __typename: 'Tag';
+  children: Array<Tag>;
+  exercises: Array<Exercise>;
+  id: Scalars['ID']['output'];
+  name: Scalars['String']['output'];
+  parent?: Maybe<Tag>;
 };
 
 export type User = {

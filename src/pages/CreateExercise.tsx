@@ -3,26 +3,21 @@ import {
   Card,
   CardHeader,
   Divider,
-  FormControlLabel,
   Grid,
-  IconButton,
-  Slider,
-  Stack,
-  Switch,
   TextField,
   Typography,
 } from "@mui/material";
-import React, { useState } from "react";
+import { useState } from "react";
 import { KaTeX } from "../components/Katex";
-import { UploadDialog } from "../components/UploadDialog";
 import { MultiSelect } from "../components/MultiSelect";
-import { BiPlus } from "react-icons/bi";
+import { UploadWithPreview } from "@/components/UploadWithPreview.tsx";
+import { AccordionExpandIcon } from "@/components/AccordionExpandIcon.tsx";
+import { CategoryDifficultySelect } from "@/components/CategoryDifficultySelect.tsx";
 
 export const CreateExercise = () => {
   const [exerciseDescription, setExerciseDescription] = useState("");
 
   const [exerciseSolution, setExerciseSolution] = useState("");
-  const [value, setValue] = React.useState(0);
 
   return (
     <Grid container gap={3}>
@@ -40,7 +35,7 @@ export const CreateExercise = () => {
                   onChange={(event) =>
                     setExerciseDescription(event.target.value)
                   }
-                  minRows={4}
+                  minRows={10}
                   maxRows={13}
                   margin="none"
                   multiline
@@ -53,14 +48,9 @@ export const CreateExercise = () => {
                 <KaTeX texExpression={exerciseDescription} />
               </Grid>
             </Grid>
-
             <Box mt={2}>
-              <Typography>Feladat fájl feltöltése</Typography>
-              <UploadDialog
-                setFile={(file) => {
-                  console.log(file);
-                }}
-              />
+              <Typography>Ábra feltöltés</Typography>
+              <UploadWithPreview />
             </Box>
 
             <Grid container spacing={2} mt={2}>
@@ -73,24 +63,20 @@ export const CreateExercise = () => {
                   onChange={(event) => setExerciseSolution(event.target.value)}
                   margin="none"
                   multiline
-                  maxRows={3}
+                  maxRows={1}
                   fullWidth
                 />
-              </Grid>
-              <Grid item xs={6}>
-                <Typography>Feladat megoldás feltöltése</Typography>
-                <Divider sx={{ m: 1, mb: 2 }} />
-                <UploadDialog
-                  setFile={(file) => {
-                    console.log(file);
-                  }}
+                <AccordionExpandIcon
+                  summary={"file feltöltés"}
+                  details={
+                    <Box mt={2}>
+                      <UploadWithPreview />
+                    </Box>
+                  }
                 />
               </Grid>
-            </Grid>
-
-            <Grid container spacing={2} mt={2}>
               <Grid item xs={6}>
-                <Typography>Feladat megoldásának kifejtése</Typography>
+                <Typography>Ötlet a megoldáshoz (opcionális)</Typography>
                 <Divider sx={{ m: 1, mb: 2 }} />
                 <TextField
                   id="outlined-required"
@@ -98,81 +84,38 @@ export const CreateExercise = () => {
                   onChange={(event) =>
                     setExerciseDescription(event.target.value)
                   }
-                  minRows={4}
-                  maxRows={13}
+                  maxRows={1}
                   margin="none"
                   multiline
                   fullWidth
                 />
-              </Grid>
-              <Grid item xs={6}>
-                <Typography>
-                  Feladat megoldás kifejtésének feltöltése
-                </Typography>
-                <Divider sx={{ m: 1, mb: 2 }} />
-                <UploadDialog
-                  setFile={(file) => {
-                    console.log(file);
-                  }}
+                <AccordionExpandIcon
+                  summary={"file feltöltés"}
+                  details={
+                    <Box mt={2}>
+                      <UploadWithPreview />
+                    </Box>
+                  }
                 />
               </Grid>
             </Grid>
-            <Stack gap={4}>
-              <Box mt={2}>
-                <Typography>Címkék</Typography>
+
+            <Grid container spacing={2} mt={2}>
+              <Grid item xs={6}>
+                <Typography>Címkék, alcímkék</Typography>
+                <Divider sx={{ m: 1, mb: 2 }} />
                 <MultiSelect items={tags} onchange={() => {}} />
-              </Box>
-              <Box>
+              </Grid>
+              <Grid item xs={6}>
                 <Typography>Korcsoport szerinti nehézség</Typography>
                 <Divider sx={{ m: 1, mb: 2 }} />
-                <Grid container xs={12} md={6}>
-                  <DifficultySelector
-                    ageGroup={"Koala"}
-                    difficulty={value}
-                    setDifficulty={(value) => setValue(value)}
-                    onNewRowClick={() => {}}
-                    isLastRow={true}
-                  />
-                </Grid>
-              </Box>
-            </Stack>
+                <CategoryDifficultySelect />
+              </Grid>
+            </Grid>
           </Box>
         </Card>
       </Grid>
     </Grid>
-  );
-};
-
-const DifficultySelector = (props: {
-  ageGroup: string;
-  difficulty: number;
-  setDifficulty: (difficulty: number) => void;
-  onNewRowClick: () => void;
-  isLastRow: boolean;
-}) => {
-  return (
-    <Stack direction="row" gap={2} alignItems="center" sx={{ flexGrow: 1 }}>
-      <FormControlLabel
-        control={<Switch defaultChecked />}
-        label={props.ageGroup}
-      />
-      <Slider
-        name={"Nehézség"}
-        sx={{ width: "100%" }}
-        value={props.difficulty}
-        onChange={(_, value) => props.setDifficulty(value as number)}
-        step={1}
-        marks
-        min={0}
-        max={4}
-        valueLabelDisplay="auto"
-      />
-      {props.isLastRow && (
-        <IconButton color="primary" onClick={() => props.onNewRowClick()}>
-          <BiPlus />
-        </IconButton>
-      )}
-    </Stack>
   );
 };
 
