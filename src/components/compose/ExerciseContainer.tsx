@@ -1,5 +1,5 @@
-import { Exercise, ExerciseAgeGroup } from "@/generated/graphql";
-import { FakeId } from "@/pages/ExcerciseCompose";
+import { ExerciseAgeGroup } from "@/generated/graphql";
+import { ExerciseCopy } from "@/pages/ExcerciseCompose";
 import { ageGroups } from "@/util/types";
 import { useDroppable } from "@dnd-kit/core";
 import {
@@ -12,20 +12,24 @@ import { FC } from "react";
 import ExerciseCard from "./ExerciseCard";
 import { SortableItem } from "./SortableItem";
 
-const AgeContainer: FC<{
-  id: string;
-  ageGroup: ExerciseAgeGroup;
-  level: number;
-  items: (Exercise & FakeId)[];
-}> = ({ id, ageGroup, level, items }) => {
+const ExerciseContainer: FC<
+  {
+    id: string;
+    items: ExerciseCopy[];
+    level: number;
+  } & (
+    | { isTalon: true; ageGroup: null }
+    | { isTalon: false; ageGroup: ExerciseAgeGroup }
+  )
+> = ({ id, ageGroup, level, items }) => {
   const { setNodeRef } = useDroppable({
     id,
   });
 
   return (
     <Stack direction={"column"} flexGrow={1}>
-      {level === 0 && (
-        <Typography textAlign={"center"}>
+      {level === 0 && ageGroup && (
+        <Typography textAlign={"center"} mt={2}>
           {ageGroups[ageGroup]?.name}
         </Typography>
       )}
@@ -36,6 +40,7 @@ const AgeContainer: FC<{
       >
         <div ref={setNodeRef} style={{ height: "75%" }}>
           <Stack
+            minHeight={110}
             gap={2}
             py={2}
             direction={"column"}
@@ -54,4 +59,4 @@ const AgeContainer: FC<{
   );
 };
 
-export default AgeContainer;
+export default ExerciseContainer;
