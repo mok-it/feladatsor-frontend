@@ -1,60 +1,120 @@
-import * as React from "react";
-import { pink } from "@mui/material/colors";
+import { blueGrey, brown } from "@mui/material/colors";
 import Radio from "@mui/material/Radio";
-import { Grid, Stack, Typography } from "@mui/material";
+import { Grid, Stack, Switch, Typography } from "@mui/material";
 import { ageGroupTexts } from "@/types/ageGroupTexts.ts";
+import {
+  ExerciseAgeGroup,
+  ExerciseDifficultyInput,
+} from "@/generated/graphql.tsx";
+import { ChangeEvent, useEffect, useState } from "react";
 
-export const CategoryDifficultySelect = () => (
-  <Grid container gap={3}>
-    <Grid item xs={12}>
-      {Object.values(ageGroupTexts).map((ageGroup) => (
-        <ColorRadioButtons
-          name={ageGroup}
-          handleChange={() => {}}
-          selectedValue=""
-        />
-      ))}
+type CategoryDifficultySelectProps = {
+  onChange: (value: ExerciseDifficultyInput[]) => void;
+  values: ExerciseDifficultyInput[];
+};
+
+export const CategoryDifficultySelect = (
+  props: CategoryDifficultySelectProps,
+) => {
+  return (
+    <Grid container gap={3}>
+      <Grid item xs={12}>
+        {Object.entries(ageGroupTexts).map(([ageGroupKey, ageGroup]) => (
+          <ColorRadioButtons
+            name={ageGroup}
+            handleChange={(value) => {
+              if (!props.values.find((v) => v.ageGroup === ageGroupKey)) {
+                props.onChange([
+                  ...props.values,
+                  {
+                    ageGroup: ageGroupKey as ExerciseAgeGroup,
+                    difficulty: parseInt(value),
+                  },
+                ]);
+                return;
+              }
+              const newValues = props.values.map((v) => {
+                if (v.ageGroup === ageGroupKey) {
+                  return {
+                    ...v,
+                    difficulty: parseInt(value),
+                  };
+                }
+                return v;
+              });
+              props.onChange(newValues);
+            }}
+            selectedValue={
+              props.values
+                .find((value) => value.ageGroup === ageGroupKey)
+                ?.difficulty.toString() ?? "0"
+            }
+          />
+        ))}
+      </Grid>
     </Grid>
-  </Grid>
-);
+  );
+};
 
 type ColorRadioButtonProps = {
   name: string;
-  handleChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  handleChange: (value: string) => void;
   selectedValue: string;
 };
 
 export const ColorRadioButtons = (props: ColorRadioButtonProps) => {
-  const [selectedValue, setSelectedValue] = React.useState("a");
-
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setSelectedValue(event.target.value);
+  const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
+    props.handleChange(event.target.value);
   };
+  const [isDisabled, setIsDisabled] = useState(true);
+
+  useEffect(() => {
+    if (isDisabled) {
+      props.handleChange("0");
+    }
+  }, [isDisabled]);
 
   const controlProps = (item: string) => ({
-    checked: selectedValue === item,
+    checked: props.selectedValue === item,
     onChange: handleChange,
     value: item,
-    name: "color-radio-button-demo",
     inputProps: { "aria-label": item },
   });
 
   return (
     <Stack direction={"row"} alignItems="center">
-      <Typography sx={{ width: "95px" }}>{props.name}</Typography>
-      <Radio {...controlProps("a")} />
-      <Radio {...controlProps("b")} color="secondary" />
-      <Radio {...controlProps("c")} color="success" />
-      <Radio {...controlProps("d")} color="default" />
+      <Switch
+        value={isDisabled}
+        onChange={(_, checked) => setIsDisabled(!checked)}
+      />
+      <Typography
+        sx={{ width: "95px" }}
+        color={isDisabled ? "text.disabled" : undefined}
+      >
+        {props.name}
+      </Typography>
+      <Radio disabled={isDisabled} {...controlProps("1")} color="success" />
       <Radio
-        {...controlProps("e")}
+        disabled={isDisabled}
+        {...controlProps("2")}
         sx={{
-          color: pink[800],
+          color: brown[800],
           "&.Mui-checked": {
-            color: pink[600],
+            color: brown[600],
           },
         }}
       />
+      <Radio
+        disabled={isDisabled}
+        {...controlProps("3")}
+        sx={{
+          color: blueGrey[800],
+          "&.Mui-checked": {
+            color: blueGrey[600],
+          },
+        }}
+      />
+      <Radio disabled={isDisabled} {...controlProps("4")} color="warning" />
     </Stack>
   );
 };

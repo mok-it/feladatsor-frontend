@@ -1,11 +1,11 @@
 import { FC } from "react";
 import { IconType } from "react-icons";
+import { CreateExercise } from "./pages/createExercise/CreateExercise.tsx";
+import { IoNewspaperOutline, IoSearch } from "react-icons/io5";
 import { FaRegUser } from "react-icons/fa";
 import { FaPencil } from "react-icons/fa6";
 import { HiOutlineHome } from "react-icons/hi";
-import { IoNewspaperOutline, IoSearch } from "react-icons/io5";
 import { MdDashboard } from "react-icons/md";
-import { CreateExercise } from "./pages/CreateExercise";
 import ExerciseCompose from "./pages/ExcerciseCompose";
 import { ExerciseListPage } from "./pages/ExerciseListPage";
 import { HomePage } from "./pages/HomePage";
