@@ -1,0 +1,42 @@
+# Write your query or mutation here
+query selectExercises {
+  exercises(take: 10, skip: 0) {
+    id
+    name
+    description
+    exerciseImage
+    solution
+    elaboration
+    elaborationImage
+    helpingQuestions
+    source
+    difficulty {
+      difficulty
+      ageGroup
+    }
+    history {
+      id
+      exercise {
+        id
+      }
+    }
+    similarExercises {
+      id
+      name
+    }
+    checks {
+      id
+      user {
+        id
+        name
+      }
+      type
+    }
+    createdBy {
+      id
+      name
+    }
+    createdAt
+    updatedAt
+  }
+}
