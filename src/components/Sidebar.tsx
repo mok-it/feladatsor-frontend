@@ -1,7 +1,9 @@
 import { userAtom } from "@/util/atoms";
 import { auth } from "@/util/firebase";
 import {
+  alpha,
   Box,
+  Button,
   Divider,
   Drawer,
   ListItem,
@@ -9,14 +11,13 @@ import {
   ListItemText,
   Stack,
   Typography,
-  alpha,
 } from "@mui/material";
 import { signOut as firebaseSignout } from "firebase/auth";
 import { useSetAtom } from "jotai";
 import { useCallback } from "react";
-import { FaSignOutAlt } from "react-icons/fa";
 import { useLocation, useNavigate } from "react-router-dom";
 import { pages } from "../pages";
+import { FaPersonRunning } from "react-icons/fa6";
 
 const style = {
   minHeight: 44,
@@ -87,16 +88,19 @@ export const Sidebar = () => {
               </ListItem>
             );
           })}
-          <ListItemButton sx={style} onClick={signOut}>
-            <Stack direction="row" gap={2} alignItems="center">
-              <Typography fontSize={22} lineHeight={0}>
-                <FaSignOutAlt />
-              </Typography>
-              <ListItemText primary={"Kijelentkezés"} />
-            </Stack>
-          </ListItemButton>
+          <Divider />
+          <Button
+            variant="text"
+            sx={{
+              color: "text.secondary",
+              mt: "auto",
+            }}
+            startIcon={<FaPersonRunning />}
+            onClick={signOut}
+          >
+            <ListItemText primary="Kijelentkezés" />
+          </Button>
         </Stack>
-        <Divider />
       </Box>
     </Drawer>
   );
