@@ -1,4 +1,4 @@
-import { userAtom } from "@/util/atoms";
+import { tokenAtom, userAtom } from "@/util/atoms";
 import { auth, authProvider } from "@/util/firebase";
 import {
   Box,
@@ -18,6 +18,7 @@ import { FcGoogle } from "react-icons/fc";
 
 const Login: FC = () => {
   const setUser = useSetAtom(userAtom);
+  const setToken = useSetAtom(tokenAtom);
 
   const [ownLogin] = useLoginWithGoogleMutation();
 
@@ -35,6 +36,7 @@ const Login: FC = () => {
           ownLoginResponse.data?.loginWithGoogle?.user
         ) {
           setUser(ownLoginResponse.data.loginWithGoogle.user);
+          setToken(ownLoginResponse.data.loginWithGoogle.token);
         }
       })
       .catch((error: AuthError) => {
@@ -49,7 +51,7 @@ const Login: FC = () => {
           credential,
         );
       });
-  }, [setUser, ownLogin]);
+  }, [setUser, setToken, ownLogin]);
 
   return (
     <>

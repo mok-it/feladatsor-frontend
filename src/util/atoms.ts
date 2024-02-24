@@ -9,3 +9,10 @@ export const userAtom = atomWithStorage<User | undefined>(
   undefined,
   storage,
 );
+
+const tokenStore = createJSONStorage<string | undefined>(() => sessionStorage);
+export const tokenAtom = atomWithStorage<string | undefined>(
+  "jwtToken",
+  undefined,
+  tokenStore,
+);

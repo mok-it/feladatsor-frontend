@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { UploadDialog } from "@/components/UploadDialog.tsx";
 import { Box, IconButton, Stack } from "@mui/material";
 import { AlertDialog } from "@/components/Dialog.tsx";
@@ -8,11 +8,17 @@ const isImage = (file: File) => {
   return file.type.startsWith("image");
 };
 
-type UploadWithPreviewProps = {};
+type UploadWithPreviewProps = {
+  onChange: (file: File | null) => void;
+};
 
 export const UploadWithPreview = (props: UploadWithPreviewProps) => {
   const [file, setFile] = useState<File | null>();
   const [dialogOpen, setDialogOpen] = useState(false);
+
+  useEffect(() => {
+    props.onChange(file ?? null);
+  }, [file]);
 
   return (
     <>

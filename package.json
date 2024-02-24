@@ -20,8 +20,12 @@
     "@graphql-codegen/typescript-react-apollo": "^4.3.0",
     "@mui/material": "^5.15.10",
     "firebase": "^10.8.0",
+    "formik": "^2.4.5",
     "graphql": "^16.8.1",
     "jotai": "^2.6.5",
+    "lodash.get": "^4.4.2",
+    "lodash.truncate": "^4.4.2",
+    "notistack": "^3.0.1",
     "prettier": "^3.2.5",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
@@ -33,6 +37,7 @@
     "vite-tsconfig-paths": "^4.3.1"
   },
   "devDependencies": {
+    "@types/lodash.get": "^4.4.9",
     "@types/react": "^18.2.55",
     "@types/react-dom": "^18.2.19",
     "@types/react-latex": "^2.0.3",
