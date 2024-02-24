@@ -7,15 +7,28 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { useState } from "react";
+import { PropsWithChildren, useState } from "react";
 import { KaTeX } from "../components/Katex";
-import { UploadDialog } from "../components/UploadDialog";
 import { MultiSelect } from "../components/MultiSelect";
+import { HelpingQuestions } from "@/components/HelpingQuestions/HelpingQuestions.tsx";
+import { UploadWithPreview } from "@/components/UploadWithPreview.tsx";
+import { SimpleAccordion } from "@/components/SimpleAccordion.tsx";
+import { CategoryDifficultySelect } from "@/components/CategoryDifficultySelect.tsx";
+
+const Section = (props: PropsWithChildren<{ text: string }>) => {
+  return (
+    <>
+      <Typography>{props.text}</Typography>
+      <Divider sx={{ m: 1, mb: 2 }} />
+      {props.children}
+    </>
+  );
+};
 
 export const CreateExercise = () => {
   const [exerciseDescription, setExerciseDescription] = useState("");
 
-  const [exerciseSolution, setExerciseSolution] = useState("")
+  const [exerciseSolution, setExerciseSolution] = useState("");
 
   return (
     <Grid container gap={3}>
@@ -25,20 +38,20 @@ export const CreateExercise = () => {
           <Box p={2}>
             <Grid container spacing={2}>
               <Grid item xs={6}>
-                <Typography>Feladat szövege</Typography>
-                <Divider sx={{ m: 1, mb: 2 }} />
-                <TextField
-                  id="outlined-required"
-                  value={exerciseDescription}
-                  onChange={(event) =>
-                    setExerciseDescription(event.target.value)
-                  }
-                  minRows={4}
-                  maxRows={13}
-                  margin="none"
-                  multiline
-                  fullWidth
-                />
+                <Section text="Feladat leírása">
+                  <TextField
+                    id="outlined-required"
+                    value={exerciseDescription}
+                    onChange={(event) =>
+                      setExerciseDescription(event.target.value)
+                    }
+                    minRows={10}
+                    maxRows={13}
+                    margin="none"
+                    multiline
+                    fullWidth
+                  />
+                </Section>
               </Grid>
               <Grid item xs={6}>
                 <KaTeX texExpression={"$\\LaTeX{}$ fordítás"} />
@@ -46,65 +59,67 @@ export const CreateExercise = () => {
                 <KaTeX texExpression={exerciseDescription} />
               </Grid>
             </Grid>
-
             <Box mt={2}>
-              <Typography>Feladat fájl feltöltése</Typography>
-              <UploadDialog setFile={(file) => {
-                console.log(file)}} />
+              <Typography>Ábra feltöltés</Typography>
+              <UploadWithPreview />
             </Box>
 
             <Grid container spacing={2} mt={2}>
               <Grid item xs={6}>
-                <Typography>Feladat megoldása</Typography>
-                <Divider sx={{ m: 1, mb: 2 }} />
-                <TextField
-                  id="outlined-required"
-                  value={exerciseSolution}
-                  onChange={(event) => setExerciseSolution(event.target.value)}
-                  margin="none"
-                  multiline
-                  maxRows={3}
-                  fullWidth
-                />
+                <Section text="Feladat megoldása">
+                  <TextField
+                    id="outlined-required"
+                    value={exerciseSolution}
+                    onChange={(event) =>
+                      setExerciseSolution(event.target.value)
+                    }
+                    margin="none"
+                    multiline
+                    maxRows={1}
+                    fullWidth
+                  />
+                  <SimpleAccordion summary="File feltöltés">
+                    <Box mt={2}>
+                      <UploadWithPreview />
+                    </Box>
+                  </SimpleAccordion>
+                </Section>
               </Grid>
               <Grid item xs={6}>
-                <Typography>Feladat megoldás feltöltése</Typography>
-                <Divider sx={{ m: 1, mb: 2 }} />
-                <UploadDialog setFile={(file) => {
-                  console.log(file)}} />
+                <Section text="Ötlet a megoldáshoz (opcionális)">
+                  <TextField
+                    id="outlined-required"
+                    value={exerciseDescription}
+                    onChange={(event) =>
+                      setExerciseDescription(event.target.value)
+                    }
+                    maxRows={1}
+                    margin="none"
+                    multiline
+                    fullWidth
+                  />
+                  <SimpleAccordion summary="File feltöltés">
+                    <Box mt={2}>
+                      <UploadWithPreview />
+                    </Box>
+                  </SimpleAccordion>
+                </Section>
               </Grid>
             </Grid>
 
             <Grid container spacing={2} mt={2}>
               <Grid item xs={6}>
-                <Typography>Feladat megoldásának kifejtése</Typography>
+                <Typography>Címkék, alcímkék</Typography>
                 <Divider sx={{ m: 1, mb: 2 }} />
-                <TextField
-                  id="outlined-required"
-                  value={exerciseDescription}
-                  onChange={(event) =>
-                    setExerciseDescription(event.target.value)
-                  }
-                  minRows={4}
-                  maxRows={13}
-                  margin="none"
-                  multiline
-                  fullWidth
-                />
+                <MultiSelect items={tags} onChange={() => {}} />
               </Grid>
               <Grid item xs={6}>
-                <Typography>
-                  Feladat megoldás kifejtésének feltöltése
-                </Typography>
+                <Typography>Korcsoport szerinti nehézség</Typography>
                 <Divider sx={{ m: 1, mb: 2 }} />
-                <UploadDialog setFile={(file) => {
-                  console.log(file)}} />
+                <CategoryDifficultySelect />
               </Grid>
             </Grid>
-            <Box mt={2}>
-              <Typography>Címkék</Typography>
-              <MultiSelect items={tags} onchange={() => {}} />
-            </Box>
+            <HelpingQuestions />
           </Box>
         </Card>
       </Grid>

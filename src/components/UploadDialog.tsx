@@ -21,11 +21,7 @@ export const UploadDialog = (props: UploadDialogProps) => {
     maxFiles: 1,
     multiple: false,
     accept: {
-      "application/vnd.ms-excel": [".xls", ".xlsx"],
-      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": [
-        ".xlsx",
-      ],
-      "text/csv": [".csv"],
+      "image/*": [".jpg", ".jpeg", ".png", ".gif"],
     },
   });
 
