@@ -1,12 +1,13 @@
 import { User as TotalUser } from "@/generated/graphql.tsx";
 import { atomWithStorage, createJSONStorage } from "jotai/utils";
 
-const storage = createJSONStorage<User | null | undefined>(
+type UserAtomType = { isLoggedIn: boolean; user: User | null } | undefined;
+const storage = createJSONStorage<UserAtomType>(
   () => sessionStorage,
 );
-export const userAtom = atomWithStorage<User | null | undefined>(
+export const userAtom = atomWithStorage<UserAtomType>(
   "user",
-  null,
+  undefined,
   storage,
 );
 type User = Omit<Omit<TotalUser, "exercises">, "__typename">;

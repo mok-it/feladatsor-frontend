@@ -36,7 +36,7 @@ export const Sidebar = () => {
 
   const signOut = useCallback(() => {
     firebaseSignout(auth).then(() => {
-      setUser(null);
+      setUser({ isLoggedIn: false, user: null });
       setToken(null);
     });
   }, [setUser, setToken]);

@@ -35,7 +35,10 @@ const Login: FC = () => {
           !ownLoginResponse.errors &&
           ownLoginResponse.data?.loginWithGoogle?.user
         ) {
-          setUser(ownLoginResponse.data.loginWithGoogle.user);
+          setUser({
+            isLoggedIn: true,
+            user: ownLoginResponse.data.loginWithGoogle.user,
+          });
           setToken(ownLoginResponse.data.loginWithGoogle.token);
         }
       })
