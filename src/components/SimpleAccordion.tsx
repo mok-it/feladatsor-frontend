@@ -22,8 +22,6 @@ export const SimpleAccordion = (
         {props.summary}
       </Typography>
     </AccordionSummary>
-    <AccordionDetails sx={{ px: 0, py: 0 }}>
-      <Typography>{props.children}</Typography>
-    </AccordionDetails>
+    <AccordionDetails sx={{ px: 0, py: 0 }}>{props.children}</AccordionDetails>
   </Accordion>
 );

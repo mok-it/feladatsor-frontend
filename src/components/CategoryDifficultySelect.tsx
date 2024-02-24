@@ -19,8 +19,9 @@ export const CategoryDifficultySelect = (
   return (
     <Grid container gap={3}>
       <Grid item xs={12}>
-        {Object.entries(ageGroupTexts).map(([ageGroupKey, ageGroup]) => (
+        {Object.entries(ageGroupTexts).map(([ageGroupKey, ageGroup], index) => (
           <ColorRadioButtons
+            key={index}
             name={ageGroup}
             handleChange={(value) => {
               if (!props.values.find((v) => v.ageGroup === ageGroupKey)) {
