@@ -7,12 +7,23 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { useState } from "react";
+import { PropsWithChildren, useState } from "react";
 import { KaTeX } from "../components/Katex";
 import { MultiSelect } from "../components/MultiSelect";
+import { HelpingQuestions } from "@/components/HelpingQuestions/HelpingQuestions.tsx";
 import { UploadWithPreview } from "@/components/UploadWithPreview.tsx";
-import { AccordionExpandIcon } from "@/components/AccordionExpandIcon.tsx";
+import { SimpleAccordion } from "@/components/SimpleAccordion.tsx";
 import { CategoryDifficultySelect } from "@/components/CategoryDifficultySelect.tsx";
+
+const Section = (props: PropsWithChildren<{ text: string }>) => {
+  return (
+    <>
+      <Typography>{props.text}</Typography>
+      <Divider sx={{ m: 1, mb: 2 }} />
+      {props.children}
+    </>
+  );
+};
 
 export const CreateExercise = () => {
   const [exerciseDescription, setExerciseDescription] = useState("");
@@ -27,20 +38,20 @@ export const CreateExercise = () => {
           <Box p={2}>
             <Grid container spacing={2}>
               <Grid item xs={6}>
-                <Typography>Feladat szövege</Typography>
-                <Divider sx={{ m: 1, mb: 2 }} />
-                <TextField
-                  id="outlined-required"
-                  value={exerciseDescription}
-                  onChange={(event) =>
-                    setExerciseDescription(event.target.value)
-                  }
-                  minRows={10}
-                  maxRows={13}
-                  margin="none"
-                  multiline
-                  fullWidth
-                />
+                <Section text="Feladat leírása">
+                  <TextField
+                    id="outlined-required"
+                    value={exerciseDescription}
+                    onChange={(event) =>
+                      setExerciseDescription(event.target.value)
+                    }
+                    minRows={10}
+                    maxRows={13}
+                    margin="none"
+                    multiline
+                    fullWidth
+                  />
+                </Section>
               </Grid>
               <Grid item xs={6}>
                 <KaTeX texExpression={"$\\LaTeX{}$ fordítás"} />
@@ -55,48 +66,44 @@ export const CreateExercise = () => {
 
             <Grid container spacing={2} mt={2}>
               <Grid item xs={6}>
-                <Typography>Feladat megoldása</Typography>
-                <Divider sx={{ m: 1, mb: 2 }} />
-                <TextField
-                  id="outlined-required"
-                  value={exerciseSolution}
-                  onChange={(event) => setExerciseSolution(event.target.value)}
-                  margin="none"
-                  multiline
-                  maxRows={1}
-                  fullWidth
-                />
-                <AccordionExpandIcon
-                  summary={"file feltöltés"}
-                  details={
+                <Section text="Feladat megoldása">
+                  <TextField
+                    id="outlined-required"
+                    value={exerciseSolution}
+                    onChange={(event) =>
+                      setExerciseSolution(event.target.value)
+                    }
+                    margin="none"
+                    multiline
+                    maxRows={1}
+                    fullWidth
+                  />
+                  <SimpleAccordion summary="File feltöltés">
                     <Box mt={2}>
                       <UploadWithPreview />
                     </Box>
-                  }
-                />
+                  </SimpleAccordion>
+                </Section>
               </Grid>
               <Grid item xs={6}>
-                <Typography>Ötlet a megoldáshoz (opcionális)</Typography>
-                <Divider sx={{ m: 1, mb: 2 }} />
-                <TextField
-                  id="outlined-required"
-                  value={exerciseDescription}
-                  onChange={(event) =>
-                    setExerciseDescription(event.target.value)
-                  }
-                  maxRows={1}
-                  margin="none"
-                  multiline
-                  fullWidth
-                />
-                <AccordionExpandIcon
-                  summary={"file feltöltés"}
-                  details={
+                <Section text="Ötlet a megoldáshoz (opcionális)">
+                  <TextField
+                    id="outlined-required"
+                    value={exerciseDescription}
+                    onChange={(event) =>
+                      setExerciseDescription(event.target.value)
+                    }
+                    maxRows={1}
+                    margin="none"
+                    multiline
+                    fullWidth
+                  />
+                  <SimpleAccordion summary="File feltöltés">
                     <Box mt={2}>
                       <UploadWithPreview />
                     </Box>
-                  }
-                />
+                  </SimpleAccordion>
+                </Section>
               </Grid>
             </Grid>
 
@@ -104,7 +111,7 @@ export const CreateExercise = () => {
               <Grid item xs={6}>
                 <Typography>Címkék, alcímkék</Typography>
                 <Divider sx={{ m: 1, mb: 2 }} />
-                <MultiSelect items={tags} onchange={() => {}} />
+                <MultiSelect items={tags} onChange={() => {}} />
               </Grid>
               <Grid item xs={6}>
                 <Typography>Korcsoport szerinti nehézség</Typography>
@@ -112,6 +119,7 @@ export const CreateExercise = () => {
                 <CategoryDifficultySelect />
               </Grid>
             </Grid>
+            <HelpingQuestions />
           </Box>
         </Card>
       </Grid>
