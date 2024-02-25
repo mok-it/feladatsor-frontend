@@ -1,3 +1,4 @@
+import { useLoginWithGoogleMutation } from "@/generated/graphql.tsx";
 import { tokenAtom, userAtom } from "@/util/atoms";
 import { auth, authProvider } from "@/util/firebase";
 import {
@@ -13,7 +14,6 @@ import {
 import { AuthError, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { useSetAtom } from "jotai";
 import { FC, useCallback } from "react";
-import { useLoginWithGoogleMutation } from "@/generated/graphql.tsx";
 import { FcGoogle } from "react-icons/fc";
 
 const Login: FC = () => {
@@ -35,7 +35,10 @@ const Login: FC = () => {
           !ownLoginResponse.errors &&
           ownLoginResponse.data?.loginWithGoogle?.user
         ) {
-          setUser(ownLoginResponse.data.loginWithGoogle.user);
+          setUser({
+            isLoggedIn: true,
+            user: ownLoginResponse.data.loginWithGoogle.user,
+          });
           setToken(ownLoginResponse.data.loginWithGoogle.token);
         }
       })
@@ -88,10 +91,7 @@ const Login: FC = () => {
                 md: "30%",
                 lg: "20%",
               },
-              height: {
-                xs: "60%",
-                sm: "40%",
-              },
+              height: "auto",
             }}
           >
             <Stack justifyContent="center" gap={2} height="100%">

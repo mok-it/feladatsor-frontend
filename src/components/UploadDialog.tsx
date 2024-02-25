@@ -1,6 +1,6 @@
+import { Box, Stack, Typography } from "@mui/material";
 import { useCallback } from "react";
 import { useDropzone } from "react-dropzone";
-import { Box, Stack, Typography } from "@mui/material";
 import { MdOutlineCloudUpload } from "react-icons/md";
 
 type UploadDialogProps = {
@@ -50,11 +50,9 @@ export const UploadDialog = (props: UploadDialogProps) => {
         direction="row"
         gap={2}
         alignItems="center"
+        py={2}
       >
-        <Typography fontSize={50}>
-          <MdOutlineCloudUpload />
-        </Typography>
-
+        <MdOutlineCloudUpload size={40} />
         <input {...getInputProps()} />
         <Typography variant="body1">
           <span style={{ color: "#8F1C6B" }}>Töltsd fel</span> vagy húzd ide a
