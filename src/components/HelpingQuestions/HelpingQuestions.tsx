@@ -1,4 +1,4 @@
-import React from "react";
+import { useEffect, useState } from "react";
 import { HelpingQuestion } from "./HelpingQuestion.tsx";
 import { HelpingQuestionComposer } from "./HelpingQuestionComposer.tsx";
 import { SimpleAccordion } from "@/components/SimpleAccordion.tsx";
@@ -8,10 +8,20 @@ export type HelpingQuestionData = {
   id: string;
   label: string;
 };
-export const HelpingQuestions = () => {
-  const [helpingQuestions, setHelpingQuestions] = React.useState<
+
+type HelpingQuestionProps = {
+  onChange: (helpingQuestions: HelpingQuestionData[]) => void;
+};
+
+export const HelpingQuestions = (props: HelpingQuestionProps) => {
+  const [helpingQuestions, setHelpingQuestions] = useState<
     HelpingQuestionData[]
   >([]);
+
+  useEffect(() => {
+    props.onChange(helpingQuestions);
+  }, [helpingQuestions]);
+
   const handleUpdateHelpingQuestion = (
     updatedHelpingQuestion: HelpingQuestionData,
   ) => {

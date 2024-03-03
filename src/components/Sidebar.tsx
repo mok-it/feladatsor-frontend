@@ -1,9 +1,7 @@
-import { userAtom } from "@/util/atoms";
+import { tokenAtom, userAtom } from "@/util/atoms";
 import { auth } from "@/util/firebase";
 import {
-  alpha,
   Box,
-  Button,
   Divider,
   Drawer,
   ListItem,
@@ -11,13 +9,14 @@ import {
   ListItemText,
   Stack,
   Typography,
+  alpha,
 } from "@mui/material";
 import { signOut as firebaseSignout } from "firebase/auth";
 import { useSetAtom } from "jotai";
 import { useCallback } from "react";
+import { FaPersonRunning } from "react-icons/fa6";
 import { useLocation, useNavigate } from "react-router-dom";
 import { pages } from "../pages";
-import { FaPersonRunning } from "react-icons/fa6";
 
 const style = {
   minHeight: 44,
@@ -33,12 +32,14 @@ export const Sidebar = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const setUser = useSetAtom(userAtom);
+  const setToken = useSetAtom(tokenAtom);
 
   const signOut = useCallback(() => {
     firebaseSignout(auth).then(() => {
-      setUser(undefined);
+      setUser({ isLoggedIn: false, user: null });
+      setToken(null);
     });
-  }, [setUser]);
+  }, [setUser, setToken]);
 
   return (
     <Drawer
@@ -67,7 +68,6 @@ export const Sidebar = () => {
                   sx={{
                     ...style,
                     ...(active && {
-                      color: "primary.main",
                       fontWeight: "fontWeightSemiBold",
                       bgcolor: (theme) =>
                         alpha(theme.palette.primary.main, 0.08),
@@ -89,17 +89,14 @@ export const Sidebar = () => {
             );
           })}
           <Divider />
-          <Button
-            variant="text"
-            sx={{
-              color: "text.secondary",
-              mt: "auto",
-            }}
-            startIcon={<FaPersonRunning />}
-            onClick={signOut}
-          >
-            <ListItemText primary="Kijelentkezés" />
-          </Button>
+          <ListItemButton sx={style} onClick={signOut}>
+            <Stack direction="row" gap={2} alignItems="center">
+              <Typography fontSize={22} lineHeight={0}>
+                <FaPersonRunning />
+              </Typography>
+              <ListItemText primary="Kijelentkezés" />
+            </Stack>
+          </ListItemButton>
         </Stack>
       </Box>
     </Drawer>

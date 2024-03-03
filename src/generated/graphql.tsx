@@ -104,23 +104,22 @@ export type ExerciseHistory = {
 
 export type ExerciseInput = {
   alternativeDifficultyParent?: InputMaybe<Scalars['ID']['input']>;
-  createdAt: Scalars['String']['input'];
   description: Scalars['String']['input'];
   difficulty: Array<ExerciseDifficultyInput>;
   elaboration?: InputMaybe<Scalars['String']['input']>;
   elaborationImage?: InputMaybe<Scalars['String']['input']>;
   exerciseImage?: InputMaybe<Scalars['String']['input']>;
   helpingQuestions: Array<Scalars['String']['input']>;
-  id?: InputMaybe<Scalars['ID']['input']>;
   isCompetitionFinal?: InputMaybe<Scalars['Boolean']['input']>;
   sameLogicParent?: InputMaybe<Scalars['ID']['input']>;
   solution: Scalars['String']['input'];
+  solutionImage?: InputMaybe<Scalars['String']['input']>;
   solutionOptions: Array<Scalars['String']['input']>;
   solveIdea?: InputMaybe<Scalars['String']['input']>;
+  solveIdeaImage?: InputMaybe<Scalars['String']['input']>;
   source?: InputMaybe<Scalars['String']['input']>;
   status: ExerciseStatus;
   tags: Array<InputMaybe<Scalars['ID']['input']>>;
-  updatedAt: Scalars['String']['input'];
 };
 
 export type ExerciseSearchQuery = {
@@ -232,6 +231,13 @@ export type UserRegisterInput = {
   userName: Scalars['String']['input'];
 };
 
+export type CreateExerciseMutationVariables = Exact<{
+  input: ExerciseInput;
+}>;
+
+
+export type CreateExerciseMutation = { __typename: 'Mutation', createExercise: { __typename: 'Exercise', id: string } };
+
 export type SelectExercisesQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -245,6 +251,39 @@ export type LoginWithGoogleMutationVariables = Exact<{
 export type LoginWithGoogleMutation = { __typename: 'Mutation', loginWithGoogle?: { __typename: 'LoginResponse', token: string, user: { __typename: 'User', id: string, email: string, name: string, userName: string, createdAt: string, updatedAt: string } } | null };
 
 
+export const CreateExerciseDocument = gql`
+    mutation createExercise($input: ExerciseInput!) {
+  createExercise(input: $input) {
+    id
+  }
+}
+    `;
+export type CreateExerciseMutationFn = Apollo.MutationFunction<CreateExerciseMutation, CreateExerciseMutationVariables>;
+
+/**
+ * __useCreateExerciseMutation__
+ *
+ * To run a mutation, you first call `useCreateExerciseMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateExerciseMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createExerciseMutation, { data, loading, error }] = useCreateExerciseMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useCreateExerciseMutation(baseOptions?: Apollo.MutationHookOptions<CreateExerciseMutation, CreateExerciseMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateExerciseMutation, CreateExerciseMutationVariables>(CreateExerciseDocument, options);
+      }
+export type CreateExerciseMutationHookResult = ReturnType<typeof useCreateExerciseMutation>;
+export type CreateExerciseMutationResult = Apollo.MutationResult<CreateExerciseMutation>;
+export type CreateExerciseMutationOptions = Apollo.BaseMutationOptions<CreateExerciseMutation, CreateExerciseMutationVariables>;
 export const SelectExercisesDocument = gql`
     query selectExercises {
   exercises(take: 10, skip: 0) {
