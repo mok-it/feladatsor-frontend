@@ -1,23 +1,18 @@
-import { ExerciseCopy } from "@/pages/ExcerciseCompose";
 import { composeStore } from "@/util/composeStore";
-import { ageGroups } from "@/util/types";
+import { ExerciseCardData, ageGroups } from "@/util/types";
 import { Card, Divider, Stack, Typography } from "@mui/material";
 import { entries } from "lodash";
-import { FC, useContext } from "react";
-import { SortableItemContext } from "./SortableItem";
+import { FC } from "react";
 
 const ExerciseCard: FC<{
   isTalon?: boolean;
-  exercise: ExerciseCopy;
-}> = ({ exercise, isTalon }) => {
-  const { attributes, listeners, ref } = useContext(SortableItemContext);
+  isDragging?: boolean;
+  exercise: ExerciseCardData;
+}> = ({ exercise, isTalon, isDragging }) => {
   const { highlightedFakeId } = composeStore();
 
   return (
     <Card
-      ref={ref}
-      {...attributes}
-      {...listeners}
       sx={{
         width: 120,
         borderRadius: 1,
@@ -27,6 +22,7 @@ const ExerciseCard: FC<{
         userSelect: "none",
         backgroundColor:
           highlightedFakeId === exercise.data.fakeId ? "lightblue" : "white",
+        opacity: isDragging ? 0.5 : 1,
       }}
       // onMouseEnter={() => {
       //   setHighlightedFakeId(exercise.fakeId);
