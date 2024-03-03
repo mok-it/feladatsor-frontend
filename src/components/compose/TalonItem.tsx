@@ -28,7 +28,12 @@ const TalonItem: FC<{ id: UniqueIdentifier }> = ({ id }) => {
   }
   return (
     <div ref={setNodeRef} style={style} {...listeners} {...attributes}>
-      <ExerciseCard exercise={exercise.data} isTalon isDragging={isDragging} />
+      <ExerciseCard
+        id={id}
+        exercise={exercise.data}
+        isTalon
+        isDragging={isDragging}
+      />
     </div>
   );
 };

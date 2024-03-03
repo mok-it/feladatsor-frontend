@@ -1,5 +1,6 @@
+import { Exercise } from "@/generated/graphql";
 import { composeStore } from "@/util/composeStore";
-import { ExerciseCardData, ageGroups } from "@/util/types";
+import { ageGroups } from "@/util/types";
 import { UniqueIdentifier } from "@dnd-kit/core";
 import { Card, Divider, Stack, Typography } from "@mui/material";
 import { entries } from "lodash";
@@ -9,8 +10,8 @@ const ExerciseCard: FC<{
   id: UniqueIdentifier;
   isTalon?: boolean;
   isDragging?: boolean;
-  exercise: ExerciseCardData;
-}> = ({ exercise, isTalon, isDragging }) => {
+  exercise: Exercise & { fakeId: string };
+}> = ({ id, exercise, isTalon, isDragging }) => {
   const { highlightedFakeId } = composeStore();
 
   return (
@@ -23,7 +24,7 @@ const ExerciseCard: FC<{
         cursor: "grab",
         userSelect: "none",
         backgroundColor:
-          highlightedFakeId === exercise.data.fakeId ? "lightblue" : "white",
+          highlightedFakeId === exercise.fakeId ? "lightblue" : "white",
         opacity: isDragging ? 0.5 : 1,
       }}
       // onMouseEnter={() => {
