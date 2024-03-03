@@ -1,16 +1,16 @@
-import { ExerciseCopy } from "@/pages/ExcerciseCompose";
 import { composeStore } from "@/util/composeStore";
 import { ageGroups } from "@/util/types";
+import { UniqueIdentifier } from "@dnd-kit/core";
 import { Card, Divider, Stack, Typography } from "@mui/material";
 import { entries } from "lodash";
-import { FC, useContext } from "react";
-import { SortableItemContext } from "./SortableItem";
+import { FC } from "react";
 
 const ExerciseCard: FC<{
+  id: UniqueIdentifier;
   isTalon?: boolean;
-  exercise: ExerciseCopy;
-}> = ({ exercise, isTalon }) => {
-  const { attributes, listeners, ref } = useContext(SortableItemContext);
+  isDragging?: boolean;
+  exercise: Exercise & { fakeId: string };
+}> = ({ id, exercise, isTalon, isDragging }) => {
   const { highlightedFakeId } = composeStore();
 
   return (
@@ -26,7 +26,8 @@ const ExerciseCard: FC<{
         cursor: "grab",
         userSelect: "none",
         backgroundColor:
-          highlightedFakeId === exercise.data.fakeId ? "lightblue" : "white",
+          highlightedFakeId === exercise.fakeId ? "lightblue" : "white",
+        opacity: isDragging ? 0.5 : 1,
       }}
       // onMouseEnter={() => {
       //   setHighlightedFakeId(exercise.fakeId);
@@ -37,8 +38,8 @@ const ExerciseCard: FC<{
     >
       <Stack gap={2}>
         <Stack direction={"row"} justifyContent={"space-between"}>
-          <Typography variant="caption">{exercise.data.fakeId}</Typography>
-          {/* <Typography variant="caption">{exercise.id}</Typography> */}
+          <Typography variant="caption">{exercise.fakeId}</Typography>
+          <Typography variant="caption">{id}</Typography>
         </Stack>
         <Stack
           direction="row"
@@ -65,7 +66,7 @@ const ExerciseCard: FC<{
                 }}
               >
                 {
-                  exercise.data.difficulty.find((d) => d.ageGroup === key)
+                  exercise.difficulty.find((d) => d.ageGroup === key)
                     ?.difficulty
                 }
               </Typography>
