@@ -22,13 +22,13 @@ import {
 import { arrayMove, sortableKeyboardCoordinates } from "@dnd-kit/sortable";
 import { useCallback, useEffect, useRef, useState } from "react";
 
-import { Grid, Stack } from "@mui/material";
-import { entries } from "lodash";
+import { Grid, Stack, Typography } from "@mui/material";
+import { entries, keys, times } from "lodash";
 import { useImmer } from "use-immer";
 import Container from "../components/compose/Container";
 import { Item } from "../components/compose/SortableItem";
 
-const DNDExample = () => {
+const Compose = () => {
   const [items, setItems] = useImmer<{
     [key in string]: UniqueIdentifier[];
   }>({
@@ -211,7 +211,7 @@ const DNDExample = () => {
       }
       setActiveId(null);
     },
-    [items, findContainer],
+    [findContainer, items, setItems],
   );
 
   // Function called when a drag operation is cancelled
@@ -308,11 +308,39 @@ const DNDExample = () => {
             },
           }}
         >
-          <Grid container columns={5} spacing={4}>
-            {entries(items).map(([key, items]) => (
-              <Grid item key={key} xs={1}>
-                <Container id={key} items={items} />
+          <Grid container columns={6} spacing={4}>
+            <Grid item xs={1} />
+            {times(5).map((i) => (
+              <Grid item key={i} xs={1}>
+                <Typography variant="h5" textAlign={"center"}>
+                  {keys(items)[i].split("-")[0]}
+                </Typography>
               </Grid>
+            ))}
+            {entries(items).map(([key, items], index) => (
+              <>
+                {index % 5 === 0 && (
+                  <Grid xs={1} item key={index}>
+                    <Stack height={"100%"} justifyContent={"center"} pb={4}>
+                      <Typography variant="h5" textAlign={"center"}>
+                        {index === 0 && "Zöld"}
+                        {index === 5 && "Bronz"}
+                        {index === 10 && "Ezüst"}
+                        {index === 15 && "Arany"}
+                      </Typography>
+                    </Stack>
+                  </Grid>
+                )}
+                <Grid
+                  item
+                  key={key}
+                  xs={1}
+                  borderBottom={"1px solid"}
+                  borderColor={"divider"}
+                >
+                  <Container id={key} items={items} />
+                </Grid>
+              </>
             ))}
           </Grid>
           <DragOverlay>
@@ -324,4 +352,4 @@ const DNDExample = () => {
   );
 };
 
-export default DNDExample;
+export default Compose;

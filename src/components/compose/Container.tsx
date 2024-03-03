@@ -6,7 +6,7 @@ import {
 } from "@dnd-kit/sortable";
 import type { FC } from "react";
 
-import { Stack, Typography } from "@mui/material";
+import { Stack } from "@mui/material";
 import SortableItem from "./SortableItem";
 
 const Container: FC<{ items: UniqueIdentifier[]; id: string }> = ({
@@ -30,9 +30,6 @@ const Container: FC<{ items: UniqueIdentifier[]; id: string }> = ({
         gap={1}
         pb={4}
       >
-        <Typography component="h3" whiteSpace={"nowrap"}>
-          {id}
-        </Typography>
         {items.map((id: UniqueIdentifier) => (
           <SortableItem key={id} id={id} />
         ))}
