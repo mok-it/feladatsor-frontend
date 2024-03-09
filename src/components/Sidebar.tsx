@@ -1,4 +1,4 @@
-import { userAtom } from "@/util/atoms";
+import { tokenAtom, userAtom } from "@/util/atoms";
 import { auth } from "@/util/firebase";
 import {
   Box,
@@ -14,7 +14,7 @@ import {
 import { signOut as firebaseSignout } from "firebase/auth";
 import { useSetAtom } from "jotai";
 import { useCallback } from "react";
-import { FaSignOutAlt } from "react-icons/fa";
+import { FaPersonRunning } from "react-icons/fa6";
 import { useLocation, useNavigate } from "react-router-dom";
 import { pages } from "../pages";
 
@@ -32,12 +32,14 @@ export const Sidebar = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const setUser = useSetAtom(userAtom);
+  const setToken = useSetAtom(tokenAtom);
 
   const signOut = useCallback(() => {
     firebaseSignout(auth).then(() => {
-      setUser(undefined);
+      setUser({ isLoggedIn: false, user: null });
+      setToken(null);
     });
-  }, [setUser]);
+  }, [setUser, setToken]);
 
   return (
     <Drawer
@@ -66,7 +68,6 @@ export const Sidebar = () => {
                   sx={{
                     ...style,
                     ...(active && {
-                      color: "primary.main",
                       fontWeight: "fontWeightSemiBold",
                       bgcolor: (theme) =>
                         alpha(theme.palette.primary.main, 0.08),
@@ -87,16 +88,16 @@ export const Sidebar = () => {
               </ListItem>
             );
           })}
+          <Divider />
           <ListItemButton sx={style} onClick={signOut}>
             <Stack direction="row" gap={2} alignItems="center">
               <Typography fontSize={22} lineHeight={0}>
-                <FaSignOutAlt />
+                <FaPersonRunning />
               </Typography>
-              <ListItemText primary={"Kijelentkezés"} />
+              <ListItemText primary="Kijelentkezés" />
             </Stack>
           </ListItemButton>
         </Stack>
-        <Divider />
       </Box>
     </Drawer>
   );

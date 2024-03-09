@@ -19,7 +19,9 @@ export type Scalars = {
 
 export type Exercise = {
   __typename: 'Exercise';
+  alternativeDifficultyExercises: Array<Exercise>;
   checks: Array<ExerciseCheck>;
+  comments: Array<ExerciseComment>;
   createdAt: Scalars['String']['output'];
   createdBy: User;
   description: Scalars['String']['output'];
@@ -30,10 +32,14 @@ export type Exercise = {
   helpingQuestions: Array<Scalars['String']['output']>;
   history: Array<ExerciseHistory>;
   id: Scalars['ID']['output'];
-  name: Scalars['String']['output'];
-  similarExercises: Array<Exercise>;
+  isCompetitionFinal?: Maybe<Scalars['Boolean']['output']>;
+  sameLogicExercises: Array<Exercise>;
   solution: Scalars['String']['output'];
+  solutionOptions: Array<Scalars['String']['output']>;
+  solveIdea?: Maybe<Scalars['String']['output']>;
   source?: Maybe<Scalars['String']['output']>;
+  status: ExerciseStatus;
+  tags: Array<Tag>;
   updatedAt: Scalars['String']['output'];
 };
 
@@ -49,6 +55,7 @@ export type ExerciseCheck = {
   createdAt: Scalars['String']['output'];
   exercise: Exercise;
   id: Scalars['ID']['output'];
+  role: ExerciseCheckRole;
   type: ExerciseCheckType;
   updatedAt: Scalars['String']['output'];
   user: User;
@@ -59,15 +66,34 @@ export type ExerciseCheckInput = {
   type: ExerciseCheckType;
 };
 
+export type ExerciseCheckRole =
+  | 'EXAMINER'
+  | 'LECTOR'
+  | 'PROFESSIONAL';
+
 export type ExerciseCheckType =
   | 'CHANGE_REQUIRED'
   | 'GOOD'
   | 'TO_DELETE';
 
+export type ExerciseComment = {
+  __typename: 'ExerciseComment';
+  comment: Scalars['String']['output'];
+  createdAt: Scalars['String']['output'];
+  id: Scalars['ID']['output'];
+  updatedAt: Scalars['String']['output'];
+  user: User;
+};
+
 export type ExerciseDifficulty = {
   __typename: 'ExerciseDifficulty';
   ageGroup: ExerciseAgeGroup;
   difficulty: Scalars['Int']['output'];
+};
+
+export type ExerciseDifficultyInput = {
+  ageGroup: ExerciseAgeGroup;
+  difficulty: Scalars['Int']['input'];
 };
 
 export type ExerciseHistory = {
@@ -77,15 +103,34 @@ export type ExerciseHistory = {
 };
 
 export type ExerciseInput = {
+  alternativeDifficultyParent?: InputMaybe<Scalars['ID']['input']>;
   description: Scalars['String']['input'];
+  difficulty: Array<ExerciseDifficultyInput>;
   elaboration?: InputMaybe<Scalars['String']['input']>;
   elaborationImage?: InputMaybe<Scalars['String']['input']>;
   exerciseImage?: InputMaybe<Scalars['String']['input']>;
   helpingQuestions: Array<Scalars['String']['input']>;
-  name: Scalars['String']['input'];
+  isCompetitionFinal?: InputMaybe<Scalars['Boolean']['input']>;
+  sameLogicParent?: InputMaybe<Scalars['ID']['input']>;
   solution: Scalars['String']['input'];
+  solutionImage?: InputMaybe<Scalars['String']['input']>;
+  solutionOptions: Array<Scalars['String']['input']>;
+  solveIdea?: InputMaybe<Scalars['String']['input']>;
+  solveIdeaImage?: InputMaybe<Scalars['String']['input']>;
   source?: InputMaybe<Scalars['String']['input']>;
+  status: ExerciseStatus;
+  tags: Array<InputMaybe<Scalars['ID']['input']>>;
 };
+
+export type ExerciseSearchQuery = {
+  queryStr?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type ExerciseStatus =
+  | 'APPROVED'
+  | 'CREATED'
+  | 'DELETED'
+  | 'DRAFT';
 
 export type LoginResponse = {
   __typename: 'LoginResponse';
@@ -98,6 +143,7 @@ export type Mutation = {
   createExercise: Exercise;
   createExerciseCheck: ExerciseCheck;
   login?: Maybe<LoginResponse>;
+  loginWithGoogle?: Maybe<LoginResponse>;
   register: User;
 };
 
@@ -118,6 +164,11 @@ export type MutationLoginArgs = {
 };
 
 
+export type MutationLoginWithGoogleArgs = {
+  googleToken: Scalars['String']['input'];
+};
+
+
 export type MutationRegisterArgs = {
   data: UserRegisterInput;
 };
@@ -127,6 +178,7 @@ export type Query = {
   exercise?: Maybe<Exercise>;
   exercises: Array<Exercise>;
   exercisesCount: Scalars['Int']['output'];
+  searchExercises: Array<Exercise>;
   user?: Maybe<User>;
   users: Array<User>;
 };
@@ -143,8 +195,22 @@ export type QueryExercisesArgs = {
 };
 
 
+export type QuerySearchExercisesArgs = {
+  query?: InputMaybe<ExerciseSearchQuery>;
+};
+
+
 export type QueryUserArgs = {
   id: Scalars['ID']['input'];
+};
+
+export type Tag = {
+  __typename: 'Tag';
+  children: Array<Tag>;
+  exercises: Array<Exercise>;
+  id: Scalars['ID']['output'];
+  name: Scalars['String']['output'];
+  parent?: Maybe<Tag>;
 };
 
 export type User = {
@@ -165,49 +231,167 @@ export type UserRegisterInput = {
   userName: Scalars['String']['input'];
 };
 
-export type LoginMutationVariables = Exact<{
-  userName: Scalars['String']['input'];
-  password: Scalars['String']['input'];
+export type CreateExerciseMutationVariables = Exact<{
+  input: ExerciseInput;
 }>;
 
 
-export type LoginMutation = { __typename: 'Mutation', login?: { __typename: 'LoginResponse', token: string, user: { __typename: 'User', id: string } } | null };
+export type CreateExerciseMutation = { __typename: 'Mutation', createExercise: { __typename: 'Exercise', id: string } };
+
+export type SelectExercisesQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export const LoginDocument = gql`
-    mutation login($userName: String!, $password: String!) {
-  login(name: $userName, password: $password) {
-    token
-    user {
-      id
-    }
+export type SelectExercisesQuery = { __typename: 'Query', exercises: Array<{ __typename: 'Exercise', id: string, description: string, exerciseImage?: string | null, solution: string, elaboration?: string | null, elaborationImage?: string | null, helpingQuestions: Array<string>, source?: string | null, createdAt: string, updatedAt: string, difficulty: Array<{ __typename: 'ExerciseDifficulty', difficulty: number, ageGroup: ExerciseAgeGroup }>, history: Array<{ __typename: 'ExerciseHistory', id: string, exercise: { __typename: 'Exercise', id: string } }>, checks: Array<{ __typename: 'ExerciseCheck', id: string, type: ExerciseCheckType, user: { __typename: 'User', id: string, name: string } }>, createdBy: { __typename: 'User', id: string, name: string } }> };
+
+export type LoginWithGoogleMutationVariables = Exact<{
+  googleToken: Scalars['String']['input'];
+}>;
+
+
+export type LoginWithGoogleMutation = { __typename: 'Mutation', loginWithGoogle?: { __typename: 'LoginResponse', token: string, user: { __typename: 'User', id: string, email: string, name: string, userName: string, createdAt: string, updatedAt: string } } | null };
+
+
+export const CreateExerciseDocument = gql`
+    mutation createExercise($input: ExerciseInput!) {
+  createExercise(input: $input) {
+    id
   }
 }
     `;
-export type LoginMutationFn = Apollo.MutationFunction<LoginMutation, LoginMutationVariables>;
+export type CreateExerciseMutationFn = Apollo.MutationFunction<CreateExerciseMutation, CreateExerciseMutationVariables>;
 
 /**
- * __useLoginMutation__
+ * __useCreateExerciseMutation__
  *
- * To run a mutation, you first call `useLoginMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useLoginMutation` returns a tuple that includes:
+ * To run a mutation, you first call `useCreateExerciseMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateExerciseMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [loginMutation, { data, loading, error }] = useLoginMutation({
+ * const [createExerciseMutation, { data, loading, error }] = useCreateExerciseMutation({
  *   variables: {
- *      userName: // value for 'userName'
- *      password: // value for 'password'
+ *      input: // value for 'input'
  *   },
  * });
  */
-export function useLoginMutation(baseOptions?: Apollo.MutationHookOptions<LoginMutation, LoginMutationVariables>) {
+export function useCreateExerciseMutation(baseOptions?: Apollo.MutationHookOptions<CreateExerciseMutation, CreateExerciseMutationVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<LoginMutation, LoginMutationVariables>(LoginDocument, options);
+        return Apollo.useMutation<CreateExerciseMutation, CreateExerciseMutationVariables>(CreateExerciseDocument, options);
       }
-export type LoginMutationHookResult = ReturnType<typeof useLoginMutation>;
-export type LoginMutationResult = Apollo.MutationResult<LoginMutation>;
-export type LoginMutationOptions = Apollo.BaseMutationOptions<LoginMutation, LoginMutationVariables>;
+export type CreateExerciseMutationHookResult = ReturnType<typeof useCreateExerciseMutation>;
+export type CreateExerciseMutationResult = Apollo.MutationResult<CreateExerciseMutation>;
+export type CreateExerciseMutationOptions = Apollo.BaseMutationOptions<CreateExerciseMutation, CreateExerciseMutationVariables>;
+export const SelectExercisesDocument = gql`
+    query selectExercises {
+  exercises(take: 10, skip: 0) {
+    id
+    description
+    exerciseImage
+    solution
+    elaboration
+    elaborationImage
+    helpingQuestions
+    source
+    difficulty {
+      difficulty
+      ageGroup
+    }
+    history {
+      id
+      exercise {
+        id
+      }
+    }
+    checks {
+      id
+      user {
+        id
+        name
+      }
+      type
+    }
+    createdBy {
+      id
+      name
+    }
+    createdAt
+    updatedAt
+  }
+}
+    `;
+
+/**
+ * __useSelectExercisesQuery__
+ *
+ * To run a query within a React component, call `useSelectExercisesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSelectExercisesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useSelectExercisesQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useSelectExercisesQuery(baseOptions?: Apollo.QueryHookOptions<SelectExercisesQuery, SelectExercisesQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<SelectExercisesQuery, SelectExercisesQueryVariables>(SelectExercisesDocument, options);
+      }
+export function useSelectExercisesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SelectExercisesQuery, SelectExercisesQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<SelectExercisesQuery, SelectExercisesQueryVariables>(SelectExercisesDocument, options);
+        }
+export function useSelectExercisesSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<SelectExercisesQuery, SelectExercisesQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<SelectExercisesQuery, SelectExercisesQueryVariables>(SelectExercisesDocument, options);
+        }
+export type SelectExercisesQueryHookResult = ReturnType<typeof useSelectExercisesQuery>;
+export type SelectExercisesLazyQueryHookResult = ReturnType<typeof useSelectExercisesLazyQuery>;
+export type SelectExercisesSuspenseQueryHookResult = ReturnType<typeof useSelectExercisesSuspenseQuery>;
+export type SelectExercisesQueryResult = Apollo.QueryResult<SelectExercisesQuery, SelectExercisesQueryVariables>;
+export const LoginWithGoogleDocument = gql`
+    mutation loginWithGoogle($googleToken: String!) {
+  loginWithGoogle(googleToken: $googleToken) {
+    user {
+      id
+      email
+      name
+      userName
+      createdAt
+      updatedAt
+    }
+    token
+  }
+}
+    `;
+export type LoginWithGoogleMutationFn = Apollo.MutationFunction<LoginWithGoogleMutation, LoginWithGoogleMutationVariables>;
+
+/**
+ * __useLoginWithGoogleMutation__
+ *
+ * To run a mutation, you first call `useLoginWithGoogleMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useLoginWithGoogleMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [loginWithGoogleMutation, { data, loading, error }] = useLoginWithGoogleMutation({
+ *   variables: {
+ *      googleToken: // value for 'googleToken'
+ *   },
+ * });
+ */
+export function useLoginWithGoogleMutation(baseOptions?: Apollo.MutationHookOptions<LoginWithGoogleMutation, LoginWithGoogleMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<LoginWithGoogleMutation, LoginWithGoogleMutationVariables>(LoginWithGoogleDocument, options);
+      }
+export type LoginWithGoogleMutationHookResult = ReturnType<typeof useLoginWithGoogleMutation>;
+export type LoginWithGoogleMutationResult = Apollo.MutationResult<LoginWithGoogleMutation>;
+export type LoginWithGoogleMutationOptions = Apollo.BaseMutationOptions<LoginWithGoogleMutation, LoginWithGoogleMutationVariables>;
