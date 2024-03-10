@@ -1,7 +1,7 @@
 import { ProfilePage } from "@/pages/ProfilePage.tsx";
 import { FC } from "react";
 import { IconType } from "react-icons";
-import { FaRegUser } from "react-icons/fa";
+import { FaRegUser, FaUsers } from "react-icons/fa";
 import { FaPencil } from "react-icons/fa6";
 import { HiOutlineHome } from "react-icons/hi";
 import { IoNewspaperOutline, IoSearch } from "react-icons/io5";
@@ -10,6 +10,7 @@ import { ExerciseListPage } from "./pages/ExerciseListPage";
 import { HomePage } from "./pages/HomePage";
 import ComposePage from "./pages/compose/ComposePage.tsx";
 import { CreateExercise } from "./pages/createExercise/CreateExercise.tsx";
+import { AdminPage } from "./pages/Admin.tsx";
 
 interface Page {
   name: string;
@@ -55,4 +56,11 @@ export const pages: Page[] = [
     component: ComposePage,
     icon: MdDashboard,
   },
+  {
+    name: "Admin",
+    path: "/admin",
+    component: AdminPage,
+    icon: FaUsers,
+  },
+
 ];
