@@ -16,6 +16,7 @@ import {
 import { entries } from "lodash";
 import { FC } from "react";
 import { MdEdit, MdStar } from "react-icons/md";
+import FakeId from "../FakeId";
 
 const ExerciseCard: FC<{
   id: UniqueIdentifier;
@@ -90,9 +91,13 @@ const ExerciseCard: FC<{
             alignItems={"center"}
             gap={1}
           >
-            <Typography variant="caption" whiteSpace={"nowrap"}>
-              #{exercise.fakeId}
-            </Typography>
+            {isDetailedView ? (
+              <FakeId>{exercise.fakeId}</FakeId>
+            ) : (
+              <Typography variant="caption" whiteSpace={"nowrap"}>
+                #{exercise.fakeId}
+              </Typography>
+            )}
             <MdStar color="gold" />
             {isSingleView &&
               tags.map((tag) => <Chip key={tag} size="small" label={tag} />)}
