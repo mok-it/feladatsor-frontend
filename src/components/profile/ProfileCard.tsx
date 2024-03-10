@@ -11,6 +11,8 @@ import { motion } from "framer-motion";
 import { MdArrowDownward } from "react-icons/md";
 import { useState } from "react";
 import History from "@/components/History.tsx";
+import { ProfileStatCard } from "@/components/profile/ProfileStatCard.tsx";
+import { grey } from "@/theme/palette.ts";
 
 // STYLES
 const styles = {
@@ -138,6 +140,29 @@ export default function ProfileCard(props: any) {
             </Stack>
           </Box>
         </Stack>
+        <Grid container spacing={3}>
+          <Grid item lg={3} sm={6} xs={12}>
+            <ProfileStatCard
+              sx={{ backgroundColor: grey[200] }}
+              title={"Beküldött feladatok"}
+              value={3}
+            />
+          </Grid>
+          <Grid item lg={3} sm={6} xs={12}>
+            <ProfileStatCard
+              sx={{ backgroundColor: grey[200] }}
+              title={"Ellenőrzött feladatok"}
+              value={3}
+            />
+          </Grid>
+          <Grid item lg={3} sm={6} xs={12}>
+            <ProfileStatCard
+              sx={{ backgroundColor: grey[200] }}
+              title={"Kacsák száma"}
+              value={1000}
+            />
+          </Grid>
+        </Grid>
       </Stack>
     </Card>
   );
