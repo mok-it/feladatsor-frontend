@@ -6,6 +6,7 @@ import Layout from "./Layout";
 import { pages } from "./pages";
 import ExerciseDetails from "./pages/ExerciseDetails";
 import { userAtom } from "./util/atoms";
+import Login from "@/pages/Login.tsx";
 
 function App() {
   const [user, setUser] = useAtom(userAtom);
@@ -22,9 +23,9 @@ function App() {
   if (!user) {
     return null;
   }
-  // if (!user.isLoggedIn) {
-  //   return <Login />;
-  // }
+  if (!user.isLoggedIn) {
+    return <Login />;
+  }
 
   return (
     <BrowserRouter basename="/">

@@ -7,6 +7,7 @@ import ExerciseFields from "@/pages/createExercise/ExerciseFields";
 import {
   Button,
   Card,
+  Checkbox,
   Grid,
   IconButton,
   MenuItem,
@@ -30,6 +31,7 @@ import {
 import { useParams } from "react-router";
 import { useToggle } from "react-use";
 import { createExerciseInitialValue } from "./createExercise/createExerciseInitialValue";
+import { MultiSelect } from "@/components/MultiSelect.tsx";
 
 const ExerciseDetails: FC = () => {
   const { fakeId } = useParams();
@@ -93,6 +95,16 @@ const ExerciseDetails: FC = () => {
               >
                 <ExerciseFields />
               </Formik>
+            </Box>
+            <Box p={2}>
+              <Stack direction={"row"} gap={1} alignItems={"center"}>
+                <Typography>Döntő</Typography>
+                <Checkbox />
+              </Stack>
+              <Stack direction={"row"} gap={1} alignItems={"center"}>
+                <Typography>Talonba rakom</Typography>
+                <MultiSelect items={["Gellért hegy", "Városliget"]} />
+              </Stack>
             </Box>
           </Card>
         </Grid>

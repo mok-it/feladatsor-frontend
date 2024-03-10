@@ -1,11 +1,16 @@
 // IMPORTS
 import Card from "@mui/material/Card";
 import Typography from "@mui/material/Typography";
-import { Grid } from "@mui/material";
+import { Divider, Grid, IconButton } from "@mui/material";
 import Avatar from "@mui/material/Avatar";
 import Badge from "@mui/material/Badge";
-import Button from "@mui/material/Button";
 import { IoCameraOutline } from "react-icons/io5";
+import { Box, Stack } from "@mui/system";
+import { ExerciseList } from "@/components/ExerciseList.tsx";
+import { motion } from "framer-motion";
+import { MdArrowDownward } from "react-icons/md";
+import { useState } from "react";
+import History from "@/components/History.tsx";
 
 // STYLES
 const styles = {
@@ -22,6 +27,8 @@ const styles = {
 
 //APP
 export default function ProfileCard(props: any) {
+  const [historySort, setHistorySort] = useState<"asc" | "desc">("asc");
+  const [commentSort, setCommentSort] = useState<"asc" | "desc">("asc");
   return (
     <Card variant="outlined">
       <Grid
@@ -59,33 +66,79 @@ export default function ProfileCard(props: any) {
           <Typography variant="h6">{props.name}</Typography>
         </Grid>
         {/* CARD HEADER END */}
-
-        {/* DETAILS */}
-        <Grid container>
-          <Grid item xs={6}>
-            <Typography style={styles.details}>Detail 1</Typography>
-            <Typography style={styles.details}>Detail 2</Typography>
-            <Typography style={styles.details}>Detail 3</Typography>
-          </Grid>
-          {/* VALUES */}
-          <Grid item xs={6} sx={{ textAlign: "end" }}>
-            <Typography style={styles.value}>{props.dt1}</Typography>
-            <Typography style={styles.value}>{props.dt2}</Typography>
-            <Typography style={styles.value}>{props.dt3}</Typography>
-          </Grid>
-        </Grid>
-
-        {/* BUTTON */}
-        <Grid item style={styles.details} sx={{ width: "100%" }}>
-          <Button
-            variant="contained"
-            color="secondary"
-            sx={{ width: "99%", p: 1, my: 2 }}
-          >
-            View Public Profile
-          </Button>
-        </Grid>
       </Grid>
+      <Stack direction="column" spacing={2} sx={styles.details}>
+        <Box>
+          <Typography variant="h6">Beküldött feladatok</Typography>
+          <ExerciseList
+            data={[
+              {
+                fakeId: "ab-012",
+                categoryDifficulties: {
+                  JEGESMEDVE: 1,
+                  KISMEDVE: 2,
+                  MEDVEBOCS: 3,
+                  NAGYMEDVE: 4,
+                  KOALA: 2,
+                },
+                hasPicture: false,
+                description:
+                  "Ez egy példa feladat kacsa kacsakacsakacsakacsakacsakacsa ",
+                state: "Checked",
+                tags: ["Kombinatorika", "Permutáció"],
+              },
+            ]}
+          />
+        </Box>
+        <Stack direction="row" spacing={2} sx={styles.value}>
+          <Box flexGrow={1}>
+            <Stack direction={"row"} gap={1} alignItems={"center"}>
+              <Typography variant="h5">Történet</Typography>
+              <Box flexGrow={1} />
+              <motion.div
+                animate={{
+                  transform:
+                    historySort === "asc" ? "rotate(0deg)" : "rotate(-180deg)",
+                }}
+              >
+                <IconButton
+                  onClick={() =>
+                    setHistorySort((prev) => (prev === "asc" ? "desc" : "asc"))
+                  }
+                >
+                  <MdArrowDownward />
+                </IconButton>
+              </motion.div>
+            </Stack>
+            <Stack spacing={2} py={2}>
+              <History />
+              <History />
+              <History />
+            </Stack>
+          </Box>
+          <Divider orientation="vertical" flexItem />
+          <Box flexGrow={1}>
+            <Stack direction={"row"} gap={1} alignItems={"center"}>
+              <Typography variant="h5">Kommentek</Typography>
+              <Box flexGrow={1} />
+              <motion.div
+                animate={{
+                  transform:
+                    commentSort === "asc" ? "rotate(0deg)" : "rotate(-180deg)",
+                }}
+              >
+                <IconButton
+                  onClick={() =>
+                    setCommentSort((prev) => (prev === "asc" ? "desc" : "asc"))
+                  }
+                >
+                  <MdArrowDownward />
+                </IconButton>
+              </motion.div>
+            </Stack>
+          </Box>
+        </Stack>
+      </Stack>
     </Card>
   );
 }
