@@ -4,7 +4,6 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import "./App.css";
 import Layout from "./Layout";
 import { pages } from "./pages";
-import Login from "./pages/Login";
 import { userAtom } from "./util/atoms";
 
 function App() {
@@ -22,9 +21,9 @@ function App() {
   if (!user) {
     return null;
   }
-  if (!user.isLoggedIn) {
-    return <Login />;
-  }
+  // if (!user.isLoggedIn) {
+  //   return <Login />;
+  // }
 
   return (
     <BrowserRouter basename="/">
