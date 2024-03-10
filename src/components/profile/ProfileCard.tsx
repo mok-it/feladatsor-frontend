@@ -13,8 +13,6 @@ import { useState } from "react";
 import History from "@/components/History.tsx";
 import { ProfileStatCard } from "@/components/profile/ProfileStatCard.tsx";
 import { grey } from "@/theme/palette.ts";
-import { useAtomValue } from "jotai/index";
-import { userAtom } from "@/util/atoms.ts";
 
 // STYLES
 const styles = {
