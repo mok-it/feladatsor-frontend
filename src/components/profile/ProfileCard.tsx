@@ -1,12 +1,16 @@
 // IMPORTS
 import Card from "@mui/material/Card";
 import Typography from "@mui/material/Typography";
-import { Grid } from "@mui/material";
+import { Divider, Grid, IconButton } from "@mui/material";
 import Avatar from "@mui/material/Avatar";
 import Badge from "@mui/material/Badge";
 import { IoCameraOutline } from "react-icons/io5";
 import { Box, Stack } from "@mui/system";
 import { ExerciseList } from "@/components/ExerciseList.tsx";
+import { motion } from "framer-motion";
+import { MdArrowDownward } from "react-icons/md";
+import { useState } from "react";
+import History from "@/components/History.tsx";
 
 // STYLES
 const styles = {
@@ -23,6 +27,8 @@ const styles = {
 
 //APP
 export default function ProfileCard(props: any) {
+  const [historySort, setHistorySort] = useState<"asc" | "desc">("asc");
+  const [commentSort, setCommentSort] = useState<"asc" | "desc">("asc");
   return (
     <Card variant="outlined">
       <Grid
@@ -84,9 +90,54 @@ export default function ProfileCard(props: any) {
             ]}
           />
         </Box>
-        <Box>
-          <Typography variant="h6">Kommentek</Typography>
-        </Box>
+        <Stack direction="row" spacing={2} sx={styles.value}>
+          <Box flexGrow={1}>
+            <Stack direction={"row"} gap={1} alignItems={"center"}>
+              <Typography variant="h5">Történet</Typography>
+              <Box flexGrow={1} />
+              <motion.div
+                animate={{
+                  transform:
+                    historySort === "asc" ? "rotate(0deg)" : "rotate(-180deg)",
+                }}
+              >
+                <IconButton
+                  onClick={() =>
+                    setHistorySort((prev) => (prev === "asc" ? "desc" : "asc"))
+                  }
+                >
+                  <MdArrowDownward />
+                </IconButton>
+              </motion.div>
+            </Stack>
+            <Stack spacing={2} py={2}>
+              <History />
+              <History />
+              <History />
+            </Stack>
+          </Box>
+          <Divider orientation="vertical" flexItem />
+          <Box flexGrow={1}>
+            <Stack direction={"row"} gap={1} alignItems={"center"}>
+              <Typography variant="h5">Kommentek</Typography>
+              <Box flexGrow={1} />
+              <motion.div
+                animate={{
+                  transform:
+                    commentSort === "asc" ? "rotate(0deg)" : "rotate(-180deg)",
+                }}
+              >
+                <IconButton
+                  onClick={() =>
+                    setCommentSort((prev) => (prev === "asc" ? "desc" : "asc"))
+                  }
+                >
+                  <MdArrowDownward />
+                </IconButton>
+              </motion.div>
+            </Stack>
+          </Box>
+        </Stack>
       </Stack>
     </Card>
   );
