@@ -1,7 +1,4 @@
-import React, { useMemo } from "react";
-import ReactDOM from "react-dom/client";
-import App from "./App.tsx";
-import { ThemeProvider } from "./theme";
+import { tokenAtom } from "@/util/atoms.ts";
 import {
   ApolloClient,
   ApolloProvider,
@@ -10,11 +7,14 @@ import {
   InMemoryCache,
 } from "@apollo/client";
 import { setContext } from "@apollo/client/link/context";
-import { useAtomValue } from "jotai";
-import { tokenAtom } from "@/util/atoms.ts";
 import { onError } from "@apollo/client/link/error";
-import { SnackbarProvider, useSnackbar } from "notistack";
+import { useAtomValue } from "jotai";
 import { truncate } from "lodash";
+import { SnackbarProvider, useSnackbar } from "notistack";
+import React, { useMemo } from "react";
+import ReactDOM from "react-dom/client";
+import App from "./App.tsx";
+import { ThemeProvider } from "./theme";
 
 const AppWithApollo = () => {
   const token = useAtomValue(tokenAtom);

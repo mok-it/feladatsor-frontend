@@ -1,6 +1,7 @@
 import { CategoryDifficultySelect } from "@/components/CategoryDifficultySelect.tsx";
 import { AlertDialog } from "@/components/Dialog.tsx";
 import { HelpingQuestions } from "@/components/HelpingQuestions/HelpingQuestions.tsx";
+import Section from "@/components/Section.tsx";
 import { SimpleAccordion } from "@/components/SimpleAccordion.tsx";
 import { UploadWithPreview } from "@/components/UploadWithPreview.tsx";
 import {
@@ -20,18 +21,9 @@ import {
   Typography,
 } from "@mui/material";
 import { Formik, useFormikContext } from "formik";
-import { PropsWithChildren, useState } from "react";
+import { useState } from "react";
 import { KaTeX } from "../../components/Katex.tsx";
 import { MultiSelect } from "../../components/MultiSelect.tsx";
-
-const Section = (props: PropsWithChildren<{ text: string }>) => {
-  return (
-    <Stack gap={1}>
-      <Typography>{props.text}</Typography>
-      {props.children}
-    </Stack>
-  );
-};
 
 export const CreateExercise = () => {
   const [createExercise] = useCreateExerciseMutation();
