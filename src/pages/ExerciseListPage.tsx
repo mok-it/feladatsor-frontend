@@ -38,6 +38,7 @@ export const ExerciseListPage = () => {
           {entries(difficulties).map(([difficultyName, [min, max]]) => {
             return (
               <DifficultySelector
+                key={difficultyName}
                 ageGroup={difficultyName}
                 difficulty={[min, max]}
                 setDifficulty={(value) =>
