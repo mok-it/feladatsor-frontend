@@ -13,6 +13,8 @@ import { useState } from "react";
 import History from "@/components/History.tsx";
 import { ProfileStatCard } from "@/components/profile/ProfileStatCard.tsx";
 import { grey } from "@/theme/palette.ts";
+import { useAtomValue } from "jotai/index";
+import { userAtom } from "@/util/atoms.ts";
 
 // STYLES
 const styles = {
@@ -31,6 +33,7 @@ const styles = {
 export default function ProfileCard(props: any) {
   const [historySort, setHistorySort] = useState<"asc" | "desc">("asc");
   const [commentSort, setCommentSort] = useState<"asc" | "desc">("asc");
+
   return (
     <Card variant="outlined">
       <Grid
@@ -60,7 +63,7 @@ export default function ProfileCard(props: any) {
           >
             <Avatar
               sx={{ width: 100, height: 100, mb: 1.5 }}
-              src="https://media.glamour.com/photos/5a425fd3b6bcee68da9f86f8/master/pass/best-face-oil.png"
+              src="https://t4.ftcdn.net/jpg/04/54/19/43/360_F_454194340_S5Dxu8CJilzPGmqSU44azVccOuvvEj1i.jpg"
             ></Avatar>
           </Badge>
 
