@@ -1,4 +1,5 @@
 import { alpha } from "@mui/material/styles";
+import { ExerciseAgeGroup } from "@/generated/graphql.tsx";
 
 // ----------------------------------------------------------------------
 
@@ -74,6 +75,14 @@ export const error = {
 export const common = {
   black: "#000000",
   white: "#FFFFFF",
+};
+
+export const categoryColors: { [key in ExerciseAgeGroup]: string } = {
+  KOALA: secondary.main,
+  MEDVEBOCS: error.darker,
+  KISMEDVE: success.main,
+  NAGYMEDVE: warning.light,
+  JEGESMEDVE: info.dark,
 };
 
 export const action = {

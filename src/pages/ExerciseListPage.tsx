@@ -16,6 +16,38 @@ import { useState } from "react";
 import { BiPlus } from "react-icons/bi";
 import { IoSearch } from "react-icons/io5";
 import { useImmer } from "use-immer";
+import { DataTable } from "@/components/DataTable/DataTable.tsx";
+import Chip from "@mui/material/Chip";
+import { FaCheck } from "react-icons/fa";
+import { RxCross2 } from "react-icons/rx";
+import { categoryColors } from "@/theme/palette.ts";
+import { MultiSelect } from "@/components/MultiSelect.tsx";
+
+type ExerciseItem = {
+  fakeId: string;
+  categoryDifficulties: number[];
+  description: string;
+  hasPicture: boolean;
+  state: string;
+  tags: string[];
+};
+
+const getCategoryColor = (index: number): string => {
+  switch (index) {
+    case 0:
+      return categoryColors.KOALA;
+    case 1:
+      return categoryColors.MEDVEBOCS;
+    case 2:
+      return categoryColors.NAGYMEDVE;
+    case 3:
+      return categoryColors.KISMEDVE;
+    case 4:
+      return categoryColors.JEGESMEDVE;
+    default:
+      return categoryColors.KOALA;
+  }
+};
 
 export const ExerciseListPage = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -49,6 +81,28 @@ export const ExerciseListPage = () => {
             );
           })}
         </Grid>
+        <Grid container>
+          <Grid item xs={0.5}>
+            <Checkbox />
+          </Grid>
+          <Grid item xs={0.5}>
+            <Stack justifyContent={"center"} height={"100%"}>
+              Döntő
+            </Stack>
+          </Grid>
+          <Grid item xs={1} />
+          <Grid item xs={0.5}>
+            <Checkbox />
+          </Grid>
+          <Grid item xs={0.5}>
+            <Stack justifyContent={"center"} height={"100%"}>
+              Talon
+            </Stack>
+          </Grid>
+          <Grid item xs={4}>
+            <MultiSelect items={["Gellért hegy", "Városliget"]} />
+          </Grid>
+        </Grid>
       </CardContent>
       <CardContent>
         <TextField
@@ -63,6 +117,79 @@ export const ExerciseListPage = () => {
             ),
           }}
           size="small"
+        />
+        <DataTable<ExerciseItem>
+          columns={{
+            fakeId: {
+              element: "fakeID",
+              sortable: true,
+              sx: { width: "5%" },
+            },
+            categoryDifficulties: {
+              element: "Kategóriák",
+              sortable: true,
+              sx: { width: "5%" },
+            },
+            state: {
+              element: "Állapot",
+              sortable: true,
+              sx: { width: "5%" },
+            },
+            tags: {
+              element: "Címkék",
+              sx: { width: "5%" },
+            },
+            hasPicture: {
+              element: "Van ábra",
+              sx: { width: "1%" },
+            },
+            description: {
+              element: "Leírás",
+              sortable: true,
+              sx: { width: "50%" },
+            },
+          }}
+          dataSource={{
+            data: [
+              {
+                fakeId: "ab-012",
+                categoryDifficulties: [0, 1, 3, 3, 4],
+                hasPicture: false,
+                description:
+                  "Ez egy példa feladat kacsa kacsakacsakacsakacsakacsakacsa ",
+                state: "Checked",
+                tags: ["Kombinatorika", "Permutáció"],
+              },
+            ],
+          }}
+          hoverable
+          maxHeight="400px"
+          pagination={{
+            defaultRowsPerPage: 5,
+            rowsPerPageOptions: [5, 10, 15],
+          }}
+          rowRenderers={{
+            //fakeId: (value) => <Chip label={value} />,
+            tags: (tags: string[]) => (
+              <>
+                {tags.map((tag, index) => (
+                  <Chip key={index} label={tag} />
+                ))}
+              </>
+            ),
+            hasPicture: (value) => (value ? <FaCheck /> : <RxCross2 />),
+            categoryDifficulties: (value) => (
+              <>
+                {value.map((tag, index) => (
+                  <Chip
+                    key={index}
+                    label={tag}
+                    style={{ backgroundColor: getCategoryColor(index) }}
+                  />
+                ))}
+              </>
+            ),
+          }}
         />
       </CardContent>
     </Card>

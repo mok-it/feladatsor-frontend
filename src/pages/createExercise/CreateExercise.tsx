@@ -135,7 +135,7 @@ const CreateExerciseForm = () => {
               <KaTeX textExpression={values.description} />
             </Grid>
             <Grid item xs={12}>
-              <Section text="Feladat képe">
+              <Section text="Feladat ábrája">
                 <UploadWithPreview
                   onChange={async (file) => {
                     if (!file) return setFieldValue("exerciseImage", null);
