@@ -20,8 +20,8 @@ import { DataTable } from "@/components/DataTable/DataTable.tsx";
 import Chip from "@mui/material/Chip";
 import { FaCheck } from "react-icons/fa";
 import { RxCross2 } from "react-icons/rx";
-import { categoryColors } from "@/theme/palette.ts";
 import { MultiSelect } from "@/components/MultiSelect.tsx";
+import { CategoryDifficulties } from "@/components/CategoryDifficulties.tsx";
 
 type ExerciseItem = {
   fakeId: string;
@@ -30,23 +30,6 @@ type ExerciseItem = {
   hasPicture: boolean;
   state: string;
   tags: string[];
-};
-
-const getCategoryColor = (index: number): string => {
-  switch (index) {
-    case 0:
-      return categoryColors.KOALA;
-    case 1:
-      return categoryColors.MEDVEBOCS;
-    case 2:
-      return categoryColors.NAGYMEDVE;
-    case 3:
-      return categoryColors.KISMEDVE;
-    case 4:
-      return categoryColors.JEGESMEDVE;
-    default:
-      return categoryColors.KOALA;
-  }
 };
 
 export const ExerciseListPage = () => {
@@ -179,15 +162,7 @@ export const ExerciseListPage = () => {
             ),
             hasPicture: (value) => (value ? <FaCheck /> : <RxCross2 />),
             categoryDifficulties: (value) => (
-              <>
-                {value.map((tag, index) => (
-                  <Chip
-                    key={index}
-                    label={tag}
-                    style={{ backgroundColor: getCategoryColor(index) }}
-                  />
-                ))}
-              </>
+              <CategoryDifficulties value={value} />
             ),
           }}
         />

@@ -78,11 +78,11 @@ export const common = {
 };
 
 export const categoryColors: { [key in ExerciseAgeGroup]: string } = {
-  KOALA: secondary.main,
-  MEDVEBOCS: error.darker,
-  KISMEDVE: success.main,
+  KOALA: secondary.light,
+  MEDVEBOCS: error.dark,
+  KISMEDVE: success.light,
   NAGYMEDVE: warning.light,
-  JEGESMEDVE: info.dark,
+  JEGESMEDVE: info.light,
 };
 
 export const action = {
