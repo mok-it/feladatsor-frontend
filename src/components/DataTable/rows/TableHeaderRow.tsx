@@ -35,16 +35,14 @@ const ComplexHeaderCell = <T extends BaseObject>(
       isSticky={props.isSticky}
       backgroundColor="white"
     >
-      <Typography data-testid="" variant="body1">
-        {props.element}
-      </Typography>
+      <Typography variant="body1">{props.element}</Typography>
       {props.unit && (
         <Typography sx={{ ml: 1 }} data-testid="" variant="body1">
           {props.unit}
         </Typography>
       )}
       {props.sortable && (
-        <IconButton data-testid="" onClick={() => sortColumn(props.columnKey)}>
+        <IconButton onClick={() => sortColumn(props.columnKey)}>
           {columnSort?.direction === null && <TiArrowUnsorted />}
           {columnSort?.direction === "asc" && <TiArrowSortedUp />}
           {columnSort?.direction === "desc" && <TiArrowSortedDown />}
@@ -80,9 +78,7 @@ export const TableHeaderRow = <T extends BaseObject>(
               borderColor: grey[300],
             }}
           >
-            <Typography data-testid="" variant="body1">
-              {column}
-            </Typography>
+            <Typography variant="body1">{column}</Typography>
           </DataTableCell>
         );
       })}

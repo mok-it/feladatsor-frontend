@@ -9,7 +9,6 @@ import Compose from "./pages/Compose.tsx";
 import { ExerciseListPage } from "./pages/ExerciseListPage";
 import { HomePage } from "./pages/HomePage";
 import { CreateExercise } from "./pages/createExercise/CreateExercise.tsx";
-import { AdminPage } from "./pages/Admin.tsx";
 
 interface Page {
   name: string;
@@ -40,7 +39,7 @@ export const pages: Page[] = [
   {
     name: "Profil",
     path: "/profile",
-    component: HomePage,
+    component: ProfilePage,
     icon: FaRegUser,
   },
   {

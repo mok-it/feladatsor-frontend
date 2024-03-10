@@ -4,12 +4,13 @@ import TextField from "@mui/material/TextField";
 
 type MultiSelectProps = {
   items: string[];
-  onChange: (value: string[]) => void;
+  onChange?: (value: string[]) => void;
 };
 
 export const MultiSelect = (props: MultiSelectProps) => (
   <Autocomplete
     multiple
+    size="small"
     options={props.items.map((option) => option)}
     renderTags={(value: readonly string[], getTagProps) =>
       value.map((option: string, index: number) => (
@@ -21,7 +22,7 @@ export const MultiSelect = (props: MultiSelectProps) => (
         elevation: 3,
       },
     }}
-    onChange={(_, value) => props.onChange(value)}
+    onChange={(_, value) => props.onChange && props.onChange(value)}
     renderInput={(params) => <TextField {...params} />}
   />
 );
