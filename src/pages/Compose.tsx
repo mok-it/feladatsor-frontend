@@ -32,7 +32,7 @@ import Container from "../components/compose/Container";
 ("../components/compose/SortableItem");
 
 const Compose = () => {
-  const [talon, setTalon] = useState<UniqueIdentifier[]>(["1", "2", "3"]);
+  const [talon] = useState<UniqueIdentifier[]>(["1", "2", "3"]);
   const addExercise = composeStore((state) => state.addExercise);
   const exercises = composeStore((state) => state.exercises);
   const [items, setItems] = useImmer<{
