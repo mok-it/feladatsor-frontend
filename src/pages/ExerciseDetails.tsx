@@ -7,6 +7,7 @@ import ExerciseFields from "@/pages/createExercise/ExerciseFields";
 import {
   Button,
   Card,
+  Checkbox,
   Grid,
   IconButton,
   MenuItem,
@@ -93,6 +94,12 @@ const ExerciseDetails: FC = () => {
               >
                 <ExerciseFields />
               </Formik>
+            </Box>
+            <Box p={2}>
+              <Stack direction={"row"} gap={1} alignItems={"center"}>
+                <Typography>Döntő</Typography>
+                <Checkbox />
+              </Stack>
             </Box>
           </Card>
         </Grid>

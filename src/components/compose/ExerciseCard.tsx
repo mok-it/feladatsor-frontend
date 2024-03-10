@@ -11,7 +11,7 @@ const ExerciseCard: FC<{
   isTalon?: boolean;
   isDragging?: boolean;
   exercise: Exercise & { fakeId: string };
-}> = ({ id, exercise, isTalon, isDragging }) => {
+}> = ({ exercise, isTalon, isDragging }) => {
   const { highlightedFakeId } = composeStore();
 
   return (
@@ -37,7 +37,7 @@ const ExerciseCard: FC<{
       <Stack gap={2}>
         <Stack direction={"row"} justifyContent={"space-between"}>
           <Typography variant="caption">{exercise.fakeId}</Typography>
-          <Typography variant="caption">{id}</Typography>
+          {/* <Typography variant="caption">{id}</Typography> */}
         </Stack>
         <Stack
           direction="row"
