@@ -126,10 +126,13 @@ const ExerciseCard: FC<{
                   {exercise.description}
                 </Typography>
                 <Box
-                  height={50}
-                  width={50}
                   overflow={"hidden"}
-                  sx={{ flexShrink: 0, aspectRatio: "1 / 1" }}
+                  sx={{
+                    flexGrow: 0,
+                    flexShrink: 0,
+                    height: "3cm",
+                    width: "3cm",
+                  }}
                 >
                   <img src={exercise.exerciseImage || ""}></img>
                 </Box>
