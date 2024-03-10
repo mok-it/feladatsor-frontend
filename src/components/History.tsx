@@ -24,6 +24,14 @@ const History: FC = () => {
             Kész
           </Typography>
         </Stack>
+        <Stack direction={"row"} gap={1} alignItems={"center"}>
+          Státusz:
+          <Typography component={"span"}>Beküldve</Typography>
+          <MdArrowForward />
+          <Typography component={"span"} fontWeight={600}>
+            Kész
+          </Typography>
+        </Stack>
       </Stack>
     </Box>
   );
