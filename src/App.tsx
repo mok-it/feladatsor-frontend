@@ -4,7 +4,7 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import "./App.css";
 import Layout from "./Layout";
 import { pages } from "./pages";
-import Login from "./pages/Login";
+import ExerciseDetails from "./pages/ExerciseDetails";
 import { userAtom } from "./util/atoms";
 
 function App() {
@@ -37,6 +37,7 @@ function App() {
               element={<page.component />}
             />
           ))}
+          <Route path={"/exercise/:fakeId"} element={<ExerciseDetails />} />
         </Route>
       </Routes>
     </BrowserRouter>
