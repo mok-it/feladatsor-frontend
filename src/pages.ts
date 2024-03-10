@@ -11,6 +11,8 @@ import { HomePage } from "./pages/HomePage";
 import ComposePage from "./pages/compose/ComposePage.tsx";
 import { CreateExercise } from "./pages/createExercise/CreateExercise.tsx";
 import { AdminPage } from "./pages/Admin.tsx";
+import { MdOutlineNewLabel } from "react-icons/md";
+import { Tags } from "./pages/tags.tsx";
 
 interface Page {
   name: string;
@@ -62,5 +64,10 @@ export const pages: Page[] = [
     component: AdminPage,
     icon: FaUsers,
   },
-
+  {
+  name: "Cimkék",
+  path: "/tags",
+  component: Tags,
+  icon: MdOutlineNewLabel,
+},
 ];
