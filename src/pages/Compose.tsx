@@ -20,25 +20,31 @@ import {
   useSensors,
 } from "@dnd-kit/core";
 import { arrayMove, sortableKeyboardCoordinates } from "@dnd-kit/sortable";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { Fragment, useCallback, useEffect, useRef, useState } from "react";
 
+import { Item } from "@/components/compose/SortableItem";
+import Talon from "@/components/compose/Talon";
+import { composeStore } from "@/util/composeStore";
 import { Grid, Stack, Typography } from "@mui/material";
 import { entries, keys, times } from "lodash";
 import { useImmer } from "use-immer";
 import Container from "../components/compose/Container";
-import { Item } from "../components/compose/SortableItem";
+("../components/compose/SortableItem");
 
 const Compose = () => {
+  const [talon, setTalon] = useState<UniqueIdentifier[]>(["1", "2", "3"]);
+  const addExercise = composeStore((state) => state.addExercise);
+  const exercises = composeStore((state) => state.exercises);
   const [items, setItems] = useImmer<{
     [key in string]: UniqueIdentifier[];
   }>({
-    "KOALA-0": ["1", "2"],
+    "KOALA-0": [],
     "MEDVEBOCS-0": [],
     "KISMEDVE-0": [],
     "NAGYMEDVE-0": [],
     "JEGESMEDVE-0": [],
 
-    "KOALA-1": ["3"],
+    "KOALA-1": [],
     "MEDVEBOCS-1": [],
     "KISMEDVE-1": [],
     "NAGYMEDVE-1": [],
@@ -87,13 +93,15 @@ const Compose = () => {
 
   // Function to find which container an item belongs to
   const findContainer = useCallback(
-    (id: UniqueIdentifier) => {
+    (id: UniqueIdentifier, options?: { excludeTalon: boolean }) => {
+      if (id === "talon") return id;
+      if (!options?.excludeTalon && talon.includes(id)) return "talon";
       // if the id is a container id itself
       if (id in items) return id;
       // find the container by looking into each of them
       return Object.keys(items).find((key) => items[key].includes(id));
     },
-    [items],
+    [items, talon],
   );
 
   // Ref to store the state of items before a drag operation begins
@@ -101,16 +109,6 @@ const Compose = () => {
 
   // Function called when a drag operation begins
   const handleDragStart = useCallback(
-    // ({ active }: DragStartEvent) => {
-    //   itemsBeforeDrag.current = {
-    //     container1: [...items.container1],
-    //     container2: [...items.container2],
-    //     container3: [...items.container3],
-    //     container4: [...items.container4],
-    //   };
-    //   setActiveId(active.id);
-    // },
-    // [items],
     ({ active }: DragStartEvent) => {
       // Store the current state of items
       itemsBeforeDrag.current = { ...items };
@@ -133,11 +131,56 @@ const Compose = () => {
       const activeContainer = findContainer(activeId);
       const overContainer = findContainer(overId);
 
+      console.log("handleDragOver", {
+        activeId,
+        activeContainer,
+        overContainer,
+      });
+
       if (!overContainer || !activeContainer) {
         return;
       }
+      if (overContainer === "talon") {
+        return;
+      }
+      if (activeContainer === "talon") {
+        // setTalon((talon) => talon.filter((id) => id !== activeId));
+        // clear duplicate items
+        setItems((items) => {
+          for (const key in items) {
+            items[key] = items[key].filter((id) => id !== activeId);
+          }
+        });
+        setItems((items) => {
+          const overItems = items[overContainer];
+          const overIndex = overItems.indexOf(overId);
 
-      if (activeContainer !== overContainer) {
+          const isBelowOverItem =
+            over &&
+            active.rect.current.translated &&
+            active.rect.current.translated.top >
+              over.rect.top + over.rect.height;
+
+          const modifier = isBelowOverItem ? 1 : 0;
+
+          const newIndex =
+            overIndex >= 0 ? overIndex + modifier : overItems.length + 1;
+
+          recentlyMovedToNewContainer.current = true;
+
+          return {
+            ...items,
+            [overContainer]: [
+              ...items[overContainer].slice(0, newIndex),
+              activeId,
+              ...items[overContainer].slice(
+                newIndex,
+                items[overContainer].length,
+              ),
+            ],
+          };
+        });
+      } else if (activeContainer !== overContainer) {
         setItems((items) => {
           const activeItems = items[activeContainer];
           const overItems = items[overContainer];
@@ -195,23 +238,40 @@ const Compose = () => {
         setActiveId(null);
         return;
       }
+      console.log("handleDragEnd", { activeContainer, active, over });
 
-      const activeIndex = items[activeContainer].indexOf(activeId);
-      const overIndex = items[overContainer].indexOf(overId);
-
-      if (activeIndex !== overIndex) {
-        setItems((items) => ({
-          ...items,
-          [overContainer]: arrayMove(
-            items[overContainer],
-            activeIndex,
-            overIndex,
-          ),
-        }));
+      if (activeContainer === "talon") {
+        const overContainer = findContainer(overId, { excludeTalon: true });
+        console.log("talon to", { overContainer });
+        if (overContainer) {
+          const overIndex = items[overContainer].indexOf(overId);
+          const newId = activeId + ".";
+          const newExercise = {
+            ...exercises.find((item) => item.id === activeId)!,
+            id: newId,
+          };
+          addExercise(newExercise);
+          setItems((items) => {
+            items[overContainer].splice(overIndex, 1, newId);
+          });
+        }
+      } else {
+        const activeIndex = items[activeContainer].indexOf(activeId);
+        const overIndex = items[overContainer].indexOf(overId);
+        if (activeIndex !== overIndex) {
+          setItems((items) => ({
+            ...items,
+            [overContainer]: arrayMove(
+              items[overContainer],
+              activeIndex,
+              overIndex,
+            ),
+          }));
+        }
       }
       setActiveId(null);
     },
-    [findContainer, items, setItems],
+    [addExercise, exercises, findContainer, items, setItems],
   );
 
   // Function called when a drag operation is cancelled
@@ -293,62 +353,61 @@ const Compose = () => {
   }, [items]);
 
   return (
-    <>
-      <Stack>
-        <DndContext
-          sensors={sensors}
-          collisionDetection={collisionDetectionStrategy}
-          onDragStart={handleDragStart}
-          onDragOver={handleDragOver}
-          onDragEnd={handleDragEnd}
-          onDragCancel={onDragCancel}
-          measuring={{
-            droppable: {
-              strategy: MeasuringStrategy.Always,
-            },
-          }}
-        >
-          <Grid container columns={6} spacing={4}>
-            <Grid item xs={1} />
-            {times(5).map((i) => (
-              <Grid item key={i} xs={1}>
-                <Typography variant="h5" textAlign={"center"}>
-                  {keys(items)[i].split("-")[0]}
-                </Typography>
-              </Grid>
-            ))}
-            {entries(items).map(([key, items], index) => (
-              <>
-                {index % 5 === 0 && (
-                  <Grid xs={1} item key={index}>
-                    <Stack height={"100%"} justifyContent={"center"} pb={4}>
-                      <Typography variant="h5" textAlign={"center"}>
-                        {index === 0 && "Zöld"}
-                        {index === 5 && "Bronz"}
-                        {index === 10 && "Ezüst"}
-                        {index === 15 && "Arany"}
-                      </Typography>
-                    </Stack>
-                  </Grid>
-                )}
-                <Grid
-                  item
-                  key={key}
-                  xs={1}
-                  borderBottom={"1px solid"}
-                  borderColor={"divider"}
-                >
-                  <Container id={key} items={items} />
+    <DndContext
+      sensors={sensors}
+      collisionDetection={collisionDetectionStrategy}
+      onDragStart={handleDragStart}
+      onDragOver={handleDragOver}
+      onDragEnd={handleDragEnd}
+      onDragCancel={onDragCancel}
+      measuring={{
+        droppable: {
+          strategy: MeasuringStrategy.Always,
+        },
+      }}
+    >
+      <Stack direction={"row"}>
+        <Talon items={talon} />
+        {/* <Container id={"talon"} items={talon} /> */}
+        <Grid container columns={6} spacing={4}>
+          <Grid item xs={1} />
+          {times(5).map((i) => (
+            <Grid item key={i} xs={1}>
+              <Typography variant="h5" textAlign={"center"}>
+                {keys(items)[i].split("-")[0]}
+              </Typography>
+            </Grid>
+          ))}
+          {entries(items).map(([key, items], index) => (
+            <Fragment key={key}>
+              {index % 5 === 0 && (
+                <Grid xs={1} item>
+                  <Stack height={"100%"} justifyContent={"center"} pb={4}>
+                    <Typography variant="h5" textAlign={"center"}>
+                      {index === 0 && "Zöld"}
+                      {index === 5 && "Bronz"}
+                      {index === 10 && "Ezüst"}
+                      {index === 15 && "Arany"}
+                    </Typography>
+                  </Stack>
                 </Grid>
-              </>
-            ))}
-          </Grid>
-          <DragOverlay>
-            {activeId ? <Item id={String(activeId)} /> : null}
-          </DragOverlay>
-        </DndContext>
+              )}
+              <Grid
+                item
+                xs={1}
+                borderBottom={"1px solid"}
+                borderColor={"divider"}
+              >
+                <Container id={key} items={items} />
+              </Grid>
+            </Fragment>
+          ))}
+        </Grid>
+        <DragOverlay>
+          {activeId ? <Item id={String(activeId)} /> : null}
+        </DragOverlay>
       </Stack>
-    </>
+    </DndContext>
   );
 };
 

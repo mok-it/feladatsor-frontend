@@ -16,6 +16,7 @@ type TActions = {
   setHoverLocation: (location: string | null) => void
   setHoverIndex: (index: number | null) => void
   setActiveItem: (item: ExerciseCardData | null) => void
+  addExercise: (exercise: ExerciseCardData) => void
 }
 
 
@@ -123,5 +124,10 @@ export const composeStore = create<TState & TActions>()(
           state.activeItem = item
         })
       },
+      addExercise: (exercise) => {
+        set(state => {
+          state.exercises.push(exercise)
+        })
+      }
     }))
 )

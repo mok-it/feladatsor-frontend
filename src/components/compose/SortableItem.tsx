@@ -3,6 +3,7 @@ import { composeStore } from "@/util/composeStore";
 import type { UniqueIdentifier } from "@dnd-kit/core";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
+import { Card, Stack, Typography } from "@mui/material";
 import type { FC } from "react";
 
 export const Item: FC<{
@@ -13,9 +14,31 @@ export const Item: FC<{
   const exercise = exercises.find((exercise) => exercise.id === id);
 
   if (!exercise) {
-    return null;
+    return (
+      <Card
+        sx={{
+          width: 120,
+          height: 70,
+          borderRadius: 1,
+          padding: 1,
+          paddingBottom: 1.5,
+          cursor: "grab",
+          userSelect: "none",
+          backgroundColor: "lightgray",
+          opacity: isDragging ? 0.5 : 1,
+        }}
+      >
+        <Stack gap={2}>
+          <Stack direction={"row"} justifyContent={"space-between"}>
+            <Typography variant="caption">Not found {id}</Typography>
+          </Stack>
+        </Stack>
+      </Card>
+    );
   }
-  return <ExerciseCard exercise={exercise} isDragging={isDragging} />;
+  return (
+    <ExerciseCard id={id} exercise={exercise.data} isDragging={isDragging} />
+  );
 };
 
 const SortableItem: FC<{ id: UniqueIdentifier }> = ({ id }) => {
