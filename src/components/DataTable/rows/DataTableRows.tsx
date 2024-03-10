@@ -7,13 +7,13 @@ import {
 } from "@mui/material";
 import React, { PropsWithChildren, useState } from "react";
 
-import { useDataTable } from "@/components/DataTable";
 import { getKeys } from "../context/getKeys";
 import { GroupByMultipleReturn } from "../context/groupBy";
 import { BaseObject, DataTableProps, RowRenderers } from "../DataTable.types";
 import { DataTableCell } from "./DataTableCell";
 import { FaAngleDown, FaAngleRight } from "react-icons/fa6";
 import { palette, primary } from "@/theme/palette.ts";
+import { useDataTable } from "@/components/DataTable/context/DataTableContext.tsx";
 
 type TableDataRowsProps<T extends BaseObject> = {
   rowKey?: keyof T;
