@@ -9,7 +9,7 @@ import {
   success,
   warning,
   secondary,
-} from "./palette.js";
+} from "./palette";
 
 // ----------------------------------------------------------------------
 
