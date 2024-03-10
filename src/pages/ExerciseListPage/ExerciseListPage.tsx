@@ -1,58 +1,100 @@
-import { ExerciseAgeGroup } from "@/generated/graphql";
+import { ExerciseAgeGroup } from "@/generated/graphql.tsx";
 import {
   Card,
   CardContent,
   CardHeader,
   Checkbox,
   Grid,
-  IconButton,
   InputAdornment,
-  Slider,
   Stack,
   TextField,
 } from "@mui/material";
 import { entries } from "lodash";
 import { useState } from "react";
-import { BiPlus } from "react-icons/bi";
 import { IoSearch } from "react-icons/io5";
-import { useImmer } from "use-immer";
+import { Updater, useImmer } from "use-immer";
 import { MultiSelect } from "@/components/MultiSelect.tsx";
 import { ExerciseList } from "@/components/ExerciseList.tsx";
+import { DifficultySelector } from "@/pages/ExerciseListPage/DifficultySelector.tsx";
+import { SimpleAccordion } from "@/components/SimpleAccordion.tsx";
+
+type DifficultySelect = {
+  [key in ExerciseAgeGroup]: {
+    difficulty: [number, number]; // [min, max]
+    isEnabled: boolean;
+  };
+};
+
+function DifficultySelectorList({
+  difficulties,
+  setDifficulties,
+}: {
+  difficulties: DifficultySelect;
+  setDifficulties: Updater<DifficultySelect>;
+}) {
+  return (
+    <Stack>
+      {entries(difficulties).map(([difficultyName, ageGroup]) => {
+        return (
+          <DifficultySelector
+            key={difficultyName}
+            ageGroup={difficultyName as ExerciseAgeGroup}
+            difficulty={ageGroup.difficulty}
+            setDifficulty={(value) =>
+              setDifficulties((draft) => {
+                draft[difficultyName as ExerciseAgeGroup].difficulty = value;
+              })
+            }
+            isEnabled={ageGroup.isEnabled}
+            setIsEnabled={(isEnabled) =>
+              setDifficulties((draft) => {
+                draft[difficultyName as ExerciseAgeGroup].isEnabled = isEnabled;
+              })
+            }
+          />
+        );
+      })}
+    </Stack>
+  );
+}
 
 export const ExerciseListPage = () => {
   const [searchTerm, setSearchTerm] = useState("");
-  const [difficulties, setDifficulties] = useImmer<{
-    [key in ExerciseAgeGroup]: [number, number];
-  }>({
-    KOALA: [0, 2],
-    MEDVEBOCS: [0, 2],
-    NAGYMEDVE: [0, 2],
-    KISMEDVE: [0, 2],
-    JEGESMEDVE: [0, 2],
+  const [difficulties, setDifficulties] = useImmer<DifficultySelect>({
+    KOALA: {
+      difficulty: [0, 4],
+      isEnabled: false,
+    },
+    MEDVEBOCS: {
+      difficulty: [0, 4],
+      isEnabled: false,
+    },
+    NAGYMEDVE: {
+      difficulty: [0, 4],
+      isEnabled: false,
+    },
+    KISMEDVE: {
+      difficulty: [0, 4],
+      isEnabled: false,
+    },
+    JEGESMEDVE: {
+      difficulty: [0, 4],
+      isEnabled: false,
+    },
   });
   return (
     <Card>
       <CardHeader title="Feladatok keresése" />
       <CardContent>
-        <Grid container>
-          {entries(difficulties).map(([difficultyName, [min, max]]) => {
-            return (
-              <DifficultySelector
-                key={difficultyName}
-                ageGroup={difficultyName}
-                difficulty={[min, max]}
-                setDifficulty={(value) =>
-                  setDifficulties((draft) => {
-                    draft[difficultyName as ExerciseAgeGroup] = value;
-                  })
-                }
-                onNewRowClick={() => {}}
-                isLastRow={true}
+        <Grid container gap={2}>
+          <Grid item xs={12}>
+            <SimpleAccordion summary="Nehétség szűrő">
+              <DifficultySelectorList
+                difficulties={difficulties}
+                setDifficulties={setDifficulties}
               />
-            );
-          })}
-        </Grid>
-        <Grid container>
+            </SimpleAccordion>
+          </Grid>
           <Grid item xs={0.5}>
             <Checkbox />
           </Grid>
@@ -110,48 +152,5 @@ export const ExerciseListPage = () => {
         />
       </CardContent>
     </Card>
-  );
-};
-
-const DifficultySelector = (props: {
-  ageGroup: string;
-  // setAgeGroup: (age: string) => void;
-  difficulty: [number, number];
-  setDifficulty: (difficulty: [number, number]) => void;
-  onNewRowClick: () => void;
-  isLastRow: boolean;
-}) => {
-  return (
-    <>
-      <Grid item xs={1}>
-        <Checkbox></Checkbox>
-      </Grid>
-      <Grid item xs={2}>
-        <Stack justifyContent={"center"} height={"100%"}>
-          {props.ageGroup}
-        </Stack>
-      </Grid>
-      <Grid item xs={8} px={8} pt={1}>
-        <Slider
-          name="Nehézség"
-          value={props.difficulty}
-          onChange={(_, value) =>
-            props.setDifficulty(value as [number, number])
-          }
-          step={1}
-          marks
-          min={0}
-          max={4}
-          valueLabelDisplay="auto"
-        />
-      </Grid>
-      <Grid item xs={1}>
-        {props.isLastRow && (
-          <IconButton color="primary" onClick={() => props.onNewRowClick()}>
-            <BiPlus />
-          </IconButton>
-        )}
-      </Grid>
-    </>
   );
 };
