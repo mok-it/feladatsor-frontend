@@ -8,7 +8,8 @@ import { Leaves } from "@/util/objectLeavesType.ts";
 import { toBase64 } from "@/util/toBase64.ts";
 import { Box, Grid, Stack, TextField, Typography } from "@mui/material";
 import { useFormikContext } from "formik";
-import { FC } from "react";
+import { FC, useState } from "react";
+import { useDebounce } from "react-use";
 import { KaTeX } from "../../components/Katex.tsx";
 import { MultiSelect } from "../../components/MultiSelect.tsx";
 
@@ -25,6 +26,16 @@ const ExerciseFields: FC = () => {
   ) => {
     return setFormikFieldValues(field, values, shouldValidate);
   };
+
+  const [debouncedDescription, setDebouncedDescription] = useState("");
+
+  useDebounce(
+    () => {
+      setDebouncedDescription(values.description);
+    },
+    500,
+    [values.description],
+  );
 
   return (
     <Box>
@@ -47,7 +58,9 @@ const ExerciseFields: FC = () => {
         </Grid>
         <Grid item xs={6}>
           <KaTeX textExpression={"$\\LaTeX{}$ fordítás"} />
-          <KaTeX textExpression={values.description} />
+          <Box mt={1}>
+            <KaTeX textExpression={debouncedDescription} />
+          </Box>
         </Grid>
         <Grid item xs={12}>
           <Section text="Feladat képe">

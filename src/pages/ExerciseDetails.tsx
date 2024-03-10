@@ -23,6 +23,7 @@ import {
   MdArrowDownward,
   MdCheck,
   MdCheckCircle,
+  MdOutlineDelete,
   MdSave,
   MdSend,
 } from "react-icons/md";
@@ -54,11 +55,9 @@ const ExerciseDetails: FC = () => {
               <Typography variant="h6" component="h2">
                 Változtatások mentése
               </Typography>
-              <Typography>
-                <Section text="Komment (opcionális)">
-                  <TextField fullWidth size="small" />
-                </Section>
-              </Typography>
+              <Section text="Komment (opcionális)">
+                <TextField fullWidth size="small" />
+              </Section>
               <Stack direction={"row"} justifyContent={"space-between"}>
                 <Button onClick={toggle}>Mégse</Button>
                 <Button
@@ -84,18 +83,22 @@ const ExerciseDetails: FC = () => {
           Ellenőriztem
         </Button>
       </Stack>
-      <Card>
-        <Grid container p={2} spacing={4}>
-          <Grid item xs={12} lg={7}>
-            <Formik<ExerciseInput>
-              initialValues={createExerciseInitialValue}
-              onSubmit={submit}
-            >
-              <ExerciseFields />
-            </Formik>
-          </Grid>
-          <Grid item xs={12} lg={5}>
-            <Stack gap={2}>
+      <Grid container spacing={2} pb={10}>
+        <Grid item xs={12} lg={7}>
+          <Card>
+            <Box p={2}>
+              <Formik<ExerciseInput>
+                initialValues={createExerciseInitialValue}
+                onSubmit={submit}
+              >
+                <ExerciseFields />
+              </Formik>
+            </Box>
+          </Card>
+        </Grid>
+        <Grid item xs={12} lg={5}>
+          <Card>
+            <Stack p={2} gap={2}>
               <Stack
                 direction={"row"}
                 alignItems={"center"}
@@ -115,6 +118,12 @@ const ExerciseDetails: FC = () => {
                       Kész
                     </Stack>
                   </MenuItem>
+                  <MenuItem value={2}>
+                    <Stack direction={"row"} alignItems={"center"} gap={1}>
+                      <MdOutlineDelete color="red" />
+                      Törölve
+                    </Stack>
+                  </MenuItem>
                 </Select>
               </Stack>
               <Stack direction={"row"} alignItems={"center"} gap={0.5}>
@@ -122,11 +131,20 @@ const ExerciseDetails: FC = () => {
                   Ellenőrzések
                 </Typography>
                 <Check
-                  checked
+                  response={"accepted"}
                   userName="Minta János"
                   timestamp={"2024-02-02"}
                 />
-                <Check />
+                <Check
+                  response={"rejected"}
+                  userName="Minta János"
+                  timestamp={"2024-02-02"}
+                />
+                <Check
+                  response={"problematic"}
+                  userName="Minta János"
+                  timestamp={"2024-02-02"}
+                />
               </Stack>
               <Stack direction={"row"} alignItems={"center"} gap={0.5}>
                 <Typography variant="body1" mr={1}>
@@ -169,9 +187,9 @@ const ExerciseDetails: FC = () => {
                 <History />
               </Stack>
             </Stack>
-          </Grid>
+          </Card>
         </Grid>
-      </Card>
+      </Grid>
     </div>
   );
 };
