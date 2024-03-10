@@ -1,6 +1,15 @@
-import { alpha } from '@mui/material/styles';
+import { alpha } from "@mui/material/styles";
 
-import { grey, info, error, common, primary, success, warning, secondary } from './palette';
+import {
+  grey,
+  info,
+  error,
+  common,
+  primary,
+  success,
+  warning,
+  secondary,
+} from "./palette.js";
 
 // ----------------------------------------------------------------------
 
