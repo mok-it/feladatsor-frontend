@@ -112,7 +112,7 @@ const CreateExerciseForm = () => {
         pt={2}
       >
         <Typography variant="h4" m={2}>
-          Feladat léterhozása
+          Feladat létrehozása
         </Typography>
         <Button
           onClick={() => {
