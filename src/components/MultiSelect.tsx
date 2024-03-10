@@ -5,12 +5,14 @@ import TextField from "@mui/material/TextField";
 type MultiSelectProps = {
   items: string[];
   onChange?: (value: string[]) => void;
+  sx?: object;
 };
 
 export const MultiSelect = (props: MultiSelectProps) => (
   <Autocomplete
     multiple
     size="small"
+    sx={props.sx} //{{ width: "80%" }}
     options={props.items.map((option) => option)}
     renderTags={(value: readonly string[], getTagProps) =>
       value.map((option: string, index: number) => (
