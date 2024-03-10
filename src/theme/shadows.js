@@ -1,6 +1,6 @@
-import { alpha } from '@mui/material/styles';
+import { alpha } from "@mui/material/styles";
 
-import { grey } from './palette';
+import { grey } from "./palette.js";
 
 // ----------------------------------------------------------------------
 
@@ -10,7 +10,7 @@ export function shadows() {
   const transparent3 = alpha(grey[500], 0.12);
 
   return [
-    'none',
+    "none",
     `0px 2px 1px -1px ${transparent1},0px 1px 1px 0px ${transparent2},0px 1px 3px 0px ${transparent3}`,
     `0px 3px 1px -2px ${transparent1},0px 2px 2px 0px ${transparent2},0px 1px 5px 0px ${transparent3}`,
     `0px 3px 3px -2px ${transparent1},0px 3px 4px 0px ${transparent2},0px 1px 8px 0px ${transparent3}`,
