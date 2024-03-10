@@ -1,6 +1,6 @@
 import { alpha } from "@mui/material/styles";
 
-import { grey } from "./palette.js";
+import { grey } from "./palette";
 
 // ----------------------------------------------------------------------
 
