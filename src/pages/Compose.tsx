@@ -32,7 +32,7 @@ import Container from "../components/compose/Container";
 ("../components/compose/SortableItem");
 
 const Compose = () => {
-  const [talon] = useState<UniqueIdentifier[]>(["1", "2", "3"]);
+  const [talon, setTalon] = useImmer<UniqueIdentifier[]>(["1", "2", "3"]);
   const addExercise = composeStore((state) => state.addExercise);
   const exercises = composeStore((state) => state.exercises);
   const [items, setItems] = useImmer<{
@@ -107,6 +107,26 @@ const Compose = () => {
   // Ref to store the state of items before a drag operation begins
   const itemsBeforeDrag = useRef<null | typeof items>(null);
 
+  const insertCopyToTalon = useCallback(
+    (id: UniqueIdentifier) => {
+      console.log("insertCopyToTalon", {
+        id,
+      });
+      const talonIndex = talon.indexOf(id);
+      const exercise = exercises.find((item) => item.id === id)!;
+      const newId = id + ".";
+      const newExercise = {
+        ...exercise,
+        id: newId,
+      };
+      addExercise(newExercise);
+      setTalon((draft) => {
+        draft.splice(talonIndex, 1, newId);
+      });
+    },
+    [addExercise, exercises, setTalon, talon],
+  );
+
   // Function called when a drag operation begins
   const handleDragStart = useCallback(
     ({ active }: DragStartEvent) => {
@@ -180,6 +200,7 @@ const Compose = () => {
             ],
           };
         });
+        insertCopyToTalon(activeId);
       } else if (activeContainer !== overContainer) {
         setItems((items) => {
           const activeItems = items[activeContainer];
@@ -217,7 +238,7 @@ const Compose = () => {
         });
       }
     },
-    [items, findContainer, setItems],
+    [items, findContainer, setItems, insertCopyToTalon],
   );
 
   // Function called when a drag operation ends
@@ -245,15 +266,10 @@ const Compose = () => {
         console.log("talon to", { overContainer });
         if (overContainer) {
           const overIndex = items[overContainer].indexOf(overId);
-          const newId = activeId + ".";
-          const newExercise = {
-            ...exercises.find((item) => item.id === activeId)!,
-            id: newId,
-          };
-          addExercise(newExercise);
           setItems((items) => {
-            items[overContainer].splice(overIndex, 1, newId);
+            items[overContainer].splice(overIndex, 1, activeId);
           });
+          insertCopyToTalon(activeId);
         }
       } else {
         const activeIndex = items[activeContainer].indexOf(activeId);
@@ -271,7 +287,7 @@ const Compose = () => {
       }
       setActiveId(null);
     },
-    [addExercise, exercises, findContainer, items, setItems],
+    [findContainer, insertCopyToTalon, items, setItems],
   );
 
   // Function called when a drag operation is cancelled
@@ -368,7 +384,6 @@ const Compose = () => {
     >
       <Stack direction={"row"}>
         <Talon items={talon} />
-        {/* <Container id={"talon"} items={talon} /> */}
         <Grid container columns={6} spacing={4}>
           <Grid item xs={1} />
           {times(5).map((i) => (
