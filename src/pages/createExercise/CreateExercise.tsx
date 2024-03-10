@@ -23,6 +23,8 @@ import { Formik, useFormikContext } from "formik";
 import { PropsWithChildren, useState } from "react";
 import { KaTeX } from "../../components/Katex.tsx";
 import { MultiSelect } from "../../components/MultiSelect.tsx";
+import {useDebounce} from  'react-use';
+
 
 const Section = (props: PropsWithChildren<{ text: string }>) => {
   return (
@@ -65,11 +67,23 @@ const CreateExerciseForm = () => {
   };
 
   const {
-    values,
     setFieldValue: setFormikFieldValues,
     submitForm,
     setValues,
+    values
   } = useFormikContext<ExerciseInput>();
+  
+  const [debouncedDescription, setDebouncedDescription] = useState('');
+  useDebounce(
+    () => {
+      setDebouncedDescription(values.description);
+    },
+    500,
+    [values.description]
+  );
+
+ 
+  
 
   const [showSuccessDialog, setShowSuccessDialog] = useState(false);
 
@@ -119,7 +133,7 @@ const CreateExerciseForm = () => {
                 <TextField
                   id="outlined-required"
                   value={values.description}
-                  onChange={(event) =>
+                   onChange={(event) =>
                     setFieldValue("description", event.target.value)
                   }
                   minRows={10}
@@ -132,7 +146,9 @@ const CreateExerciseForm = () => {
             </Grid>
             <Grid item xs={6}>
               <KaTeX textExpression={"$\\LaTeX{}$ fordítás"} />
-              <KaTeX textExpression={values.description} />
+              <div>
+              <KaTeX textExpression={debouncedDescription} />
+              </div>
             </Grid>
             <Grid item xs={12}>
               <Section text="Feladat ábrája">
