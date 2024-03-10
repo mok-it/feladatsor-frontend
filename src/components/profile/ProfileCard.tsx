@@ -141,6 +141,8 @@ export default function ProfileCard(props: any) {
             </Stack>
           </Box>
         </Stack>
+        <Divider />
+        <Typography variant="h6">Statisztikák</Typography>
         <Grid container spacing={3}>
           <Grid item lg={3} sm={6} xs={12}>
             <ProfileStatCard

@@ -1,7 +1,7 @@
-import { SxProps } from '@mui/material';
-import React from 'react';
+import { SxProps } from "@mui/material";
+import React from "react";
 
-import { GroupingStrategy } from './context/groupBy';
+import { GroupingStrategy } from "./context/groupBy";
 
 export type BaseObject = Record<PropertyKey, unknown>;
 export type RowRenderers<T extends BaseObject> = {
@@ -17,7 +17,7 @@ export type ComplexColumn<T> = {
   /**
    * Aligns the component in the table cell
    */
-  align?: 'inherit' | 'left' | 'center' | 'right' | 'justify';
+  align?: "inherit" | "left" | "center" | "right" | "justify";
 
   /**
    * If true, the column will be sortable
@@ -72,7 +72,10 @@ export type DataTableDataSource<T extends BaseObject> =
       /**
        * Data to be displayed in the table as a function that generates the data
        */
-      dataGenerator: (rowFrom: number, rowTo: number) => Promise<T[]> | T[] | { error: string };
+      dataGenerator: (
+        rowFrom: number,
+        rowTo: number,
+      ) => Promise<T[]> | T[] | { error: string };
       /**
        * The number of rows to be displayed in the table
        */
@@ -97,6 +100,12 @@ export type DataTableProps<T extends BaseObject> = {
   expandableRowRenderer?: (row: T) => React.ReactNode | null;
 
   /**
+   * A function to be called when a row is clicked
+   * @param row
+   */
+  onRowClick?: (row: T) => void;
+
+  /**
    * Any custom element to be displayed in the table body instead of the dataRows
    */
   customBodyRender?: (dataSource: DataTableDataSource<T>) => React.ReactNode;
@@ -110,7 +119,12 @@ export type DataTableProps<T extends BaseObject> = {
    * The columns to be displayed in the table, based on the keys of the data object
    */
   columns: {
-    [key in keyof T]?: ComplexColumn<T> | React.ReactElement | string | number | boolean;
+    [key in keyof T]?:
+      | ComplexColumn<T>
+      | React.ReactElement
+      | string
+      | number
+      | boolean;
   };
 
   /**
