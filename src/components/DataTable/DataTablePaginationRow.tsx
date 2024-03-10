@@ -29,12 +29,14 @@ const RowsPerPage = (props: PaginationProps) => {
       <Typography
         variant="body1"
         color={props.disabled ? "textDisabled" : undefined}
+        sx={{ fontSize: 16 }}
       >
         {props.itemsPerPageText ?? "Sorok száma oldalanként:"}
       </Typography>
       {props.rowsPerPageOptions.map((option) => (
         <Chip
           key={option}
+          sx={{ fontSize: 16 }}
           variant={rowsPerPage === option ? undefined : "filled"}
           label={option.toString()}
           onClick={() => setRowsPerPage(option)}
@@ -51,16 +53,32 @@ const PaginationButtonGroup = (props: { disabled?: boolean }) => {
   const { nextPage, prevPage, firstPage, lastPage } = useDataTable();
   return (
     <Stack direction="row" alignItems="center" sx={{ color: "primary" }}>
-      <IconButton disabled={props.disabled} data-testid="" onClick={firstPage}>
+      <IconButton
+        disabled={props.disabled}
+        onClick={firstPage}
+        sx={{ fontSize: 16 }}
+      >
         <FaAnglesLeft />
       </IconButton>
-      <IconButton disabled={props.disabled} data-testid="" onClick={prevPage}>
+      <IconButton
+        disabled={props.disabled}
+        onClick={prevPage}
+        sx={{ fontSize: 16 }}
+      >
         <FaAngleLeft />
       </IconButton>
-      <IconButton disabled={props.disabled} data-testid="" onClick={nextPage}>
+      <IconButton
+        disabled={props.disabled}
+        onClick={nextPage}
+        sx={{ fontSize: 16 }}
+      >
         <FaAngleRight />
       </IconButton>
-      <IconButton disabled={props.disabled} data-testid="" onClick={lastPage}>
+      <IconButton
+        disabled={props.disabled}
+        onClick={lastPage}
+        sx={{ fontSize: 16 }}
+      >
         <FaAnglesRight />
       </IconButton>
     </Stack>
@@ -91,11 +109,9 @@ export const DataTablePaginationRow: React.FC<
           rowsPerPageOptions={props.pagination.rowsPerPageOptions}
           itemsPerPageText={props.itemsPerPageText}
         />
-        {loading && (
-          <Skeleton data-testid={""} width={100} height={5} variant="rounded" />
-        )}
+        {loading && <Skeleton width={100} height={5} variant="rounded" />}
         {!loading && (
-          <Typography data-testid="" variant="body1">
+          <Typography variant="body1" sx={{ fontSize: 16 }}>
             {displayRowsFrom + 1}–{Math.min(displayRowsTo, totalDataLength)}{" "}
             a(z) {totalDataLength} sorból
           </Typography>
