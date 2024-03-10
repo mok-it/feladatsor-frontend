@@ -34,6 +34,7 @@ export const DataTable = <T extends BaseObject>(props: DataTableProps<T>) => {
                 rowKey={props.rowKey}
                 stickyFirstColumn={props.stickyFirstColumn}
                 hoverable={props.hoverable}
+                onRowClick={props.onRowClick}
               />
             )}
           </Table>

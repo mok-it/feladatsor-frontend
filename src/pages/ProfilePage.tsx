@@ -8,9 +8,6 @@ export const ProfilePage = () => {
     <ProfileCard
       user={user}
       name={user && user.user ? user.user.name : " - "}
-      dt1={"mainUser.dt1"}
-      dt2={"mainUser.dt2"}
-      dt3={"mainUser.dt3"}
     ></ProfileCard>
   );
 };

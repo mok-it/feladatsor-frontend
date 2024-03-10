@@ -4,6 +4,7 @@ import { RxCross2 } from "react-icons/rx";
 import { CategoryDifficulties } from "@/components/CategoryDifficulties.tsx";
 import { DataTable } from "@/components/DataTable/DataTable.tsx";
 import { ExerciseAgeGroup } from "@/generated/graphql.tsx";
+import { useNavigate } from "react-router-dom";
 
 type ExerciseItem = {
   fakeId: string;
@@ -14,6 +15,12 @@ type ExerciseItem = {
   tags: string[];
 };
 export const ExerciseList = (props: { data: ExerciseItem[] }) => {
+  let navigate = useNavigate();
+  const routeChange = (id: string) => {
+    let path = `/exercise/${id}`;
+    navigate(path);
+  };
+
   return (
     <DataTable<ExerciseItem>
       columns={{
@@ -55,6 +62,7 @@ export const ExerciseList = (props: { data: ExerciseItem[] }) => {
         defaultRowsPerPage: 5,
         rowsPerPageOptions: [5, 10, 15],
       }}
+      onRowClick={(row) => routeChange(row.fakeId)}
       rowRenderers={{
         //fakeId: (value) => <Chip label={value} />,
         tags: (tags: string[]) => (
