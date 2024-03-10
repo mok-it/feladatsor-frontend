@@ -19,3 +19,9 @@ export type ExerciseCardData = {
   id: string;
   data: Exercise & { fakeId: string };
 };
+
+export type ExercisePlacements = {
+  [key in string]: {
+    [key in ExerciseAgeGroup]: number;
+  }
+}

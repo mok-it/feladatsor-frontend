@@ -1,4 +1,5 @@
-import { Exercise } from "@/generated/graphql";
+import { Exercise, ExerciseAgeGroup } from "@/generated/graphql";
+import { exercisePlacementsAtom } from "@/util/atoms";
 import { ExerciseView, composeStore } from "@/util/composeStore";
 import { ageGroups } from "@/util/types";
 import { UniqueIdentifier } from "@dnd-kit/core";
@@ -13,10 +14,12 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
+import { useAtomValue } from "jotai";
 import { entries } from "lodash";
-import { FC } from "react";
+import { FC, useContext, useMemo } from "react";
 import { MdEdit, MdStar } from "react-icons/md";
 import FakeId from "../FakeId";
+import { ContainerContext } from "./Container";
 
 const ExerciseCard: FC<{
   id: UniqueIdentifier;
@@ -24,42 +27,64 @@ const ExerciseCard: FC<{
   isDragging?: boolean;
   exercise: Exercise & { fakeId: string };
 }> = ({ exercise, isTalon, isDragging }) => {
+  const containerId = useContext(ContainerContext);
   const highlightedFakeId = composeStore((state) => state.highlightedFakeId);
   const view = composeStore((state) => state.view);
   const exerciseView = composeStore((state) => state.exerciseView);
+  const placements = useAtomValue(exercisePlacementsAtom);
   const isSingleView = view !== "all";
   const isDetailedView = exerciseView === ExerciseView.LIST;
   const tags = ["Geometria"];
+  const ageGroup = containerId?.split("-")[0];
+  const countInGroup =
+    placements[exercise.fakeId]?.[ageGroup as ExerciseAgeGroup];
+  const isAgeGroupBad = useMemo(
+    () =>
+      (!isTalon &&
+        exercise.difficulty.find((d) => d.ageGroup === ageGroup)?.difficulty ===
+          0) ||
+      countInGroup > 1,
+    [ageGroup, exercise.difficulty, isTalon, countInGroup],
+  );
 
-  const difficulties = (
+  const difficultiesElem = (
     <Stack
       direction="row"
       justifyContent={"space-evenly"}
       divider={<Divider orientation="vertical" flexItem />}
     >
-      {entries(ageGroups).map(([key], index) => (
-        <Stack
-          key={key}
-          bgcolor={!isTalon && index > 2 ? "red" : "none"}
-          width={20}
-          height={20}
-          alignItems={"center"}
-          justifyContent={"center"}
-          borderRadius={50}
-        >
-          <Typography
-            key={key}
-            variant="caption"
-            sx={{
-              color: !isTalon && index > 2 ? "white" : "black",
-              fontWeight: !isTalon && index === 1 ? "600" : "400",
-              opacity: isTalon && index === 1 ? "1" : "0.8",
-            }}
+      {entries(ageGroups).map(([group]) => {
+        const value = exercise.difficulty.find(
+          (d) => d.ageGroup === group,
+        )?.difficulty;
+        const isMissing =
+          !isTalon &&
+          placements[exercise.fakeId]?.[group as ExerciseAgeGroup] === 0 &&
+          value;
+
+        return (
+          <Stack
+            key={group}
+            bgcolor={isMissing ? "red" : "none"}
+            width={20}
+            height={20}
+            alignItems={"center"}
+            justifyContent={"center"}
+            borderRadius={50}
           >
-            {exercise.difficulty.find((d) => d.ageGroup === key)?.difficulty}
-          </Typography>
-        </Stack>
-      ))}
+            <Typography
+              variant="caption"
+              sx={{
+                color: isMissing ? "white" : "black",
+                fontWeight: isMissing ? "600" : "400",
+                opacity: value ? 1 : 0.2,
+              }}
+            >
+              {value}
+            </Typography>
+          </Stack>
+        );
+      })}
     </Stack>
   );
 
@@ -76,6 +101,7 @@ const ExerciseCard: FC<{
           backgroundColor:
             highlightedFakeId === exercise.fakeId ? "lightblue" : "white",
           opacity: isDragging ? 0.5 : 1,
+          border: isAgeGroupBad ? "1px solid red" : "none",
         }}
         // onMouseEnter={() => {
         //   setHighlightedFakeId(exercise.fakeId);
@@ -103,7 +129,7 @@ const ExerciseCard: FC<{
               tags.map((tag) => <Chip key={tag} size="small" label={tag} />)}
             {/* <Typography variant="caption">{id}</Typography> */}
             <Box flexGrow={1} />
-            {isSingleView && difficulties}{" "}
+            {isSingleView && difficultiesElem}
             {isSingleView && (
               <IconButton size="small">
                 <MdEdit />
@@ -176,7 +202,7 @@ const ExerciseCard: FC<{
               )}
             </>
           )}
-          {!isSingleView && difficulties}
+          {!isSingleView && difficultiesElem}
         </Stack>
       </Card>
     </Tooltip>
