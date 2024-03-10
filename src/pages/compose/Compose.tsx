@@ -24,17 +24,19 @@ import { Fragment, useCallback, useEffect, useRef, useState } from "react";
 
 import { Item } from "@/components/compose/SortableItem";
 import Talon from "@/components/compose/Talon";
-import { composeStore } from "@/util/composeStore";
-import { Grid, Stack, Typography } from "@mui/material";
+import { ExerciseView, composeStore } from "@/util/composeStore";
+import { Box, Grid, Stack, Typography } from "@mui/material";
 import { entries, keys, times } from "lodash";
 import { useImmer } from "use-immer";
-import Container from "../components/compose/Container";
+import Container from "../../components/compose/Container";
 ("../components/compose/SortableItem");
 
 const Compose = () => {
-  const [talon] = useState<UniqueIdentifier[]>(["1", "2", "3"]);
+  const [talon, setTalon] = useImmer<UniqueIdentifier[]>(["1", "2", "3"]);
   const addExercise = composeStore((state) => state.addExercise);
   const exercises = composeStore((state) => state.exercises);
+  const view = composeStore((state) => state.view);
+  const exerciseView = composeStore((state) => state.exerciseView);
   const [items, setItems] = useImmer<{
     [key in string]: UniqueIdentifier[];
   }>({
@@ -106,6 +108,26 @@ const Compose = () => {
 
   // Ref to store the state of items before a drag operation begins
   const itemsBeforeDrag = useRef<null | typeof items>(null);
+
+  const insertCopyToTalon = useCallback(
+    (id: UniqueIdentifier) => {
+      console.log("insertCopyToTalon", {
+        id,
+      });
+      const talonIndex = talon.indexOf(id);
+      const exercise = exercises.find((item) => item.id === id)!;
+      const newId = id + ".";
+      const newExercise = {
+        ...exercise,
+        id: newId,
+      };
+      addExercise(newExercise);
+      setTalon((draft) => {
+        draft.splice(talonIndex, 1, newId);
+      });
+    },
+    [addExercise, exercises, setTalon, talon],
+  );
 
   // Function called when a drag operation begins
   const handleDragStart = useCallback(
@@ -180,6 +202,7 @@ const Compose = () => {
             ],
           };
         });
+        insertCopyToTalon(activeId);
       } else if (activeContainer !== overContainer) {
         setItems((items) => {
           const activeItems = items[activeContainer];
@@ -217,7 +240,7 @@ const Compose = () => {
         });
       }
     },
-    [items, findContainer, setItems],
+    [items, findContainer, setItems, insertCopyToTalon],
   );
 
   // Function called when a drag operation ends
@@ -245,15 +268,10 @@ const Compose = () => {
         console.log("talon to", { overContainer });
         if (overContainer) {
           const overIndex = items[overContainer].indexOf(overId);
-          const newId = activeId + ".";
-          const newExercise = {
-            ...exercises.find((item) => item.id === activeId)!,
-            id: newId,
-          };
-          addExercise(newExercise);
           setItems((items) => {
-            items[overContainer].splice(overIndex, 1, newId);
+            items[overContainer].splice(overIndex, 1, activeId);
           });
+          insertCopyToTalon(activeId);
         }
       } else {
         const activeIndex = items[activeContainer].indexOf(activeId);
@@ -271,7 +289,7 @@ const Compose = () => {
       }
       setActiveId(null);
     },
-    [addExercise, exercises, findContainer, items, setItems],
+    [findContainer, insertCopyToTalon, items, setItems],
   );
 
   // Function called when a drag operation is cancelled
@@ -366,45 +384,56 @@ const Compose = () => {
         },
       }}
     >
-      <Stack direction={"row"}>
-        <Talon items={talon} />
-        {/* <Container id={"talon"} items={talon} /> */}
+      <Stack direction={"row"} gap={2} p={2}>
         <Grid container columns={6} spacing={4}>
-          <Grid item xs={1} />
-          {times(5).map((i) => (
-            <Grid item key={i} xs={1}>
-              <Typography variant="h5" textAlign={"center"}>
-                {keys(items)[i].split("-")[0]}
-              </Typography>
-            </Grid>
-          ))}
-          {entries(items).map(([key, items], index) => (
-            <Fragment key={key}>
-              {index % 5 === 0 && (
-                <Grid xs={1} item>
-                  <Stack height={"100%"} justifyContent={"center"} pb={4}>
-                    <Typography variant="h5" textAlign={"center"}>
-                      {index === 0 && "Zöld"}
-                      {index === 5 && "Bronz"}
-                      {index === 10 && "Ezüst"}
-                      {index === 15 && "Arany"}
-                    </Typography>
-                  </Stack>
+          {view === "all" && (
+            <>
+              <Grid item xs={1} />
+              {times(5).map((i) => (
+                <Grid item key={i} xs={1}>
+                  <Typography variant="body1" textAlign={"center"}>
+                    {keys(items)[i].split("-")[0]}
+                  </Typography>
                 </Grid>
-              )}
-              <Grid
-                item
-                xs={1}
-                borderBottom={"1px solid"}
-                borderColor={"divider"}
-              >
-                <Container id={key} items={items} />
-              </Grid>
-            </Fragment>
-          ))}
+              ))}
+            </>
+          )}
+          {entries(items).map(([key, items], index) => {
+            return (
+              <Fragment key={key}>
+                {index % 5 === 0 && (
+                  <Grid xs={1} item>
+                    <Stack height={"100%"} justifyContent={"center"} pb={4}>
+                      <Typography variant="body1" textAlign={"center"}>
+                        {index === 0 && "Zöld"}
+                        {index === 5 && "Bronz"}
+                        {index === 10 && "Ezüst"}
+                        {index === 15 && "Arany"}
+                      </Typography>
+                    </Stack>
+                  </Grid>
+                )}
+                {(view === "all" || key.split("-")[0] === view) && (
+                  <Grid
+                    item
+                    xs={view === "all" ? 1 : 5}
+                    borderBottom={"1px solid"}
+                    borderColor={"divider"}
+                  >
+                    <Container id={key} items={items} />
+                  </Grid>
+                )}
+              </Fragment>
+            );
+          })}
         </Grid>
+        {exerciseView !== ExerciseView.LIST && (
+          <Box maxWidth={"40%"}>
+            <Talon items={talon} />
+          </Box>
+        )}
         <DragOverlay>
-          {activeId ? <Item id={String(activeId)} /> : null}
+          {activeId ? <Item id={String(activeId)} isDragging /> : null}
         </DragOverlay>
       </Stack>
     </DndContext>

@@ -54,6 +54,7 @@ const SortableItem: FC<{ id: UniqueIdentifier }> = ({ id }) => {
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
+    alignSelf: "stretch",
   };
 
   return (
