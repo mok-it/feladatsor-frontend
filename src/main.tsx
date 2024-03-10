@@ -59,6 +59,8 @@ const AppWithApollo = () => {
     });
   }, [token]);
 
+  console.log("Graphql endpoint:", import.meta.env.VITE_APP_GRAPHQL_ENDPOINT);
+
   return (
     <ApolloProvider client={client}>
       <App />
