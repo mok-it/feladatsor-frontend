@@ -42,6 +42,7 @@
     "react-latex": "^2.0.0",
     "react-router-dom": "^6.22.0",
     "react-use": "^17.5.0",
+    "tinycolor2": "^1.6.0",
     "use-immer": "^0.9.0",
     "vite-tsconfig-paths": "^4.3.1",
     "zustand": "^4.5.1"
@@ -53,6 +54,7 @@
     "@types/react": "^18.2.55",
     "@types/react-dom": "^18.2.19",
     "@types/react-latex": "^2.0.3",
+    "@types/tinycolor2": "^1.4.6",
     "@typescript-eslint/eslint-plugin": "^6.21.0",
     "@typescript-eslint/parser": "^6.21.0",
     "@vitejs/plugin-react": "^4.2.1",
