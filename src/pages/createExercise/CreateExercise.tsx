@@ -58,7 +58,7 @@ const CreateExerciseForm = () => {
         pr={2}
         pt={2}
       >
-        <Typography variant="h4" m={2}>
+        <Typography variant="h2" m={2}>
           Feladat létrehozása
         </Typography>
         <Button
