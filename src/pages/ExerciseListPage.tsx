@@ -16,21 +16,8 @@ import { useState } from "react";
 import { BiPlus } from "react-icons/bi";
 import { IoSearch } from "react-icons/io5";
 import { useImmer } from "use-immer";
-import { DataTable } from "@/components/DataTable/DataTable.tsx";
-import Chip from "@mui/material/Chip";
-import { FaCheck } from "react-icons/fa";
-import { RxCross2 } from "react-icons/rx";
 import { MultiSelect } from "@/components/MultiSelect.tsx";
-import { CategoryDifficulties } from "@/components/CategoryDifficulties.tsx";
-
-type ExerciseItem = {
-  fakeId: string;
-  categoryDifficulties: { [key in ExerciseAgeGroup]: number };
-  description: string;
-  hasPicture: boolean;
-  state: string;
-  tags: string[];
-};
+import { ExerciseList } from "@/components/ExerciseList.tsx";
 
 export const ExerciseListPage = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -101,76 +88,24 @@ export const ExerciseListPage = () => {
           }}
           size="small"
         />
-        <DataTable<ExerciseItem>
-          columns={{
-            fakeId: {
-              element: "fakeID",
-              sortable: true,
-              sx: { width: "5%" },
-            },
-            categoryDifficulties: {
-              element: "Kategóriák",
-              sortable: true,
-              sx: { width: "5%" },
-            },
-            state: {
-              element: "Állapot",
-              sortable: true,
-              sx: { width: "5%" },
-            },
-            tags: {
-              element: "Címkék",
-              sx: { width: "5%" },
-            },
-            hasPicture: {
-              element: "Van ábra",
-              sx: { width: "1%" },
-            },
-            description: {
-              element: "Leírás",
-              sortable: true,
-              sx: { width: "50%" },
-            },
-          }}
-          dataSource={{
-            data: [
-              {
-                fakeId: "ab-012",
-                categoryDifficulties: {
-                  JEGESMEDVE: 1,
-                  KISMEDVE: 2,
-                  MEDVEBOCS: 3,
-                  NAGYMEDVE: 4,
-                  KOALA: 2,
-                },
-                hasPicture: false,
-                description:
-                  "Ez egy példa feladat kacsa kacsakacsakacsakacsakacsakacsa ",
-                state: "Checked",
-                tags: ["Kombinatorika", "Permutáció"],
+        <ExerciseList
+          data={[
+            {
+              fakeId: "ab-012",
+              categoryDifficulties: {
+                JEGESMEDVE: 1,
+                KISMEDVE: 2,
+                MEDVEBOCS: 3,
+                NAGYMEDVE: 4,
+                KOALA: 2,
               },
-            ],
-          }}
-          hoverable
-          maxHeight="400px"
-          pagination={{
-            defaultRowsPerPage: 5,
-            rowsPerPageOptions: [5, 10, 15],
-          }}
-          rowRenderers={{
-            //fakeId: (value) => <Chip label={value} />,
-            tags: (tags: string[]) => (
-              <>
-                {tags.map((tag, index) => (
-                  <Chip key={index} label={tag} />
-                ))}
-              </>
-            ),
-            hasPicture: (value) => (value ? <FaCheck /> : <RxCross2 />),
-            categoryDifficulties: (value) => (
-              <CategoryDifficulties value={value} />
-            ),
-          }}
+              hasPicture: false,
+              description:
+                "Ez egy példa feladat kacsa kacsakacsakacsakacsakacsakacsa ",
+              state: "Checked",
+              tags: ["Kombinatorika", "Permutáció"],
+            },
+          ]}
         />
       </CardContent>
     </Card>
