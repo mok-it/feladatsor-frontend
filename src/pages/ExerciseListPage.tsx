@@ -11,6 +11,7 @@ import {
   Slider,
   Stack,
   TextField,
+  Typography,
 } from "@mui/material";
 import { entries } from "lodash";
 import { useState } from "react";
@@ -30,39 +31,55 @@ export const ExerciseListPage = () => {
     JEGESMEDVE: [0, 2],
   });
   return (
-    <Card>
-      <CardHeader title="Feladatok keresése" />
-      <CardContent>
-        <Grid container>
-          {entries(difficulties).map(([difficultyName, [min, max]]) => {
-            return (
-              <DifficultySelector
-                key={difficultyName}
-                ageGroup={difficultyName}
-                difficulty={[min, max]}
-                setDifficulty={(value) =>
-                  setDifficulties((draft) => {
-                    draft[difficultyName as ExerciseAgeGroup] = value;
-                  })
-                }
-                onNewRowClick={() => {}}
-                isLastRow={true}
-              />
-            );
-          })}
-        </Grid>
-        <Grid container>
-          <Grid item xs={0.5}>
-            <Checkbox />
+    <>
+      <Typography variant={"h2"} mb={2}>
+        Feladatok keresése
+      </Typography>
+      <Card>
+        <CardContent>
+          <Grid container>
+            {entries(difficulties).map(([difficultyName, [min, max]]) => {
+              return (
+                <DifficultySelector
+                  key={difficultyName}
+                  ageGroup={difficultyName}
+                  difficulty={[min, max]}
+                  setDifficulty={(value) =>
+                    setDifficulties((draft) => {
+                      draft[difficultyName as ExerciseAgeGroup] = value;
+                    })
+                  }
+                  onNewRowClick={() => {}}
+                  isLastRow={true}
+                />
+              );
+            })}
           </Grid>
           <Grid container>
             <Grid item xs={0.5}>
               <Checkbox />
             </Grid>
-            <Grid item xs={0.5}>
-              <Stack justifyContent={"center"} height={"100%"}>
-                Döntő
-              </Stack>
+            <Grid container>
+              <Grid item xs={0.5}>
+                <Checkbox />
+              </Grid>
+              <Grid item xs={0.5}>
+                <Stack justifyContent={"center"} height={"100%"}>
+                  Döntő
+                </Stack>
+              </Grid>
+              <Grid item xs={1} />
+              <Grid item xs={0.5}>
+                <Checkbox />
+              </Grid>
+              <Grid item xs={0.5}>
+                <Stack justifyContent={"center"} height={"100%"}>
+                  Talon
+                </Stack>
+              </Grid>
+              <Grid item xs={4}>
+                <MultiSelect items={["Gellért hegy", "Városliget"]} />
+              </Grid>
             </Grid>
             <Grid item xs={1} />
             <Grid item xs={0.5}>
@@ -77,55 +94,43 @@ export const ExerciseListPage = () => {
               <MultiSelect items={["Gellért hegy", "Városliget"]} />
             </Grid>
           </Grid>
-          <Grid item xs={1} />
-          <Grid item xs={0.5}>
-            <Checkbox />
-          </Grid>
-          <Grid item xs={0.5}>
-            <Stack justifyContent={"center"} height={"100%"}>
-              Talon
-            </Stack>
-          </Grid>
-          <Grid item xs={4}>
-            <MultiSelect items={["Gellért hegy", "Városliget"]} />
-          </Grid>
-        </Grid>
-      </CardContent>
-      <CardContent>
-        <TextField
-          onChange={(event) => setSearchTerm(event.target.value)}
-          label="Keresés"
-          value={searchTerm}
-          InputProps={{
-            startAdornment: (
-              <InputAdornment position="start">
-                <IoSearch />
-              </InputAdornment>
-            ),
-          }}
-          size="small"
-        />
-        <ExerciseList
-          data={[
-            {
-              fakeId: "ab-012",
-              categoryDifficulties: {
-                JEGESMEDVE: 1,
-                KISMEDVE: 2,
-                MEDVEBOCS: 3,
-                NAGYMEDVE: 4,
-                KOALA: 2,
+        </CardContent>
+        <CardContent>
+          <TextField
+            onChange={(event) => setSearchTerm(event.target.value)}
+            label="Keresés"
+            value={searchTerm}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <IoSearch />
+                </InputAdornment>
+              ),
+            }}
+            size="small"
+          />
+          <ExerciseList
+            data={[
+              {
+                fakeId: "ab-012",
+                categoryDifficulties: {
+                  JEGESMEDVE: 1,
+                  KISMEDVE: 2,
+                  MEDVEBOCS: 3,
+                  NAGYMEDVE: 4,
+                  KOALA: 2,
+                },
+                hasPicture: false,
+                description:
+                  "Ez egy példa feladat kacsa kacsakacsakacsakacsakacsakacsa ",
+                state: "Checked",
+                tags: ["Kombinatorika", "Permutáció"],
               },
-              hasPicture: false,
-              description:
-                "Ez egy példa feladat kacsa kacsakacsakacsakacsakacsakacsa ",
-              state: "Checked",
-              tags: ["Kombinatorika", "Permutáció"],
-            },
-          ]}
-        />
-      </CardContent>
-    </Card>
+            ]}
+          />
+        </CardContent>
+      </Card>
+    </>
   );
 };
 
