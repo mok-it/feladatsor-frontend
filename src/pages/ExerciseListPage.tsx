@@ -25,7 +25,7 @@ import { CategoryDifficulties } from "@/components/CategoryDifficulties.tsx";
 
 type ExerciseItem = {
   fakeId: string;
-  categoryDifficulties: number[];
+  categoryDifficulties: { [key in ExerciseAgeGroup]: number };
   description: string;
   hasPicture: boolean;
   state: string;
@@ -136,7 +136,13 @@ export const ExerciseListPage = () => {
             data: [
               {
                 fakeId: "ab-012",
-                categoryDifficulties: [0, 1, 3, 3, 4],
+                categoryDifficulties: {
+                  JEGESMEDVE: 1,
+                  KISMEDVE: 2,
+                  MEDVEBOCS: 3,
+                  NAGYMEDVE: 4,
+                  KOALA: 2,
+                },
                 hasPicture: false,
                 description:
                   "Ez egy példa feladat kacsa kacsakacsakacsakacsakacsakacsa ",

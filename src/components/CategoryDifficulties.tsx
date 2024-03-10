@@ -1,29 +1,19 @@
 import Chip from "@mui/material/Chip";
 import { categoryColors } from "@/theme/palette.ts";
-
-const getCategoryColor = (index: number): string => {
-  let getCategoryColors = [
-    categoryColors.KOALA,
-    categoryColors.MEDVEBOCS,
-    categoryColors.NAGYMEDVE,
-    categoryColors.KISMEDVE,
-    categoryColors.JEGESMEDVE,
-  ];
-  return getCategoryColors[index];
-};
+import { ExerciseAgeGroup } from "@/generated/graphql.tsx";
 
 type ValueProps = {
-  value: number[];
+  value: { [key in ExerciseAgeGroup]: number };
 };
 export const CategoryDifficulties = (props: ValueProps) => {
   return (
     <>
-      {props.value.map((tag, index) => (
+      {(Object.keys(props.value) as ExerciseAgeGroup[]).map((key) => (
         <Chip
-          key={index}
-          label={tag}
+          key={key}
+          label={props.value[key]}
           sx={{
-            backgroundColor: getCategoryColor(index),
+            backgroundColor: categoryColors[key],
             fontWeight: 700,
           }}
         />
