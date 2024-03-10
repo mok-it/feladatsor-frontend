@@ -33,7 +33,9 @@ export const CreateExercise = () => {
 
 const CreateExerciseForm = () => {
   const [showSuccessDialog, setShowSuccessDialog] = useState(false);
-  const { setValues, submitForm } = useFormikContext<ExerciseInput>();
+
+  const { submitForm, setValues } = useFormikContext<ExerciseInput>();
+
   const clearForm = useCallback(() => {
     setShowSuccessDialog(false);
     setValues(createExerciseInitialValue);
