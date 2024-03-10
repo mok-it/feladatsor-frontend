@@ -27,7 +27,8 @@ const styles = {
 
 //APP
 export default function ProfileCard(props: any) {
-  const [sort, setSort] = useState<"asc" | "desc">("asc");
+  const [historySort, setHistorySort] = useState<"asc" | "desc">("asc");
+  const [commentSort, setCommentSort] = useState<"asc" | "desc">("asc");
   return (
     <Card variant="outlined">
       <Grid
@@ -97,12 +98,12 @@ export default function ProfileCard(props: any) {
               <motion.div
                 animate={{
                   transform:
-                    sort === "asc" ? "rotate(0deg)" : "rotate(-180deg)",
+                    historySort === "asc" ? "rotate(0deg)" : "rotate(-180deg)",
                 }}
               >
                 <IconButton
                   onClick={() =>
-                    setSort((prev) => (prev === "asc" ? "desc" : "asc"))
+                    setHistorySort((prev) => (prev === "asc" ? "desc" : "asc"))
                   }
                 >
                   <MdArrowDownward />
@@ -123,12 +124,12 @@ export default function ProfileCard(props: any) {
               <motion.div
                 animate={{
                   transform:
-                    sort === "asc" ? "rotate(0deg)" : "rotate(-180deg)",
+                    commentSort === "asc" ? "rotate(0deg)" : "rotate(-180deg)",
                 }}
               >
                 <IconButton
                   onClick={() =>
-                    setSort((prev) => (prev === "asc" ? "desc" : "asc"))
+                    setCommentSort((prev) => (prev === "asc" ? "desc" : "asc"))
                   }
                 >
                   <MdArrowDownward />
