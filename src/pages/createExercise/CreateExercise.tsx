@@ -1,39 +1,13 @@
-import { CategoryDifficultySelect } from "@/components/CategoryDifficultySelect.tsx";
 import { AlertDialog } from "@/components/Dialog.tsx";
-import { HelpingQuestions } from "@/components/HelpingQuestions/HelpingQuestions.tsx";
-import { SimpleAccordion } from "@/components/SimpleAccordion.tsx";
-import { UploadWithPreview } from "@/components/UploadWithPreview.tsx";
 import {
   ExerciseInput,
   useCreateExerciseMutation,
 } from "@/generated/graphql.tsx";
 import { createExerciseInitialValue } from "@/pages/createExercise/createExerciseInitialValue.ts";
-import { Leaves } from "@/util/objectLeavesType.ts";
-import { toBase64 } from "@/util/toBase64.ts";
-import {
-  Box,
-  Button,
-  Card,
-  Grid,
-  Stack,
-  TextField,
-  Typography,
-} from "@mui/material";
+import { Box, Button, Card, Stack, Typography } from "@mui/material";
 import { Formik, useFormikContext } from "formik";
-import { PropsWithChildren, useState } from "react";
-import { KaTeX } from "../../components/Katex.tsx";
-import { MultiSelect } from "../../components/MultiSelect.tsx";
-import {useDebounce} from  'react-use';
-
-
-const Section = (props: PropsWithChildren<{ text: string }>) => {
-  return (
-    <Stack gap={1}>
-      <Typography>{props.text}</Typography>
-      {props.children}
-    </Stack>
-  );
-};
+import { useCallback, useState } from "react";
+import ExerciseFields from "./ExerciseFields.tsx";
 
 export const CreateExercise = () => {
   const [createExercise] = useCreateExerciseMutation();
@@ -44,7 +18,6 @@ export const CreateExercise = () => {
         input: values,
       },
     });
-
     console.log(createResult);
   };
 
@@ -58,42 +31,16 @@ export const CreateExercise = () => {
   );
 };
 
-const tags = ["Geometria", "Algebra"];
-
 const CreateExerciseForm = () => {
-  const clearForm = () => {
-    setShowSuccessDialog(false);
-    setValues(createExerciseInitialValue);
-  };
-
-  const {
-    setFieldValue: setFormikFieldValues,
-    submitForm,
-    setValues,
-    values
-  } = useFormikContext<ExerciseInput>();
-  
-  const [debouncedDescription, setDebouncedDescription] = useState('');
-  useDebounce(
-    () => {
-      setDebouncedDescription(values.description);
-    },
-    500,
-    [values.description]
-  );
-
- 
-  
-
   const [showSuccessDialog, setShowSuccessDialog] = useState(false);
 
-  const setFieldValue = <T extends Leaves<ExerciseInput>>(
-    field: T,
-    values: ExerciseInput[T],
-    shouldValidate?: boolean,
-  ) => {
-    return setFormikFieldValues(field, values, shouldValidate);
-  };
+  const { submitForm, setValues } = useFormikContext<ExerciseInput>();
+
+  const clearForm = useCallback(() => {
+    setShowSuccessDialog(false);
+    setValues(createExerciseInitialValue);
+  }, [setValues]);
+
   return (
     <Box pb={16}>
       <AlertDialog
@@ -112,7 +59,7 @@ const CreateExerciseForm = () => {
         pt={2}
       >
         <Typography variant="h4" m={2}>
-          Feladat léterhozása
+          Feladat létrehozása
         </Typography>
         <Button
           onClick={() => {
