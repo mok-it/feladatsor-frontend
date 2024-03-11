@@ -1,4 +1,4 @@
-import { Checkbox, Grid, Slider, Stack } from "@mui/material";
+import { Grid, Slider, Stack, Switch } from "@mui/material";
 import { ExerciseAgeGroup } from "@/generated/graphql.tsx";
 import { ageGroupHumanize } from "@/util/ageGroupHumanize.ts";
 
@@ -12,7 +12,7 @@ export const DifficultySelector = (props: {
   return (
     <Grid container>
       <Grid item xs={1}>
-        <Checkbox
+        <Switch
           checked={props.isEnabled}
           onChange={(_, checked) => {
             props.setIsEnabled(checked);

@@ -26,6 +26,7 @@ const Login: FC = () => {
     await signInWithPopup(auth, authProvider)
       .then(async (googleAuthResult) => {
         const googleToken = await googleAuthResult.user.getIdToken();
+        console.log("Google token:", googleToken);
         const ownLoginResponse = await ownLogin({
           variables: {
             googleToken: googleToken,
@@ -40,6 +41,10 @@ const Login: FC = () => {
             user: ownLoginResponse.data.loginWithGoogle.user,
           });
           setToken(ownLoginResponse.data.loginWithGoogle.token);
+          console.log(
+            "User token:",
+            ownLoginResponse.data.loginWithGoogle.token,
+          );
         }
       })
       .catch((error: AuthError) => {

@@ -4,16 +4,21 @@ import { RxCross2 } from "react-icons/rx";
 import { CategoryDifficulties } from "@/components/CategoryDifficulties.tsx";
 import { DataTable } from "@/components/DataTable/DataTable.tsx";
 import { ExerciseAgeGroup } from "@/generated/graphql.tsx";
+import { DataGenerator } from "@/components/DataTable/DataTable.types.ts";
 
-type ExerciseItem = {
+export type ExerciseItem = {
   fakeId: string;
   categoryDifficulties: { [key in ExerciseAgeGroup]: number };
-  description: string;
-  hasPicture: boolean;
   state: string;
   tags: string[];
+  hasPicture: boolean;
+  description: string;
 };
-export const ExerciseList = (props: { data: ExerciseItem[] }) => {
+
+export const ExerciseList = (props: {
+  dataGenerator: DataGenerator<ExerciseItem>;
+  totalRows: number;
+}) => {
   return (
     <DataTable<ExerciseItem>
       columns={{
@@ -47,7 +52,8 @@ export const ExerciseList = (props: { data: ExerciseItem[] }) => {
         },
       }}
       dataSource={{
-        data: props.data,
+        dataGenerator: props.dataGenerator,
+        totalRows: props.totalRows,
       }}
       hoverable
       maxHeight="400px"
@@ -56,7 +62,7 @@ export const ExerciseList = (props: { data: ExerciseItem[] }) => {
         rowsPerPageOptions: [5, 10, 15],
       }}
       rowRenderers={{
-        //fakeId: (value) => <Chip label={value} />,
+        fakeId: (value) => <Chip label={value} />,
         tags: (tags: string[]) => (
           <>
             {tags.map((tag, index) => (
