@@ -102,6 +102,12 @@ export type DataTableProps<T extends BaseObject> = {
   expandableRowRenderer?: (row: T) => React.ReactNode | null;
 
   /**
+   * A function to be called when a row is clicked
+   * @param row
+   */
+  onRowClick?: (row: T) => void;
+
+  /**
    * Any custom element to be displayed in the table body instead of the dataRows
    */
   customBodyRender?: (dataSource: DataTableDataSource<T>) => React.ReactNode;

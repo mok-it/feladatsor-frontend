@@ -24,6 +24,7 @@ type TableDataRowsProps<T extends BaseObject> = {
   groupDisplayNames?: Record<string, string>;
   stickyFirstColumn?: boolean;
   hoverable?: boolean;
+  onRowClick?: (row: T) => void;
 };
 export const DataTableRows = <T extends BaseObject>(
   props: TableDataRowsProps<T>,
@@ -61,6 +62,7 @@ const DataTableRowsRecursive = <T extends BaseObject>(
           color="white"
           stickyFirstColumn={props.stickyFirstColumn}
           hoverable={props.hoverable}
+          onRowClick={props.onRowClick}
         />
       ))}
     </>
@@ -142,6 +144,7 @@ type DataTableDataRowProps<T extends BaseObject> = {
   color?: string;
   stickyFirstColumn?: boolean;
   hoverable?: boolean;
+  onRowClick?: (row: T) => void;
 };
 
 const DataTableDataRow = <T extends BaseObject>(
@@ -177,7 +180,12 @@ const DataTableDataRow = <T extends BaseObject>(
       <TableRow
         onMouseEnter={() => setHovered(true)}
         onMouseLeave={() => setHovered(false)}
-        onClick={() => setExpanded((e) => !e)}
+        onClick={() => {
+          if (props.onRowClick) {
+            props.onRowClick(props.row);
+          }
+          setExpanded((e) => !e);
+        }}
         sx={{
           backgroundColor: bgColor,
           overflow: "sroll",

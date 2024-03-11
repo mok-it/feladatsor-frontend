@@ -14,13 +14,13 @@ export const MultiSelect = (props: MultiSelectProps) => (
   <Autocomplete
     multiple
     size="small"
+    sx={props.sx} //{{ width: "80%" }}
     options={props.items.map((option) => option)}
     renderTags={(value: readonly string[], getTagProps) =>
       value.map((option: string, index: number) => (
         <Chip variant="outlined" label={option} {...getTagProps({ index })} />
       ))
     }
-    sx={props.sx}
     slotProps={{
       paper: {
         elevation: 3,

@@ -41,19 +41,17 @@ export const typography = {
   h1: {
     fontWeight: 700,
     lineHeight: 80 / 64,
-    fontSize: pxToRem(40),
-    ...responsiveFontSizes({ sm: 52, md: 58, lg: 64 }),
+    fontSize: pxToRem(28),
   },
   h2: {
     fontWeight: 700,
     lineHeight: 64 / 48,
-    fontSize: pxToRem(32),
-    ...responsiveFontSizes({ sm: 40, md: 44, lg: 48 }),
+    fontSize: pxToRem(24),
   },
   h3: {
     fontWeight: 500,
     lineHeight: 1.5,
-    fontSize: pxToRem(24),
+    fontSize: pxToRem(20),
     ...responsiveFontSizes({ sm: 26, md: 30, lg: 32 }),
   },
   h4: {

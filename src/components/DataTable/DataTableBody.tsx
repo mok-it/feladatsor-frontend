@@ -1,31 +1,34 @@
-import { TableBody } from '@mui/material';
-import React from 'react';
+import { TableBody } from "@mui/material";
+import React from "react";
 
-import { useDataTable } from './context/DataTableContext';
-import { getKeys } from './context/getKeys';
+import { useDataTable } from "./context/DataTableContext";
+import { getKeys } from "./context/getKeys";
 import {
   BaseObject,
   ComplexColumn,
   DataTableDataSource,
   DataTableProps,
   RowRenderers,
-} from './DataTable.types';
-import { DataTableLoadingRows } from './rows/DataTableLoadingRows';
-import { DataTableRows } from './rows/DataTableRows';
+} from "./DataTable.types";
+import { DataTableLoadingRows } from "./rows/DataTableLoadingRows";
+import { DataTableRows } from "./rows/DataTableRows";
 
 export const DataTableBody = <T extends BaseObject>(props: {
-  columns: DataTableProps<T>['columns'];
-  expandableRowRenderer: DataTableProps<T>['expandableRowRenderer'];
-  orderedColumnKeys: Array<keyof { [key in keyof T]?: ComplexColumn<T> | React.ReactNode }>;
+  columns: DataTableProps<T>["columns"];
+  expandableRowRenderer: DataTableProps<T>["expandableRowRenderer"];
+  orderedColumnKeys: Array<
+    keyof { [key in keyof T]?: ComplexColumn<T> | React.ReactNode }
+  >;
   dataSource: DataTableDataSource<T>;
   rowRenderers?: RowRenderers<T>;
   rowKey?: keyof T;
   stickyFirstColumn: boolean | undefined;
   hoverable: boolean | undefined;
+  onRowClick?: (row: T) => void;
 }) => {
   const { loading, rowsPerPage } = useDataTable();
   return (
-    <TableBody sx={{ overflow: 'scroll' }}>
+    <TableBody sx={{ overflow: "scroll" }}>
       {loading && (
         <DataTableLoadingRows
           rows={Math.min(rowsPerPage, 20)}
@@ -42,6 +45,7 @@ export const DataTableBody = <T extends BaseObject>(props: {
           columns={props.columns}
           stickyFirstColumn={props.stickyFirstColumn}
           hoverable={props.hoverable}
+          onRowClick={props.onRowClick}
         />
       )}
     </TableBody>

@@ -5,6 +5,7 @@ import { CategoryDifficulties } from "@/components/CategoryDifficulties.tsx";
 import { DataTable } from "@/components/DataTable/DataTable.tsx";
 import { ExerciseAgeGroup } from "@/generated/graphql.tsx";
 import { DataGenerator } from "@/components/DataTable/DataTable.types.ts";
+import { useNavigate } from "react-router-dom";
 
 export type ExerciseItem = {
   fakeId: string;
@@ -19,6 +20,11 @@ export const ExerciseList = (props: {
   dataGenerator: DataGenerator<ExerciseItem>;
   totalRows: number;
 }) => {
+  let navigate = useNavigate();
+  const routeChange = (id: string) => {
+    let path = `/exercise/${id}`;
+    navigate(path);
+  };
   return (
     <DataTable<ExerciseItem>
       columns={{
@@ -61,6 +67,7 @@ export const ExerciseList = (props: {
         defaultRowsPerPage: 5,
         rowsPerPageOptions: [5, 10, 15],
       }}
+      onRowClick={(row) => routeChange(row.fakeId)}
       rowRenderers={{
         fakeId: (value) => <Chip label={value} />,
         tags: (tags: string[]) => (

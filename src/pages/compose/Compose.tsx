@@ -24,44 +24,29 @@ import { Fragment, useCallback, useEffect, useRef, useState } from "react";
 
 import { Item } from "@/components/compose/SortableItem";
 import Talon from "@/components/compose/Talon";
-import { composeStore } from "@/util/composeStore";
-import { Grid, Stack, Typography } from "@mui/material";
+import { ExerciseAgeGroup } from "@/generated/graphql";
+import {
+  composeAtom,
+  exerciseCardsAtom,
+  exercisePlacementsAtom,
+} from "@/util/atoms";
+import { ExerciseView, composeStore } from "@/util/composeStore";
+import { ExercisePlacements } from "@/util/types";
+import { Box, Grid, Stack, Typography } from "@mui/material";
+import { useAtom, useSetAtom } from "jotai";
 import { entries, keys, times } from "lodash";
 import { useImmer } from "use-immer";
-import Container from "../components/compose/Container";
-("../components/compose/SortableItem");
+import Container from "../../components/compose/Container";
 
 const Compose = () => {
   const [talon, setTalon] = useImmer<UniqueIdentifier[]>(["1", "2", "3"]);
-  const addExercise = composeStore((state) => state.addExercise);
-  const exercises = composeStore((state) => state.exercises);
-  const [items, setItems] = useImmer<{
-    [key in string]: UniqueIdentifier[];
-  }>({
-    "KOALA-0": [],
-    "MEDVEBOCS-0": [],
-    "KISMEDVE-0": [],
-    "NAGYMEDVE-0": [],
-    "JEGESMEDVE-0": [],
+  const [exercises, setExercises] = useAtom(exerciseCardsAtom);
+  const view = composeStore((state) => state.view);
+  const exerciseView = composeStore((state) => state.exerciseView);
+  const [items, setItems] = useAtom(composeAtom);
+  const setPlacements = useSetAtom(exercisePlacementsAtom);
 
-    "KOALA-1": [],
-    "MEDVEBOCS-1": [],
-    "KISMEDVE-1": [],
-    "NAGYMEDVE-1": [],
-    "JEGESMEDVE-1": [],
-
-    "KOALA-2": [],
-    "MEDVEBOCS-2": [],
-    "KISMEDVE-2": [],
-    "NAGYMEDVE-2": [],
-    "JEGESMEDVE-2": [],
-
-    "KOALA-3": [],
-    "MEDVEBOCS-3": [],
-    "KISMEDVE-3": [],
-    "NAGYMEDVE-3": [],
-    "JEGESMEDVE-3": [],
-  });
+  //console.log({ items });
 
   // Use the defined sensors for drag and drop operation
   const sensors = useSensors(
@@ -119,13 +104,39 @@ const Compose = () => {
         ...exercise,
         id: newId,
       };
-      addExercise(newExercise);
+      setExercises((draft) => {
+        draft.push(newExercise);
+      });
       setTalon((draft) => {
         draft.splice(talonIndex, 1, newId);
       });
     },
-    [addExercise, exercises, setTalon, talon],
+    [setExercises, exercises, setTalon, talon],
   );
+
+  const updatePlacements = useCallback(() => {
+    const placements: ExercisePlacements = {};
+    entries(items).forEach(([group, cards]) => {
+      cards.forEach((id) => {
+        const exercise = exercises.find((exercise) => exercise.id === id)?.data;
+        if (exercise) {
+          if (!placements[exercise.fakeId]) {
+            placements[exercise.fakeId] = {
+              KOALA: 0,
+              MEDVEBOCS: 0,
+              KISMEDVE: 0,
+              NAGYMEDVE: 0,
+              JEGESMEDVE: 0,
+            };
+          }
+          placements[exercise.fakeId][
+            group.split("-")[0] as ExerciseAgeGroup
+          ]++;
+        }
+      });
+    });
+    setPlacements(placements);
+  }, [exercises, items, setPlacements]);
 
   // Function called when a drag operation begins
   const handleDragStart = useCallback(
@@ -151,11 +162,11 @@ const Compose = () => {
       const activeContainer = findContainer(activeId);
       const overContainer = findContainer(overId);
 
-      console.log("handleDragOver", {
-        activeId,
-        activeContainer,
-        overContainer,
-      });
+      // console.log("handleDragOver", {
+      //   activeId,
+      //   activeContainer,
+      //   overContainer,
+      // });
 
       if (!overContainer || !activeContainer) {
         return;
@@ -164,14 +175,11 @@ const Compose = () => {
         return;
       }
       if (activeContainer === "talon") {
-        // setTalon((talon) => talon.filter((id) => id !== activeId));
-        // clear duplicate items
         setItems((items) => {
+          // clear duplicate items
           for (const key in items) {
             items[key] = items[key].filter((id) => id !== activeId);
           }
-        });
-        setItems((items) => {
           const overItems = items[overContainer];
           const overIndex = overItems.indexOf(overId);
 
@@ -188,17 +196,14 @@ const Compose = () => {
 
           recentlyMovedToNewContainer.current = true;
 
-          return {
-            ...items,
-            [overContainer]: [
-              ...items[overContainer].slice(0, newIndex),
-              activeId,
-              ...items[overContainer].slice(
-                newIndex,
-                items[overContainer].length,
-              ),
-            ],
-          };
+          items[overContainer] = [
+            ...items[overContainer].slice(0, newIndex),
+            activeId,
+            ...items[overContainer].slice(
+              newIndex,
+              items[overContainer].length,
+            ),
+          ];
         });
         insertCopyToTalon(activeId);
       } else if (activeContainer !== overContainer) {
@@ -259,7 +264,7 @@ const Compose = () => {
         setActiveId(null);
         return;
       }
-      console.log("handleDragEnd", { activeContainer, active, over });
+      //console.log("handleDragEnd", { activeContainer, active, over });
 
       if (activeContainer === "talon") {
         const overContainer = findContainer(overId, { excludeTalon: true });
@@ -285,9 +290,10 @@ const Compose = () => {
           }));
         }
       }
+      updatePlacements();
       setActiveId(null);
     },
-    [findContainer, insertCopyToTalon, items, setItems],
+    [findContainer, insertCopyToTalon, items, setItems, updatePlacements],
   );
 
   // Function called when a drag operation is cancelled
@@ -295,7 +301,7 @@ const Compose = () => {
     console.log(itemsBeforeDrag.current);
     setActiveId(null);
     if (!itemsBeforeDrag.current) return;
-    setItems(itemsBeforeDrag.current);
+    setItems(() => itemsBeforeDrag.current);
     itemsBeforeDrag.current = null;
   }, [setItems]);
 
@@ -382,44 +388,56 @@ const Compose = () => {
         },
       }}
     >
-      <Stack direction={"row"}>
-        <Talon items={talon} />
+      <Stack direction={"row"} gap={2} p={2}>
         <Grid container columns={6} spacing={4}>
-          <Grid item xs={1} />
-          {times(5).map((i) => (
-            <Grid item key={i} xs={1}>
-              <Typography variant="h5" textAlign={"center"}>
-                {keys(items)[i].split("-")[0]}
-              </Typography>
-            </Grid>
-          ))}
-          {entries(items).map(([key, items], index) => (
-            <Fragment key={key}>
-              {index % 5 === 0 && (
-                <Grid xs={1} item>
-                  <Stack height={"100%"} justifyContent={"center"} pb={4}>
-                    <Typography variant="h5" textAlign={"center"}>
-                      {index === 0 && "Zöld"}
-                      {index === 5 && "Bronz"}
-                      {index === 10 && "Ezüst"}
-                      {index === 15 && "Arany"}
-                    </Typography>
-                  </Stack>
+          {view === "all" && (
+            <>
+              <Grid item xs={1} />
+              {times(5).map((i) => (
+                <Grid item key={i} xs={1}>
+                  <Typography variant="body1" textAlign={"center"}>
+                    {keys(items)[i].split("-")[0]}
+                  </Typography>
                 </Grid>
-              )}
-              <Grid
-                item
-                xs={1}
-                borderBottom={"1px solid"}
-                borderColor={"divider"}
-              >
-                <Container id={key} items={items} />
-              </Grid>
-            </Fragment>
-          ))}
+              ))}
+            </>
+          )}
+          {entries(items).map(([key, items], index) => {
+            return (
+              <Fragment key={key}>
+                {index % 5 === 0 && (
+                  <Grid xs={1} item>
+                    <Stack height={"100%"} justifyContent={"center"} pb={4}>
+                      <Typography variant="body1" textAlign={"center"}>
+                        {index === 0 && "Zöld"}
+                        {index === 5 && "Bronz"}
+                        {index === 10 && "Ezüst"}
+                        {index === 15 && "Arany"}
+                      </Typography>
+                    </Stack>
+                  </Grid>
+                )}
+                {(view === "all" || key.split("-")[0] === view) && (
+                  <Grid
+                    item
+                    xs={view === "all" ? 1 : 5}
+                    borderBottom={"1px solid"}
+                    borderColor={"divider"}
+                  >
+                    <Container id={key} items={items} />
+                  </Grid>
+                )}
+              </Fragment>
+            );
+          })}
         </Grid>
+        {exerciseView !== ExerciseView.LIST && (
+          <Box maxWidth={"40%"}>
+            <Talon items={talon} />
+          </Box>
+        )}
         <DragOverlay>
-          {activeId ? <Item id={String(activeId)} /> : null}
+          {activeId ? <Item id={String(activeId)} isDragging /> : null}
         </DragOverlay>
       </Stack>
     </DndContext>

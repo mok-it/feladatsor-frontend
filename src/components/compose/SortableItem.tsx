@@ -1,16 +1,17 @@
 import ExerciseCard from "@/components/compose/ExerciseCard";
-import { composeStore } from "@/util/composeStore";
+import { exerciseCardsAtom } from "@/util/atoms";
 import type { UniqueIdentifier } from "@dnd-kit/core";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { Card, Stack, Typography } from "@mui/material";
+import { useAtomValue } from "jotai";
 import type { FC } from "react";
 
 export const Item: FC<{
   id: UniqueIdentifier;
   isDragging?: boolean;
 }> = ({ id, isDragging = false }) => {
-  const exercises = composeStore((state) => state.exercises);
+  const exercises = useAtomValue(exerciseCardsAtom);
   const exercise = exercises.find((exercise) => exercise.id === id);
 
   if (!exercise) {
@@ -54,6 +55,7 @@ const SortableItem: FC<{ id: UniqueIdentifier }> = ({ id }) => {
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
+    alignSelf: "stretch",
   };
 
   return (
