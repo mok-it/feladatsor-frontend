@@ -4,7 +4,7 @@ import { RxCross2 } from "react-icons/rx";
 import { CategoryDifficulties } from "@/components/CategoryDifficulties.tsx";
 import { DataTable } from "@/components/DataTable/DataTable.tsx";
 import { ExerciseAgeGroup } from "@/generated/graphql.tsx";
-import { DataGenerator } from "@/components/DataTable/DataTable.types.ts";
+import { DataTableDataSource } from "@/components/DataTable/DataTable.types.ts";
 import { useNavigate } from "react-router-dom";
 
 export type ExerciseItem = {
@@ -17,13 +17,11 @@ export type ExerciseItem = {
 };
 
 export const ExerciseList = (props: {
-  dataGenerator: DataGenerator<ExerciseItem>;
-  totalRows: number;
+  dataSource: DataTableDataSource<ExerciseItem>;
 }) => {
-  let navigate = useNavigate();
+  const navigate = useNavigate();
   const routeChange = (id: string) => {
-    let path = `/exercise/${id}`;
-    navigate(path);
+    navigate(`/exercise/${id}`);
   };
   return (
     <DataTable<ExerciseItem>
@@ -57,10 +55,7 @@ export const ExerciseList = (props: {
           sx: { width: "50%" },
         },
       }}
-      dataSource={{
-        dataGenerator: props.dataGenerator,
-        totalRows: props.totalRows,
-      }}
+      dataSource={props.dataSource}
       hoverable
       maxHeight="400px"
       pagination={{

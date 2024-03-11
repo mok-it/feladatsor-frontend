@@ -142,10 +142,11 @@ export const ExerciseListPage = () => {
         </Stack>
 
         <ExerciseList
-          totalRows={
-            searchExercisesResults.data?.searchExercises.totalCount ?? 0
-          }
-          dataGenerator={dataGenerator}
+          dataSource={{
+            totalRows:
+              searchExercisesResults.data?.searchExercises.totalCount ?? 0,
+            dataGenerator,
+          }}
         />
       </CardContent>
     </Card>
