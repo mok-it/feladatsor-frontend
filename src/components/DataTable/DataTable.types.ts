@@ -46,6 +46,11 @@ export type ComplexColumn<T> = {
   sx?: SxProps;
 };
 
+export type DataGenerator<T> = (
+  rowFrom: number,
+  rowTo: number,
+) => Promise<T[]> | T[] | { error: string };
+
 export type DataTableDataSource<T extends BaseObject> =
   | {
       /**
@@ -72,10 +77,7 @@ export type DataTableDataSource<T extends BaseObject> =
       /**
        * Data to be displayed in the table as a function that generates the data
        */
-      dataGenerator: (
-        rowFrom: number,
-        rowTo: number,
-      ) => Promise<T[]> | T[] | { error: string };
+      dataGenerator: DataGenerator<T>;
       /**
        * The number of rows to be displayed in the table
        */

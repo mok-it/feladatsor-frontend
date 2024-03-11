@@ -4,23 +4,25 @@ import { RxCross2 } from "react-icons/rx";
 import { CategoryDifficulties } from "@/components/CategoryDifficulties.tsx";
 import { DataTable } from "@/components/DataTable/DataTable.tsx";
 import { ExerciseAgeGroup } from "@/generated/graphql.tsx";
+import { DataTableDataSource } from "@/components/DataTable/DataTable.types.ts";
 import { useNavigate } from "react-router-dom";
 
-type ExerciseItem = {
+export type ExerciseItem = {
   fakeId: string;
   categoryDifficulties: { [key in ExerciseAgeGroup]: number };
-  description: string;
-  hasPicture: boolean;
   state: string;
   tags: string[];
+  hasPicture: boolean;
+  description: string;
 };
-export const ExerciseList = (props: { data: ExerciseItem[] }) => {
-  let navigate = useNavigate();
-  const routeChange = (id: string) => {
-    let path = `/exercise/${id}`;
-    navigate(path);
-  };
 
+export const ExerciseList = (props: {
+  dataSource: DataTableDataSource<ExerciseItem>;
+}) => {
+  const navigate = useNavigate();
+  const routeChange = (id: string) => {
+    navigate(`/exercise/${id}`);
+  };
   return (
     <DataTable<ExerciseItem>
       columns={{
@@ -53,9 +55,7 @@ export const ExerciseList = (props: { data: ExerciseItem[] }) => {
           sx: { width: "50%" },
         },
       }}
-      dataSource={{
-        data: props.data,
-      }}
+      dataSource={props.dataSource}
       hoverable
       maxHeight="400px"
       pagination={{
@@ -64,7 +64,7 @@ export const ExerciseList = (props: { data: ExerciseItem[] }) => {
       }}
       onRowClick={(row) => routeChange(row.fakeId)}
       rowRenderers={{
-        //fakeId: (value) => <Chip label={value} />,
+        fakeId: (value) => <Chip label={value} />,
         tags: (tags: string[]) => (
           <>
             {tags.map((tag, index) => (

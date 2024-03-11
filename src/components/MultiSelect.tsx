@@ -1,11 +1,13 @@
 import Chip from "@mui/material/Chip";
 import Autocomplete from "@mui/material/Autocomplete";
 import TextField from "@mui/material/TextField";
+import { SxProps } from "@mui/material";
 
 type MultiSelectProps = {
   items: string[];
+  label?: string;
   onChange?: (value: string[]) => void;
-  sx?: object;
+  sx?: SxProps;
 };
 
 export const MultiSelect = (props: MultiSelectProps) => (
@@ -25,6 +27,6 @@ export const MultiSelect = (props: MultiSelectProps) => (
       },
     }}
     onChange={(_, value) => props.onChange && props.onChange(value)}
-    renderInput={(params) => <TextField {...params} />}
+    renderInput={(params) => <TextField label={props.label} {...params} />}
   />
 );
