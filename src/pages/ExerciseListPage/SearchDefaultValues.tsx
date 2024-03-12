@@ -2,6 +2,7 @@ import { ExerciseQuery } from "@/pages/ExerciseListPage/ExerciseListPage.tsx";
 
 export const searchDefaultValues: ExerciseQuery = {
   searchQuery: "",
+  isFinal: false,
   difficulty: {
     KOALA: {
       difficulty: [0, 4],
