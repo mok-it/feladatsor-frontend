@@ -1,16 +1,20 @@
 import Chip from "@mui/material/Chip";
 import Autocomplete from "@mui/material/Autocomplete";
 import TextField from "@mui/material/TextField";
+import { SxProps } from "@mui/material";
 
 type MultiSelectProps = {
   items: string[];
+  label?: string;
   onChange?: (value: string[]) => void;
+  sx?: SxProps;
 };
 
 export const MultiSelect = (props: MultiSelectProps) => (
   <Autocomplete
     multiple
     size="small"
+    sx={props.sx} //{{ width: "80%" }}
     options={props.items.map((option) => option)}
     renderTags={(value: readonly string[], getTagProps) =>
       value.map((option: string, index: number) => (
@@ -23,6 +27,6 @@ export const MultiSelect = (props: MultiSelectProps) => (
       },
     }}
     onChange={(_, value) => props.onChange && props.onChange(value)}
-    renderInput={(params) => <TextField {...params} />}
+    renderInput={(params) => <TextField label={props.label} {...params} />}
   />
 );

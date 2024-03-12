@@ -74,23 +74,25 @@ export default function ProfileCard(props: any) {
         <Box>
           <Typography variant="h6">Beküldött feladatok</Typography>
           <ExerciseList
-            data={[
-              {
-                fakeId: "ab-012",
-                categoryDifficulties: {
-                  JEGESMEDVE: 1,
-                  KISMEDVE: 2,
-                  MEDVEBOCS: 3,
-                  NAGYMEDVE: 4,
-                  KOALA: 2,
+            dataSource={{
+              data: [
+                {
+                  fakeId: "ab-012",
+                  categoryDifficulties: {
+                    JEGESMEDVE: 1,
+                    KISMEDVE: 2,
+                    MEDVEBOCS: 3,
+                    NAGYMEDVE: 4,
+                    KOALA: 2,
+                  },
+                  hasPicture: false,
+                  description:
+                    "Ez egy példa feladat kacsa kacsakacsakacsakacsakacsakacsa ",
+                  state: "Checked",
+                  tags: ["Kombinatorika", "Permutáció"],
                 },
-                hasPicture: false,
-                description:
-                  "Ez egy példa feladat kacsa kacsakacsakacsakacsakacsakacsa ",
-                state: "Checked",
-                tags: ["Kombinatorika", "Permutáció"],
-              },
-            ]}
+              ],
+            }}
           />
         </Box>
         <Stack direction="row" spacing={2} sx={styles.value}>
@@ -141,6 +143,8 @@ export default function ProfileCard(props: any) {
             </Stack>
           </Box>
         </Stack>
+        <Divider />
+        <Typography variant="h6">Statisztikák</Typography>
         <Grid container spacing={3}>
           <Grid item lg={3} sm={6} xs={12}>
             <ProfileStatCard

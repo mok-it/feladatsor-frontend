@@ -4,11 +4,13 @@ import {
   SortableContext,
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
-import type { FC } from "react";
+import { createContext, type FC } from "react";
 
 import { ExerciseView, composeStore } from "@/util/composeStore";
 import { Stack } from "@mui/material";
 import SortableItem from "./SortableItem";
+
+export const ContainerContext = createContext<string | null>(null);
 
 const Container: FC<{ items: UniqueIdentifier[]; id: string }> = ({
   items,
@@ -20,24 +22,26 @@ const Container: FC<{ items: UniqueIdentifier[]; id: string }> = ({
   });
 
   return (
-    <SortableContext
-      items={items}
-      strategy={verticalListSortingStrategy}
-      id={id}
-      disabled={exerciseView === ExerciseView.LIST}
-    >
-      <Stack
-        ref={setNodeRef}
-        height={"100%"}
-        alignItems={"center"}
-        gap={1}
-        pb={4}
+    <ContainerContext.Provider value={id}>
+      <SortableContext
+        items={items}
+        strategy={verticalListSortingStrategy}
+        id={id}
+        disabled={exerciseView === ExerciseView.LIST}
       >
-        {items.map((id: UniqueIdentifier) => (
-          <SortableItem key={id} id={id} />
-        ))}
-      </Stack>
-    </SortableContext>
+        <Stack
+          ref={setNodeRef}
+          height={"100%"}
+          alignItems={"center"}
+          gap={1}
+          pb={4}
+        >
+          {items.map((cardId: UniqueIdentifier) => (
+            <SortableItem key={cardId} id={cardId} />
+          ))}
+        </Stack>
+      </SortableContext>
+    </ContainerContext.Provider>
   );
 };
 

@@ -1,7 +1,8 @@
-import { composeStore } from "@/util/composeStore";
+import { exerciseCardsAtom } from "@/util/atoms";
 import { UniqueIdentifier } from "@dnd-kit/core";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
+import { useAtomValue } from "jotai";
 import { FC } from "react";
 import ExerciseCard from "./ExerciseCard";
 
@@ -20,7 +21,7 @@ const TalonItem: FC<{ id: UniqueIdentifier }> = ({ id }) => {
     transition,
   };
 
-  const exercises = composeStore((state) => state.exercises);
+  const exercises = useAtomValue(exerciseCardsAtom);
   const exercise = exercises.find((exercise) => exercise.id === id);
 
   if (!exercise) {

@@ -103,7 +103,10 @@ const ExerciseDetails: FC = () => {
               </Stack>
               <Stack direction={"row"} gap={1} alignItems={"center"}>
                 <Typography>Talonba rakom</Typography>
-                <MultiSelect items={["Gellért hegy", "Városliget"]} />
+                <MultiSelect
+                  sx={{ width: "80%" }}
+                  items={["Gellért hegy", "Városliget"]}
+                />
               </Stack>
             </Box>
           </Card>

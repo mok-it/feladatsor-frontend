@@ -7,6 +7,7 @@ import { ExerciseAgeGroup } from "@/generated/graphql.tsx";
 
 export const grey = {
   0: "#FFFFFF",
+  50: "#F4F6F8",
   100: "#F9FAFB",
   200: "#F4F6F8",
   300: "#DFE3E8",
