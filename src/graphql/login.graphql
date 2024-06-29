@@ -5,6 +5,7 @@ mutation loginWithGoogle($googleToken: String!) {
       email
       name
       userName
+      roles
       createdAt
       updatedAt
     }

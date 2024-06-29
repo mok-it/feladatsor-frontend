@@ -327,7 +327,7 @@ export type LoginWithGoogleMutationVariables = Exact<{
 }>;
 
 
-export type LoginWithGoogleMutation = { __typename: 'Mutation', loginWithGoogle?: { __typename: 'LoginResponse', token: string, user: { __typename: 'User', id: string, email: string, name: string, userName: string, createdAt: string, updatedAt: string } } | null };
+export type LoginWithGoogleMutation = { __typename: 'Mutation', loginWithGoogle?: { __typename: 'LoginResponse', token: string, user: { __typename: 'User', id: string, email: string, name: string, userName: string, roles: Array<Role>, createdAt: string, updatedAt: string } } | null };
 
 export type SearchExercisesQueryVariables = Exact<{
   query: ExerciseSearchQuery;
@@ -488,6 +488,7 @@ export const LoginWithGoogleDocument = gql`
       email
       name
       userName
+      roles
       createdAt
       updatedAt
     }
