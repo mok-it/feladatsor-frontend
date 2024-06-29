@@ -1,0 +1,6 @@
+mutation changePermissions($userId: ID!, $permissions: [Role!]!) {
+  changePermissions(userId: $userId, permissions: $permissions) {
+    id
+    name
+  }
+}

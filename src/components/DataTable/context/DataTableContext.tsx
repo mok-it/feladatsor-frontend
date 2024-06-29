@@ -44,10 +44,7 @@ const DataTableContext = createContext(
 export const DataTableContextProvider = <T extends BaseObject>(
   props: DataTableProps<T> & { children: React.ReactNode },
 ) => {
-  const totalDataLength =
-    "data" in props.dataSource && props.dataSource.data
-      ? props.dataSource.data.length
-      : props.dataSource.totalRows;
+  const totalDataLength = props.dataSource.data?.length ?? 0;
 
   const [currentPage, setCurrentPage] = useState(0);
   const [rowsPerPage, _setRowsPerPage] = useState(
@@ -58,8 +55,14 @@ export const DataTableContextProvider = <T extends BaseObject>(
   const [dataSlice, setDataSlice] = useState<
     GroupByMultipleReturn<T, ["", ""]> | T[]
   >([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    _setRowsPerPage(
+      props.pagination?.defaultRowsPerPage ??
+        props.pagination?.rowsPerPageOptions[0] ??
+        totalDataLength,
+    );
+  }, [totalDataLength]);
 
   const [data, setData] = useState(
     Array.isArray(props.dataSource.data)
@@ -126,26 +129,6 @@ export const DataTableContextProvider = <T extends BaseObject>(
   }, [data, props.dataSource.data, displayRowsFrom, displayRowsTo]);
 
   /*
-   * Generate data with the dataGenerator function
-   */
-  useEffect(() => {
-    if (props.dataSource["dataGenerator"] !== undefined) {
-      (async () => {
-        setLoading(true);
-        const res = await props.dataSource.dataGenerator?.(
-          displayRowsFrom,
-          displayRowsTo,
-        );
-        if (res) {
-          if ("error" in res) setError(res.error);
-          else setDataSlice(res);
-        }
-        setLoading(false);
-      })();
-    }
-  }, [displayRowsFrom, displayRowsTo, props.dataSource.dataGenerator]);
-
-  /*
    *  Sorting the data
    */
   useEffect(() => {
@@ -201,8 +184,8 @@ export const DataTableContextProvider = <T extends BaseObject>(
         // @ts-ignore
         dataSource: props.dataSource,
         dataSlice,
-        loading,
-        error,
+        loading: props.dataSource.loading ?? false,
+        error: props.dataSource.error ?? null,
         columnSorting,
         sortColumn,
       }}

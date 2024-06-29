@@ -34,6 +34,7 @@
     "jotai": "^2.6.5",
     "jotai-immer": "^0.3.0",
     "lodash": "^4.17.21",
+    "mui-datatables": "^4.3.0",
     "notistack": "^3.0.1",
     "prettier": "^3.2.5",
     "react": "^18.2.0",
@@ -52,6 +53,7 @@
   "devDependencies": {
     "@graphql-codegen/introspection": "^4.0.3",
     "@types/lodash": "^4.14.202",
+    "@types/mui-datatables": "^4.3.12",
     "@types/node": "^20.11.20",
     "@types/react": "^18.2.55",
     "@types/react-dom": "^18.2.19",

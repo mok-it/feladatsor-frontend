@@ -1,98 +1,219 @@
-  import { Box, Typography, Card } from '@mui/material';
-  import Table from '@mui/material/Table';
-  import TableBody from '@mui/material/TableBody';
-  import TableCell from '@mui/material/TableCell';
-  import TableContainer from '@mui/material/TableContainer';
-  import TableHead from '@mui/material/TableHead';
-  import TableRow from '@mui/material/TableRow';
-  import Paper from '@mui/material/Paper';
-  import Checkbox from '@mui/material/Checkbox';
-  import TextField from '@mui/material/TextField';
-  import Autocomplete from '@mui/material/Autocomplete';
-  import { MdCheckBoxOutlineBlank } from "react-icons/md";
-  import { IoMdCheckbox } from "react-icons/io";
+import { Box, Card, Typography } from "@mui/material";
+import Checkbox from "@mui/material/Checkbox";
+import TextField from "@mui/material/TextField";
+import Autocomplete from "@mui/material/Autocomplete";
+import {
+  Role,
+  useChangePermissionsMutation,
+  useUsersQuery,
+} from "@/generated/graphql.tsx";
+import { userAtom } from "@/util/atoms.ts";
+import { useAtom } from "jotai";
+import { DataTable } from "@/components/DataTable/DataTable.tsx";
 
-  function createData(name: string, roles: string[]) {
-    return { name, roles };
-  }
+const Roles: Role[] = ["ADMIN", "USER"];
 
-  const icon = <MdCheckBoxOutlineBlank fontSize="small" />;
-  const checkedIcon = <IoMdCheckbox fontSize="small" />;
+const capitalizeStr = (s: string) =>
+  s.charAt(0).toUpperCase() + s.slice(1).toLowerCase();
 
-  const Roles = [
-    { name: 'Beküldő' },
-    { name: 'Ellenőrző' },
-    { name: 'Admin' },
-    { name: 'Bohóc' },
-    { name: 'Szabad' },
-    { name: 'Semmit nem csináló' },
-  ];
+export const AdminPage = () => {
+  const { data, loading, error } = useUsersQuery();
 
-  const rows = [
-    createData('Zoárd', ['Beküldő', 'Admin']),
-    createData('Anna', ['Ellenőrző']),
-    createData('Bálint', ['Bohóc']),
-    createData('Ajtony', ['Szabad']),
-    createData('Balázs', ['Semmit nem csináló']),
-  ]
+  const [changePermissions] = useChangePermissionsMutation();
 
-  export const AdminPage = () => {
-    return (
-      <Box mb={16}>
-        <Typography variant="h4" style={{ margin: '16px' }}>
-          Admin
-        </Typography>
-        <Card>
-          <Box p={2}>
-            <TableContainer component={Paper}>
-              <Table sx={{ minWidth: 650 }} size="small" aria-label="a dense table">
-                <TableHead>
-                  <TableRow>
-                    <TableCell>Name</TableCell>
-                    <TableCell align="right">Roles</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {rows.map((row) => (
-                    <TableRow key={row.name} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
-                      <TableCell scope="row" width={'50%'}>
-                        {row.name}
-                      </TableCell>
-                      <TableCell align="right">
-                        <Autocomplete
-                          multiple
-                          id={`checkboxes-tags-demo-${row.name}`}
-                          options={Roles}
-                          disableCloseOnSelect
-                          getOptionLabel={(option) => option?.name || ''}
-                          defaultValue={row.roles.map(role => Roles.find(r => r.name === role))}
-                          renderOption={(props, option, { selected }) => (
-                            <li {...props}>
-                              <Checkbox
-                                icon={icon}
-                                checkedIcon={checkedIcon}
-                                style={{ marginRight: 8 }}
-                                checked={selected}
-                              />
-                              {option && option.name} {/* Ellenőrizzük, hogy az option nem undefined */}
-                            </li>
-                          )}                                              
-                          renderInput={(params) => (
-                            <TextField
-                              {...params}
-                              label="Roles"
-                              placeholder="Select"
-                            />
-                          )}
-                        />
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </TableContainer>
-          </Box>
-        </Card>
-      </Box>
-    );
+  const [user] = useAtom(userAtom);
+
+  const isMyself = (userId: string) => {
+    if (user?.user?.id) return user.user.id === userId;
+    return false;
   };
+
+  return (
+    <Box mb={16}>
+      <Typography variant="h4" style={{ margin: "16px" }}>
+        Admin
+      </Typography>
+      <Card>
+        <Box p={2}>
+          <DataTable
+            dataSource={{
+              data: data?.users,
+              loading,
+              error: error?.message,
+            }}
+            columns={{
+              name: {
+                element: "Név",
+                sortable: true,
+              },
+              roles: {
+                element: "Jogosultságok",
+                sortable: false,
+              },
+            }}
+            rowRenderers={{
+              roles: (userRoles: string[], row) => (
+                <Autocomplete
+                  multiple
+                  freeSolo
+                  disableCloseOnSelect
+                  disableClearable
+                  size="small"
+                  sx={{ m: 1, width: "100%" }}
+                  options={Roles}
+                  disabled={isMyself(row.id)}
+                  defaultValue={userRoles}
+                  renderOption={(props, option, { selected }) => (
+                    <li {...props}>
+                      <Checkbox
+                        size="small"
+                        style={{ marginRight: 8 }}
+                        checked={selected}
+                      />
+                      {capitalizeStr(option)}
+                    </li>
+                  )}
+                  onChange={(_, value) => {
+                    changePermissions({
+                      variables: {
+                        userId: row.id,
+                        permissions: value as Role[],
+                      },
+                    }).then((r) => {
+                      console.log(
+                        `Sucessfully changed permissions to user: ${row.name}, to: ${value.join()}`,
+                      );
+                      console.log(r);
+                    });
+                  }}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      label="Roles"
+                      size="small"
+                      placeholder="Select"
+                    />
+                  )}
+                />
+              ),
+            }}
+          />
+        </Box>
+      </Card>
+    </Box>
+  );
+};
+
+/*
+<MUIDataTable
+            options={{
+              search: false,
+              filter: false,
+              download: false,
+              print: false,
+              viewColumns: false,
+              elevation: 0,
+              pagination: false,
+              selectableRows: "none",
+            }}
+            data={data?.users ?? []}
+            columns={[
+              {
+                name: "name",
+                label: "Name",
+                options: {
+                  sort: true,
+                },
+              },
+              {
+                name: "roles",
+                label: "Roles",
+                options: {
+                  sort: false,
+                  customBodyRender: (value, meta) => (
+                    <Autocomplete
+                      multiple
+                      freeSolo
+                      disableCloseOnSelect
+                      disableClearable
+                      size="small"
+                      sx={{ m: 1, width: "100%" }}
+                      options={Roles}
+                      disabled={isMyself(meta.currentTableData)}
+                      defaultValue={value}
+                      renderOption={(props, option, { selected }) => (
+                        <li {...props}>
+                          <Checkbox
+                            size="small"
+                            style={{ marginRight: 8 }}
+                            checked={selected}
+                          />
+                          {capitalizeStr(option)}
+                        </li>
+                      )}
+                      renderInput={(params) => (
+                        <TextField
+                          {...params}
+                          label="Roles"
+                          size="small"
+                          placeholder="Select"
+                        />
+                      )}
+                    />
+                  ),
+                },
+              },
+            ]}
+            title={"Jogosultságok"}
+          />
+<DataTable
+            dataSource={{
+              dataGenerator: async () => {
+                const { data } = await getUsers();
+                return data?.users || ([] as UsersQuery["users"]);
+              },
+            }}
+            columns={{
+              name: {
+                element: "Név",
+                sortable: true,
+              },
+              roles: {
+                element: "Jogosultságok",
+                sortable: false,
+              },
+            }}
+            rowRenderers={{
+              roles: (userRoles: string[]) => (
+                <Autocomplete
+                  multiple
+                  freeSolo
+                  disableCloseOnSelect
+                  disableClearable
+                  size="small"
+                  sx={{ m: 1, width: "100%" }}
+                  options={Roles}
+                  defaultValue={userRoles}
+                  renderOption={(props, option, { selected }) => (
+                    <li {...props}>
+                      <Checkbox
+                        size="small"
+                        style={{ marginRight: 8 }}
+                        checked={selected}
+                      />
+                      {capitalizeStr(option)}
+                    </li>
+                  )}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      label="Roles"
+                      size="small"
+                      placeholder="Select"
+                    />
+                  )}
+                />
+              ),
+            }}
+          />
+ */

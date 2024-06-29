@@ -2,9 +2,11 @@ import { useLoginWithGoogleMutation } from "@/generated/graphql.tsx";
 import { tokenAtom, userAtom } from "@/util/atoms";
 import { auth, authProvider } from "@/util/firebase";
 import {
+  Backdrop,
   Box,
   Button,
   Card,
+  CircularProgress,
   Divider,
   Link,
   Stack,
@@ -13,16 +15,18 @@ import {
 } from "@mui/material";
 import { AuthError, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { useSetAtom } from "jotai";
-import { FC, useCallback } from "react";
+import { FC, useCallback, useState } from "react";
 import { FcGoogle } from "react-icons/fc";
 
 const Login: FC = () => {
+  const [loading, setLoading] = useState(false);
   const setUser = useSetAtom(userAtom);
   const setToken = useSetAtom(tokenAtom);
 
   const [ownLogin] = useLoginWithGoogleMutation();
 
   const signIn = useCallback(async () => {
+    setLoading(true);
     await signInWithPopup(auth, authProvider)
       .then(async (googleAuthResult) => {
         const googleToken = await googleAuthResult.user.getIdToken();
@@ -58,7 +62,8 @@ const Login: FC = () => {
           email,
           credential,
         );
-      });
+      })
+      .finally(() => setLoading(false));
   }, [setUser, setToken, ownLogin]);
 
   return (
@@ -67,7 +72,7 @@ const Login: FC = () => {
         sx={{
           height: "100vh",
           width: "100vw",
-          background: "url(https://source.unsplash.com/1920x1080/?landscape)",
+          background: "url(https://picsum.photos/1920/1080)",
           backgroundSize: "cover",
           backgroundPosition: "center",
           filter: "brightness(0.5)",
@@ -124,6 +129,7 @@ const Login: FC = () => {
                 variant="outlined"
                 onClick={signIn}
                 startIcon={<FcGoogle />}
+                disabled={loading}
                 sx={{ mt: 2 }}
               >
                 Google
@@ -135,6 +141,12 @@ const Login: FC = () => {
           </Card>
         </Stack>
       </Box>
+      <Backdrop
+        sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+        open={loading}
+      >
+        <CircularProgress color="inherit" />
+      </Backdrop>
     </>
   );
 };

@@ -51,42 +51,34 @@ export type DataGenerator<T> = (
   rowTo: number,
 ) => Promise<T[]> | T[] | { error: string };
 
-export type DataTableDataSource<T extends BaseObject> =
-  | {
-      /**
-       * Data to be displayed in the table as an array of objects (either use this data prop or the dataGenerator prop)
-       */
-      data: T[];
+export type DataTableDataSource<T extends BaseObject> = {
+  /**
+   * Data to be displayed in the table as an array of objects (either use this data prop or the dataGenerator prop)
+   */
+  data?: T[];
 
-      /**
-       * An array of keys or groupBy functions to group the data by
-       * Grouping function works just like Object.groupBy() in JS. Grouping calls this provided grouping function once for each element in the data[].
-       * The callback function should return a string (PropertyKey) indicating the group of the associated element.
-       */
-      groupBy?: GroupingStrategy<T, string>[];
+  /**
+   * If true, a table loading state will be displayed
+   */
+  loading?: boolean;
 
-      /**
-       * Display names mapped to keys corresponding the group keys created in the groupBy.
-       */
-      groupDisplayNames?: Record<PropertyKey, string>;
+  /**
+   * If true, a table error state will be displayed
+   */
+  error?: string;
 
-      dataGenerator?: never;
-      totalRows?: never;
-    }
-  | {
-      /**
-       * Data to be displayed in the table as a function that generates the data
-       */
-      dataGenerator: DataGenerator<T>;
-      /**
-       * The number of rows to be displayed in the table
-       */
-      totalRows: number;
+  /**
+   * An array of keys or groupBy functions to group the data by
+   * Grouping function works just like Object.groupBy() in JS. Grouping calls this provided grouping function once for each element in the data[].
+   * The callback function should return a string (PropertyKey) indicating the group of the associated element.
+   */
+  groupBy?: GroupingStrategy<T, string>[];
 
-      groupBy?: never;
-      groupDisplayNames?: never;
-      data?: never;
-    };
+  /**
+   * Display names mapped to keys corresponding the group keys created in the groupBy.
+   */
+  groupDisplayNames?: Record<PropertyKey, string>;
+};
 
 export type DataTableProps<T extends BaseObject> = {
   /**

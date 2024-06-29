@@ -149,6 +149,14 @@ export type ExerciseStatus =
   | 'DELETED'
   | 'DRAFT';
 
+export type ExerciseTag = {
+  __typename: 'ExerciseTag';
+  children: Array<ExerciseTag>;
+  id: Scalars['ID']['output'];
+  name: Scalars['String']['output'];
+  parent?: Maybe<ExerciseTag>;
+};
+
 export type LoginResponse = {
   __typename: 'LoginResponse';
   token: Scalars['String']['output'];
@@ -157,11 +165,22 @@ export type LoginResponse = {
 
 export type Mutation = {
   __typename: 'Mutation';
+  changePermissions: User;
   createExercise: Exercise;
   createExerciseCheck: ExerciseCheck;
+  createExerciseTag: ExerciseTag;
+  deleteExerciseTag: Scalars['Boolean']['output'];
   login?: Maybe<LoginResponse>;
   loginWithGoogle?: Maybe<LoginResponse>;
   register: User;
+  updateExercise: Exercise;
+  updateExerciseTag: ExerciseTag;
+};
+
+
+export type MutationChangePermissionsArgs = {
+  permissions: Array<Role>;
+  userId: Scalars['ID']['input'];
 };
 
 
@@ -172,6 +191,17 @@ export type MutationCreateExerciseArgs = {
 
 export type MutationCreateExerciseCheckArgs = {
   data: ExerciseCheckInput;
+};
+
+
+export type MutationCreateExerciseTagArgs = {
+  name: Scalars['String']['input'];
+  parentId?: InputMaybe<Scalars['ID']['input']>;
+};
+
+
+export type MutationDeleteExerciseTagArgs = {
+  id: Scalars['ID']['input'];
 };
 
 
@@ -190,9 +220,23 @@ export type MutationRegisterArgs = {
   data: UserRegisterInput;
 };
 
+
+export type MutationUpdateExerciseArgs = {
+  id: Scalars['ID']['input'];
+  input: ExerciseInput;
+};
+
+
+export type MutationUpdateExerciseTagArgs = {
+  id: Scalars['ID']['input'];
+  name: Scalars['String']['input'];
+};
+
 export type Query = {
   __typename: 'Query';
   exercise?: Maybe<Exercise>;
+  exerciseTag?: Maybe<ExerciseTag>;
+  exerciseTags: Array<ExerciseTag>;
   exercises: Array<Exercise>;
   exercisesCount: Scalars['Int']['output'];
   searchExercises: ExerciseSearchResult;
@@ -202,6 +246,11 @@ export type Query = {
 
 
 export type QueryExerciseArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
+export type QueryExerciseTagArgs = {
   id: Scalars['ID']['input'];
 };
 
@@ -221,6 +270,10 @@ export type QueryUserArgs = {
   id: Scalars['ID']['input'];
 };
 
+export type Role =
+  | 'ADMIN'
+  | 'USER';
+
 export type Tag = {
   __typename: 'Tag';
   children: Array<Tag>;
@@ -237,6 +290,7 @@ export type User = {
   exercises: Array<Exercise>;
   id: Scalars['ID']['output'];
   name: Scalars['String']['output'];
+  roles: Array<Role>;
   updatedAt: Scalars['String']['output'];
   userName: Scalars['String']['output'];
 };
@@ -247,6 +301,14 @@ export type UserRegisterInput = {
   password: Scalars['String']['input'];
   userName: Scalars['String']['input'];
 };
+
+export type ChangePermissionsMutationVariables = Exact<{
+  userId: Scalars['ID']['input'];
+  permissions: Array<Role> | Role;
+}>;
+
+
+export type ChangePermissionsMutation = { __typename: 'Mutation', changePermissions: { __typename: 'User', id: string, name: string } };
 
 export type CreateExerciseMutationVariables = Exact<{
   input: ExerciseInput;
@@ -274,7 +336,47 @@ export type SearchExercisesQueryVariables = Exact<{
 
 export type SearchExercisesQuery = { __typename: 'Query', searchExercises: { __typename: 'ExerciseSearchResult', totalCount: number, exercises: Array<{ __typename: 'Exercise', id: string, description: string, difficulty: Array<{ __typename: 'ExerciseDifficulty', ageGroup: ExerciseAgeGroup, difficulty: number }>, tags: Array<{ __typename: 'Tag', id: string, name: string }> }> } };
 
+export type UsersQueryVariables = Exact<{ [key: string]: never; }>;
 
+
+export type UsersQuery = { __typename: 'Query', users: Array<{ __typename: 'User', id: string, name: string, email: string, userName: string, roles: Array<Role> }> };
+
+
+export const ChangePermissionsDocument = gql`
+    mutation changePermissions($userId: ID!, $permissions: [Role!]!) {
+  changePermissions(userId: $userId, permissions: $permissions) {
+    id
+    name
+  }
+}
+    `;
+export type ChangePermissionsMutationFn = Apollo.MutationFunction<ChangePermissionsMutation, ChangePermissionsMutationVariables>;
+
+/**
+ * __useChangePermissionsMutation__
+ *
+ * To run a mutation, you first call `useChangePermissionsMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useChangePermissionsMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [changePermissionsMutation, { data, loading, error }] = useChangePermissionsMutation({
+ *   variables: {
+ *      userId: // value for 'userId'
+ *      permissions: // value for 'permissions'
+ *   },
+ * });
+ */
+export function useChangePermissionsMutation(baseOptions?: Apollo.MutationHookOptions<ChangePermissionsMutation, ChangePermissionsMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<ChangePermissionsMutation, ChangePermissionsMutationVariables>(ChangePermissionsDocument, options);
+      }
+export type ChangePermissionsMutationHookResult = ReturnType<typeof useChangePermissionsMutation>;
+export type ChangePermissionsMutationResult = Apollo.MutationResult<ChangePermissionsMutation>;
+export type ChangePermissionsMutationOptions = Apollo.BaseMutationOptions<ChangePermissionsMutation, ChangePermissionsMutationVariables>;
 export const CreateExerciseDocument = gql`
     mutation createExercise($input: ExerciseInput!) {
   createExercise(input: $input) {
@@ -471,3 +573,46 @@ export type SearchExercisesQueryHookResult = ReturnType<typeof useSearchExercise
 export type SearchExercisesLazyQueryHookResult = ReturnType<typeof useSearchExercisesLazyQuery>;
 export type SearchExercisesSuspenseQueryHookResult = ReturnType<typeof useSearchExercisesSuspenseQuery>;
 export type SearchExercisesQueryResult = Apollo.QueryResult<SearchExercisesQuery, SearchExercisesQueryVariables>;
+export const UsersDocument = gql`
+    query users {
+  users {
+    id
+    name
+    email
+    userName
+    roles
+  }
+}
+    `;
+
+/**
+ * __useUsersQuery__
+ *
+ * To run a query within a React component, call `useUsersQuery` and pass it any options that fit your needs.
+ * When your component renders, `useUsersQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useUsersQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useUsersQuery(baseOptions?: Apollo.QueryHookOptions<UsersQuery, UsersQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<UsersQuery, UsersQueryVariables>(UsersDocument, options);
+      }
+export function useUsersLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<UsersQuery, UsersQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<UsersQuery, UsersQueryVariables>(UsersDocument, options);
+        }
+export function useUsersSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<UsersQuery, UsersQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<UsersQuery, UsersQueryVariables>(UsersDocument, options);
+        }
+export type UsersQueryHookResult = ReturnType<typeof useUsersQuery>;
+export type UsersLazyQueryHookResult = ReturnType<typeof useUsersLazyQuery>;
+export type UsersSuspenseQueryHookResult = ReturnType<typeof useUsersSuspenseQuery>;
+export type UsersQueryResult = Apollo.QueryResult<UsersQuery, UsersQueryVariables>;
