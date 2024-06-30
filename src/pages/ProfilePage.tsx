@@ -6,7 +6,6 @@ export const ProfilePage = () => {
   const user = useAtomValue(userAtom);
   return (
     <ProfileCard
-      user={user}
       name={user && user.user ? user.user.name : " - "}
     ></ProfileCard>
   );

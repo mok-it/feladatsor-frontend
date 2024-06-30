@@ -17,7 +17,7 @@ export type ExerciseItem = {
 };
 
 export const ExerciseList = (props: {
-  setPagination: (pagination: { fromRow: number; toRow: number }) => void;
+  setPagination?: (pagination: { fromRow: number; toRow: number }) => void;
   dataSource: DataTableDataSource<ExerciseItem>;
 }) => {
   const navigate = useNavigate();

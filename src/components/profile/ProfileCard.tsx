@@ -28,7 +28,7 @@ const styles = {
 };
 
 //APP
-export default function ProfileCard(props: any) {
+export default function ProfileCard(props: { name: string }) {
   const [historySort, setHistorySort] = useState<"asc" | "desc">("asc");
   const [commentSort, setCommentSort] = useState<"asc" | "desc">("asc");
 

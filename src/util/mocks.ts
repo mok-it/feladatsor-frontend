@@ -29,7 +29,8 @@ export const mock: ExerciseCardData = {
     helpingQuestions: ["Ki az a Matusz?", "Mi az a cigány?"],
     history: [],
     id: "1",
-    description: "Bomátakertben járt Matusz a cigányokkal. Matusz a cigányoknak adott egy kis pénzt, hogy ne bántsák. A cigányok megkérdezték, hogy mennyi pénzt adott nekik. Matusz azt mondta, hogy 10 forintot. A cigányok azt mondták, hogy 10 forintot adtál nekünk, de 10 forintot adtál a cigányoknak is. Matusz azt mondta, hogy 10 forintot adott nekik. Mennyi pénzt adott nekik Matusz?",
+    description:
+      "Bomátakertben járt Matusz a cigányokkal. Matusz a cigányoknak adott egy kis pénzt, hogy ne bántsák. A cigányok megkérdezték, hogy mennyi pénzt adott nekik. Matusz azt mondta, hogy 10 forintot. A cigányok azt mondták, hogy 10 forintot adtál nekünk, de 10 forintot adtál a cigányoknak is. Matusz azt mondta, hogy 10 forintot adott nekik. Mennyi pénzt adott nekik Matusz?",
     solution: "solution",
     alternativeDifficultyExercises: [],
     sameLogicExercises: [],
@@ -39,13 +40,15 @@ export const mock: ExerciseCardData = {
     tags: [],
     elaboration: "elaboration",
     elaborationImage: null,
-    exerciseImage: "https://i.kym-cdn.com/entries/icons/facebook/000/021/464/14608107_1180665285312703_1558693314_n.jpg",
+    exerciseImage:
+      "https://i.kym-cdn.com/entries/icons/facebook/000/021/464/14608107_1180665285312703_1558693314_n.jpg",
     isCompetitionFinal: false,
     solveIdea: "",
     source: "source",
     createdBy: {
       __typename: "User",
       id: "1",
+      roles: ["USER"],
       name: "name",
       email: "email",
       exercises: [],
