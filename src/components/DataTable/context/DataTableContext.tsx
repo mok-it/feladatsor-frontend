@@ -115,6 +115,13 @@ export const DataTableContextProvider = <T extends BaseObject>(
   const displayRowsFrom = currentPage * rowsPerPage;
   const displayRowsTo = (currentPage + 1) * rowsPerPage;
 
+  useEffect(() => {
+    props.pagination?.setPagination?.({
+      fromRow: displayRowsFrom,
+      toRow: displayRowsTo,
+    });
+  }, [displayRowsFrom, displayRowsTo]);
+
   /*
    * Slicing the data into pages
    */

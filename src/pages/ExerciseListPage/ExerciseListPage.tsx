@@ -1,6 +1,6 @@
 import {
   ExerciseAgeGroup,
-  useSearchExercisesLazyQuery,
+  useSearchExercisesQuery,
 } from "@/generated/graphql.tsx";
 import {
   Card,
@@ -20,7 +20,7 @@ import { ExerciseItem, ExerciseList } from "@/components/ExerciseList.tsx";
 import { SimpleAccordion } from "@/components/SimpleAccordion.tsx";
 import { DifficultySelectorList } from "@/pages/ExerciseListPage/DifficultySelectorList.tsx";
 import { searchDefaultValues } from "@/pages/ExerciseListPage/SearchDefaultValues.tsx";
-import { useCallback } from "react";
+import { useEffect, useState } from "react";
 
 export type DifficultySelect = {
   [key in ExerciseAgeGroup]: {
@@ -38,38 +38,35 @@ export type ExerciseQuery = {
 export const ExerciseListPage = () => {
   const [exerciseQuery, setExerciseQuery] =
     useImmer<ExerciseQuery>(searchDefaultValues);
+  const [pagination, setPagination] = useState({ fromRow: 0, toRow: 10 });
 
-  const [searchExercises, searchExercisesResults] =
-    useSearchExercisesLazyQuery();
+  const [tableData, setTableData] = useState<ExerciseItem[]>([]);
 
-  const dataGenerator = useCallback(
-    async (from: number, to: number): Promise<ExerciseItem[]> => {
-      const { data, error } = await searchExercises({
-        variables: {
-          query: {
-            fromRow: from,
-            toRow: to,
-            difficulty: entries(exerciseQuery.difficulty)
-              .filter(([_, diff]) => diff.isEnabled)
-              .map(([ageGroup, difficulty]) => {
-                return {
-                  ageGroup: ageGroup as ExerciseAgeGroup,
-                  min: difficulty.difficulty[0],
-                  max: difficulty.difficulty[1],
-                };
-              }),
-            queryStr: exerciseQuery.searchQuery,
-            tags: [],
-            excludeTags: [],
-          },
-        },
-      });
-      if (error) {
-        console.error(error);
-        return [];
-      }
-      if (data) {
-        return data.searchExercises.exercises.map((exercise) => {
+  const { data, loading, error } = useSearchExercisesQuery({
+    variables: {
+      query: {
+        fromRow: pagination.fromRow,
+        toRow: pagination.toRow,
+        difficulty: entries(exerciseQuery.difficulty)
+          .filter(([, diff]) => diff.isEnabled)
+          .map(([ageGroup, difficulty]) => {
+            return {
+              ageGroup: ageGroup as ExerciseAgeGroup,
+              min: difficulty.difficulty[0],
+              max: difficulty.difficulty[1],
+            };
+          }),
+        queryStr: exerciseQuery.searchQuery,
+        tags: [],
+        excludeTags: [],
+      },
+    },
+  });
+
+  useEffect(() => {
+    if (data) {
+      setTableData(
+        data.searchExercises.exercises.map((exercise) => {
           return {
             fakeId: exercise.id,
             categoryDifficulties: exercise.difficulty.reduce(
@@ -86,12 +83,10 @@ export const ExerciseListPage = () => {
             hasPicture: true,
             description: exercise.description,
           };
-        });
-      }
-      return [];
-    },
-    [exerciseQuery.difficulty, exerciseQuery.searchQuery],
-  );
+        }),
+      );
+    }
+  }, [data]);
 
   return (
     <Card>
@@ -142,10 +137,11 @@ export const ExerciseListPage = () => {
         </Stack>
 
         <ExerciseList
+          setPagination={setPagination}
           dataSource={{
-            totalRows:
-              searchExercisesResults.data?.searchExercises.totalCount ?? 0,
-            dataGenerator,
+            data: tableData,
+            loading: loading,
+            error: error?.message,
           }}
         />
       </CardContent>

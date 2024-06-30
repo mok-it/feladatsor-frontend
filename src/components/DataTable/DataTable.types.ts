@@ -155,6 +155,12 @@ export type DataTableProps<T extends BaseObject> = {
      * Any custom element to be displayed in the pagination component
      */
     extraContent?: React.ReactNode;
+
+    /**
+     * A function that is called by the dataTable when the pagination changes
+     * @param pagination The new pagination state
+     */
+    setPagination?: (pagination: { fromRow: number; toRow: number }) => void;
   };
 
   /**
