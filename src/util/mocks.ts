@@ -38,10 +38,11 @@ export const mock: ExerciseCardData = {
     solutionOptions: ["10", "69", "matusz sosem ad pénzt", "0 "],
     status: "CREATED",
     tags: [],
-    elaboration: "elaboration",
-    elaborationImage: null,
-    exerciseImage:
-      "https://i.kym-cdn.com/entries/icons/facebook/000/021/464/14608107_1180665285312703_1558693314_n.jpg",
+    exerciseImage: {
+      __typename: "Image",
+      id: "1",
+      url: "https://i.kym-cdn.com/entries/icons/facebook/000/021/464/14608107_1180665285312703_1558693314_n.jpg",
+    },
     isCompetitionFinal: false,
     solveIdea: "",
     source: "source",
@@ -65,6 +66,20 @@ export const mock2 = {
   data: {
     ...mock.data,
     fakeId: "ab-2837-1234",
+    description:
+      "Dr. Balogh Tamás és Perjési Gábor együtt pisálnak a Pisa-patakba. Tamás 4 km/h-val, Gábor pedig a jobb kezével. Matusz Imre viszont ezt nem akarta annyiban hagyni, ezért ő is csatlakozott hozzájuk. Matusz 3 km/h-val, de a bal kezével. Melyikük ér hamarabb a patakhoz?",
+    helpingQuestions: [
+      "Mit ivott Dr. Balogh Tamás aznap este?",
+      "Melyikőjük a legnagyobb fasz?",
+    ],
+    solutionOptions: [
+      "Dr. Balogh Tamás",
+      "Perjési Gábor",
+      "Matusz Imre",
+      "Ezekből az adatokból nem lehet megmondani.",
+    ],
+    exerciseImage:
+      "https://osztalykirandulas.hu/wp-content/uploads/2023/12/be1n.jpg",
   },
   id: "2",
 };

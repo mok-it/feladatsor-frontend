@@ -1,6 +1,6 @@
-import { ExerciseInput } from "@/generated/graphql.tsx";
+import { ExerciseFields } from "@/types/ExerciseFields";
 
-export const createExerciseInitialValue: ExerciseInput = {
+export const createExerciseInitialValue: ExerciseFields = {
   description: "",
   difficulty: [
     {

@@ -1,43 +1,53 @@
 import { AlertDialog } from "@/components/Dialog.tsx";
 import { UploadDialog } from "@/components/UploadDialog.tsx";
-import { fromBase64 } from "@/util/toBase64";
+import { toBase64 } from "@/util/toBase64";
+import { useUploadImage } from "@/util/useUploadImage";
 import { Box, Button, Stack } from "@mui/material";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { MdDeleteOutline } from "react-icons/md";
-
-const isImage = (file: File | string) => {
-  if (typeof file === "string") return false;
-  return file.type.startsWith("image");
-};
+import { useToggle } from "react-use";
 
 type UploadWithPreviewProps = {
-  value?: string | null | undefined;
-  onChange: (file: File | null) => void;
+  defaultUrl?: string | null | undefined;
+  onChange: (values: { id: string | null; url: string | null }) => void;
 };
 
 export const UploadWithPreview = ({
-  onChange,
-  value,
+  onChange: onPropChange,
+  defaultUrl,
 }: UploadWithPreviewProps) => {
-  const [file, setFile] = useState<File | string | null>(value || null);
-  useEffect(() => {
-    if (!value) setFile(null);
-    else if (isImage(value)) setFile(fromBase64(value));
-    else setFile(value);
-  }, [value]);
+  const [url, setUrl] = useState<string | null>(defaultUrl || null);
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [loading, toggleLoading] = useToggle(false);
+
+  const uploadImage = useUploadImage();
+  const onChange = async (file: File | null) => {
+    if (!file) {
+      setUrl(null);
+      onPropChange({ id: null, url: null });
+      return;
+    }
+    toggleLoading(true);
+    const { id, url } = await uploadImage(await toBase64(file));
+    setUrl(url);
+    onPropChange({ id, url });
+    toggleLoading(false);
+  };
+
+  if (loading) {
+    return <p>Feltöltés...</p>;
+  }
 
   return (
     <>
-      {!file && (
+      {!url && (
         <UploadDialog
           setFile={(file) => {
-            setFile(file);
             onChange(file ?? null);
           }}
         />
       )}
-      {file && (
+      {url && (
         <Stack direction="column" spacing={2}>
           <Box
             sx={{
@@ -50,11 +60,7 @@ export const UploadWithPreview = ({
             }}
             borderRadius={1}
           >
-            {isImage(file) ? (
-              <img src={URL.createObjectURL(file as Blob)} alt="preview" />
-            ) : (
-              <img src={file as string} alt="preview" />
-            )}
+            <img src={url} alt="preview" />
           </Box>
           <Button
             sx={{
@@ -83,7 +89,7 @@ export const UploadWithPreview = ({
           setDialogOpen(false);
         }}
         primaryClick={() => {
-          setFile(null);
+          setUrl(null);
           onChange(null);
           setDialogOpen(false);
         }}

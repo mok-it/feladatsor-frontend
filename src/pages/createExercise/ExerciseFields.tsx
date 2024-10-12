@@ -4,8 +4,7 @@ import { Required } from "@/components/Required.tsx";
 import Section from "@/components/Section.tsx";
 import { SimpleAccordion } from "@/components/SimpleAccordion.tsx";
 import { UploadWithPreview } from "@/components/UploadWithPreview.tsx";
-import { ExerciseInput } from "@/generated/graphql.tsx";
-import { toBase64 } from "@/util/toBase64.ts";
+import { ExerciseFieldsType } from "@/types/ExerciseFieldsType";
 import { Box, Grid, Stack, TextField, Typography } from "@mui/material";
 import { useFormikContext } from "formik";
 import { FC, useMemo, useState } from "react";
@@ -17,7 +16,7 @@ const tags = ["Geometria", "Algebra"];
 
 const ExerciseFields: FC = () => {
   const { values, handleChange, handleBlur, setFieldValue } =
-    useFormikContext<ExerciseInput>();
+    useFormikContext<ExerciseFieldsType>();
 
   const categoryDifficultySelect = useMemo(() => {
     return (
@@ -75,10 +74,10 @@ const ExerciseFields: FC = () => {
         <Grid item xs={12}>
           <Section text={<>Feladat képe</>}>
             <UploadWithPreview
-              value={values.exerciseImage}
-              onChange={async (file) => {
-                if (!file) return setFieldValue("exerciseImage", null);
-                setFieldValue("exerciseImage", await toBase64(file));
+              defaultUrl={values.exerciseImageUrl}
+              onChange={({ id, url }) => {
+                setFieldValue("exerciseImage", id);
+                setFieldValue("exerciseImageUrl", url);
               }}
             />
           </Section>
@@ -104,13 +103,13 @@ const ExerciseFields: FC = () => {
             />
             <SimpleAccordion
               summary="Fájl feltöltés"
-              defaultExpanded={values.solutionImage !== undefined}
+              defaultExpanded={values.solutionImageUrl !== undefined}
             >
               <UploadWithPreview
-                value={values.solutionImage}
-                onChange={async (file) => {
-                  if (!file) return setFieldValue("solutionImage", null);
-                  setFieldValue("solutionImage", await toBase64(file));
+                defaultUrl={values.solutionImageUrl}
+                onChange={({ id, url }) => {
+                  setFieldValue("solutionImage", id);
+                  setFieldValue("solutionImageUrl", url);
                 }}
               />
             </SimpleAccordion>
@@ -130,13 +129,13 @@ const ExerciseFields: FC = () => {
             />
             <SimpleAccordion
               summary="Fájl feltöltés"
-              defaultExpanded={values.solveIdeaImage !== undefined}
+              defaultExpanded={values.solveIdeaImageUrl !== undefined}
             >
               <UploadWithPreview
-                value={values.solveIdeaImage}
-                onChange={async (file) => {
-                  if (!file) return setFieldValue("solveIdeaImage", null);
-                  setFieldValue("solveIdeaImage", await toBase64(file));
+                defaultUrl={values.solveIdeaImageUrl}
+                onChange={({ id, url }) => {
+                  setFieldValue("solveIdeaImage", id);
+                  setFieldValue("solveIdeaImageUrl", url);
                 }}
               />
             </SimpleAccordion>

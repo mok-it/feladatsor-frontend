@@ -3,9 +3,11 @@ import FakeId from "@/components/FakeId";
 import History from "@/components/History";
 import { MultiSelect } from "@/components/MultiSelect.tsx";
 import Section from "@/components/Section";
-import { ExerciseInput, useSelectExerciseQuery } from "@/generated/graphql";
-import ExerciseFields from "@/pages/createExercise/ExerciseFields";
-import { useUploadImage } from "@/util/useUploadImage";
+import {
+  useSelectExerciseQuery,
+  useUpdateExerciseMutation,
+} from "@/generated/graphql";
+import { ExerciseFieldsType } from "@/types/ExerciseFieldsType";
 import { LoadingButton } from "@mui/lab";
 import {
   Button,
@@ -22,6 +24,7 @@ import {
 import { Box, Stack } from "@mui/system";
 import { Formik, useFormikContext } from "formik";
 import { motion } from "framer-motion";
+import { useSnackbar } from "notistack";
 import { FC, useCallback, useState } from "react";
 import {
   MdArrowDownward,
@@ -33,66 +36,66 @@ import {
 } from "react-icons/md";
 import { useParams } from "react-router";
 import { useToggle } from "react-use";
+import ExerciseFields from "./createExercise/ExerciseFields";
 import { createExerciseInitialValue } from "./createExercise/createExerciseInitialValue";
 
 const ExerciseDetails: FC = () => {
-  //const [createExercise] = useCreateExerciseMutation();
+  const { enqueueSnackbar } = useSnackbar();
+  const [updateExercise] = useUpdateExerciseMutation();
+  const { fakeId } = useParams();
   const [showConfirmDialog, setShowConfirmDialog] = useToggle(false);
   const [loadingSubmit, toggleLoadingSubmit] = useToggle(false);
-  const [formDataToSend, setFormDataToSend] = useState<ExerciseInput | null>(
-    null,
-  );
-  const uploadImage = useUploadImage();
+  const [formDataToSend, setFormDataToSend] =
+    useState<ExerciseFieldsType | null>(null);
 
   const send = useCallback(async () => {
-    console.log(formDataToSend);
     if (!formDataToSend) return;
     toggleLoadingSubmit(true);
     try {
-      const images: Partial<ExerciseInput> = {
-        exerciseImage:
-          formDataToSend.exerciseImage &&
-          (await uploadImage(formDataToSend.exerciseImage)),
-        solutionImage:
-          formDataToSend.solutionImage &&
-          (await uploadImage(formDataToSend.solutionImage)),
-        solveIdeaImage:
-          formDataToSend.solveIdeaImage &&
-          (await uploadImage(formDataToSend.solveIdeaImage)),
-      };
+      const createResult = await updateExercise({
+        variables: {
+          id: fakeId!,
+          input: {
+            alternativeDifficultyParent:
+              formDataToSend.alternativeDifficultyParent,
+            description: formDataToSend.description,
+            difficulty: formDataToSend.difficulty.map((d) => ({
+              ageGroup: d.ageGroup,
+              difficulty: d.difficulty,
+            })),
+            helpingQuestions: formDataToSend.helpingQuestions,
+            isCompetitionFinal: formDataToSend.isCompetitionFinal,
+            sameLogicParent: formDataToSend.sameLogicParent,
+            solution: formDataToSend.solution,
+            solutionOptions: formDataToSend.solutionOptions,
+            solveIdea: formDataToSend.solveIdea,
+            source: formDataToSend.source,
+            status: formDataToSend.status,
+            tags: formDataToSend.tags,
 
-      const variables = {
-        input: {
-          alternativeDifficultyParent:
-            formDataToSend.alternativeDifficultyParent,
-          description: formDataToSend.description,
-          difficulty: formDataToSend.difficulty,
-          exerciseImage: images.exerciseImage,
-          helpingQuestions: formDataToSend.helpingQuestions,
-          isCompetitionFinal: formDataToSend.isCompetitionFinal,
-          sameLogicParent: formDataToSend.sameLogicParent,
-          solution: formDataToSend.solution,
-          solutionImage: images.solutionImage,
-          solutionOptions: formDataToSend.solutionOptions,
-          solveIdea: formDataToSend.solveIdea,
-          solveIdeaImage: images.solveIdeaImage,
-          source: formDataToSend.source,
-          status: formDataToSend.status,
-          tags: formDataToSend.tags,
+            exerciseImage: formDataToSend.exerciseImage,
+            solutionImage: formDataToSend.solutionImage,
+            solveIdeaImage: formDataToSend.solveIdeaImage,
+          },
         },
-      };
-      return variables;
-      // const createResult = await createExercise({
-      //   variables,
-      // });
-      // if (createResult.errors) {
-      //   console.log(createResult.errors);
-      //   return;
-      // }
+      });
+      if (createResult.errors) {
+        console.log(createResult.errors);
+        return;
+      }
+      enqueueSnackbar({ variant: "success", message: "Sikeresen mentve" });
+      setShowConfirmDialog(false);
     } finally {
       toggleLoadingSubmit(false);
     }
-  }, [formDataToSend, toggleLoadingSubmit, uploadImage]);
+  }, [
+    enqueueSnackbar,
+    fakeId,
+    formDataToSend,
+    setShowConfirmDialog,
+    toggleLoadingSubmit,
+    updateExercise,
+  ]);
 
   return (
     <div>
@@ -130,8 +133,8 @@ const ExerciseDetails: FC = () => {
           </Card>
         </Stack>
       </Modal>
-      <Formik<ExerciseInput>
-        initialValues={createExerciseInitialValue}
+      <Formik<ExerciseFieldsType & { initial: boolean }>
+        initialValues={{ ...createExerciseInitialValue, initial: true }}
         onSubmit={(values) => {
           setFormDataToSend(values);
           setShowConfirmDialog(true);
@@ -144,27 +147,34 @@ const ExerciseDetails: FC = () => {
 };
 
 const ExerciseDetailsForm = () => {
-  const { setValues, submitForm } = useFormikContext<ExerciseInput>();
+  const { values, setValues, submitForm } = useFormikContext<
+    ExerciseFieldsType & { initial: boolean }
+  >();
   const { fakeId } = useParams();
   const [sort, setSort] = useState<"asc" | "desc">("asc");
 
-  const { loading, data } = useSelectExerciseQuery({
+  const { loading } = useSelectExerciseQuery({
     variables: { exerciseId: fakeId! },
+    fetchPolicy: "no-cache",
     onCompleted: (data) => {
       if (!data.exercise) return;
       setValues({
         ...data.exercise,
+        initial: false,
         status: "CREATED",
         solutionOptions: [],
-        exerciseImage: data.exercise.exerciseImage?.url,
-        solutionImage: data.exercise.solutionImage?.url,
-        solveIdeaImage: data.exercise.solveIdeaImage?.url,
+        exerciseImageUrl: data.exercise.exerciseImage?.url,
+        solutionImageUrl: data.exercise.solutionImage?.url,
+        solveIdeaImageUrl: data.exercise.solveIdeaImage?.url,
+        exerciseImage: data.exercise.exerciseImage?.id,
+        solutionImage: data.exercise.solutionImage?.id,
+        solveIdeaImage: data.exercise.solveIdeaImage?.id,
         tags: data.exercise.tags.map((tag) => tag.name),
       });
     },
   });
 
-  if (loading && !data) return <div>Loading...</div>;
+  if (loading || values.initial) return <div>Loading...</div>;
 
   return (
     <>

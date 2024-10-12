@@ -5,7 +5,7 @@ import { fromBase64 } from "./toBase64";
 export const useUploadImage = () => {
   const token = useAtomValue(tokenAtom);
 
-  return async (base64: string): Promise<string> => {
+  return async (base64: string): Promise<{ id: string; url: string }> => {
     const file = fromBase64(base64);
     const formData = new FormData();
     formData.append("file", file as Blob);
@@ -20,6 +20,6 @@ export const useUploadImage = () => {
       },
     );
     const data = await res.json();
-    return data.id;
+    return { id: data.id, url: data.url };
   };
 };

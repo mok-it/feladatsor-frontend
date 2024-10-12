@@ -1,4 +1,5 @@
-import { ExerciseInput, User as TotalUser } from "@/generated/graphql.tsx";
+import { User as TotalUser } from "@/generated/graphql.tsx";
+import { ExerciseFieldsType } from "@/types/ExerciseFieldsType";
 import { UniqueIdentifier } from "@dnd-kit/core";
 import { atomWithImmer } from "jotai-immer";
 import { atomWithStorage, createJSONStorage } from "jotai/utils";
@@ -55,7 +56,7 @@ export const composeAtom = atomWithImmer<{
 
 export const exercisePlacementsAtom = atomWithImmer<ExercisePlacements>({});
 
-export const createExerciseAtom = atomWithStorage<ExerciseInput | null>(
+export const createExerciseAtom = atomWithStorage<ExerciseFieldsType | null>(
   "createExercise",
   null,
   createJSONStorage(() => localStorage),

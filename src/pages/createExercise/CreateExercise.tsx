@@ -1,10 +1,7 @@
 import { KaTeX } from "@/components/Katex.tsx";
-import {
-  ExerciseInput,
-  useCreateExerciseMutation,
-} from "@/generated/graphql.tsx";
+import { useCreateExerciseMutation } from "@/generated/graphql.tsx";
+import { ExerciseFieldsType } from "@/types/ExerciseFieldsType.ts";
 import { createExerciseAtom } from "@/util/atoms.ts";
-import { useUploadImage } from "@/util/useUploadImage.ts";
 import { LoadingButton } from "@mui/lab";
 import {
   Box,
@@ -19,6 +16,7 @@ import {
 } from "@mui/material";
 import { Formik, useFormikContext } from "formik";
 import { useAtomValue, useSetAtom } from "jotai";
+import { useSnackbar } from "notistack";
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDebounce, useToggle } from "react-use";
@@ -26,35 +24,21 @@ import ExerciseFields from "./ExerciseFields.tsx";
 import { createExerciseInitialValue } from "./createExerciseInitialValue.ts";
 
 export const CreateExercise = () => {
+  const { enqueueSnackbar } = useSnackbar();
   const [createExercise] = useCreateExerciseMutation();
   const persistedValues = useAtomValue(createExerciseAtom);
   const setPersistedValues = useSetAtom(createExerciseAtom);
 
   const [showConfirmDialog, setShowConfirmDialog] = useToggle(false);
   const [loadingSubmit, toggleLoadingSubmit] = useToggle(false);
-  const [formDataToSend, setFormDataToSend] = useState<ExerciseInput | null>(
-    null,
-  );
+  const [formDataToSend, setFormDataToSend] =
+    useState<ExerciseFieldsType | null>(null);
   const navigate = useNavigate();
-  const uploadImage = useUploadImage();
 
   const send = useCallback(async () => {
-    console.log(formDataToSend);
     if (!formDataToSend) return;
     toggleLoadingSubmit(true);
     try {
-      const images: Partial<ExerciseInput> = {
-        exerciseImage:
-          formDataToSend.exerciseImage &&
-          (await uploadImage(formDataToSend.exerciseImage)),
-        solutionImage:
-          formDataToSend.solutionImage &&
-          (await uploadImage(formDataToSend.solutionImage)),
-        solveIdeaImage:
-          formDataToSend.solveIdeaImage &&
-          (await uploadImage(formDataToSend.solveIdeaImage)),
-      };
-
       const createResult = await createExercise({
         variables: {
           input: {
@@ -62,18 +46,19 @@ export const CreateExercise = () => {
               formDataToSend.alternativeDifficultyParent,
             description: formDataToSend.description,
             difficulty: formDataToSend.difficulty,
-            exerciseImage: images.exerciseImage,
             helpingQuestions: formDataToSend.helpingQuestions,
             isCompetitionFinal: formDataToSend.isCompetitionFinal,
             sameLogicParent: formDataToSend.sameLogicParent,
             solution: formDataToSend.solution,
-            solutionImage: images.solutionImage,
             solutionOptions: formDataToSend.solutionOptions,
             solveIdea: formDataToSend.solveIdea,
-            solveIdeaImage: images.solveIdeaImage,
             source: formDataToSend.source,
             status: formDataToSend.status,
             tags: formDataToSend.tags,
+
+            exerciseImage: formDataToSend.exerciseImage,
+            solutionImage: formDataToSend.solutionImage,
+            solveIdeaImage: formDataToSend.solveIdeaImage,
           },
         },
       });
@@ -82,17 +67,21 @@ export const CreateExercise = () => {
         return;
       }
       setPersistedValues(createExerciseInitialValue);
-      navigate("/list-exercises");
+      enqueueSnackbar({
+        variant: "success",
+        message: "Sikeresen beküldted a feladatot!",
+      });
+      navigate("/exercise/" + createResult.data?.createExercise.id);
     } finally {
       toggleLoadingSubmit(false);
     }
   }, [
     createExercise,
+    enqueueSnackbar,
     formDataToSend,
     navigate,
     setPersistedValues,
     toggleLoadingSubmit,
-    uploadImage,
   ]);
 
   useEffect(() => {
@@ -122,7 +111,7 @@ export const CreateExercise = () => {
           </LoadingButton>
         </DialogActions>
       </Dialog>
-      <Formik<ExerciseInput>
+      <Formik<ExerciseFieldsType>
         initialValues={persistedValues}
         onSubmit={(values) => {
           setFormDataToSend(values);
@@ -137,7 +126,7 @@ export const CreateExercise = () => {
 };
 
 const CreateExerciseForm = () => {
-  const { submitForm, values } = useFormikContext<ExerciseInput>();
+  const { submitForm, values } = useFormikContext<ExerciseFieldsType>();
   const setPersistedValues = useSetAtom(createExerciseAtom);
 
   useDebounce(
