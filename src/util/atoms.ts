@@ -2,7 +2,7 @@ import { ExerciseInput, User as TotalUser } from "@/generated/graphql.tsx";
 import { UniqueIdentifier } from "@dnd-kit/core";
 import { atomWithImmer } from "jotai-immer";
 import { atomWithStorage, createJSONStorage } from "jotai/utils";
-import { mock, mock2, mock3 } from "./mocks";
+import { mock, mock3 } from "./mocks";
 import { ExerciseCardData, ExercisePlacements } from "./types";
 
 type UserAtomType = { isLoggedIn: boolean; user: User | null } | undefined;
@@ -23,7 +23,6 @@ export const tokenAtom = atomWithStorage<string | null>(
 
 export const exerciseCardsAtom = atomWithImmer<ExerciseCardData[]>([
   mock,
-  mock2,
   mock3,
 ]);
 export const composeAtom = atomWithImmer<{

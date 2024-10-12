@@ -1,23 +1,30 @@
 import { AlertDialog } from "@/components/Dialog.tsx";
 import { UploadDialog } from "@/components/UploadDialog.tsx";
+import { fromBase64 } from "@/util/toBase64";
 import { Box, Button, Stack } from "@mui/material";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { MdDeleteOutline } from "react-icons/md";
 
-const isImage = (file: File) => {
+const isImage = (file: File | string) => {
+  if (typeof file === "string") return false;
   return file.type.startsWith("image");
 };
 
 type UploadWithPreviewProps = {
-  defaultValue?: File;
+  value?: string | null | undefined;
   onChange: (file: File | null) => void;
 };
 
 export const UploadWithPreview = ({
   onChange,
-  defaultValue,
+  value,
 }: UploadWithPreviewProps) => {
-  const [file, setFile] = useState<File | null>(defaultValue || null);
+  const [file, setFile] = useState<File | string | null>(value || null);
+  useEffect(() => {
+    if (!value) setFile(null);
+    else if (isImage(value)) setFile(fromBase64(value));
+    else setFile(value);
+  }, [value]);
   const [dialogOpen, setDialogOpen] = useState(false);
 
   return (
@@ -30,7 +37,7 @@ export const UploadWithPreview = ({
           }}
         />
       )}
-      {file && isImage(file) && (
+      {file && (
         <Stack direction="column" spacing={2}>
           <Box
             sx={{
@@ -43,7 +50,11 @@ export const UploadWithPreview = ({
             }}
             borderRadius={1}
           >
-            <img src={URL.createObjectURL(file)} alt="preview" />
+            {isImage(file) ? (
+              <img src={URL.createObjectURL(file as Blob)} alt="preview" />
+            ) : (
+              <img src={file as string} alt="preview" />
+            )}
           </Box>
           <Button
             sx={{
@@ -73,7 +84,7 @@ export const UploadWithPreview = ({
         }}
         primaryClick={() => {
           setFile(null);
-          onChange(file ?? null);
+          onChange(null);
           setDialogOpen(false);
         }}
       />
