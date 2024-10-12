@@ -1,3 +1,6 @@
+import { NotFoundPage } from "@/pages/404Page.tsx";
+import Login from "@/pages/Login.tsx";
+import RegisterPage from "@/pages/RegisterPage.tsx";
 import { useAtom } from "jotai";
 import { useEffect } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
@@ -6,9 +9,6 @@ import Layout from "./Layout";
 import { pages } from "./pages";
 import ExerciseDetails from "./pages/ExerciseDetails";
 import { userAtom } from "./util/atoms";
-import Login from "@/pages/Login.tsx";
-import RegisterPage from "@/pages/RegisterPage.tsx";
-import { NotFoundPage } from "@/pages/404Page.tsx";
 
 function App() {
   const [user, setUser] = useAtom(userAtom);
@@ -22,7 +22,9 @@ function App() {
     }
   }, [setUser, user]);
 
-  const isAuthenticated = user && user.isLoggedIn;
+  if (!user) return null;
+
+  const isAuthenticated = user.isLoggedIn;
 
   if (!isAuthenticated) {
     return (
