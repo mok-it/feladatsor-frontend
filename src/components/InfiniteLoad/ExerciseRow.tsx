@@ -2,10 +2,11 @@ import {
   ExerciseAgeGroup,
   ExerciseListElemFragment,
 } from "@/generated/graphql";
-import { Box, Chip, TableCell, TableRow } from "@mui/material";
+import { Box, Chip, TableCell, TableRow, Tooltip } from "@mui/material";
 import { FC, memo } from "react";
 import { useNavigate } from "react-router-dom";
 import { CategoryDifficulties } from "../CategoryDifficulties";
+import { KaTeX } from "../Katex";
 
 const ExerciseRow: FC<{ data: ExerciseListElemFragment }> = ({ data }) => {
   const navigate = useNavigate();
@@ -39,18 +40,20 @@ const ExerciseRow: FC<{ data: ExerciseListElemFragment }> = ({ data }) => {
         ))}
       </TableCell>
       <TableCell sx={{ minWidth: 300 }}>
-        <Box
-          sx={{
-            maxHeight: 100,
-            overflow: "hidden",
-            textOverflow: "ellipsis",
-            display: "-webkit-box",
-            WebkitLineClamp: "2",
-            WebkitBoxOrient: "vertical",
-          }}
-        >
-          {data.description}
-        </Box>
+        <Tooltip title={<KaTeX fixNewLines value={data.description} />}>
+          <Box
+            sx={{
+              maxHeight: 100,
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+              display: "-webkit-box",
+              WebkitLineClamp: "2",
+              WebkitBoxOrient: "vertical",
+            }}
+          >
+            <KaTeX value={data.description} />
+          </Box>
+        </Tooltip>
       </TableCell>
     </TableRow>
   );

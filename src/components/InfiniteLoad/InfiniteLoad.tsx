@@ -59,16 +59,24 @@ export function InfiniteLoad<T>({
           })}
           {hasMore && (
             <TableRow>
+              <TableCell />
               <TableCell>Loading...</TableCell>
+              <TableCell />
+              <TableCell />
+              <TableCell />
             </TableRow>
           )}
         </>
       )}
       {!hasMore && !isFetchingNextPage && (
         <TableRow>
+          <TableCell />
           <TableCell>
             {data.length > 0 ? "A végére értél" : "Nincs találat"}
           </TableCell>
+          <TableCell />
+          <TableCell />
+          <TableCell />
         </TableRow>
       )}
       <TableRow>

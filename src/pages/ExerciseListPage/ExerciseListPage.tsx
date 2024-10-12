@@ -95,15 +95,20 @@ export const ExerciseListPage = () => {
     setHasMore,
   ]);
 
+  const [resetSignal, reset] = useToggle(false);
   useEffectOnce(() => {
     fetchMore();
   });
+  useEffect(() => {
+    fetchMore();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [resetSignal]);
 
   useEffect(() => {
     setData([]);
     setLoadingSkip(-1);
     setHasMore(true);
-    fetchMore();
+    reset();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [exerciseQuery]);
 
@@ -115,7 +120,6 @@ export const ExerciseListPage = () => {
           <TextField
             onChange={(event) => {
               setExerciseQuery((draft) => {
-                if (event.target.value === draft.searchQuery) return draft;
                 draft.searchQuery = event.target.value;
               });
             }}
@@ -130,6 +134,7 @@ export const ExerciseListPage = () => {
             }}
             size="small"
           />
+          {exerciseQuery.searchQuery}
           <SimpleAccordion summary="Nehétség szűrő">
             <DifficultySelectorList
               difficulties={exerciseQuery.difficulty}
