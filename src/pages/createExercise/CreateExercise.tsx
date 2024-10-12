@@ -62,8 +62,6 @@ export const CreateExercise = () => {
               formDataToSend.alternativeDifficultyParent,
             description: formDataToSend.description,
             difficulty: formDataToSend.difficulty,
-            elaboration: formDataToSend.elaboration,
-            // elaborationImage: formDataToSend.elaborationImage, // TODO what is this
             exerciseImage: images.exerciseImage,
             helpingQuestions: formDataToSend.helpingQuestions,
             isCompetitionFinal: formDataToSend.isCompetitionFinal,

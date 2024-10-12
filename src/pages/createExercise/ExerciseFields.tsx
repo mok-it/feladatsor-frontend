@@ -5,7 +5,7 @@ import Section from "@/components/Section.tsx";
 import { SimpleAccordion } from "@/components/SimpleAccordion.tsx";
 import { UploadWithPreview } from "@/components/UploadWithPreview.tsx";
 import { ExerciseInput } from "@/generated/graphql.tsx";
-import { fromBase64, toBase64 } from "@/util/toBase64.ts";
+import { toBase64 } from "@/util/toBase64.ts";
 import { Box, Grid, Stack, TextField, Typography } from "@mui/material";
 import { useFormikContext } from "formik";
 import { FC, useMemo, useState } from "react";
@@ -42,33 +42,6 @@ const ExerciseFields: FC = () => {
     return <KaTeX value={debouncedDescription} />;
   }, [debouncedDescription]);
 
-  const {
-    defaultExerciseImage,
-    // defaultElaborationImage,
-    defaultSolutionImage,
-    defaultSolveIdeaImage,
-  } = useMemo(() => {
-    return {
-      defaultExerciseImage: values.exerciseImage
-        ? fromBase64(values.exerciseImage) || undefined
-        : undefined,
-      defaultElaborationImage: values.elaborationImage
-        ? fromBase64(values.elaborationImage) || undefined
-        : undefined,
-      defaultSolutionImage: values.solutionImage
-        ? fromBase64(values.solutionImage) || undefined
-        : undefined,
-      defaultSolveIdeaImage: values.solveIdeaImage
-        ? fromBase64(values.solveIdeaImage) || undefined
-        : undefined,
-    };
-  }, [
-    values.elaborationImage,
-    values.exerciseImage,
-    values.solutionImage,
-    values.solveIdeaImage,
-  ]);
-
   return (
     <Box>
       <Grid container spacing={2}>
@@ -102,7 +75,7 @@ const ExerciseFields: FC = () => {
         <Grid item xs={12}>
           <Section text={<>Feladat képe</>}>
             <UploadWithPreview
-              defaultValue={defaultExerciseImage}
+              value={values.exerciseImage}
               onChange={async (file) => {
                 if (!file) return setFieldValue("exerciseImage", null);
                 setFieldValue("exerciseImage", await toBase64(file));
@@ -131,10 +104,10 @@ const ExerciseFields: FC = () => {
             />
             <SimpleAccordion
               summary="Fájl feltöltés"
-              defaultExpanded={defaultSolutionImage !== undefined}
+              defaultExpanded={values.solutionImage !== undefined}
             >
               <UploadWithPreview
-                defaultValue={defaultSolutionImage}
+                value={values.solutionImage}
                 onChange={async (file) => {
                   if (!file) return setFieldValue("solutionImage", null);
                   setFieldValue("solutionImage", await toBase64(file));
@@ -157,10 +130,10 @@ const ExerciseFields: FC = () => {
             />
             <SimpleAccordion
               summary="Fájl feltöltés"
-              defaultExpanded={defaultSolutionImage !== undefined}
+              defaultExpanded={values.solveIdeaImage !== undefined}
             >
               <UploadWithPreview
-                defaultValue={defaultSolveIdeaImage}
+                value={values.solveIdeaImage}
                 onChange={async (file) => {
                   if (!file) return setFieldValue("solveIdeaImage", null);
                   setFieldValue("solveIdeaImage", await toBase64(file));
