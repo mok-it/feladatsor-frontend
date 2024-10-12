@@ -6,16 +6,12 @@ import { ageGroupTexts } from "@/types/ageGroupTexts.ts";
 import { Grid, Stack, Switch, Typography } from "@mui/material";
 import Radio from "@mui/material/Radio";
 import { blueGrey, brown } from "@mui/material/colors";
-import { ChangeEvent, useEffect, useState } from "react";
+import { ChangeEvent, FC } from "react";
 
-type CategoryDifficultySelectProps = {
+export const CategoryDifficultySelect: FC<{
+  difficulty: ExerciseDifficultyInput[];
   onChange: (value: ExerciseDifficultyInput[]) => void;
-  values: ExerciseDifficultyInput[];
-};
-
-export const CategoryDifficultySelect = (
-  props: CategoryDifficultySelectProps,
-) => {
+}> = ({ difficulty, onChange }) => {
   return (
     <Grid container gap={3}>
       <Grid item xs={12}>
@@ -24,9 +20,9 @@ export const CategoryDifficultySelect = (
             key={index}
             name={ageGroup}
             handleChange={(value) => {
-              if (!props.values.find((v) => v.ageGroup === ageGroupKey)) {
-                props.onChange([
-                  ...props.values,
+              if (!difficulty.find((v) => v.ageGroup === ageGroupKey)) {
+                onChange([
+                  ...difficulty,
                   {
                     ageGroup: ageGroupKey as ExerciseAgeGroup,
                     difficulty: parseInt(value),
@@ -34,7 +30,7 @@ export const CategoryDifficultySelect = (
                 ]);
                 return;
               }
-              const newValues = props.values.map((v) => {
+              const newValues = difficulty.map((v) => {
                 if (v.ageGroup === ageGroupKey) {
                   return {
                     ...v,
@@ -43,10 +39,11 @@ export const CategoryDifficultySelect = (
                 }
                 return v;
               });
-              props.onChange(newValues);
+              console.log({ newValues });
+              onChange(newValues);
             }}
             selectedValue={
-              props.values
+              difficulty
                 .find((value) => value.ageGroup === ageGroupKey)
                 ?.difficulty.toString() ?? "0"
             }
@@ -63,21 +60,20 @@ type ColorRadioButtonProps = {
   selectedValue: string;
 };
 
-export const ColorRadioButtons = (props: ColorRadioButtonProps) => {
+export const ColorRadioButtons = ({
+  name,
+  handleChange: propHandleChange,
+  selectedValue,
+}: ColorRadioButtonProps) => {
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
-    props.handleChange(event.target.value);
+    propHandleChange(event.target.value);
   };
-  const [isDisabled, setIsDisabled] = useState(true);
-
-  useEffect(() => {
-    if (isDisabled) {
-      props.handleChange("0");
-    }
-  }, [isDisabled]);
 
   const controlProps = (item: string) => ({
-    checked: props.selectedValue === item,
-    onChange: handleChange,
+    checked: selectedValue === item,
+    onChange: (e: ChangeEvent<HTMLInputElement>) => {
+      handleChange(e);
+    },
     value: item,
     inputProps: { "aria-label": item },
   });
@@ -85,18 +81,17 @@ export const ColorRadioButtons = (props: ColorRadioButtonProps) => {
   return (
     <Stack direction={"row"} alignItems="center">
       <Switch
-        value={isDisabled}
-        onChange={(_, checked) => setIsDisabled(!checked)}
+        checked={selectedValue !== "0"}
+        onChange={() => propHandleChange(selectedValue === "0" ? "1" : "0")}
       />
       <Typography
         sx={{ width: "95px" }}
-        color={isDisabled ? "text.disabled" : undefined}
+        color={selectedValue === "0" ? "text.disabled" : undefined}
       >
-        {props.name}
+        {name}
       </Typography>
-      <Radio disabled={isDisabled} {...controlProps("1")} color="success" />
+      <Radio {...controlProps("1")} color="success" />
       <Radio
-        disabled={isDisabled}
         {...controlProps("2")}
         sx={{
           color: brown[800],
@@ -106,7 +101,6 @@ export const ColorRadioButtons = (props: ColorRadioButtonProps) => {
         }}
       />
       <Radio
-        disabled={isDisabled}
         {...controlProps("3")}
         sx={{
           color: blueGrey[800],
@@ -115,7 +109,7 @@ export const ColorRadioButtons = (props: ColorRadioButtonProps) => {
           },
         }}
       />
-      <Radio disabled={isDisabled} {...controlProps("4")} color="warning" />
+      <Radio {...controlProps("4")} color="warning" />
     </Stack>
   );
 };
