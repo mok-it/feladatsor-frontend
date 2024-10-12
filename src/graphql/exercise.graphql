@@ -3,10 +3,10 @@ query selectExercises {
   exercises(take: 10, skip: 0) {
     id
     description
-    exerciseImage
+    exerciseImage {
+      url
+    }
     solution
-    elaboration
-    elaborationImage
     helpingQuestions
     source
     difficulty {

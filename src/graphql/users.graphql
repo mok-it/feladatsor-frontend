@@ -2,6 +2,7 @@ query users {
   users {
     id
     name
+    userName
     email
     userName
     roles

@@ -1,4 +1,7 @@
-import { useLoginWithGoogleMutation } from "@/generated/graphql.tsx";
+import {
+  useLoginMutation,
+  useLoginWithGoogleMutation,
+} from "@/generated/graphql.tsx";
 import { tokenAtom, userAtom } from "@/util/atoms";
 import { auth, authProvider } from "@/util/firebase";
 import {
@@ -8,13 +11,13 @@ import {
   Card,
   CircularProgress,
   Divider,
-  Link,
   Stack,
   TextField,
   Typography,
 } from "@mui/material";
 import { AuthError, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { useSetAtom } from "jotai";
+import { Link } from "react-router-dom";
 import { FC, useCallback, useState } from "react";
 import { FcGoogle } from "react-icons/fc";
 
@@ -23,9 +26,34 @@ const Login: FC = () => {
   const setUser = useSetAtom(userAtom);
   const setToken = useSetAtom(tokenAtom);
 
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+
   const [ownLogin] = useLoginWithGoogleMutation();
+  const [login] = useLoginMutation();
 
   const signIn = useCallback(async () => {
+    const loginResponse = await login({
+      variables: {
+        name: username,
+        password: password,
+      },
+    });
+    if (
+      !loginResponse.errors &&
+      loginResponse.data &&
+      loginResponse.data.login
+    ) {
+      setUser({
+        isLoggedIn: true,
+        user: loginResponse.data.login.user,
+      });
+      setToken(loginResponse.data.login?.token);
+      console.log("User token:", loginResponse.data.login.token);
+    }
+  }, [setUser, setToken, login, username, password]);
+
+  const signInWithGoogle = useCallback(async () => {
     setLoading(true);
     await signInWithPopup(auth, authProvider)
       .then(async (googleAuthResult) => {
@@ -111,31 +139,39 @@ const Login: FC = () => {
               <TextField
                 required
                 label="Felhasználónév"
-                defaultValue=""
+                onChange={(e) => setUsername(e.target.value)}
+                value={username}
                 size="small"
               />
               <TextField
                 required
                 label="Jelszó"
-                defaultValue=""
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
                 type="password"
                 size="small"
               />
-              <Button variant="contained" fullWidth>
+              <Button variant="contained" fullWidth onClick={signIn}>
                 Bejelentkezés
               </Button>
               <Divider />
               <Button
                 variant="outlined"
-                onClick={signIn}
+                onClick={signInWithGoogle}
                 startIcon={<FcGoogle />}
                 disabled={loading}
                 sx={{ mt: 2 }}
               >
                 Google
               </Button>
-              <Link textAlign="right" mt="auto" sx={{ cursor: "pointer" }}>
-                Regisztráció
+              <Link to="/register">
+                <Typography
+                  textAlign="right"
+                  mt="auto"
+                  sx={{ cursor: "pointer" }}
+                >
+                  Regisztráció
+                </Typography>
               </Link>
             </Stack>
           </Card>

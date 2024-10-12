@@ -1,0 +1,14 @@
+mutation loginWithGoogle($googleToken: String!) {
+  loginWithGoogle(googleToken: $googleToken) {
+    user {
+      id
+      email
+      name
+      userName
+      roles
+      createdAt
+      updatedAt
+    }
+    token
+  }
+}

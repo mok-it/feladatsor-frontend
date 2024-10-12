@@ -26,17 +26,17 @@ export type Exercise = {
   createdBy: User;
   description: Scalars['String']['output'];
   difficulty: Array<ExerciseDifficulty>;
-  elaboration?: Maybe<Scalars['String']['output']>;
-  elaborationImage?: Maybe<Scalars['String']['output']>;
-  exerciseImage?: Maybe<Scalars['String']['output']>;
+  exerciseImage?: Maybe<Image>;
   helpingQuestions: Array<Scalars['String']['output']>;
   history: Array<ExerciseHistory>;
   id: Scalars['ID']['output'];
   isCompetitionFinal?: Maybe<Scalars['Boolean']['output']>;
   sameLogicExercises: Array<Exercise>;
   solution: Scalars['String']['output'];
+  solutionImage?: Maybe<Image>;
   solutionOptions: Array<Scalars['String']['output']>;
   solveIdea?: Maybe<Scalars['String']['output']>;
+  solveIdeaImage?: Maybe<Image>;
   source?: Maybe<Scalars['String']['output']>;
   status: ExerciseStatus;
   tags: Array<Tag>;
@@ -112,8 +112,6 @@ export type ExerciseInput = {
   alternativeDifficultyParent?: InputMaybe<Scalars['ID']['input']>;
   description: Scalars['String']['input'];
   difficulty: Array<ExerciseDifficultyInput>;
-  elaboration?: InputMaybe<Scalars['String']['input']>;
-  elaborationImage?: InputMaybe<Scalars['String']['input']>;
   exerciseImage?: InputMaybe<Scalars['String']['input']>;
   helpingQuestions: Array<Scalars['String']['input']>;
   isCompetitionFinal?: InputMaybe<Scalars['Boolean']['input']>;
@@ -155,6 +153,12 @@ export type ExerciseTag = {
   id: Scalars['ID']['output'];
   name: Scalars['String']['output'];
   parent?: Maybe<ExerciseTag>;
+};
+
+export type Image = {
+  __typename: 'Image';
+  id: Scalars['ID']['output'];
+  url: Scalars['String']['output'];
 };
 
 export type LoginResponse = {
@@ -320,12 +324,20 @@ export type CreateExerciseMutation = { __typename: 'Mutation', createExercise: {
 export type SelectExercisesQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type SelectExercisesQuery = { __typename: 'Query', exercises: Array<{ __typename: 'Exercise', id: string, description: string, exerciseImage?: string | null, solution: string, elaboration?: string | null, elaborationImage?: string | null, helpingQuestions: Array<string>, source?: string | null, createdAt: string, updatedAt: string, difficulty: Array<{ __typename: 'ExerciseDifficulty', difficulty: number, ageGroup: ExerciseAgeGroup }>, history: Array<{ __typename: 'ExerciseHistory', id: string, exercise: { __typename: 'Exercise', id: string } }>, checks: Array<{ __typename: 'ExerciseCheck', id: string, type: ExerciseCheckType, user: { __typename: 'User', id: string, name: string } }>, createdBy: { __typename: 'User', id: string, name: string } }> };
+export type SelectExercisesQuery = { __typename: 'Query', exercises: Array<{ __typename: 'Exercise', id: string, description: string, solution: string, helpingQuestions: Array<string>, source?: string | null, createdAt: string, updatedAt: string, exerciseImage?: { __typename: 'Image', url: string } | null, difficulty: Array<{ __typename: 'ExerciseDifficulty', difficulty: number, ageGroup: ExerciseAgeGroup }>, history: Array<{ __typename: 'ExerciseHistory', id: string, exercise: { __typename: 'Exercise', id: string } }>, checks: Array<{ __typename: 'ExerciseCheck', id: string, type: ExerciseCheckType, user: { __typename: 'User', id: string, name: string } }>, createdBy: { __typename: 'User', id: string, name: string } }> };
 
 export type ExerciseTagsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type ExerciseTagsQuery = { __typename: 'Query', exerciseTags: Array<{ __typename: 'ExerciseTag', id: string, name: string, children: Array<{ __typename: 'ExerciseTag', id: string, name: string, children: Array<{ __typename: 'ExerciseTag', id: string, name: string }> }> }> };
+
+export type LoginMutationVariables = Exact<{
+  name: Scalars['String']['input'];
+  password: Scalars['String']['input'];
+}>;
+
+
+export type LoginMutation = { __typename: 'Mutation', login?: { __typename: 'LoginResponse', token: string, user: { __typename: 'User', id: string, name: string, userName: string, email: string, roles: Array<Role>, createdAt: string, updatedAt: string } } | null };
 
 export type LoginWithGoogleMutationVariables = Exact<{
   googleToken: Scalars['String']['input'];
@@ -333,6 +345,13 @@ export type LoginWithGoogleMutationVariables = Exact<{
 
 
 export type LoginWithGoogleMutation = { __typename: 'Mutation', loginWithGoogle?: { __typename: 'LoginResponse', token: string, user: { __typename: 'User', id: string, email: string, name: string, userName: string, roles: Array<Role>, createdAt: string, updatedAt: string } } | null };
+
+export type RegisterMutationVariables = Exact<{
+  data: UserRegisterInput;
+}>;
+
+
+export type RegisterMutation = { __typename: 'Mutation', register: { __typename: 'User', id: string, userName: string } };
 
 export type SearchExercisesQueryVariables = Exact<{
   query: ExerciseSearchQuery;
@@ -344,7 +363,7 @@ export type SearchExercisesQuery = { __typename: 'Query', searchExercises: { __t
 export type UsersQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type UsersQuery = { __typename: 'Query', users: Array<{ __typename: 'User', id: string, name: string, email: string, userName: string, roles: Array<Role> }> };
+export type UsersQuery = { __typename: 'Query', users: Array<{ __typename: 'User', id: string, name: string, userName: string, email: string, roles: Array<Role> }> };
 
 
 export const ChangePermissionsDocument = gql`
@@ -420,10 +439,10 @@ export const SelectExercisesDocument = gql`
   exercises(take: 10, skip: 0) {
     id
     description
-    exerciseImage
+    exerciseImage {
+      url
+    }
     solution
-    elaboration
-    elaborationImage
     helpingQuestions
     source
     difficulty {
@@ -533,6 +552,49 @@ export type ExerciseTagsQueryHookResult = ReturnType<typeof useExerciseTagsQuery
 export type ExerciseTagsLazyQueryHookResult = ReturnType<typeof useExerciseTagsLazyQuery>;
 export type ExerciseTagsSuspenseQueryHookResult = ReturnType<typeof useExerciseTagsSuspenseQuery>;
 export type ExerciseTagsQueryResult = Apollo.QueryResult<ExerciseTagsQuery, ExerciseTagsQueryVariables>;
+export const LoginDocument = gql`
+    mutation login($name: String!, $password: String!) {
+  login(name: $name, password: $password) {
+    token
+    user {
+      id
+      name
+      userName
+      email
+      roles
+      createdAt
+      updatedAt
+    }
+  }
+}
+    `;
+export type LoginMutationFn = Apollo.MutationFunction<LoginMutation, LoginMutationVariables>;
+
+/**
+ * __useLoginMutation__
+ *
+ * To run a mutation, you first call `useLoginMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useLoginMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [loginMutation, { data, loading, error }] = useLoginMutation({
+ *   variables: {
+ *      name: // value for 'name'
+ *      password: // value for 'password'
+ *   },
+ * });
+ */
+export function useLoginMutation(baseOptions?: Apollo.MutationHookOptions<LoginMutation, LoginMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<LoginMutation, LoginMutationVariables>(LoginDocument, options);
+      }
+export type LoginMutationHookResult = ReturnType<typeof useLoginMutation>;
+export type LoginMutationResult = Apollo.MutationResult<LoginMutation>;
+export type LoginMutationOptions = Apollo.BaseMutationOptions<LoginMutation, LoginMutationVariables>;
 export const LoginWithGoogleDocument = gql`
     mutation loginWithGoogle($googleToken: String!) {
   loginWithGoogle(googleToken: $googleToken) {
@@ -575,6 +637,40 @@ export function useLoginWithGoogleMutation(baseOptions?: Apollo.MutationHookOpti
 export type LoginWithGoogleMutationHookResult = ReturnType<typeof useLoginWithGoogleMutation>;
 export type LoginWithGoogleMutationResult = Apollo.MutationResult<LoginWithGoogleMutation>;
 export type LoginWithGoogleMutationOptions = Apollo.BaseMutationOptions<LoginWithGoogleMutation, LoginWithGoogleMutationVariables>;
+export const RegisterDocument = gql`
+    mutation register($data: UserRegisterInput!) {
+  register(data: $data) {
+    id
+    userName
+  }
+}
+    `;
+export type RegisterMutationFn = Apollo.MutationFunction<RegisterMutation, RegisterMutationVariables>;
+
+/**
+ * __useRegisterMutation__
+ *
+ * To run a mutation, you first call `useRegisterMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useRegisterMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [registerMutation, { data, loading, error }] = useRegisterMutation({
+ *   variables: {
+ *      data: // value for 'data'
+ *   },
+ * });
+ */
+export function useRegisterMutation(baseOptions?: Apollo.MutationHookOptions<RegisterMutation, RegisterMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<RegisterMutation, RegisterMutationVariables>(RegisterDocument, options);
+      }
+export type RegisterMutationHookResult = ReturnType<typeof useRegisterMutation>;
+export type RegisterMutationResult = Apollo.MutationResult<RegisterMutation>;
+export type RegisterMutationOptions = Apollo.BaseMutationOptions<RegisterMutation, RegisterMutationVariables>;
 export const SearchExercisesDocument = gql`
     query searchExercises($query: ExerciseSearchQuery!) {
   searchExercises(query: $query) {
@@ -632,6 +728,7 @@ export const UsersDocument = gql`
   users {
     id
     name
+    userName
     email
     userName
     roles

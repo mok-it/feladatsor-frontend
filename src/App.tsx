@@ -7,6 +7,8 @@ import { pages } from "./pages";
 import ExerciseDetails from "./pages/ExerciseDetails";
 import { userAtom } from "./util/atoms";
 import Login from "@/pages/Login.tsx";
+import RegisterPage from "@/pages/RegisterPage.tsx";
+import { NotFoundPage } from "@/pages/404Page.tsx";
 
 function App() {
   const [user, setUser] = useAtom(userAtom);
@@ -20,11 +22,17 @@ function App() {
     }
   }, [setUser, user]);
 
-  if (!user) {
-    return null;
-  }
-  if (!user.isLoggedIn) {
-    return <Login />;
+  const isAuthenticated = user && user.isLoggedIn;
+
+  if (!isAuthenticated) {
+    return (
+      <BrowserRouter basename="/">
+        <Routes>
+          <Route path="register" element={<RegisterPage />} />
+          <Route path="*" element={<Login />} />
+        </Routes>
+      </BrowserRouter>
+    );
   }
 
   return (
@@ -39,6 +47,7 @@ function App() {
             />
           ))}
           <Route path={"/exercise/:fakeId"} element={<ExerciseDetails />} />
+          <Route path="*" element={<NotFoundPage />} />
         </Route>
       </Routes>
     </BrowserRouter>
