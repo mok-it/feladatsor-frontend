@@ -41,11 +41,32 @@ const ExerciseFields: FC = () => {
     return <KaTeX value={debouncedDescription} />;
   }, [debouncedDescription]);
 
-  const defaultExerciseImage = useMemo(() => {
-    return values.exerciseImage
-      ? fromBase64(values.exerciseImage) || undefined
-      : undefined;
-  }, [values.exerciseImage]);
+  const {
+    defaultExerciseImage,
+    // defaultElaborationImage,
+    defaultSolutionImage,
+    defaultSolveIdeaImgae,
+  } = useMemo(() => {
+    return {
+      defaultExerciseImage: values.exerciseImage
+        ? fromBase64(values.exerciseImage) || undefined
+        : undefined,
+      defaultElaborationImage: values.elaborationImage
+        ? fromBase64(values.elaborationImage) || undefined
+        : undefined,
+      defaultSolutionImage: values.solutionImage
+        ? fromBase64(values.solutionImage) || undefined
+        : undefined,
+      defaultSolveIdeaImgae: values.solveIdeaImage
+        ? fromBase64(values.solveIdeaImage) || undefined
+        : undefined,
+    };
+  }, [
+    values.elaborationImage,
+    values.exerciseImage,
+    values.solutionImage,
+    values.solveIdeaImage,
+  ]);
 
   return (
     <Box>
@@ -93,8 +114,12 @@ const ExerciseFields: FC = () => {
               maxRows={1}
               fullWidth
             />
-            <SimpleAccordion summary="File feltöltés">
+            <SimpleAccordion
+              summary="File feltöltés"
+              defaultExpanded={defaultSolutionImage !== undefined}
+            >
               <UploadWithPreview
+                defaultValue={defaultSolutionImage}
                 onChange={async (file) => {
                   if (!file) return setFieldValue("solutionImage", null);
                   setFieldValue("solutionImage", await toBase64(file));
@@ -115,8 +140,12 @@ const ExerciseFields: FC = () => {
               multiline
               fullWidth
             />
-            <SimpleAccordion summary="File feltöltés">
+            <SimpleAccordion
+              summary="File feltöltés"
+              defaultExpanded={defaultSolutionImage !== undefined}
+            >
               <UploadWithPreview
+                defaultValue={defaultSolveIdeaImgae}
                 onChange={async (file) => {
                   if (!file) return setFieldValue("solveIdeaImage", null);
                   setFieldValue("solveIdeaImage", await toBase64(file));

@@ -1,8 +1,8 @@
 import { AlertDialog } from "@/components/Dialog.tsx";
 import { UploadDialog } from "@/components/UploadDialog.tsx";
-import { Box, IconButton, Stack } from "@mui/material";
+import { Box, Button, Stack } from "@mui/material";
 import { useState } from "react";
-import { FaDeleteLeft } from "react-icons/fa6";
+import { MdDeleteOutline } from "react-icons/md";
 
 const isImage = (file: File) => {
   return file.type.startsWith("image");
@@ -45,13 +45,21 @@ export const UploadWithPreview = ({
           >
             <img src={URL.createObjectURL(file)} alt="preview" />
           </Box>
-          <IconButton
+          <Button
+            sx={{
+              maxWidth: {
+                xs: "100%",
+                md: "50%",
+              },
+              overflow: "hidden",
+            }}
             onClick={() => {
               setDialogOpen(true);
             }}
           >
-            <FaDeleteLeft />
-          </IconButton>
+            <MdDeleteOutline />
+            Törlés
+          </Button>
         </Stack>
       )}
       <AlertDialog

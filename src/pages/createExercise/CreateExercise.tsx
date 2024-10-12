@@ -4,6 +4,7 @@ import {
   useCreateExerciseMutation,
 } from "@/generated/graphql.tsx";
 import { createExerciseAtom } from "@/util/atoms.ts";
+import { useUploadImage } from "@/util/useUploadImage.ts";
 import { LoadingButton } from "@mui/lab";
 import {
   Box,
@@ -35,12 +36,25 @@ export const CreateExercise = () => {
     null,
   );
   const navigate = useNavigate();
+  const uploadImage = useUploadImage();
 
   const send = useCallback(async () => {
     console.log(formDataToSend);
     if (!formDataToSend) return;
     toggleLoadingSubmit(true);
     try {
+      const images: Partial<ExerciseInput> = {
+        exerciseImage:
+          formDataToSend.exerciseImage &&
+          (await uploadImage(formDataToSend.exerciseImage)),
+        solutionImage:
+          formDataToSend.solutionImage &&
+          (await uploadImage(formDataToSend.solutionImage)),
+        solveIdeaImage:
+          formDataToSend.solveIdeaImage &&
+          (await uploadImage(formDataToSend.solveIdeaImage)),
+      };
+
       const createResult = await createExercise({
         variables: {
           input: {
@@ -49,16 +63,16 @@ export const CreateExercise = () => {
             description: formDataToSend.description,
             difficulty: formDataToSend.difficulty,
             elaboration: formDataToSend.elaboration,
-            // elaborationImage: formDataToSend.elaborationImage,
-            // exerciseImage: formDataToSend.exerciseImage,
+            // elaborationImage: formDataToSend.elaborationImage, // TODO what is this
+            exerciseImage: images.exerciseImage,
             helpingQuestions: formDataToSend.helpingQuestions,
             isCompetitionFinal: formDataToSend.isCompetitionFinal,
             sameLogicParent: formDataToSend.sameLogicParent,
             solution: formDataToSend.solution,
-            // solutionImage: formDataToSend.solutionImage,
+            solutionImage: images.solutionImage,
             solutionOptions: formDataToSend.solutionOptions,
             solveIdea: formDataToSend.solveIdea,
-            // solveIdeaImage: formDataToSend.solveIdeaImage,
+            solveIdeaImage: images.solveIdeaImage,
             source: formDataToSend.source,
             status: formDataToSend.status,
             tags: formDataToSend.tags,
@@ -80,6 +94,7 @@ export const CreateExercise = () => {
     navigate,
     setPersistedValues,
     toggleLoadingSubmit,
+    uploadImage,
   ]);
 
   useEffect(() => {
