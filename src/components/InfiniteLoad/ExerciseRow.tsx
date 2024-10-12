@@ -3,13 +3,11 @@ import {
   ExerciseListElemFragment,
 } from "@/generated/graphql";
 import { Box, Chip, TableCell, TableRow } from "@mui/material";
-import { FC } from "react";
+import { FC, memo } from "react";
 import { useNavigate } from "react-router-dom";
 import { CategoryDifficulties } from "../CategoryDifficulties";
 
-export const ExerciseRow: FC<{ data: ExerciseListElemFragment }> = ({
-  data,
-}) => {
+const ExerciseRow: FC<{ data: ExerciseListElemFragment }> = ({ data }) => {
   const navigate = useNavigate();
   const difficulties: Record<ExerciseAgeGroup, number> = {
     KOALA: 0,
@@ -37,14 +35,18 @@ export const ExerciseRow: FC<{ data: ExerciseListElemFragment }> = ({
       <TableCell sx={{ verticalAlign: "middle" }}>{data.status}</TableCell>
       <TableCell>
         {data.tags.map((tag, index) => (
-          <Chip key={index} label={tag.name} />
+          <Chip key={index} label={tag.name} sx={{ margin: 0.5 }} />
         ))}
       </TableCell>
       <TableCell sx={{ minWidth: 300 }}>
         <Box
           sx={{
-            overflow: "hidden",
             maxHeight: 100,
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+            display: "-webkit-box",
+            WebkitLineClamp: "2",
+            WebkitBoxOrient: "vertical",
           }}
         >
           {data.description}
@@ -53,3 +55,7 @@ export const ExerciseRow: FC<{ data: ExerciseListElemFragment }> = ({
     </TableRow>
   );
 };
+
+const MemoizedExerciseRow = memo(ExerciseRow);
+
+export { MemoizedExerciseRow as ExerciseRow };

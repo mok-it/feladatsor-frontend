@@ -1,4 +1,4 @@
-import { TableCell, TableRow } from "@mui/material";
+import { Box, TableCell, TableRow } from "@mui/material";
 import { ReactNode, useCallback, useEffect, useRef } from "react";
 import { useEffectOnce, useIntersection } from "react-use";
 
@@ -71,16 +71,21 @@ export function InfiniteLoad<T>({
           </TableCell>
         </TableRow>
       )}
-      <TableRow
-        ref={intersectionRef}
-        style={{
-          position: "relative",
-          bottom: 600,
-          height: 500,
-          background: "red",
-          pointerEvents: "none",
-        }}
-      ></TableRow>
+      <TableRow>
+        <TableCell>
+          <Box
+            ref={intersectionRef}
+            style={{
+              position: "relative",
+              bottom: 400,
+              left: 0,
+              height: 10,
+              width: 10,
+              pointerEvents: "none",
+            }}
+          ></Box>
+        </TableCell>
+      </TableRow>
     </>
   );
 }

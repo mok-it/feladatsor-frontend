@@ -10,6 +10,7 @@ import {
 import { DifficultySelectorList } from "@/pages/ExerciseListPage/DifficultySelectorList.tsx";
 import { searchDefaultValues } from "@/pages/ExerciseListPage/SearchDefaultValues.tsx";
 import {
+  Box,
   Card,
   CardContent,
   CardHeader,
@@ -22,7 +23,7 @@ import {
   Typography,
 } from "@mui/material";
 import { entries, uniqBy } from "lodash";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { IoSearch } from "react-icons/io5";
 import { useEffectOnce, useToggle } from "react-use";
 import { useImmer } from "use-immer";
@@ -60,7 +61,7 @@ export const ExerciseListPage = () => {
 
   const [hasMore, setHasMore] = useToggle(true);
   const [loadingSkip, setLoadingSkip] = useState(-1);
-  const [data, setData] = useState<ExerciseListElemFragment[]>([]);
+  const [data, setData] = useImmer<ExerciseListElemFragment[]>([]);
   const [getData, { loading }] = useSearchExercisesLazyQuery({
     fetchPolicy: "cache-and-network",
   });
@@ -90,6 +91,7 @@ export const ExerciseListPage = () => {
     getData,
     difficulty,
     exerciseQuery.searchQuery,
+    setData,
     setHasMore,
   ]);
 
@@ -97,12 +99,13 @@ export const ExerciseListPage = () => {
     fetchMore();
   });
 
-  const refetch = useCallback(() => {
+  useEffect(() => {
     setData([]);
     setLoadingSkip(-1);
     setHasMore(true);
     fetchMore();
-  }, [fetchMore, setHasMore]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [exerciseQuery]);
 
   return (
     <Card>
@@ -112,9 +115,9 @@ export const ExerciseListPage = () => {
           <TextField
             onChange={(event) => {
               setExerciseQuery((draft) => {
+                if (event.target.value === draft.searchQuery) return draft;
                 draft.searchQuery = event.target.value;
               });
-              refetch();
             }}
             label="Keresés"
             value={exerciseQuery.searchQuery}
@@ -130,10 +133,7 @@ export const ExerciseListPage = () => {
           <SimpleAccordion summary="Nehétség szűrő">
             <DifficultySelectorList
               difficulties={exerciseQuery.difficulty}
-              setExerciseQuery={(v) => {
-                setExerciseQuery(v);
-                refetch();
-              }}
+              setExerciseQuery={setExerciseQuery}
             />
           </SimpleAccordion>
           <Stack direction="row" alignItems="center" gap={2}>
@@ -142,9 +142,9 @@ export const ExerciseListPage = () => {
               checked={exerciseQuery.isFinal}
               onChange={(_, checked) => {
                 setExerciseQuery((draft) => {
+                  if (checked === draft.isFinal) return;
                   draft.isFinal = checked;
                 });
-                refetch();
               }}
             />
           </Stack>
@@ -156,23 +156,25 @@ export const ExerciseListPage = () => {
             />
           </Stack>
         </Stack>
-        <Table sx={{ minWidth: 650 }} aria-label="simple table">
-          <TableBody>
-            <InfiniteLoad<ExerciseListElemFragment>
-              data={data}
-              hasMore={hasMore}
-              isInitialLoading={loading && data.length === 0}
-              isFetchingNextPage={loading}
-              fetchNextPage={async () => {
-                await fetchMore();
-              }}
-            >
-              {(row) => {
-                return <ExerciseRow key={row.id} data={row} />;
-              }}
-            </InfiniteLoad>
-          </TableBody>
-        </Table>
+        <Box sx={{ overflowX: "auto" }}>
+          <Table sx={{ minWidth: 650 }} aria-label="simple table">
+            <TableBody>
+              <InfiniteLoad<ExerciseListElemFragment>
+                data={data}
+                hasMore={hasMore}
+                isInitialLoading={loading && data.length === 0}
+                isFetchingNextPage={loading}
+                fetchNextPage={async () => {
+                  await fetchMore();
+                }}
+              >
+                {(row) => {
+                  return <ExerciseRow key={row.id} data={row} />;
+                }}
+              </InfiniteLoad>
+            </TableBody>
+          </Table>
+        </Box>
       </CardContent>
     </Card>
   );

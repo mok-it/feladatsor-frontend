@@ -1,12 +1,12 @@
-import { Updater } from "use-immer";
-import { Stack } from "@mui/material";
-import { entries } from "lodash";
-import { DifficultySelector } from "@/pages/ExerciseListPage/DifficultySelector.tsx";
 import { ExerciseAgeGroup } from "@/generated/graphql.tsx";
+import { DifficultySelector } from "@/pages/ExerciseListPage/DifficultySelector.tsx";
 import {
   DifficultySelect,
   ExerciseQuery,
 } from "@/pages/ExerciseListPage/ExerciseListPage.tsx";
+import { Stack } from "@mui/material";
+import { entries } from "lodash";
+import { Updater } from "use-immer";
 
 export const DifficultySelectorList = ({
   difficulties,
@@ -24,6 +24,12 @@ export const DifficultySelectorList = ({
           difficulty={ageGroup.difficulty}
           setDifficulty={(value) =>
             setExerciseQuery((draft) => {
+              if (
+                draft.difficulty[difficultyName as ExerciseAgeGroup]
+                  .difficulty === value
+              ) {
+                return draft;
+              }
               draft.difficulty[difficultyName as ExerciseAgeGroup].difficulty =
                 value;
             })
@@ -31,6 +37,12 @@ export const DifficultySelectorList = ({
           isEnabled={ageGroup.isEnabled}
           setIsEnabled={(isEnabled) =>
             setExerciseQuery((draft) => {
+              if (
+                draft.difficulty[difficultyName as ExerciseAgeGroup]
+                  .isEnabled === isEnabled
+              ) {
+                return draft;
+              }
               draft.difficulty[difficultyName as ExerciseAgeGroup].isEnabled =
                 isEnabled;
             })

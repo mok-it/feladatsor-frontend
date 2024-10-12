@@ -27,8 +27,9 @@ const style = {
   fontWeight: "fontWeightMedium",
 };
 
+export const drawerWidth = 250;
+
 export const Sidebar = () => {
-  const drawerWidth = 250;
   const navigate = useNavigate();
   const location = useLocation();
   const setUser = useSetAtom(userAtom);
