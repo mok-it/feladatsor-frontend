@@ -1,14 +1,14 @@
 import { CategoryDifficultySelect } from "@/components/CategoryDifficultySelect.tsx";
 import { HelpingQuestions } from "@/components/HelpingQuestions/HelpingQuestions.tsx";
+import { Required } from "@/components/Required.tsx";
 import Section from "@/components/Section.tsx";
 import { SimpleAccordion } from "@/components/SimpleAccordion.tsx";
 import { UploadWithPreview } from "@/components/UploadWithPreview.tsx";
 import { ExerciseInput } from "@/generated/graphql.tsx";
-import { Leaves } from "@/util/objectLeavesType.ts";
-import { toBase64 } from "@/util/toBase64.ts";
+import { fromBase64, toBase64 } from "@/util/toBase64.ts";
 import { Box, Grid, Stack, TextField, Typography } from "@mui/material";
 import { useFormikContext } from "formik";
-import { FC, useState } from "react";
+import { FC, useMemo, useState } from "react";
 import { useDebounce } from "react-use";
 import { KaTeX } from "../../components/Katex.tsx";
 import { MultiSelect } from "../../components/MultiSelect.tsx";
@@ -16,16 +16,17 @@ import { MultiSelect } from "../../components/MultiSelect.tsx";
 const tags = ["Geometria", "Algebra"];
 
 const ExerciseFields: FC = () => {
-  const { values, setFieldValue: setFormikFieldValues } =
+  const { values, handleChange, handleBlur, setFieldValue } =
     useFormikContext<ExerciseInput>();
 
-  const setFieldValue = <T extends Leaves<ExerciseInput>>(
-    field: T,
-    values: ExerciseInput[T],
-    shouldValidate?: boolean,
-  ) => {
-    return setFormikFieldValues(field, values, shouldValidate);
-  };
+  const categoryDifficultySelect = useMemo(() => {
+    return (
+      <CategoryDifficultySelect
+        difficulty={values.difficulty}
+        onChange={(value) => setFieldValue("difficulty", value)}
+      />
+    );
+  }, [setFieldValue, values.difficulty]);
 
   const [debouncedDescription, setDebouncedDescription] = useState("");
 
@@ -37,17 +38,55 @@ const ExerciseFields: FC = () => {
     [values.description],
   );
 
+  const katex = useMemo(() => {
+    return <KaTeX value={debouncedDescription} />;
+  }, [debouncedDescription]);
+
+  const {
+    defaultExerciseImage,
+    // defaultElaborationImage,
+    defaultSolutionImage,
+    defaultSolveIdeaImage,
+  } = useMemo(() => {
+    return {
+      defaultExerciseImage: values.exerciseImage
+        ? fromBase64(values.exerciseImage) || undefined
+        : undefined,
+      defaultElaborationImage: values.elaborationImage
+        ? fromBase64(values.elaborationImage) || undefined
+        : undefined,
+      defaultSolutionImage: values.solutionImage
+        ? fromBase64(values.solutionImage) || undefined
+        : undefined,
+      defaultSolveIdeaImage: values.solveIdeaImage
+        ? fromBase64(values.solveIdeaImage) || undefined
+        : undefined,
+    };
+  }, [
+    values.elaborationImage,
+    values.exerciseImage,
+    values.solutionImage,
+    values.solveIdeaImage,
+  ]);
+
   return (
     <Box>
       <Grid container spacing={2}>
         <Grid item xs={6}>
-          <Section text="Feladat leírása">
+          <Section
+            text={
+              <>
+                Feladat leírása
+                <Required />
+              </>
+            }
+          >
             <TextField
               id="outlined-required"
-              value={values.description}
-              onChange={(event) =>
-                setFieldValue("description", event.target.value)
-              }
+              name="description"
+              defaultValue={values.description}
+              onChange={handleChange}
+              onBlur={handleBlur}
               minRows={10}
               maxRows={13}
               margin="none"
@@ -57,14 +96,13 @@ const ExerciseFields: FC = () => {
           </Section>
         </Grid>
         <Grid item xs={6}>
-          <KaTeX textExpression={"$\\LaTeX{}$ fordítás"} />
-          <Box mt={1}>
-            <KaTeX textExpression={debouncedDescription} />
-          </Box>
+          <KaTeX value={"$\\LaTeX{}$ fordítás"} />
+          <Box mt={1}>{katex}</Box>
         </Grid>
         <Grid item xs={12}>
-          <Section text="Feladat képe">
+          <Section text={<>Feladat képe</>}>
             <UploadWithPreview
+              defaultValue={defaultExerciseImage}
               onChange={async (file) => {
                 if (!file) return setFieldValue("exerciseImage", null);
                 setFieldValue("exerciseImage", await toBase64(file));
@@ -73,20 +111,30 @@ const ExerciseFields: FC = () => {
           </Section>
         </Grid>
         <Grid item xs={6}>
-          <Section text="Feladat megoldása">
+          <Section
+            text={
+              <>
+                Feladat megoldása
+                <Required />
+              </>
+            }
+          >
             <TextField
-              id="outlined-required"
-              value={values.solution}
-              onChange={(event) =>
-                setFieldValue("solution", event.target.value)
-              }
+              name="solution"
+              defaultValue={values.solution}
+              onChange={handleChange}
+              onBlur={handleBlur}
               margin="none"
               multiline
               maxRows={1}
               fullWidth
             />
-            <SimpleAccordion summary="File feltöltés">
+            <SimpleAccordion
+              summary="Fájl feltöltés"
+              defaultExpanded={defaultSolutionImage !== undefined}
+            >
               <UploadWithPreview
+                defaultValue={defaultSolutionImage}
                 onChange={async (file) => {
                   if (!file) return setFieldValue("solutionImage", null);
                   setFieldValue("solutionImage", await toBase64(file));
@@ -96,20 +144,23 @@ const ExerciseFields: FC = () => {
           </Section>
         </Grid>
         <Grid item xs={6}>
-          <Section text="Ötlet a megoldáshoz (opcionális)">
+          <Section text="Ötlet a megoldáshoz">
             <TextField
-              id="outlined-required"
-              value={values.solveIdea}
-              onChange={(event) =>
-                setFieldValue("solveIdea", event.target.value)
-              }
+              name="solveIdea"
+              defaultValue={values.solveIdea}
+              onChange={handleChange}
+              onBlur={handleBlur}
               maxRows={1}
               margin="none"
               multiline
               fullWidth
             />
-            <SimpleAccordion summary="File feltöltés">
+            <SimpleAccordion
+              summary="Fájl feltöltés"
+              defaultExpanded={defaultSolutionImage !== undefined}
+            >
               <UploadWithPreview
+                defaultValue={defaultSolveIdeaImage}
                 onChange={async (file) => {
                   if (!file) return setFieldValue("solveIdeaImage", null);
                   setFieldValue("solveIdeaImage", await toBase64(file));
@@ -134,13 +185,10 @@ const ExerciseFields: FC = () => {
           </Stack>
         </Grid>
         <Grid item xs={6}>
-          <Typography>Korcsoport szerinti nehézség</Typography>
-          <CategoryDifficultySelect
-            values={values.difficulty}
-            onChange={(value) => {
-              setFieldValue("difficulty", value);
-            }}
-          />
+          <Typography>
+            Korcsoport szerinti nehézség <Required />
+          </Typography>
+          {categoryDifficultySelect}
         </Grid>
       </Grid>
       <HelpingQuestions

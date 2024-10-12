@@ -4,7 +4,7 @@ import {
   SortableContext,
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
-import { createContext, type FC } from "react";
+import { createContext, memo, type FC } from "react";
 
 import { ExerciseView, composeStore } from "@/util/composeStore";
 import { Stack } from "@mui/material";
@@ -45,4 +45,5 @@ const Container: FC<{ items: UniqueIdentifier[]; id: string }> = ({
   );
 };
 
-export default Container;
+const MemoizedContainer = memo(Container);
+export default MemoizedContainer;

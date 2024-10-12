@@ -1,14 +1,12 @@
-import { User as TotalUser } from "@/generated/graphql.tsx";
+import { ExerciseInput, User as TotalUser } from "@/generated/graphql.tsx";
 import { UniqueIdentifier } from "@dnd-kit/core";
-import { atomWithImmer } from 'jotai-immer';
+import { atomWithImmer } from "jotai-immer";
 import { atomWithStorage, createJSONStorage } from "jotai/utils";
 import { mock, mock2, mock3 } from "./mocks";
 import { ExerciseCardData, ExercisePlacements } from "./types";
 
 type UserAtomType = { isLoggedIn: boolean; user: User | null } | undefined;
-const storage = createJSONStorage<UserAtomType>(
-  () => sessionStorage,
-);
+const storage = createJSONStorage<UserAtomType>(() => sessionStorage);
 export const userAtom = atomWithStorage<UserAtomType>(
   "user",
   undefined,
@@ -23,7 +21,11 @@ export const tokenAtom = atomWithStorage<string | null>(
   tokenStore,
 );
 
-export const exerciseCardsAtom = atomWithImmer<ExerciseCardData[]>([mock, mock2, mock3])
+export const exerciseCardsAtom = atomWithImmer<ExerciseCardData[]>([
+  mock,
+  mock2,
+  mock3,
+]);
 export const composeAtom = atomWithImmer<{
   [key in string]: UniqueIdentifier[];
 }>({
@@ -50,8 +52,12 @@ export const composeAtom = atomWithImmer<{
   "KISMEDVE-3": [],
   "NAGYMEDVE-3": [],
   "JEGESMEDVE-3": [],
-})
+});
 
-export const exercisePlacementsAtom = atomWithImmer<ExercisePlacements>({})
+export const exercisePlacementsAtom = atomWithImmer<ExercisePlacements>({});
 
-
+export const createExerciseAtom = atomWithStorage<ExerciseInput | null>(
+  "createExercise",
+  null,
+  createJSONStorage(() => localStorage),
+);

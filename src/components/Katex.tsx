@@ -1,18 +1,16 @@
+import { useTheme } from "@mui/material";
 import "katex/dist/katex.min.css";
 import Latex from "react-latex";
-import { useTheme } from "@mui/material";
 
 type KaTexProps = {
-  textExpression: string;
+  value: string;
   fixNewLines?: boolean;
 };
 
-export const KaTeX = ({ textExpression, fixNewLines = true }: KaTexProps) => {
+export const KaTeX = ({ fixNewLines = true, value }: KaTexProps) => {
   const theme = useTheme();
+  const text = fixNewLines ? value.replace(/\n/g, "$\\\\$") : value;
 
-  const text = fixNewLines
-    ? textExpression.replace(/\n/g, "$\\\\$")
-    : textExpression;
   return (
     <Latex
       throwOnError={false}

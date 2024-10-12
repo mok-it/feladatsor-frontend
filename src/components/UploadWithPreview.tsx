@@ -1,24 +1,24 @@
-import { useEffect, useState } from "react";
-import { UploadDialog } from "@/components/UploadDialog.tsx";
-import { Box, IconButton, Stack } from "@mui/material";
 import { AlertDialog } from "@/components/Dialog.tsx";
-import { FaDeleteLeft } from "react-icons/fa6";
+import { UploadDialog } from "@/components/UploadDialog.tsx";
+import { Box, Button, Stack } from "@mui/material";
+import { useState } from "react";
+import { MdDeleteOutline } from "react-icons/md";
 
 const isImage = (file: File) => {
   return file.type.startsWith("image");
 };
 
 type UploadWithPreviewProps = {
+  defaultValue?: File;
   onChange: (file: File | null) => void;
 };
 
-export const UploadWithPreview = (props: UploadWithPreviewProps) => {
-  const [file, setFile] = useState<File | null>();
+export const UploadWithPreview = ({
+  onChange,
+  defaultValue,
+}: UploadWithPreviewProps) => {
+  const [file, setFile] = useState<File | null>(defaultValue || null);
   const [dialogOpen, setDialogOpen] = useState(false);
-
-  useEffect(() => {
-    props.onChange(file ?? null);
-  }, [file]);
 
   return (
     <>
@@ -26,6 +26,7 @@ export const UploadWithPreview = (props: UploadWithPreviewProps) => {
         <UploadDialog
           setFile={(file) => {
             setFile(file);
+            onChange(file ?? null);
           }}
         />
       )}
@@ -44,13 +45,21 @@ export const UploadWithPreview = (props: UploadWithPreviewProps) => {
           >
             <img src={URL.createObjectURL(file)} alt="preview" />
           </Box>
-          <IconButton
+          <Button
+            sx={{
+              maxWidth: {
+                xs: "100%",
+                md: "50%",
+              },
+              overflow: "hidden",
+            }}
             onClick={() => {
               setDialogOpen(true);
             }}
           >
-            <FaDeleteLeft />
-          </IconButton>
+            <MdDeleteOutline />
+            Törlés
+          </Button>
         </Stack>
       )}
       <AlertDialog
@@ -64,6 +73,7 @@ export const UploadWithPreview = (props: UploadWithPreviewProps) => {
         }}
         primaryClick={() => {
           setFile(null);
+          onChange(file ?? null);
           setDialogOpen(false);
         }}
       />

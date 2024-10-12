@@ -1,14 +1,14 @@
+import { grey } from "@/theme/palette.ts";
 import {
+  AccordionProps,
+  AccordionSummaryProps,
   Accordion as MuiAccordion,
   AccordionDetails as MuiAccordionDetails,
-  AccordionProps,
   AccordionSummary as MuiAccordionSummary,
-  AccordionSummaryProps,
   styled,
 } from "@mui/material";
 import Typography from "@mui/material/Typography";
 import { PropsWithChildren } from "react";
-import { grey } from "@/theme/palette.ts";
 import { FaAngleRight } from "react-icons/fa6";
 
 type AccordionTypeProps = {
@@ -55,13 +55,17 @@ export const SimpleAccordion = (
 ) => (
   <Accordion
     defaultExpanded={props.defaultExpanded}
-    sx={{ ":before": { display: "none" } }}
+    sx={{ ":before": { display: "none" }, borderRadius: 1, overflow: "hidden" }}
   >
-    <AccordionSummary>
+    <AccordionSummary
+      sx={{ borderBottomLeftRadius: 0, borderBottomRightRadius: 0 }}
+    >
       <Typography variant="subtitle1" color="text.primary">
         {props.summary}
       </Typography>
     </AccordionSummary>
-    <AccordionDetails>{props.children}</AccordionDetails>
+    <AccordionDetails sx={{ borderTopLeftRadius: 0, borderTopRightRadius: 0 }}>
+      {props.children}
+    </AccordionDetails>
   </Accordion>
 );
