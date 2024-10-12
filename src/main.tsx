@@ -16,6 +16,10 @@ import ReactDOM from "react-dom/client";
 import App from "./App.tsx";
 import { ThemeProvider } from "./theme";
 
+// tessék bazdmeg voice komment
+// vscode extenstion required: AsyncLine
+//audio: 5NA6
+
 const AppWithApollo = () => {
   const token = useAtomValue(tokenAtom);
 
