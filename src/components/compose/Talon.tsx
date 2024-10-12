@@ -4,7 +4,7 @@ import {
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import { Stack, Typography } from "@mui/material";
-import { FC } from "react";
+import { FC, memo } from "react";
 import TalonItem from "./TalonItem";
 
 const Talon: FC<{ items: UniqueIdentifier[] }> = ({ items }) => {
@@ -32,4 +32,5 @@ const Talon: FC<{ items: UniqueIdentifier[] }> = ({ items }) => {
   );
 };
 
-export default Talon;
+const MemoizedTalon = memo(Talon);
+export default MemoizedTalon;

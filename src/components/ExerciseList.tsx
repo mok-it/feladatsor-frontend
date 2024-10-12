@@ -1,10 +1,10 @@
+import { CategoryDifficulties } from "@/components/CategoryDifficulties.tsx";
+import { DataTable } from "@/components/DataTable/DataTable.tsx";
+import { DataTableDataSource } from "@/components/DataTable/DataTable.types.ts";
+import { ExerciseAgeGroup } from "@/generated/graphql.tsx";
 import Chip from "@mui/material/Chip";
 import { FaCheck } from "react-icons/fa";
 import { RxCross2 } from "react-icons/rx";
-import { CategoryDifficulties } from "@/components/CategoryDifficulties.tsx";
-import { DataTable } from "@/components/DataTable/DataTable.tsx";
-import { ExerciseAgeGroup } from "@/generated/graphql.tsx";
-import { DataTableDataSource } from "@/components/DataTable/DataTable.types.ts";
 import { useNavigate } from "react-router-dom";
 
 export type ExerciseItem = {
@@ -28,7 +28,7 @@ export const ExerciseList = (props: {
     <DataTable<ExerciseItem>
       columns={{
         fakeId: {
-          element: "fakeID",
+          element: "fID",
           sortable: true,
           sx: { width: "5%" },
         },

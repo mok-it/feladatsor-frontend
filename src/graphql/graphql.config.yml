@@ -1,2 +1,2 @@
 schema: ${VITE_APP_GRAPHQL_ENDPOINT}
-documents: '**/*.graphql'
+documents: "**/*.graphql"

@@ -46,7 +46,7 @@ const ExerciseFields: FC = () => {
     defaultExerciseImage,
     // defaultElaborationImage,
     defaultSolutionImage,
-    defaultSolveIdeaImgae,
+    defaultSolveIdeaImage,
   } = useMemo(() => {
     return {
       defaultExerciseImage: values.exerciseImage
@@ -58,7 +58,7 @@ const ExerciseFields: FC = () => {
       defaultSolutionImage: values.solutionImage
         ? fromBase64(values.solutionImage) || undefined
         : undefined,
-      defaultSolveIdeaImgae: values.solveIdeaImage
+      defaultSolveIdeaImage: values.solveIdeaImage
         ? fromBase64(values.solveIdeaImage) || undefined
         : undefined,
     };
@@ -160,7 +160,7 @@ const ExerciseFields: FC = () => {
               defaultExpanded={defaultSolutionImage !== undefined}
             >
               <UploadWithPreview
-                defaultValue={defaultSolveIdeaImgae}
+                defaultValue={defaultSolveIdeaImage}
                 onChange={async (file) => {
                   if (!file) return setFieldValue("solveIdeaImage", null);
                   setFieldValue("solveIdeaImage", await toBase64(file));

@@ -226,20 +226,20 @@ const Compose = () => {
 
           recentlyMovedToNewContainer.current = true;
 
-          return {
-            ...items,
-            [activeContainer]: items[activeContainer].filter(
-              (item) => item !== active.id,
+          const activeTemp = items[activeContainer].filter(
+            (item) => item !== active.id,
+          );
+          const overTemp = [
+            ...items[overContainer].slice(0, newIndex),
+            items[activeContainer][activeIndex],
+            ...items[overContainer].slice(
+              newIndex,
+              items[overContainer].length,
             ),
-            [overContainer]: [
-              ...items[overContainer].slice(0, newIndex),
-              items[activeContainer][activeIndex],
-              ...items[overContainer].slice(
-                newIndex,
-                items[overContainer].length,
-              ),
-            ],
-          };
+          ];
+          // update
+          items[activeContainer] = activeTemp;
+          items[overContainer] = overTemp;
         });
       }
     },
@@ -384,7 +384,7 @@ const Compose = () => {
       onDragCancel={onDragCancel}
       measuring={{
         droppable: {
-          strategy: MeasuringStrategy.Always,
+          strategy: MeasuringStrategy.WhileDragging,
         },
       }}
     >
