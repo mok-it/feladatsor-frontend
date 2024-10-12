@@ -1,0 +1,16 @@
+fragment ExerciseListElem on Exercise {
+  id
+  description
+  status
+  exerciseImage {
+    url
+  }
+  difficulty {
+    ageGroup
+    difficulty
+  }
+  tags {
+    id
+    name
+  }
+}

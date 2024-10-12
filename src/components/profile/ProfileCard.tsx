@@ -1,18 +1,18 @@
 // IMPORTS
-import Card from "@mui/material/Card";
-import Typography from "@mui/material/Typography";
-import { Divider, Grid, IconButton } from "@mui/material";
-import Avatar from "@mui/material/Avatar";
-import Badge from "@mui/material/Badge";
-import { IoCameraOutline } from "react-icons/io5";
-import { Box, Stack } from "@mui/system";
-import { ExerciseList } from "@/components/ExerciseList.tsx";
-import { motion } from "framer-motion";
-import { MdArrowDownward } from "react-icons/md";
-import { useState } from "react";
+import { ExerciseTable } from "@/components/ExerciseTable";
 import History from "@/components/History.tsx";
 import { ProfileStatCard } from "@/components/profile/ProfileStatCard.tsx";
 import { grey } from "@/theme/palette.ts";
+import { Divider, Grid, IconButton } from "@mui/material";
+import Avatar from "@mui/material/Avatar";
+import Badge from "@mui/material/Badge";
+import Card from "@mui/material/Card";
+import Typography from "@mui/material/Typography";
+import { Box, Stack } from "@mui/system";
+import { motion } from "framer-motion";
+import { useState } from "react";
+import { IoCameraOutline } from "react-icons/io5";
+import { MdArrowDownward } from "react-icons/md";
 
 // STYLES
 const styles = {
@@ -73,7 +73,7 @@ export default function ProfileCard(props: { name: string }) {
       <Stack direction="column" spacing={2} sx={styles.details}>
         <Box>
           <Typography variant="h6">Beküldött feladatok</Typography>
-          <ExerciseList
+          <ExerciseTable
             dataSource={{
               data: [
                 {

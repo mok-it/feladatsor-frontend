@@ -16,7 +16,7 @@ export type ExerciseItem = {
   description: string;
 };
 
-export const ExerciseList = (props: {
+export const ExerciseTable = (props: {
   setPagination?: (pagination: { fromRow: number; toRow: number }) => void;
   dataSource: DataTableDataSource<ExerciseItem>;
 }) => {

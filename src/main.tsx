@@ -61,7 +61,7 @@ const AppWithApollo = () => {
       link: from([errorLink, authLink, httpLink]),
       cache: new InMemoryCache(),
     });
-  }, [token]);
+  }, [errorLink, token]);
 
   console.log("Graphql endpoint:", import.meta.env.VITE_APP_GRAPHQL_ENDPOINT);
 

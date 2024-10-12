@@ -1,7 +1,14 @@
+import { ExerciseRow } from "@/components/InfiniteLoad/ExerciseRow";
+import { InfiniteLoad } from "@/components/InfiniteLoad/InfiniteLoad";
+import { MultiSelect } from "@/components/MultiSelect.tsx";
+import { SimpleAccordion } from "@/components/SimpleAccordion.tsx";
 import {
   ExerciseAgeGroup,
-  useSearchExercisesQuery,
+  ExerciseListElemFragment,
+  useSearchExercisesLazyQuery,
 } from "@/generated/graphql.tsx";
+import { DifficultySelectorList } from "@/pages/ExerciseListPage/DifficultySelectorList.tsx";
+import { searchDefaultValues } from "@/pages/ExerciseListPage/SearchDefaultValues.tsx";
 import {
   Card,
   CardContent,
@@ -9,18 +16,16 @@ import {
   Checkbox,
   InputAdornment,
   Stack,
+  Table,
+  TableBody,
   TextField,
   Typography,
 } from "@mui/material";
-import { entries } from "lodash";
+import { entries, uniqBy } from "lodash";
+import { useCallback, useMemo, useState } from "react";
 import { IoSearch } from "react-icons/io5";
+import { useEffectOnce, useToggle } from "react-use";
 import { useImmer } from "use-immer";
-import { MultiSelect } from "@/components/MultiSelect.tsx";
-import { ExerciseItem, ExerciseList } from "@/components/ExerciseList.tsx";
-import { SimpleAccordion } from "@/components/SimpleAccordion.tsx";
-import { DifficultySelectorList } from "@/pages/ExerciseListPage/DifficultySelectorList.tsx";
-import { searchDefaultValues } from "@/pages/ExerciseListPage/SearchDefaultValues.tsx";
-import { useEffect, useState } from "react";
 
 export type DifficultySelect = {
   [key in ExerciseAgeGroup]: {
@@ -35,58 +40,69 @@ export type ExerciseQuery = {
   isFinal: boolean;
 };
 
+const LIMIT = 20;
+
 export const ExerciseListPage = () => {
   const [exerciseQuery, setExerciseQuery] =
     useImmer<ExerciseQuery>(searchDefaultValues);
-  const [pagination, setPagination] = useState({ fromRow: 0, toRow: 10 });
 
-  const [tableData, setTableData] = useState<ExerciseItem[]>([]);
+  const difficulty = useMemo(() => {
+    return entries(exerciseQuery.difficulty)
+      .filter(([, diff]) => diff.isEnabled)
+      .map(([ageGroup, difficulty]) => {
+        return {
+          ageGroup: ageGroup as ExerciseAgeGroup,
+          min: difficulty.difficulty[0],
+          max: difficulty.difficulty[1],
+        };
+      });
+  }, [exerciseQuery.difficulty]);
 
-  const { data, loading, error } = useSearchExercisesQuery({
-    variables: {
-      query: {
-        fromRow: pagination.fromRow,
-        toRow: pagination.toRow,
-        difficulty: entries(exerciseQuery.difficulty)
-          .filter(([, diff]) => diff.isEnabled)
-          .map(([ageGroup, difficulty]) => {
-            return {
-              ageGroup: ageGroup as ExerciseAgeGroup,
-              min: difficulty.difficulty[0],
-              max: difficulty.difficulty[1],
-            };
-          }),
-        queryStr: exerciseQuery.searchQuery,
-        tags: [],
-        excludeTags: [],
-      },
-    },
+  const [hasMore, setHasMore] = useToggle(true);
+  const [loadingSkip, setLoadingSkip] = useState(-1);
+  const [data, setData] = useState<ExerciseListElemFragment[]>([]);
+  const [getData, { loading }] = useSearchExercisesLazyQuery({
+    fetchPolicy: "cache-and-network",
   });
 
-  useEffect(() => {
-    if (data) {
-      setTableData(
-        data.searchExercises.exercises.map((exercise) => {
-          return {
-            fakeId: exercise.id,
-            categoryDifficulties: exercise.difficulty.reduce(
-              (prev, current) => {
-                return {
-                  ...prev,
-                  [current.ageGroup]: current.difficulty,
-                };
-              },
-              {},
-            ) as { [key in ExerciseAgeGroup]: number },
-            state: "ACTIVE",
-            tags: exercise.tags.map((tag) => tag.name),
-            hasPicture: true,
-            description: exercise.description,
-          };
-        }),
-      );
+  const fetchMore = useCallback(async () => {
+    const skip = data.length || 0;
+    if (loadingSkip >= skip) return;
+    setLoadingSkip(skip);
+    const res = await getData({
+      variables: {
+        query: {
+          skip: skip,
+          take: LIMIT,
+          difficulty,
+          queryStr: exerciseQuery.searchQuery,
+        },
+      },
+    });
+    const newData = res.data?.searchExercises.exercises || [];
+    setData((prev) => uniqBy([...prev, ...newData], "id"));
+    if (newData.length < LIMIT) {
+      setHasMore(false);
     }
-  }, [data]);
+  }, [
+    data.length,
+    loadingSkip,
+    getData,
+    difficulty,
+    exerciseQuery.searchQuery,
+    setHasMore,
+  ]);
+
+  useEffectOnce(() => {
+    fetchMore();
+  });
+
+  const refetch = useCallback(() => {
+    setData([]);
+    setLoadingSkip(-1);
+    setHasMore(true);
+    fetchMore();
+  }, [fetchMore, setHasMore]);
 
   return (
     <Card>
@@ -98,6 +114,7 @@ export const ExerciseListPage = () => {
               setExerciseQuery((draft) => {
                 draft.searchQuery = event.target.value;
               });
+              refetch();
             }}
             label="Keresés"
             value={exerciseQuery.searchQuery}
@@ -113,7 +130,10 @@ export const ExerciseListPage = () => {
           <SimpleAccordion summary="Nehétség szűrő">
             <DifficultySelectorList
               difficulties={exerciseQuery.difficulty}
-              setExerciseQuery={setExerciseQuery}
+              setExerciseQuery={(v) => {
+                setExerciseQuery(v);
+                refetch();
+              }}
             />
           </SimpleAccordion>
           <Stack direction="row" alignItems="center" gap={2}>
@@ -124,6 +144,7 @@ export const ExerciseListPage = () => {
                 setExerciseQuery((draft) => {
                   draft.isFinal = checked;
                 });
+                refetch();
               }}
             />
           </Stack>
@@ -135,15 +156,23 @@ export const ExerciseListPage = () => {
             />
           </Stack>
         </Stack>
-
-        <ExerciseList
-          setPagination={setPagination}
-          dataSource={{
-            data: tableData,
-            loading: loading,
-            error: error?.message,
-          }}
-        />
+        <Table sx={{ minWidth: 650 }} aria-label="simple table">
+          <TableBody>
+            <InfiniteLoad<ExerciseListElemFragment>
+              data={data}
+              hasMore={hasMore}
+              isInitialLoading={loading && data.length === 0}
+              isFetchingNextPage={loading}
+              fetchNextPage={async () => {
+                await fetchMore();
+              }}
+            >
+              {(row) => {
+                return <ExerciseRow key={row.id} data={row} />;
+              }}
+            </InfiniteLoad>
+          </TableBody>
+        </Table>
       </CardContent>
     </Card>
   );

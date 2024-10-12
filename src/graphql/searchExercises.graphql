@@ -1,16 +1,7 @@
 query searchExercises($query: ExerciseSearchQuery!) {
   searchExercises(query: $query) {
     exercises {
-      id
-      difficulty {
-        ageGroup
-        difficulty
-      }
-      tags {
-        id
-        name
-      }
-      description
+      ...ExerciseListElem
     }
     totalCount
   }

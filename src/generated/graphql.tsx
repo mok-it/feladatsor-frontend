@@ -129,10 +129,10 @@ export type ExerciseInput = {
 export type ExerciseSearchQuery = {
   difficulty?: InputMaybe<Array<ExerciseDifficultyRange>>;
   excludeTags?: InputMaybe<Array<Scalars['ID']['input']>>;
-  fromRow: Scalars['Int']['input'];
   queryStr?: InputMaybe<Scalars['String']['input']>;
+  skip: Scalars['Int']['input'];
   tags?: InputMaybe<Array<Scalars['ID']['input']>>;
-  toRow: Scalars['Int']['input'];
+  take: Scalars['Int']['input'];
 };
 
 export type ExerciseSearchResult = {
@@ -172,12 +172,15 @@ export type Mutation = {
   changePermissions: User;
   createExercise: Exercise;
   createExerciseCheck: ExerciseCheck;
+  createExerciseComment: ExerciseComment;
   createExerciseTag: ExerciseTag;
+  deleteExerciseComment: ExerciseComment;
   deleteExerciseTag: Scalars['Boolean']['output'];
   login?: Maybe<LoginResponse>;
   loginWithGoogle?: Maybe<LoginResponse>;
   register: User;
   updateExercise: Exercise;
+  updateExerciseComment: ExerciseComment;
   updateExerciseTag: ExerciseTag;
 };
 
@@ -198,9 +201,20 @@ export type MutationCreateExerciseCheckArgs = {
 };
 
 
+export type MutationCreateExerciseCommentArgs = {
+  comment: Scalars['String']['input'];
+  exerciseId: Scalars['ID']['input'];
+};
+
+
 export type MutationCreateExerciseTagArgs = {
   name: Scalars['String']['input'];
   parentId?: InputMaybe<Scalars['ID']['input']>;
+};
+
+
+export type MutationDeleteExerciseCommentArgs = {
+  id: Scalars['ID']['input'];
 };
 
 
@@ -231,6 +245,12 @@ export type MutationUpdateExerciseArgs = {
 };
 
 
+export type MutationUpdateExerciseCommentArgs = {
+  comment: Scalars['String']['input'];
+  id: Scalars['ID']['input'];
+};
+
+
 export type MutationUpdateExerciseTagArgs = {
   id: Scalars['ID']['input'];
   name: Scalars['String']['input'];
@@ -239,6 +259,7 @@ export type MutationUpdateExerciseTagArgs = {
 export type Query = {
   __typename: 'Query';
   exercise?: Maybe<Exercise>;
+  exerciseComment?: Maybe<ExerciseComment>;
   exerciseTag?: Maybe<ExerciseTag>;
   exerciseTags: Array<ExerciseTag>;
   exercises: Array<Exercise>;
@@ -250,6 +271,11 @@ export type Query = {
 
 
 export type QueryExerciseArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
+export type QueryExerciseCommentArgs = {
   id: Scalars['ID']['input'];
 };
 
@@ -338,6 +364,8 @@ export type ExerciseTagsQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type ExerciseTagsQuery = { __typename: 'Query', exerciseTags: Array<{ __typename: 'ExerciseTag', id: string, name: string, children: Array<{ __typename: 'ExerciseTag', id: string, name: string, children: Array<{ __typename: 'ExerciseTag', id: string, name: string }> }> }> };
 
+export type ExerciseListElemFragment = { __typename: 'Exercise', id: string, description: string, status: ExerciseStatus, exerciseImage?: { __typename: 'Image', url: string } | null, difficulty: Array<{ __typename: 'ExerciseDifficulty', ageGroup: ExerciseAgeGroup, difficulty: number }>, tags: Array<{ __typename: 'Tag', id: string, name: string }> };
+
 export type LoginMutationVariables = Exact<{
   name: Scalars['String']['input'];
   password: Scalars['String']['input'];
@@ -365,7 +393,7 @@ export type SearchExercisesQueryVariables = Exact<{
 }>;
 
 
-export type SearchExercisesQuery = { __typename: 'Query', searchExercises: { __typename: 'ExerciseSearchResult', totalCount: number, exercises: Array<{ __typename: 'Exercise', id: string, description: string, difficulty: Array<{ __typename: 'ExerciseDifficulty', ageGroup: ExerciseAgeGroup, difficulty: number }>, tags: Array<{ __typename: 'Tag', id: string, name: string }> }> } };
+export type SearchExercisesQuery = { __typename: 'Query', searchExercises: { __typename: 'ExerciseSearchResult', totalCount: number, exercises: Array<{ __typename: 'Exercise', id: string, description: string, status: ExerciseStatus, exerciseImage?: { __typename: 'Image', url: string } | null, difficulty: Array<{ __typename: 'ExerciseDifficulty', ageGroup: ExerciseAgeGroup, difficulty: number }>, tags: Array<{ __typename: 'Tag', id: string, name: string }> }> } };
 
 export type UpdateExerciseMutationVariables = Exact<{
   id: Scalars['ID']['input'];
@@ -380,7 +408,24 @@ export type UsersQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type UsersQuery = { __typename: 'Query', users: Array<{ __typename: 'User', id: string, name: string, userName: string, email: string, roles: Array<Role> }> };
 
-
+export const ExerciseListElemFragmentDoc = gql`
+    fragment ExerciseListElem on Exercise {
+  id
+  description
+  status
+  exerciseImage {
+    url
+  }
+  difficulty {
+    ageGroup
+    difficulty
+  }
+  tags {
+    id
+    name
+  }
+}
+    `;
 export const ChangePermissionsDocument = gql`
     mutation changePermissions($userId: ID!, $permissions: [Role!]!) {
   changePermissions(userId: $userId, permissions: $permissions) {
@@ -750,21 +795,12 @@ export const SearchExercisesDocument = gql`
     query searchExercises($query: ExerciseSearchQuery!) {
   searchExercises(query: $query) {
     exercises {
-      id
-      difficulty {
-        ageGroup
-        difficulty
-      }
-      tags {
-        id
-        name
-      }
-      description
+      ...ExerciseListElem
     }
     totalCount
   }
 }
-    `;
+    ${ExerciseListElemFragmentDoc}`;
 
 /**
  * __useSearchExercisesQuery__
