@@ -1,5 +1,6 @@
 import { CategoryDifficultySelect } from "@/components/CategoryDifficultySelect.tsx";
 import { HelpingQuestions } from "@/components/HelpingQuestions/HelpingQuestions.tsx";
+import { Required } from "@/components/Required.tsx";
 import Section from "@/components/Section.tsx";
 import { SimpleAccordion } from "@/components/SimpleAccordion.tsx";
 import { UploadWithPreview } from "@/components/UploadWithPreview.tsx";
@@ -72,7 +73,14 @@ const ExerciseFields: FC = () => {
     <Box>
       <Grid container spacing={2}>
         <Grid item xs={6}>
-          <Section text="Feladat leírása">
+          <Section
+            text={
+              <>
+                Feladat leírása
+                <Required />
+              </>
+            }
+          >
             <TextField
               id="outlined-required"
               name="description"
@@ -92,7 +100,7 @@ const ExerciseFields: FC = () => {
           <Box mt={1}>{katex}</Box>
         </Grid>
         <Grid item xs={12}>
-          <Section text="Feladat képe">
+          <Section text={<>Feladat képe</>}>
             <UploadWithPreview
               defaultValue={defaultExerciseImage}
               onChange={async (file) => {
@@ -103,7 +111,14 @@ const ExerciseFields: FC = () => {
           </Section>
         </Grid>
         <Grid item xs={6}>
-          <Section text="Feladat megoldása">
+          <Section
+            text={
+              <>
+                Feladat megoldása
+                <Required />
+              </>
+            }
+          >
             <TextField
               name="solution"
               defaultValue={values.solution}
@@ -115,7 +130,7 @@ const ExerciseFields: FC = () => {
               fullWidth
             />
             <SimpleAccordion
-              summary="File feltöltés"
+              summary="Fájl feltöltés"
               defaultExpanded={defaultSolutionImage !== undefined}
             >
               <UploadWithPreview
@@ -129,7 +144,7 @@ const ExerciseFields: FC = () => {
           </Section>
         </Grid>
         <Grid item xs={6}>
-          <Section text="Ötlet a megoldáshoz (opcionális)">
+          <Section text="Ötlet a megoldáshoz">
             <TextField
               name="solveIdea"
               defaultValue={values.solveIdea}
@@ -141,7 +156,7 @@ const ExerciseFields: FC = () => {
               fullWidth
             />
             <SimpleAccordion
-              summary="File feltöltés"
+              summary="Fájl feltöltés"
               defaultExpanded={defaultSolutionImage !== undefined}
             >
               <UploadWithPreview
@@ -170,7 +185,9 @@ const ExerciseFields: FC = () => {
           </Stack>
         </Grid>
         <Grid item xs={6}>
-          <Typography>Korcsoport szerinti nehézség</Typography>
+          <Typography>
+            Korcsoport szerinti nehézség <Required />
+          </Typography>
           {categoryDifficultySelect}
         </Grid>
       </Grid>
