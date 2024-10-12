@@ -4,7 +4,7 @@ import Section from "@/components/Section.tsx";
 import { SimpleAccordion } from "@/components/SimpleAccordion.tsx";
 import { UploadWithPreview } from "@/components/UploadWithPreview.tsx";
 import { ExerciseInput } from "@/generated/graphql.tsx";
-import { toBase64 } from "@/util/toBase64.ts";
+import { fromBase64, toBase64 } from "@/util/toBase64.ts";
 import { Box, Grid, Stack, TextField, Typography } from "@mui/material";
 import { useFormikContext } from "formik";
 import { FC, useMemo, useState } from "react";
@@ -41,6 +41,12 @@ const ExerciseFields: FC = () => {
     return <KaTeX value={debouncedDescription} />;
   }, [debouncedDescription]);
 
+  const defaultExerciseImage = useMemo(() => {
+    return values.exerciseImage
+      ? fromBase64(values.exerciseImage) || undefined
+      : undefined;
+  }, [values.exerciseImage]);
+
   return (
     <Box>
       <Grid container spacing={2}>
@@ -49,6 +55,7 @@ const ExerciseFields: FC = () => {
             <TextField
               id="outlined-required"
               name="description"
+              defaultValue={values.description}
               onChange={handleChange}
               onBlur={handleBlur}
               minRows={10}
@@ -66,6 +73,7 @@ const ExerciseFields: FC = () => {
         <Grid item xs={12}>
           <Section text="Feladat képe">
             <UploadWithPreview
+              defaultValue={defaultExerciseImage}
               onChange={async (file) => {
                 if (!file) return setFieldValue("exerciseImage", null);
                 setFieldValue("exerciseImage", await toBase64(file));
@@ -76,7 +84,8 @@ const ExerciseFields: FC = () => {
         <Grid item xs={6}>
           <Section text="Feladat megoldása">
             <TextField
-              id="outlined-required"
+              name="solution"
+              defaultValue={values.solution}
               onChange={handleChange}
               onBlur={handleBlur}
               margin="none"
@@ -97,7 +106,8 @@ const ExerciseFields: FC = () => {
         <Grid item xs={6}>
           <Section text="Ötlet a megoldáshoz (opcionális)">
             <TextField
-              id="outlined-required"
+              name="solveIdea"
+              defaultValue={values.solveIdea}
               onChange={handleChange}
               onBlur={handleBlur}
               maxRows={1}

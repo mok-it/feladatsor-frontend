@@ -3,7 +3,7 @@ import {
   ExerciseInput,
   useCreateExerciseMutation,
 } from "@/generated/graphql.tsx";
-import { createExerciseInitialValue } from "@/pages/createExercise/createExerciseInitialValue.ts";
+import { createExerciseAtom } from "@/util/atoms.ts";
 import { LoadingButton } from "@mui/lab";
 import {
   Box,
@@ -17,13 +17,18 @@ import {
   Typography,
 } from "@mui/material";
 import { Formik, useFormikContext } from "formik";
-import { useCallback, useState } from "react";
+import { useAtomValue, useSetAtom } from "jotai";
+import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useToggle } from "react-use";
+import { useDebounce, useToggle } from "react-use";
 import ExerciseFields from "./ExerciseFields.tsx";
+import { createExerciseInitialValue } from "./createExerciseInitialValue.ts";
 
 export const CreateExercise = () => {
   const [createExercise] = useCreateExerciseMutation();
+  const persistedValues = useAtomValue(createExerciseAtom);
+  const setPersistedValues = useSetAtom(createExerciseAtom);
+
   const [showConfirmDialog, setShowConfirmDialog] = useToggle(false);
   const [loadingSubmit, toggleLoadingSubmit] = useToggle(false);
   const [formDataToSend, setFormDataToSend] = useState<ExerciseInput | null>(
@@ -38,18 +43,57 @@ export const CreateExercise = () => {
     try {
       const createResult = await createExercise({
         variables: {
-          input: formDataToSend,
+          input: {
+            alternativeDifficultyParent:
+              formDataToSend.alternativeDifficultyParent,
+            description: formDataToSend.description,
+            difficulty: formDataToSend.difficulty,
+            elaboration: formDataToSend.elaboration,
+            // elaborationImage: formDataToSend.elaborationImage,
+            // exerciseImage: formDataToSend.exerciseImage,
+            helpingQuestions: formDataToSend.helpingQuestions,
+            isCompetitionFinal: formDataToSend.isCompetitionFinal,
+            sameLogicParent: formDataToSend.sameLogicParent,
+            solution: formDataToSend.solution,
+            // solutionImage: formDataToSend.solutionImage,
+            solutionOptions: formDataToSend.solutionOptions,
+            solveIdea: formDataToSend.solveIdea,
+            // solveIdeaImage: formDataToSend.solveIdeaImage,
+            source: formDataToSend.source,
+            status: formDataToSend.status,
+            tags: formDataToSend.tags,
+          },
         },
       });
       if (createResult.errors) {
         console.log(createResult.errors);
         return;
       }
+      setPersistedValues(createExerciseInitialValue);
       navigate("/list-exercises");
     } finally {
       toggleLoadingSubmit(false);
     }
-  }, [createExercise, formDataToSend, navigate, toggleLoadingSubmit]);
+  }, [
+    createExercise,
+    formDataToSend,
+    navigate,
+    setPersistedValues,
+    toggleLoadingSubmit,
+  ]);
+
+  useEffect(() => {
+    if (persistedValues === null) {
+      const id = setTimeout(() => {
+        setPersistedValues(createExerciseInitialValue);
+      }, 100);
+      return () => clearTimeout(id);
+    }
+  }, [persistedValues, setPersistedValues]);
+
+  if (persistedValues === null) {
+    return "Loading...";
+  }
 
   return (
     <>
@@ -66,7 +110,7 @@ export const CreateExercise = () => {
         </DialogActions>
       </Dialog>
       <Formik<ExerciseInput>
-        initialValues={createExerciseInitialValue}
+        initialValues={persistedValues}
         onSubmit={(values) => {
           setFormDataToSend(values);
           setShowConfirmDialog(true);
@@ -80,7 +124,16 @@ export const CreateExercise = () => {
 };
 
 const CreateExerciseForm = () => {
-  const { submitForm } = useFormikContext<ExerciseInput>();
+  const { submitForm, values } = useFormikContext<ExerciseInput>();
+  const setPersistedValues = useSetAtom(createExerciseAtom);
+
+  useDebounce(
+    () => {
+      setPersistedValues(values);
+    },
+    500,
+    [values],
+  );
 
   return (
     <Box pb={16}>
