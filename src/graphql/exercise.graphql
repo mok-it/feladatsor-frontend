@@ -3,10 +3,7 @@ query selectExercises {
   exercises(take: 10, skip: 0) {
     id
     description
-    exerciseImage
     solution
-    elaboration
-    elaborationImage
     helpingQuestions
     source
     difficulty {
@@ -33,5 +30,34 @@ query selectExercises {
     }
     createdAt
     updatedAt
+  }
+}
+
+query selectExercise($exerciseId: ID!) {
+  exercise(id: $exerciseId) {
+    description
+    exerciseImage {
+      id
+      url
+    }
+    solution
+    solutionImage {
+      id
+      url
+    }
+    solveIdea
+    solveIdeaImage {
+      id
+      url
+    }
+    tags {
+      id
+      name
+    }
+    difficulty {
+      ageGroup
+      difficulty
+    }
+    helpingQuestions
   }
 }
