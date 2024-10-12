@@ -26,7 +26,7 @@ const AppWithApollo = () => {
       graphQLErrors.forEach((error) => {
         enqueueSnackbar({
           variant: "error",
-          message: `[${error.name ?? "GraphQL"}] ${truncate(error.message, { length: 100 })}`,
+          message: `[${error.message ?? "GraphQL"}] ${truncate(error.message, { length: 100 })}`,
         });
       });
     }

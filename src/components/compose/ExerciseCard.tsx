@@ -160,7 +160,7 @@ const ExerciseCard: FC<{
                     width: "3cm",
                   }}
                 >
-                  <img src={exercise.exerciseImage || ""}></img>
+                  <img src={exercise.exerciseImage?.url || ""}></img>
                 </Box>
               </Stack>
               {isDetailedView && (

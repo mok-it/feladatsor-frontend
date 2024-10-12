@@ -1,6 +1,6 @@
-import { ExerciseFields } from "@/types/ExerciseFields";
+import { ExerciseFieldsType } from "@/types/ExerciseFieldsType";
 
-export const createExerciseInitialValue: ExerciseFields = {
+export const createExerciseInitialValue: ExerciseFieldsType = {
   description: "",
   difficulty: [
     {
