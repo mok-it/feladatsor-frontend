@@ -322,6 +322,11 @@ export type SelectExercisesQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type SelectExercisesQuery = { __typename: 'Query', exercises: Array<{ __typename: 'Exercise', id: string, description: string, exerciseImage?: string | null, solution: string, elaboration?: string | null, elaborationImage?: string | null, helpingQuestions: Array<string>, source?: string | null, createdAt: string, updatedAt: string, difficulty: Array<{ __typename: 'ExerciseDifficulty', difficulty: number, ageGroup: ExerciseAgeGroup }>, history: Array<{ __typename: 'ExerciseHistory', id: string, exercise: { __typename: 'Exercise', id: string } }>, checks: Array<{ __typename: 'ExerciseCheck', id: string, type: ExerciseCheckType, user: { __typename: 'User', id: string, name: string } }>, createdBy: { __typename: 'User', id: string, name: string } }> };
 
+export type ExerciseTagsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type ExerciseTagsQuery = { __typename: 'Query', exerciseTags: Array<{ __typename: 'ExerciseTag', id: string, name: string, children: Array<{ __typename: 'ExerciseTag', id: string, name: string, children: Array<{ __typename: 'ExerciseTag', id: string, name: string }> }> }> };
+
 export type LoginWithGoogleMutationVariables = Exact<{
   googleToken: Scalars['String']['input'];
 }>;
@@ -480,6 +485,54 @@ export type SelectExercisesQueryHookResult = ReturnType<typeof useSelectExercise
 export type SelectExercisesLazyQueryHookResult = ReturnType<typeof useSelectExercisesLazyQuery>;
 export type SelectExercisesSuspenseQueryHookResult = ReturnType<typeof useSelectExercisesSuspenseQuery>;
 export type SelectExercisesQueryResult = Apollo.QueryResult<SelectExercisesQuery, SelectExercisesQueryVariables>;
+export const ExerciseTagsDocument = gql`
+    query ExerciseTags {
+  exerciseTags {
+    id
+    name
+    children {
+      id
+      name
+      children {
+        id
+        name
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useExerciseTagsQuery__
+ *
+ * To run a query within a React component, call `useExerciseTagsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useExerciseTagsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useExerciseTagsQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useExerciseTagsQuery(baseOptions?: Apollo.QueryHookOptions<ExerciseTagsQuery, ExerciseTagsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<ExerciseTagsQuery, ExerciseTagsQueryVariables>(ExerciseTagsDocument, options);
+      }
+export function useExerciseTagsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ExerciseTagsQuery, ExerciseTagsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<ExerciseTagsQuery, ExerciseTagsQueryVariables>(ExerciseTagsDocument, options);
+        }
+export function useExerciseTagsSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<ExerciseTagsQuery, ExerciseTagsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<ExerciseTagsQuery, ExerciseTagsQueryVariables>(ExerciseTagsDocument, options);
+        }
+export type ExerciseTagsQueryHookResult = ReturnType<typeof useExerciseTagsQuery>;
+export type ExerciseTagsLazyQueryHookResult = ReturnType<typeof useExerciseTagsLazyQuery>;
+export type ExerciseTagsSuspenseQueryHookResult = ReturnType<typeof useExerciseTagsSuspenseQuery>;
+export type ExerciseTagsQueryResult = Apollo.QueryResult<ExerciseTagsQuery, ExerciseTagsQueryVariables>;
 export const LoginWithGoogleDocument = gql`
     mutation loginWithGoogle($googleToken: String!) {
   loginWithGoogle(googleToken: $googleToken) {

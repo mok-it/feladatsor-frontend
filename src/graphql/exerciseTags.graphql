@@ -1,0 +1,14 @@
+query ExerciseTags {
+  exerciseTags {
+    id
+    name
+    children {
+      id
+      name
+      children {
+        id
+        name
+      }
+    }
+  }
+}

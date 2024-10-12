@@ -134,7 +134,7 @@ const Login: FC = () => {
               >
                 Google
               </Button>
-              <Link textAlign="right" mt="auto">
+              <Link textAlign="right" mt="auto" sx={{ cursor: "pointer" }}>
                 Regisztráció
               </Link>
             </Stack>

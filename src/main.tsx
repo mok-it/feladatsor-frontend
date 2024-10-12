@@ -26,7 +26,7 @@ const AppWithApollo = () => {
       graphQLErrors.forEach((error) => {
         enqueueSnackbar({
           variant: "error",
-          message: `[${error.name}]${truncate(error.message, { length: 100 })}`,
+          message: `[${error.name ?? "GraphQL"}] ${truncate(error.message, { length: 100 })}`,
         });
       });
     }
@@ -35,7 +35,7 @@ const AppWithApollo = () => {
       // handle network error
       enqueueSnackbar({
         variant: "error",
-        message: `[${networkError.name}]: ${networkError.message}`,
+        message: `[${networkError.name ?? "Network"}] ${networkError.message}`,
       });
     }
   });
