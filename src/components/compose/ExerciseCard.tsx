@@ -18,6 +18,7 @@ import { useAtomValue } from "jotai";
 import { entries } from "lodash";
 import { FC, useContext, useMemo } from "react";
 import { MdEdit, MdStar } from "react-icons/md";
+import FakeId from "../FakeId";
 import { ContainerContext } from "./Container";
 
 const ExerciseCard: FC<{
@@ -116,7 +117,7 @@ const ExerciseCard: FC<{
             gap={1}
           >
             {isDetailedView ? (
-              <id>{exercise.id}</id>
+              <FakeId>{exercise.id}</FakeId>
             ) : (
               <Typography variant="caption" whiteSpace={"nowrap"}>
                 #{exercise.id}

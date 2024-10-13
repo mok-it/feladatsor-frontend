@@ -83,7 +83,7 @@ export const ExerciseOperations: FC<{
           ...history,
           historyType: "history",
         })) || []),
-        ...[...exercise.checks, ...newChecks].map((check) => ({
+        ...[...(exercise?.checks || []), ...newChecks].map((check) => ({
           ...check,
           historyType: "check",
         })),
