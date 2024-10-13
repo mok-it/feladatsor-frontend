@@ -4,10 +4,12 @@ import Section from "@/components/Section";
 import {
   ExerciseCheckFragment,
   ExerciseCommentFragment,
+  ExerciseHistoryFragment,
   SelectExerciseQuery,
   useCommentsByExerciseQuery,
   useCreateExerciseCommentMutation,
   useDeleteExerciseCommentMutation,
+  useExerciseHistoryByExerciseQuery,
 } from "@/generated/graphql";
 import { userAtom } from "@/util/atoms";
 import { translateCheck } from "@/util/translateCheck";
@@ -28,6 +30,7 @@ import { useAtomValue } from "jotai";
 import { orderBy, times } from "lodash";
 import { useSnackbar } from "notistack";
 import { FC, useCallback, useMemo, useState } from "react";
+import { FaArrowRight } from "react-icons/fa6";
 import {
   MdArrowDownward,
   MdCheckCircle,
@@ -46,6 +49,7 @@ export const ExerciseOperations: FC<{
   const { enqueueSnackbar } = useSnackbar();
   const user = useAtomValue(userAtom);
   const [sort, setSort] = useState<"asc" | "desc">("asc");
+
   const [comment, setComment] = useState<string>("");
   const {
     data: commentsData,
@@ -65,11 +69,20 @@ export const ExerciseOperations: FC<{
     enqueueSnackbar({ variant: "success", message: "Komment elküldve" });
     refetchComments();
   }, [comment, createComment, enqueueSnackbar, exerciseId, refetchComments]);
+  const [deleteComment] = useDeleteExerciseCommentMutation();
+  const [commentToDelete, setCommentToDelete] = useState<string | null>(null);
+
+  const { data: historyData, loading: historyLoading } =
+    useExerciseHistoryByExerciseQuery({ variables: { exerciseId } });
 
   const [newChecks, setNewChecks] = useState<ExerciseCheckFragment[]>([]);
   const history = useMemo(() => {
     return orderBy(
       [
+        ...(historyData?.exerciseHistoryByExercise.map((history) => ({
+          ...history,
+          historyType: "history",
+        })) || []),
         ...[...exercise.checks, ...newChecks].map((check) => ({
           ...check,
           historyType: "check",
@@ -82,12 +95,17 @@ export const ExerciseOperations: FC<{
       "createdAt",
       sort,
     );
-  }, [commentsData?.commentsByExercise, exercise.checks, newChecks, sort]);
+  }, [
+    commentsData?.commentsByExercise,
+    exercise.checks,
+    historyData?.exerciseHistoryByExercise,
+    newChecks,
+    sort,
+  ]);
 
-  const [deleteComment] = useDeleteExerciseCommentMutation();
-  const [commentToDelete, setCommentToDelete] = useState<string | null>(null);
+  //const [updateExercise] = useUpdateExerciseMutation();
 
-  const loading = commentsLoading;
+  const loading = commentsLoading || historyLoading;
 
   return (
     <Grid item xs={12} lg={5}>
@@ -119,16 +137,16 @@ export const ExerciseOperations: FC<{
             <Select
               size="small"
               defaultValue={status}
-              onChange={async () => {
-                // await updateExercise({
-                //   variables: {
-                //     id: exerciseId,
-                //     input: {
-                //       status: e.target.value as ExerciseStatus,
-                //     },
-                //   },
-                // });
-              }}
+              // onChange={async (e) => {
+              //   await updateExercise({
+              //     variables: {
+              //       id: exerciseId,
+              //       input: {
+              //         status: e.target.value as ExerciseStatus,
+              //       },
+              //     },
+              //   });
+              // }}
             >
               <MenuItem value={ExerciseStatusEnum.CREATED}>
                 <Stack direction={"row"} alignItems={"center"} gap={1}>
@@ -222,15 +240,18 @@ export const ExerciseOperations: FC<{
           </Stack>
           <Stack spacing={2} py={2}>
             {loading && <Typography>Töltés...</Typography>}
-            {history.map((item) => {
+            {history.map((item, i, arr) => {
               switch (item.historyType) {
                 case "comment": {
                   const comment = item as ExerciseCommentFragment;
                   return (
                     <History
+                      key={comment.id}
+                      hideHeader={
+                        i > 0 && arr[i - 1].createdAt === comment.createdAt
+                      }
                       userName={comment.createdBy.name}
                       createdAt={comment.createdAt}
-                      key={comment.id}
                     >
                       <Box sx={{ ml: 4, mr: 6, mt: 1 }}>
                         <Typography sx={{ wordBreak: "break-all" }}>
@@ -253,9 +274,12 @@ export const ExerciseOperations: FC<{
                   const check = item as ExerciseCheckFragment;
                   return (
                     <History
+                      key={check.id}
+                      hideHeader={
+                        i > 0 && arr[i - 1].createdAt === check.createdAt
+                      }
                       userName={check.user.name}
                       createdAt={check.createdAt}
-                      key={check.id}
                     >
                       <Stack
                         direction={"row"}
@@ -280,6 +304,30 @@ export const ExerciseOperations: FC<{
                             </IconButton>
                           </Box>
                         )} */}
+                      </Stack>
+                    </History>
+                  );
+                }
+                case "history": {
+                  const history = item as ExerciseHistoryFragment;
+                  return (
+                    <History
+                      key={history.id}
+                      hideHeader={
+                        i > 0 && arr[i - 1].createdAt === history.createdAt
+                      }
+                      userName={history.createdBy.name}
+                      createdAt={history.createdAt}
+                    >
+                      <Stack
+                        direction={"row"}
+                        gap={1}
+                        sx={{ ml: 4, mr: 6, mt: 1 }}
+                      >
+                        <Typography sx={{ wordBreak: "break-all" }}>
+                          {history.field}: {history.oldValue} <FaArrowRight />
+                          {history.newValue}
+                        </Typography>
                       </Stack>
                     </History>
                   );

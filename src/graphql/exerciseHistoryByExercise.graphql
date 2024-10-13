@@ -1,0 +1,5 @@
+query ExerciseHistoryByExercise($exerciseId: ID!) {
+  exerciseHistoryByExercise(id: $exerciseId) {
+    ...ExerciseHistory
+  }
+}

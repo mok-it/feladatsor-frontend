@@ -1,0 +1,11 @@
+fragment ExerciseHistory on ExerciseHistory {
+  id
+  field
+  oldValue
+  newValue
+  createdAt
+  createdBy {
+    id
+    name
+  }
+}

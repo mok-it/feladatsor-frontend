@@ -421,6 +421,13 @@ export type SelectExerciseQueryVariables = Exact<{
 
 export type SelectExerciseQuery = { __typename: 'Query', exercise?: { __typename: 'Exercise', id: string, status: ExerciseStatus, description: string, solution: string, solveIdea?: string | null, helpingQuestions: Array<string>, alternativeDifficultyExercises: Array<{ __typename: 'Exercise', id: string }>, exerciseImage?: { __typename: 'Image', id: string, url: string } | null, solutionImage?: { __typename: 'Image', id: string, url: string } | null, solveIdeaImage?: { __typename: 'Image', id: string, url: string } | null, tags: Array<{ __typename: 'Tag', id: string, name: string }>, difficulty: Array<{ __typename: 'ExerciseDifficulty', ageGroup: ExerciseAgeGroup, difficulty: number }>, checks: Array<{ __typename: 'ExerciseCheck', id: string, type: ExerciseCheckType, createdAt: string, user: { __typename: 'User', id: string, name: string } }> } | null };
 
+export type ExerciseHistoryByExerciseQueryVariables = Exact<{
+  exerciseId: Scalars['ID']['input'];
+}>;
+
+
+export type ExerciseHistoryByExerciseQuery = { __typename: 'Query', exerciseHistoryByExercise: Array<{ __typename: 'ExerciseHistory', id: string, field: string, oldValue: string, newValue: string, createdAt: string, createdBy: { __typename: 'User', id: string, name: string } }> };
+
 export type ExerciseTagsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -429,6 +436,8 @@ export type ExerciseTagsQuery = { __typename: 'Query', exerciseTags: Array<{ __t
 export type ExerciseCheckFragment = { __typename: 'ExerciseCheck', id: string, type: ExerciseCheckType, createdAt: string, user: { __typename: 'User', id: string, name: string } };
 
 export type ExerciseCommentFragment = { __typename: 'ExerciseComment', id: string, comment: string, createdAt: string, createdBy: { __typename: 'User', id: string, name: string } };
+
+export type ExerciseHistoryFragment = { __typename: 'ExerciseHistory', id: string, field: string, oldValue: string, newValue: string, createdAt: string, createdBy: { __typename: 'User', id: string, name: string } };
 
 export type ExerciseListElemFragment = { __typename: 'Exercise', id: string, description: string, status: ExerciseStatus, exerciseImage?: { __typename: 'Image', url: string } | null, difficulty: Array<{ __typename: 'ExerciseDifficulty', ageGroup: ExerciseAgeGroup, difficulty: number }>, tags: Array<{ __typename: 'Tag', id: string, name: string }> };
 
@@ -489,6 +498,19 @@ export const ExerciseCommentFragmentDoc = gql`
     fragment ExerciseComment on ExerciseComment {
   id
   comment
+  createdAt
+  createdBy {
+    id
+    name
+  }
+}
+    `;
+export const ExerciseHistoryFragmentDoc = gql`
+    fragment ExerciseHistory on ExerciseHistory {
+  id
+  field
+  oldValue
+  newValue
   createdAt
   createdBy {
     id
@@ -866,6 +888,46 @@ export type SelectExerciseQueryHookResult = ReturnType<typeof useSelectExerciseQ
 export type SelectExerciseLazyQueryHookResult = ReturnType<typeof useSelectExerciseLazyQuery>;
 export type SelectExerciseSuspenseQueryHookResult = ReturnType<typeof useSelectExerciseSuspenseQuery>;
 export type SelectExerciseQueryResult = Apollo.QueryResult<SelectExerciseQuery, SelectExerciseQueryVariables>;
+export const ExerciseHistoryByExerciseDocument = gql`
+    query ExerciseHistoryByExercise($exerciseId: ID!) {
+  exerciseHistoryByExercise(id: $exerciseId) {
+    ...ExerciseHistory
+  }
+}
+    ${ExerciseHistoryFragmentDoc}`;
+
+/**
+ * __useExerciseHistoryByExerciseQuery__
+ *
+ * To run a query within a React component, call `useExerciseHistoryByExerciseQuery` and pass it any options that fit your needs.
+ * When your component renders, `useExerciseHistoryByExerciseQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useExerciseHistoryByExerciseQuery({
+ *   variables: {
+ *      exerciseId: // value for 'exerciseId'
+ *   },
+ * });
+ */
+export function useExerciseHistoryByExerciseQuery(baseOptions: Apollo.QueryHookOptions<ExerciseHistoryByExerciseQuery, ExerciseHistoryByExerciseQueryVariables> & ({ variables: ExerciseHistoryByExerciseQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<ExerciseHistoryByExerciseQuery, ExerciseHistoryByExerciseQueryVariables>(ExerciseHistoryByExerciseDocument, options);
+      }
+export function useExerciseHistoryByExerciseLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ExerciseHistoryByExerciseQuery, ExerciseHistoryByExerciseQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<ExerciseHistoryByExerciseQuery, ExerciseHistoryByExerciseQueryVariables>(ExerciseHistoryByExerciseDocument, options);
+        }
+export function useExerciseHistoryByExerciseSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<ExerciseHistoryByExerciseQuery, ExerciseHistoryByExerciseQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<ExerciseHistoryByExerciseQuery, ExerciseHistoryByExerciseQueryVariables>(ExerciseHistoryByExerciseDocument, options);
+        }
+export type ExerciseHistoryByExerciseQueryHookResult = ReturnType<typeof useExerciseHistoryByExerciseQuery>;
+export type ExerciseHistoryByExerciseLazyQueryHookResult = ReturnType<typeof useExerciseHistoryByExerciseLazyQuery>;
+export type ExerciseHistoryByExerciseSuspenseQueryHookResult = ReturnType<typeof useExerciseHistoryByExerciseSuspenseQuery>;
+export type ExerciseHistoryByExerciseQueryResult = Apollo.QueryResult<ExerciseHistoryByExerciseQuery, ExerciseHistoryByExerciseQueryVariables>;
 export const ExerciseTagsDocument = gql`
     query ExerciseTags {
   exerciseTags {
