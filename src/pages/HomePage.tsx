@@ -1,4 +1,5 @@
 import { userAtom } from "@/util/atoms.ts";
+import { Card, Grid2, Typography } from "@mui/material";
 import { useAtomValue } from "jotai";
 import { useToggle } from "react-use";
 
@@ -23,6 +24,13 @@ export const HomePage = () => {
           ></iframe>
         </div>
       )}
+      <Grid2 container>
+        <Grid2 size={2}>
+          <Card>
+            <Typography variant="h4">Beküldött feladatok</Typography>
+          </Card>
+        </Grid2>
+      </Grid2>
     </div>
   );
 };

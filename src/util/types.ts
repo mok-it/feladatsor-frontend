@@ -23,5 +23,12 @@ export type ExerciseCardData = {
 export type ExercisePlacements = {
   [key in string]: {
     [key in ExerciseAgeGroup]: number;
-  }
+  };
+};
+
+export enum ExerciseStatusEnum {
+  APPROVED = "APPROVED",
+  CREATED = "CREATED",
+  DELETED = "DELETED",
+  DRAFT = "DRAFT",
 }

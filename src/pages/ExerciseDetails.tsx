@@ -3,6 +3,7 @@ import FakeId from "@/components/FakeId";
 import { MultiSelect } from "@/components/MultiSelect.tsx";
 import Section from "@/components/Section";
 import {
+  SelectExerciseQuery,
   useSelectExerciseQuery,
   useUpdateExerciseMutation,
 } from "@/generated/graphql";
@@ -21,7 +22,7 @@ import { Box, Stack } from "@mui/system";
 import { Formik, useFormikContext } from "formik";
 import { useSnackbar } from "notistack";
 import { FC, useCallback, useState } from "react";
-import { MdCheck, MdSave } from "react-icons/md";
+import { MdSave } from "react-icons/md";
 import { useParams } from "react-router";
 import { useToggle } from "react-use";
 import ExerciseFields from "./createExercise/ExerciseFields";
@@ -139,6 +140,9 @@ const ExerciseDetailsForm = () => {
     ExerciseFieldsType & { initial: boolean }
   >();
   const { fakeId } = useParams();
+  const [exercise, setExercise] = useState<
+    SelectExerciseQuery["exercise"] | null
+  >(null);
 
   const { loading } = useSelectExerciseQuery({
     variables: { exerciseId: fakeId! },
@@ -158,6 +162,7 @@ const ExerciseDetailsForm = () => {
         solveIdeaImage: data.exercise.solveIdeaImage?.id,
         tags: data.exercise.tags.map((tag) => tag.name),
       });
+      setExercise(data.exercise);
     },
   });
 
@@ -171,9 +176,6 @@ const ExerciseDetailsForm = () => {
         <Box flexGrow={1} />
         <Button onClick={submitForm} variant="contained" endIcon={<MdSave />}>
           Mentés
-        </Button>
-        <Button variant="contained" color="success" endIcon={<MdCheck />}>
-          Ellenőriztem
         </Button>
       </Stack>
       <Grid container spacing={2} pb={10}>
@@ -197,7 +199,7 @@ const ExerciseDetailsForm = () => {
             </Box>
           </Card>
         </Grid>
-        <ExerciseOperations exerciseId={fakeId!} />
+        <ExerciseOperations exercise={exercise} />
       </Grid>
     </>
   );

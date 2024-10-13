@@ -2,11 +2,16 @@ import Check from "@/components/Check";
 import History from "@/components/History";
 import Section from "@/components/Section";
 import {
+  ExerciseCheckFragment,
+  ExerciseCommentFragment,
+  SelectExerciseQuery,
   useCommentsByExerciseQuery,
   useCreateExerciseCommentMutation,
   useDeleteExerciseCommentMutation,
 } from "@/generated/graphql";
 import { userAtom } from "@/util/atoms";
+import { translateCheck } from "@/util/translateCheck";
+import { ExerciseStatusEnum } from "@/util/types";
 import {
   Button,
   Card,
@@ -20,7 +25,7 @@ import {
 import { Box, Stack } from "@mui/system";
 import { motion } from "framer-motion";
 import { useAtomValue } from "jotai";
-import { orderBy } from "lodash";
+import { orderBy, times } from "lodash";
 import { useSnackbar } from "notistack";
 import { FC, useCallback, useMemo, useState } from "react";
 import {
@@ -30,10 +35,14 @@ import {
   MdSend,
 } from "react-icons/md";
 import { AlertDialog } from "./Dialog";
+import { ExerciseChecks } from "./ExerciseChecks";
 
-export const ExerciseOperations: FC<{ exerciseId: string }> = ({
-  exerciseId,
-}) => {
+export const ExerciseOperations: FC<{
+  exercise: SelectExerciseQuery["exercise"];
+}> = ({ exercise }) => {
+  exercise = exercise!;
+  const exerciseId = exercise.id;
+  const status = exercise.status;
   const { enqueueSnackbar } = useSnackbar();
   const user = useAtomValue(userAtom);
   const [sort, setSort] = useState<"asc" | "desc">("asc");
@@ -41,7 +50,7 @@ export const ExerciseOperations: FC<{ exerciseId: string }> = ({
   const {
     data: commentsData,
     loading: commentsLoading,
-    refetch,
+    refetch: refetchComments,
   } = useCommentsByExerciseQuery({
     variables: { exerciseId },
     fetchPolicy: "no-cache",
@@ -54,19 +63,26 @@ export const ExerciseOperations: FC<{ exerciseId: string }> = ({
       variables: { comment: comment!, exerciseId },
     });
     enqueueSnackbar({ variant: "success", message: "Komment elküldve" });
-    refetch();
-  }, [comment, createComment, enqueueSnackbar, exerciseId, refetch]);
+    refetchComments();
+  }, [comment, createComment, enqueueSnackbar, exerciseId, refetchComments]);
 
+  const [newChecks, setNewChecks] = useState<ExerciseCheckFragment[]>([]);
   const history = useMemo(() => {
     return orderBy(
-      commentsData?.commentsByExercise.map((comment) => ({
-        type: "comment",
-        ...comment,
-      })) || [],
+      [
+        ...[...exercise.checks, ...newChecks].map((check) => ({
+          ...check,
+          historyType: "check",
+        })),
+        ...(commentsData?.commentsByExercise.map((comment) => ({
+          ...comment,
+          historyType: "comment",
+        })) || []),
+      ],
       "createdAt",
       sort,
     );
-  }, [commentsData?.commentsByExercise, sort]);
+  }, [commentsData?.commentsByExercise, exercise.checks, newChecks, sort]);
 
   const [deleteComment] = useDeleteExerciseCommentMutation();
   const [commentToDelete, setCommentToDelete] = useState<string | null>(null);
@@ -89,7 +105,7 @@ export const ExerciseOperations: FC<{ exerciseId: string }> = ({
           });
           enqueueSnackbar({ variant: "success", message: "Komment törölve" });
           setCommentToDelete(null);
-          refetch();
+          refetchComments();
         }}
       />
       <Card>
@@ -100,20 +116,33 @@ export const ExerciseOperations: FC<{ exerciseId: string }> = ({
             justifyContent={"space-between"}
           >
             <Typography variant="h5">Státusz</Typography>
-            <Select size="small" defaultValue={1}>
-              <MenuItem value={1}>
+            <Select
+              size="small"
+              defaultValue={status}
+              onChange={async () => {
+                // await updateExercise({
+                //   variables: {
+                //     id: exerciseId,
+                //     input: {
+                //       status: e.target.value as ExerciseStatus,
+                //     },
+                //   },
+                // });
+              }}
+            >
+              <MenuItem value={ExerciseStatusEnum.CREATED}>
                 <Stack direction={"row"} alignItems={"center"} gap={1}>
                   <MdSend />
                   Beküldve
                 </Stack>
               </MenuItem>
-              <MenuItem value={2}>
+              <MenuItem value={ExerciseStatusEnum.APPROVED}>
                 <Stack direction={"row"} alignItems={"center"} gap={1}>
                   <MdCheckCircle color="green" />
                   Kész
                 </Stack>
               </MenuItem>
-              <MenuItem value={2}>
+              <MenuItem value={ExerciseStatusEnum.DELETED}>
                 <Stack direction={"row"} alignItems={"center"} gap={1}>
                   <MdOutlineDelete color="red" />
                   Törölve
@@ -125,28 +154,30 @@ export const ExerciseOperations: FC<{ exerciseId: string }> = ({
             <Typography variant="body1" mr={1}>
               Ellenőrzések
             </Typography>
-            <Check
-              response={"accepted"}
-              userName="Minta János"
-              timestamp={"2024-02-02"}
-            />
-            <Check
-              response={"rejected"}
-              userName="Minta János"
-              timestamp={"2024-02-02"}
-            />
-            <Check
-              response={"problematic"}
-              userName="Minta János"
-              timestamp={"2024-02-02"}
+            {[...exercise.checks, ...newChecks].map((check) => (
+              <Check
+                key={check.id}
+                response={check.type}
+                userName={check.user.name}
+                timestamp={check.createdAt}
+              />
+            ))}
+            {exercise.checks.length + newChecks.length <= 3 &&
+              times(3 - (exercise.checks.length + newChecks.length), (i) => (
+                <Check key={i} response={null} userName={""} timestamp={""} />
+              ))}
+            <Box flexGrow={1} />
+            <ExerciseChecks
+              exerciseId={exercise.id}
+              onCheck={(check) => {
+                setNewChecks((prev) => [...prev, check]);
+              }}
             />
           </Stack>
           <Stack direction={"row"} alignItems={"center"} gap={0.5}>
             <Typography variant="body1" mr={1}>
               Lektorálások
             </Typography>
-            <Check />
-            <Check />
           </Stack>
           <Section text="Komment">
             <form
@@ -191,20 +222,21 @@ export const ExerciseOperations: FC<{ exerciseId: string }> = ({
           </Stack>
           <Stack spacing={2} py={2}>
             {loading && <Typography>Töltés...</Typography>}
-            {history.map((item, index) => {
-              switch (item.type) {
-                case "comment":
+            {history.map((item) => {
+              switch (item.historyType) {
+                case "comment": {
+                  const comment = item as ExerciseCommentFragment;
                   return (
                     <History
-                      userName={item.createdBy.name}
-                      createdAt={item.createdAt}
-                      key={index}
+                      userName={comment.createdBy.name}
+                      createdAt={comment.createdAt}
+                      key={comment.id}
                     >
                       <Box sx={{ ml: 4, mr: 6, mt: 1 }}>
                         <Typography sx={{ wordBreak: "break-all" }}>
-                          <i>{item.comment}</i>
+                          <i>{comment.comment}</i>
                         </Typography>
-                        {item.createdBy.id === user?.user?.id && (
+                        {comment.createdBy.id === user?.user?.id && (
                           <Box sx={{ position: "absolute", right: 0, top: 0 }}>
                             <IconButton
                               onClick={() => setCommentToDelete(item.id)}
@@ -216,6 +248,42 @@ export const ExerciseOperations: FC<{ exerciseId: string }> = ({
                       </Box>
                     </History>
                   );
+                }
+                case "check": {
+                  const check = item as ExerciseCheckFragment;
+                  return (
+                    <History
+                      userName={check.user.name}
+                      createdAt={check.createdAt}
+                      key={check.id}
+                    >
+                      <Stack
+                        direction={"row"}
+                        gap={1}
+                        sx={{ ml: 4, mr: 6, mt: 1 }}
+                      >
+                        <Check
+                          hideTooltip
+                          response={check.type}
+                          userName={check.user.name}
+                          timestamp={check.createdAt}
+                        />
+                        <Typography sx={{ wordBreak: "break-all" }}>
+                          {translateCheck(check.type)}
+                        </Typography>
+                        {/* {check.user.id === user?.user?.id && (
+                          <Box sx={{ position: "absolute", right: 0, top: 0 }}>
+                            <IconButton
+                              onClick={() => setCommentToDelete(item.id)}
+                            >
+                              <MdOutlineDelete />
+                            </IconButton>
+                          </Box>
+                        )} */}
+                      </Stack>
+                    </History>
+                  );
+                }
                 default:
                   return null;
               }

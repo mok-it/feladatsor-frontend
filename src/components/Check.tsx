@@ -1,5 +1,8 @@
+import { ExerciseCheckType } from "@/generated/graphql";
+import { translateCheck } from "@/util/translateCheck";
 import { Tooltip } from "@mui/material";
 import { Box } from "@mui/system";
+import dayjs from "dayjs";
 import { FC } from "react";
 import {
   FaCircleCheck,
@@ -9,28 +12,30 @@ import {
 } from "react-icons/fa6";
 
 const Check: FC<{
-  response?: "accepted" | "rejected" | "problematic";
-  userName?: string;
-  timestamp?: string;
-}> = ({ response, userName, timestamp }) => {
+  response: ExerciseCheckType | null;
+  userName: string;
+  timestamp: string;
+  hideTooltip?: boolean;
+}> = ({ response, userName, timestamp, hideTooltip }) => {
+  const tootltip = `${response && translateCheck(response)} - ${userName} - ${dayjs(+timestamp!).format("YYYY-MM-DD HH:mm")}`;
   return (
     <>
-      {response === "accepted" && (
-        <Tooltip title={`${userName} - ${timestamp}`}>
+      {response === "GOOD" && (
+        <Tooltip title={!hideTooltip && tootltip}>
           <Box height={20}>
             <FaCircleCheck color="green" size={20} />
           </Box>
         </Tooltip>
       )}
-      {response === "rejected" && (
-        <Tooltip title={`${userName} - ${timestamp}`}>
+      {response === "TO_DELETE" && (
+        <Tooltip title={!hideTooltip && tootltip}>
           <Box height={20}>
             <FaCircleXmark color="red" size={20} />
           </Box>
         </Tooltip>
       )}
-      {response === "problematic" && (
-        <Tooltip title={`${userName} - ${timestamp}`}>
+      {response === "CHANGE_REQUIRED" && (
+        <Tooltip title={!hideTooltip && tootltip}>
           <Box height={20}>
             <FaCircleQuestion color="orange" size={20} />
           </Box>

@@ -1,0 +1,5 @@
+mutation CreateExerciseCheck($input: ExerciseCheckInput!) {
+  createExerciseCheck(data: $input) {
+    ...ExerciseCheck
+  }
+}
