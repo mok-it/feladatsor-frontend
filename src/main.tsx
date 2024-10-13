@@ -31,6 +31,7 @@ const AppWithApollo = () => {
         enqueueSnackbar({
           variant: "error",
           message: `[${error.message ?? "GraphQL"}] ${truncate(error.message, { length: 100 })}`,
+          autoHideDuration: 5000,
         });
       });
     }

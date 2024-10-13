@@ -9,6 +9,7 @@ import {
   Button,
   Card,
   Modal,
+  TextField,
   ToggleButton,
   ToggleButtonGroup,
   Typography,
@@ -16,6 +17,7 @@ import {
 import { Stack } from "@mui/system";
 import { FC, useState } from "react";
 import { useToggle } from "react-use";
+import Section from "./Section";
 
 export const ExerciseChecks: FC<{
   exerciseId: string;
@@ -25,6 +27,7 @@ export const ExerciseChecks: FC<{
   const [checkModal, setCheckModal] = useToggle(false);
   const [loadingCheck, setLoadingCheck] = useToggle(false);
   const [checkType, setCheckType] = useState<ExerciseCheckType>("GOOD");
+  const [comment, setComment] = useState<string>("");
 
   return (
     <>
@@ -39,7 +42,7 @@ export const ExerciseChecks: FC<{
           justifyContent={"center"}
           onClick={setCheckModal}
         >
-          <Card sx={{ width: 300 }}>
+          <Card>
             <Stack gap={2} p={2} onClick={(e) => e.stopPropagation()}>
               <Typography variant="h6" component="h2">
                 Ellenőrzés
@@ -54,16 +57,24 @@ export const ExerciseChecks: FC<{
                 aria-label="check"
                 sx={{ width: "100%" }}
               >
-                <ToggleButton value="TO_DELETE">
+                <ToggleButton value="TO_DELETE" color="error">
                   {translateCheck("TO_DELETE")}
                 </ToggleButton>
-                <ToggleButton value="CHANGE_REQUIRED">
+                <ToggleButton value="CHANGE_REQUIRED" color="warning">
                   {translateCheck("CHANGE_REQUIRED")}
                 </ToggleButton>
-                <ToggleButton value="GOOD">
+                <ToggleButton value="GOOD" color="success">
                   {translateCheck("GOOD")}
                 </ToggleButton>
               </ToggleButtonGroup>
+              <Section text="Komment (opcionális)">
+                <TextField
+                  fullWidth
+                  size="small"
+                  value={comment}
+                  onChange={(e) => setComment(e.target.value)}
+                />
+              </Section>
               <Stack direction={"row"} justifyContent={"space-between"}>
                 <Button onClick={setCheckModal}>Mégse</Button>
                 <LoadingButton
@@ -76,6 +87,7 @@ export const ExerciseChecks: FC<{
                         input: {
                           exerciseId,
                           type: checkType,
+                          comment,
                         },
                       },
                     })

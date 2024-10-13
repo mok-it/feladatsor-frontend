@@ -5,14 +5,17 @@ import {
   ExerciseCheckFragment,
   ExerciseCommentFragment,
   ExerciseHistoryFragment,
+  ExerciseStatus,
   SelectExerciseQuery,
   useCommentsByExerciseQuery,
   useCreateExerciseCommentMutation,
   useDeleteExerciseCommentMutation,
   useExerciseHistoryByExerciseQuery,
+  useUpdateExerciseMutation,
 } from "@/generated/graphql";
 import { userAtom } from "@/util/atoms";
 import { translateCheck } from "@/util/translateCheck";
+import { translateFieldName } from "@/util/translateFieldName";
 import { ExerciseStatusEnum } from "@/util/types";
 import {
   Button,
@@ -38,6 +41,7 @@ import {
   MdSend,
 } from "react-icons/md";
 import { AlertDialog } from "./Dialog";
+import { DiffModal } from "./DiffModal";
 import { ExerciseChecks } from "./ExerciseChecks";
 
 export const ExerciseOperations: FC<{
@@ -108,7 +112,7 @@ export const ExerciseOperations: FC<{
     (item) => item.user.id,
   );
 
-  //const [updateExercise] = useUpdateExerciseMutation();
+  const [updateExercise] = useUpdateExerciseMutation();
 
   const loading = commentsLoading || historyLoading;
 
@@ -142,16 +146,20 @@ export const ExerciseOperations: FC<{
             <Select
               size="small"
               defaultValue={status}
-              // onChange={async (e) => {
-              //   await updateExercise({
-              //     variables: {
-              //       id: exerciseId,
-              //       input: {
-              //         status: e.target.value as ExerciseStatus,
-              //       },
-              //     },
-              //   });
-              // }}
+              onChange={async (e) => {
+                await updateExercise({
+                  variables: {
+                    id: exerciseId,
+                    input: {
+                      status: e.target.value as ExerciseStatus,
+                    },
+                  },
+                });
+                enqueueSnackbar({
+                  variant: "success",
+                  message: "Státusz frissítve",
+                });
+              }}
             >
               <MenuItem value={ExerciseStatusEnum.CREATED}>
                 <Stack direction={"row"} alignItems={"center"} gap={1}>
@@ -243,7 +251,7 @@ export const ExerciseOperations: FC<{
               </IconButton>
             </motion.div>
           </Stack>
-          <Stack spacing={2} py={2}>
+          <Stack py={2}>
             {loading && <Typography>Töltés...</Typography>}
             {history.map((item, i, arr) => {
               switch (item.historyType) {
@@ -329,10 +337,29 @@ export const ExerciseOperations: FC<{
                         gap={1}
                         sx={{ ml: 4, mr: 6, mt: 1 }}
                       >
-                        <Typography sx={{ wordBreak: "break-all" }}>
-                          {history.field}: {history.oldValue} <FaArrowRight />
-                          {history.newValue}
-                        </Typography>
+                        <Box sx={{ wordBreak: "break-all" }}>
+                          {translateFieldName(history.field)}:{" "}
+                          {history.field === "description" ? (
+                            <DiffModal
+                              oldValue={history.oldValue}
+                              newValue={history.newValue}
+                            />
+                          ) : (
+                            <>
+                              {history.oldValue || <i>üres</i>}{" "}
+                              <Box
+                                sx={{
+                                  display: "inline",
+                                  position: "relative",
+                                  top: 1.5,
+                                }}
+                              >
+                                <FaArrowRight />
+                              </Box>
+                              {history.newValue || <i>üres</i>}
+                            </>
+                          )}
+                        </Box>
                       </Stack>
                     </History>
                   );

@@ -164,6 +164,7 @@ export type ExerciseTag = {
 
 export type ExerciseUpdateInput = {
   alternativeDifficultyParent?: InputMaybe<Scalars['ID']['input']>;
+  comment: Scalars['String']['input'];
   description?: InputMaybe<Scalars['String']['input']>;
   difficulty?: InputMaybe<Array<ExerciseDifficultyInput>>;
   exerciseImage?: InputMaybe<Scalars['String']['input']>;
@@ -177,7 +178,7 @@ export type ExerciseUpdateInput = {
   solveIdeaImage?: InputMaybe<Scalars['String']['input']>;
   source?: InputMaybe<Scalars['String']['input']>;
   status?: InputMaybe<ExerciseStatus>;
-  tags: Array<InputMaybe<Scalars['ID']['input']>>;
+  tags?: InputMaybe<Array<Scalars['ID']['input']>>;
 };
 
 export type Image = {

@@ -13,7 +13,7 @@ const History: FC<
   return (
     <Box>
       {!hideHeader && (
-        <Stack direction={"row"} alignItems={"center"} gap={1}>
+        <Stack direction={"row"} alignItems={"center"} gap={1} mt={2}>
           <Avatar sx={{ height: 24, width: 24 }} />
           <span>{userName}</span>
           <Box flexGrow={1} />

@@ -46,6 +46,7 @@ const ExerciseDetails: FC = () => {
         variables: {
           id: id!,
           input: {
+            comment,
             alternativeDifficultyParent:
               formDataToSend.alternativeDifficultyParent,
             description: formDataToSend.description,
@@ -61,7 +62,7 @@ const ExerciseDetails: FC = () => {
             solveIdea: formDataToSend.solveIdea,
             source: formDataToSend.source,
             status: formDataToSend.status,
-            tags: formDataToSend.tags,
+            // tags: (formDataToSend.tags.filter((a) => a) as string[]) || [],
 
             exerciseImage: formDataToSend.exerciseImage,
             solutionImage: formDataToSend.solutionImage,
@@ -80,12 +81,13 @@ const ExerciseDetails: FC = () => {
       toggleLoadingSubmit(false);
     }
   }, [
-    enqueueSnackbar,
-    id,
     formDataToSend,
-    setShowConfirmDialog,
     toggleLoadingSubmit,
     updateExercise,
+    id,
+    comment,
+    enqueueSnackbar,
+    setShowConfirmDialog,
   ]);
 
   return (
