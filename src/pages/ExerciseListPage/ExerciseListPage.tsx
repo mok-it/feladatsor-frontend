@@ -19,6 +19,9 @@ import {
   Stack,
   Table,
   TableBody,
+  TableCell,
+  TableHead,
+  TableRow,
   TextField,
   Typography,
 } from "@mui/material";
@@ -161,8 +164,24 @@ export const ExerciseListPage = () => {
             />
           </Stack>
         </Stack>
-        <Box sx={{ overflowX: "auto" }}>
-          <Table sx={{ minWidth: 650 }} aria-label="simple table">
+        <Box sx={{ overflowX: "auto", mx: -2 }}>
+          <Table
+            sx={{
+              minWidth: 650,
+              mt: 4,
+              overflow: "hidden",
+            }}
+            aria-label="simple table"
+          >
+            <TableHead sx={{}}>
+              <TableRow>
+                <TableCell>fID</TableCell>
+                <TableCell>Nehézség</TableCell>
+                <TableCell>Státusz</TableCell>
+                <TableCell sx={{ pl: 2.5 }}>Címkék</TableCell>
+                <TableCell>Feladat</TableCell>
+              </TableRow>
+            </TableHead>
             <TableBody>
               <InfiniteLoad<ExerciseListElemFragment>
                 data={data}

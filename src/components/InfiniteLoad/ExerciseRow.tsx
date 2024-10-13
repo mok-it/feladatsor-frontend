@@ -2,6 +2,7 @@ import {
   ExerciseAgeGroup,
   ExerciseListElemFragment,
 } from "@/generated/graphql";
+import { palette } from "@/theme/palette";
 import { Box, Chip, TableCell, TableRow, Tooltip } from "@mui/material";
 import { FC, memo } from "react";
 import { useNavigate } from "react-router-dom";
@@ -25,7 +26,10 @@ const ExerciseRow: FC<{ data: ExerciseListElemFragment }> = ({ data }) => {
   return (
     <TableRow
       onClick={() => navigate(`/exercise/${data.id}`)}
-      sx={{ cursor: "pointer" }}
+      sx={{
+        cursor: "pointer",
+        ":nth-child(even)": { background: palette().background.neutral },
+      }}
     >
       <TableCell sx={{ minWidth: 100 }}>
         <Chip label={data.id} />
