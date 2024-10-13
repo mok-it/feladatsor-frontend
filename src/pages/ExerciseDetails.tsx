@@ -1,6 +1,6 @@
 import { ExerciseOperations } from "@/components/ExerciseOperations";
 import FakeId from "@/components/FakeId";
-import { MultiSelect } from "@/components/MultiSelect.tsx";
+import { MultiSelect } from "@/components/MultiSelect";
 import Section from "@/components/Section";
 import {
   SelectExerciseQuery,
@@ -13,7 +13,7 @@ import {
   Button,
   Card,
   Checkbox,
-  Grid,
+  Grid2,
   Modal,
   TextField,
   Typography,
@@ -21,7 +21,7 @@ import {
 import { Box, Stack } from "@mui/system";
 import { Formik, useFormikContext } from "formik";
 import { useSnackbar } from "notistack";
-import { FC, useCallback, useState } from "react";
+import { FC, useCallback, useMemo, useState } from "react";
 import { MdSave } from "react-icons/md";
 import { useParams } from "react-router";
 import { useToggle } from "react-use";
@@ -37,58 +37,63 @@ const ExerciseDetails: FC = () => {
   const [formDataToSend, setFormDataToSend] =
     useState<ExerciseFieldsType | null>(null);
   const [comment, setComment] = useState<string>("");
+  const [updateSignal, update] = useToggle(false);
 
-  const send = useCallback(async () => {
-    if (!formDataToSend) return;
-    toggleLoadingSubmit(true);
-    try {
-      const createResult = await updateExercise({
-        variables: {
-          id: id!,
-          input: {
-            comment: comment.length > 0 ? comment : undefined,
-            alternativeDifficultyParent:
-              formDataToSend.alternativeDifficultyParent,
-            description: formDataToSend.description,
-            difficulty: formDataToSend.difficulty.map((d) => ({
-              ageGroup: d.ageGroup,
-              difficulty: d.difficulty,
-            })),
-            helpingQuestions: formDataToSend.helpingQuestions,
-            isCompetitionFinal: formDataToSend.isCompetitionFinal,
-            sameLogicParent: formDataToSend.sameLogicParent,
-            solution: formDataToSend.solution,
-            solutionOptions: formDataToSend.solutionOptions,
-            solveIdea: formDataToSend.solveIdea,
-            source: formDataToSend.source,
-            status: formDataToSend.status,
-            // tags: (formDataToSend.tags.filter((a) => a) as string[]) || [],
+  const send = useCallback(
+    async (formDataToSend: ExerciseFieldsType | null) => {
+      if (!formDataToSend) return;
+      toggleLoadingSubmit(true);
+      try {
+        const createResult = await updateExercise({
+          variables: {
+            id: id!,
+            input: {
+              comment: comment.length > 0 ? comment : undefined,
+              alternativeDifficultyParent:
+                formDataToSend.alternativeDifficultyParent,
+              description: formDataToSend.description,
+              difficulty: formDataToSend.difficulty.map((d) => ({
+                ageGroup: d.ageGroup,
+                difficulty: d.difficulty,
+              })),
+              helpingQuestions: formDataToSend.helpingQuestions,
+              isCompetitionFinal: formDataToSend.isCompetitionFinal,
+              sameLogicParent: formDataToSend.sameLogicParent,
+              solution: formDataToSend.solution,
+              // solutionOptions: formDataToSend.solutionOptions,
+              solveIdea: formDataToSend.solveIdea,
+              source: formDataToSend.source,
+              status: formDataToSend.status,
+              // tags: (formDataToSend.tags.filter((a) => a) as string[]) || [],
 
-            exerciseImage: formDataToSend.exerciseImage,
-            solutionImage: formDataToSend.solutionImage,
-            solveIdeaImage: formDataToSend.solveIdeaImage,
+              exerciseImage: formDataToSend.exerciseImage,
+              solutionImage: formDataToSend.solutionImage,
+              solveIdeaImage: formDataToSend.solveIdeaImage,
+            },
           },
-        },
-      });
-      if (createResult.errors) {
-        console.log(createResult.errors);
-        return;
+        });
+        if (createResult.errors) {
+          console.log(createResult.errors);
+          return;
+        }
+        enqueueSnackbar({ variant: "success", message: "Sikeresen mentve" });
+        setShowConfirmDialog(false);
+        setComment("");
+        update();
+      } finally {
+        toggleLoadingSubmit(false);
       }
-      enqueueSnackbar({ variant: "success", message: "Sikeresen mentve" });
-      setShowConfirmDialog(false);
-      setComment("");
-    } finally {
-      toggleLoadingSubmit(false);
-    }
-  }, [
-    formDataToSend,
-    toggleLoadingSubmit,
-    updateExercise,
-    id,
-    comment,
-    enqueueSnackbar,
-    setShowConfirmDialog,
-  ]);
+    },
+    [
+      toggleLoadingSubmit,
+      updateExercise,
+      id,
+      comment,
+      enqueueSnackbar,
+      setShowConfirmDialog,
+      update,
+    ],
+  );
 
   return (
     <div>
@@ -122,7 +127,7 @@ const ExerciseDetails: FC = () => {
                 <LoadingButton
                   variant="contained"
                   loading={loadingSubmit}
-                  onClick={send}
+                  onClick={() => send(formDataToSend)}
                 >
                   Mentés
                 </LoadingButton>
@@ -138,13 +143,15 @@ const ExerciseDetails: FC = () => {
           setShowConfirmDialog(true);
         }}
       >
-        <ExerciseDetailsForm />
+        <ExerciseDetailsForm updateSignal={updateSignal} />
       </Formik>
     </div>
   );
 };
 
-const ExerciseDetailsForm = () => {
+const ExerciseDetailsForm: FC<{ updateSignal: boolean }> = ({
+  updateSignal,
+}) => {
   const { values, setValues, submitForm } = useFormikContext<
     ExerciseFieldsType & { initial: boolean }
   >();
@@ -175,6 +182,14 @@ const ExerciseDetailsForm = () => {
     },
   });
 
+  const operations = useMemo(() => {
+    return (
+      <Grid2 size={{ xs: 12, lg: 5 }}>
+        <ExerciseOperations updateSignal={updateSignal} exercise={exercise} />
+      </Grid2>
+    );
+  }, [exercise, updateSignal]);
+
   if (loading || values.initial) return <div>Loading...</div>;
 
   return (
@@ -187,8 +202,8 @@ const ExerciseDetailsForm = () => {
           Mentés
         </Button>
       </Stack>
-      <Grid container spacing={2} pb={10}>
-        <Grid item xs={12} lg={7}>
+      <Grid2 container spacing={2} pb={10}>
+        <Grid2 size={{ xs: 12, lg: 7 }}>
           <Card>
             <Box p={2}>
               <ExerciseFields />
@@ -207,9 +222,9 @@ const ExerciseDetailsForm = () => {
               </Stack>
             </Box>
           </Card>
-        </Grid>
-        <ExerciseOperations exercise={exercise} />
-      </Grid>
+        </Grid2>
+        {operations}
+      </Grid2>
     </>
   );
 };

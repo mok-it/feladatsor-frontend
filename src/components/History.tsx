@@ -1,7 +1,7 @@
 import { Avatar, Typography } from "@mui/material";
 import { Box, Stack } from "@mui/system";
 import dayjs from "dayjs";
-import { FC, PropsWithChildren } from "react";
+import { FC, memo, PropsWithChildren } from "react";
 
 const History: FC<
   PropsWithChildren<{
@@ -27,4 +27,6 @@ const History: FC<
   );
 };
 
-export default History;
+const MemoizedHistory = memo(History);
+
+export { MemoizedHistory as History };

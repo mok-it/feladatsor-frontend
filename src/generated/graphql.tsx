@@ -62,6 +62,7 @@ export type ExerciseCheck = {
 };
 
 export type ExerciseCheckInput = {
+  comment?: InputMaybe<Scalars['String']['input']>;
   exerciseId: Scalars['ID']['input'];
   type: ExerciseCheckType;
 };
@@ -164,7 +165,7 @@ export type ExerciseTag = {
 
 export type ExerciseUpdateInput = {
   alternativeDifficultyParent?: InputMaybe<Scalars['ID']['input']>;
-  comment: Scalars['String']['input'];
+  comment?: InputMaybe<Scalars['String']['input']>;
   description?: InputMaybe<Scalars['String']['input']>;
   difficulty?: InputMaybe<Array<ExerciseDifficultyInput>>;
   exerciseImage?: InputMaybe<Scalars['String']['input']>;
@@ -286,6 +287,7 @@ export type MutationUpdateExerciseTagArgs = {
 
 export type MutationUpdateUserArgs = {
   data: UserUpdateInput;
+  id?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type Query = {
@@ -380,9 +382,9 @@ export type UserRegisterInput = {
 export type UserUpdateInput = {
   customAvatarId?: InputMaybe<Scalars['String']['input']>;
   email?: InputMaybe<Scalars['String']['input']>;
-  id: Scalars['String']['input'];
   name?: InputMaybe<Scalars['String']['input']>;
   password?: InputMaybe<Scalars['String']['input']>;
+  userName?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type ChangePermissionsMutationVariables = Exact<{

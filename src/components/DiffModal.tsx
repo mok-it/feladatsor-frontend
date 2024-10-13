@@ -20,7 +20,7 @@ export const DiffModal: FC<{
           compareMethod={DiffMethod.WORDS}
         />
       </Dialog>
-      <Button onClick={() => setOpen(true)}>Kinyit</Button>
+      <Button onClick={() => setOpen(true)}>Változtatások</Button>
     </>
   );
 };

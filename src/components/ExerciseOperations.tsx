@@ -1,5 +1,5 @@
 import Check from "@/components/Check";
-import History from "@/components/History";
+import { History } from "@/components/History";
 import Section from "@/components/Section";
 import {
   ExerciseCheckFragment,
@@ -20,7 +20,6 @@ import { ExerciseStatusEnum } from "@/util/types";
 import {
   Button,
   Card,
-  Grid,
   IconButton,
   MenuItem,
   Select,
@@ -32,7 +31,7 @@ import { motion } from "framer-motion";
 import { useAtomValue } from "jotai";
 import { orderBy, times, union, uniqBy } from "lodash";
 import { useSnackbar } from "notistack";
-import { FC, useCallback, useMemo, useState } from "react";
+import { FC, useCallback, useEffect, useMemo, useState } from "react";
 import { FaArrowRight } from "react-icons/fa6";
 import {
   MdArrowDownward,
@@ -46,7 +45,8 @@ import { ExerciseChecks } from "./ExerciseChecks";
 
 export const ExerciseOperations: FC<{
   exercise: SelectExerciseQuery["exercise"];
-}> = ({ exercise }) => {
+  updateSignal: boolean;
+}> = ({ exercise, updateSignal }) => {
   exercise = exercise!;
   const exerciseId = exercise.id;
   const status = exercise.status;
@@ -76,8 +76,16 @@ export const ExerciseOperations: FC<{
   const [deleteComment] = useDeleteExerciseCommentMutation();
   const [commentToDelete, setCommentToDelete] = useState<string | null>(null);
 
-  const { data: historyData, loading: historyLoading } =
-    useExerciseHistoryByExerciseQuery({ variables: { exerciseId } });
+  const {
+    data: historyData,
+    loading: historyLoading,
+    refetch: refetchHistories,
+  } = useExerciseHistoryByExerciseQuery({ variables: { exerciseId } });
+
+  useEffect(() => {
+    refetchComments();
+    refetchHistories();
+  }, [refetchComments, refetchHistories, updateSignal]);
 
   const [newChecks, setNewChecks] = useState<ExerciseCheckFragment[]>([]);
   const history = useMemo(() => {
@@ -117,7 +125,7 @@ export const ExerciseOperations: FC<{
   const loading = commentsLoading || historyLoading;
 
   return (
-    <Grid item xs={12} lg={5}>
+    <>
       <AlertDialog
         open={commentToDelete !== null}
         title="Biztosan törlöd ezt a kommentedet?"
@@ -234,24 +242,25 @@ export const ExerciseOperations: FC<{
               </Stack>
             </form>
           </Section>
-          <Stack direction={"row"} gap={1} alignItems={"center"}>
-            <Typography variant="h5">Történet</Typography>
-            <Box flexGrow={1} />
-            <motion.div
-              animate={{
-                transform: sort === "asc" ? "rotate(0deg)" : "rotate(-180deg)",
-              }}
-            >
-              <IconButton
-                onClick={() =>
-                  setSort((prev) => (prev === "asc" ? "desc" : "asc"))
-                }
+          <Stack>
+            <Stack direction={"row"} gap={1} alignItems={"center"}>
+              <Typography variant="h5">Történet</Typography>
+              <Box flexGrow={1} />
+              <motion.div
+                animate={{
+                  transform:
+                    sort === "asc" ? "rotate(0deg)" : "rotate(-180deg)",
+                }}
               >
-                <MdArrowDownward />
-              </IconButton>
-            </motion.div>
-          </Stack>
-          <Stack py={2}>
+                <IconButton
+                  onClick={() =>
+                    setSort((prev) => (prev === "asc" ? "desc" : "asc"))
+                  }
+                >
+                  <MdArrowDownward />
+                </IconButton>
+              </motion.div>
+            </Stack>
             {loading && <Typography>Töltés...</Typography>}
             {history.map((item, i, arr) => {
               switch (item.historyType) {
@@ -371,6 +380,6 @@ export const ExerciseOperations: FC<{
           </Stack>
         </Stack>
       </Card>
-    </Grid>
+    </>
   );
 };
