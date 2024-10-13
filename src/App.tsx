@@ -48,7 +48,7 @@ function App() {
               element={<page.component />}
             />
           ))}
-          <Route path={"/exercise/:fakeId"} element={<ExerciseDetails />} />
+          <Route path={"/exercise/:id"} element={<ExerciseDetails />} />
           <Route path="*" element={<NotFoundPage />} />
         </Route>
       </Routes>

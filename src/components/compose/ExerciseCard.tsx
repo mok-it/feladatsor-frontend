@@ -18,17 +18,16 @@ import { useAtomValue } from "jotai";
 import { entries } from "lodash";
 import { FC, useContext, useMemo } from "react";
 import { MdEdit, MdStar } from "react-icons/md";
-import FakeId from "../FakeId";
 import { ContainerContext } from "./Container";
 
 const ExerciseCard: FC<{
   id: UniqueIdentifier;
   isTalon?: boolean;
   isDragging?: boolean;
-  exercise: Exercise & { fakeId: string };
+  exercise: Exercise & { id: string };
 }> = ({ exercise, isTalon, isDragging }) => {
   const containerId = useContext(ContainerContext);
-  const highlightedFakeId = composeStore((state) => state.highlightedFakeId);
+  const highlightedid = composeStore((state) => state.highlightedid);
   const view = composeStore((state) => state.view);
   const exerciseView = composeStore((state) => state.exerciseView);
   const placements = useAtomValue(exercisePlacementsAtom);
@@ -36,8 +35,7 @@ const ExerciseCard: FC<{
   const isDetailedView = exerciseView === ExerciseView.LIST;
   const tags = ["Geometria"];
   const ageGroup = containerId?.split("-")[0];
-  const countInGroup =
-    placements[exercise.fakeId]?.[ageGroup as ExerciseAgeGroup];
+  const countInGroup = placements[exercise.id]?.[ageGroup as ExerciseAgeGroup];
   const isAgeGroupBad = useMemo(
     () =>
       (!isTalon &&
@@ -59,7 +57,7 @@ const ExerciseCard: FC<{
         )?.difficulty;
         const isMissing =
           !isTalon &&
-          placements[exercise.fakeId]?.[group as ExerciseAgeGroup] === 0 &&
+          placements[exercise.id]?.[group as ExerciseAgeGroup] === 0 &&
           value;
 
         return (
@@ -99,15 +97,15 @@ const ExerciseCard: FC<{
           cursor: isDetailedView ? "auto" : "grab",
           userSelect: isDetailedView ? "auto" : "none",
           backgroundColor:
-            highlightedFakeId === exercise.fakeId ? "lightblue" : "white",
+            highlightedid === exercise.id ? "lightblue" : "white",
           opacity: isDragging ? 0.5 : 1,
           border: isAgeGroupBad ? "1px solid red" : "none",
         }}
         // onMouseEnter={() => {
-        //   setHighlightedFakeId(exercise.fakeId);
+        //   setHighlightedid(exercise.id);
         // }}
         // onMouseLeave={() => {
-        //   setHighlightedFakeId(null);
+        //   setHighlightedid(null);
         // }}
       >
         <Stack gap={1} p={isSingleView ? 1 : 0}>
@@ -118,10 +116,10 @@ const ExerciseCard: FC<{
             gap={1}
           >
             {isDetailedView ? (
-              <FakeId>{exercise.fakeId}</FakeId>
+              <id>{exercise.id}</id>
             ) : (
               <Typography variant="caption" whiteSpace={"nowrap"}>
-                #{exercise.fakeId}
+                #{exercise.id}
               </Typography>
             )}
             <MdStar color="gold" />

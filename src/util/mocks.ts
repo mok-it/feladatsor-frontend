@@ -5,7 +5,7 @@ export const mock: ExerciseCardData = {
   id: "1",
   data: {
     __typename: "Exercise",
-    fakeId: "24-0123-4567",
+    id: "24-0123-4567",
     checks: [],
     difficulty: [
       { ageGroup: "KOALA", difficulty: 4, __typename: "ExerciseDifficulty" },
@@ -28,7 +28,6 @@ export const mock: ExerciseCardData = {
     ],
     helpingQuestions: ["Ki az a Matusz?", "Mi az a cigány?"],
     history: [],
-    id: "1",
     description:
       "Bomátakertben járt Matusz a cigányokkal. Matusz a cigányoknak adott egy kis pénzt, hogy ne bántsák. A cigányok megkérdezték, hogy mennyi pénzt adott nekik. Matusz azt mondta, hogy 10 forintot. A cigányok azt mondták, hogy 10 forintot adtál nekünk, de 10 forintot adtál a cigányoknak is. Matusz azt mondta, hogy 10 forintot adott nekik. Mennyi pénzt adott nekik Matusz?",
     solution: "solution",
@@ -65,7 +64,7 @@ export const mock: ExerciseCardData = {
 export const mock2 = {
   data: {
     ...mock.data,
-    fakeId: "ab-2837-1234",
+    id: "ab-2837-1234",
     description:
       "Dr. Balogh Tamás és Perjési Gábor együtt pisálnak a Pisa-patakba. Tamás 4 km/h-val, Gábor pedig a jobb kezével. Matusz Imre viszont ezt nem akarta annyiban hagyni, ezért ő is csatlakozott hozzájuk. Matusz 3 km/h-val, de a bal kezével. Melyikük ér hamarabb a patakhoz?",
     helpingQuestions: [
@@ -86,7 +85,7 @@ export const mock2 = {
 export const mock3 = {
   data: {
     ...mock.data,
-    fakeId: "ku-2837-1234",
+    id: "ku-2837-1234",
   },
   id: "3",
 };

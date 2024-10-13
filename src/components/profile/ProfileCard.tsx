@@ -76,7 +76,7 @@ export default function ProfileCard(props: { name: string }) {
             dataSource={{
               data: [
                 {
-                  fakeId: "ab-012",
+                  id: "ab-012",
                   categoryDifficulties: {
                     JEGESMEDVE: 1,
                     KISMEDVE: 2,

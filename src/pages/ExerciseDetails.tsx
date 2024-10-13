@@ -25,17 +25,18 @@ import { FC, useCallback, useState } from "react";
 import { MdSave } from "react-icons/md";
 import { useParams } from "react-router";
 import { useToggle } from "react-use";
-import ExerciseFields from "./createExercise/ExerciseFields";
 import { createExerciseInitialValue } from "./createExercise/createExerciseInitialValue";
+import ExerciseFields from "./createExercise/ExerciseFields";
 
 const ExerciseDetails: FC = () => {
   const { enqueueSnackbar } = useSnackbar();
   const [updateExercise] = useUpdateExerciseMutation();
-  const { fakeId } = useParams();
+  const { id } = useParams();
   const [showConfirmDialog, setShowConfirmDialog] = useToggle(false);
   const [loadingSubmit, toggleLoadingSubmit] = useToggle(false);
   const [formDataToSend, setFormDataToSend] =
     useState<ExerciseFieldsType | null>(null);
+  const [comment, setComment] = useState<string>("");
 
   const send = useCallback(async () => {
     if (!formDataToSend) return;
@@ -43,7 +44,7 @@ const ExerciseDetails: FC = () => {
     try {
       const createResult = await updateExercise({
         variables: {
-          id: fakeId!,
+          id: id!,
           input: {
             alternativeDifficultyParent:
               formDataToSend.alternativeDifficultyParent,
@@ -74,12 +75,13 @@ const ExerciseDetails: FC = () => {
       }
       enqueueSnackbar({ variant: "success", message: "Sikeresen mentve" });
       setShowConfirmDialog(false);
+      setComment("");
     } finally {
       toggleLoadingSubmit(false);
     }
   }, [
     enqueueSnackbar,
-    fakeId,
+    id,
     formDataToSend,
     setShowConfirmDialog,
     toggleLoadingSubmit,
@@ -106,7 +108,12 @@ const ExerciseDetails: FC = () => {
                 Változtatások mentése
               </Typography>
               <Section text="Komment (opcionális)">
-                <TextField fullWidth size="small" />
+                <TextField
+                  fullWidth
+                  size="small"
+                  value={comment}
+                  onChange={(e) => setComment(e.target.value)}
+                />
               </Section>
               <Stack direction={"row"} justifyContent={"space-between"}>
                 <Button onClick={setShowConfirmDialog}>Mégse</Button>
@@ -139,13 +146,13 @@ const ExerciseDetailsForm = () => {
   const { values, setValues, submitForm } = useFormikContext<
     ExerciseFieldsType & { initial: boolean }
   >();
-  const { fakeId } = useParams();
+  const { id } = useParams();
   const [exercise, setExercise] = useState<
     SelectExerciseQuery["exercise"] | null
   >(null);
 
   const { loading } = useSelectExerciseQuery({
-    variables: { exerciseId: fakeId! },
+    variables: { exerciseId: id! },
     fetchPolicy: "no-cache",
     onCompleted: (data) => {
       if (!data.exercise) return;
@@ -172,7 +179,7 @@ const ExerciseDetailsForm = () => {
     <>
       <Stack mb={2} direction={"row"} gap={1} alignItems={"center"}>
         <Typography variant="h4">Feladat</Typography>
-        <FakeId>{fakeId}</FakeId>
+        <FakeId>{id}</FakeId>
         <Box flexGrow={1} />
         <Button onClick={submitForm} variant="contained" endIcon={<MdSave />}>
           Mentés

@@ -162,6 +162,24 @@ export type ExerciseTag = {
   parent?: Maybe<ExerciseTag>;
 };
 
+export type ExerciseUpdateInput = {
+  alternativeDifficultyParent?: InputMaybe<Scalars['ID']['input']>;
+  description?: InputMaybe<Scalars['String']['input']>;
+  difficulty?: InputMaybe<Array<ExerciseDifficultyInput>>;
+  exerciseImage?: InputMaybe<Scalars['String']['input']>;
+  helpingQuestions?: InputMaybe<Array<Scalars['String']['input']>>;
+  isCompetitionFinal?: InputMaybe<Scalars['Boolean']['input']>;
+  sameLogicParent?: InputMaybe<Scalars['ID']['input']>;
+  solution?: InputMaybe<Scalars['String']['input']>;
+  solutionImage?: InputMaybe<Scalars['String']['input']>;
+  solutionOptions?: InputMaybe<Array<Scalars['String']['input']>>;
+  solveIdea?: InputMaybe<Scalars['String']['input']>;
+  solveIdeaImage?: InputMaybe<Scalars['String']['input']>;
+  source?: InputMaybe<Scalars['String']['input']>;
+  status?: InputMaybe<ExerciseStatus>;
+  tags: Array<InputMaybe<Scalars['ID']['input']>>;
+};
+
 export type Image = {
   __typename: 'Image';
   id: Scalars['ID']['output'];
@@ -249,7 +267,7 @@ export type MutationRegisterArgs = {
 
 export type MutationUpdateExerciseArgs = {
   id: Scalars['ID']['input'];
-  input: ExerciseInput;
+  input: ExerciseUpdateInput;
 };
 
 
@@ -340,6 +358,7 @@ export type Tag = {
 
 export type User = {
   __typename: 'User';
+  avatarUrl?: Maybe<Scalars['String']['output']>;
   createdAt: Scalars['String']['output'];
   email: Scalars['String']['output'];
   exercises: Array<Exercise>;
@@ -472,7 +491,7 @@ export type SearchExercisesQuery = { __typename: 'Query', searchExercises: { __t
 
 export type UpdateExerciseMutationVariables = Exact<{
   id: Scalars['ID']['input'];
-  input: ExerciseInput;
+  input: ExerciseUpdateInput;
 }>;
 
 
@@ -1139,7 +1158,7 @@ export type SearchExercisesLazyQueryHookResult = ReturnType<typeof useSearchExer
 export type SearchExercisesSuspenseQueryHookResult = ReturnType<typeof useSearchExercisesSuspenseQuery>;
 export type SearchExercisesQueryResult = Apollo.QueryResult<SearchExercisesQuery, SearchExercisesQueryVariables>;
 export const UpdateExerciseDocument = gql`
-    mutation UpdateExercise($id: ID!, $input: ExerciseInput!) {
+    mutation UpdateExercise($id: ID!, $input: ExerciseUpdateInput!) {
   updateExercise(id: $id, input: $input) {
     id
   }

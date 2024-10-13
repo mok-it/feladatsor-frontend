@@ -120,8 +120,8 @@ const Compose = () => {
       cards.forEach((id) => {
         const exercise = exercises.find((exercise) => exercise.id === id)?.data;
         if (exercise) {
-          if (!placements[exercise.fakeId]) {
-            placements[exercise.fakeId] = {
+          if (!placements[exercise.id]) {
+            placements[exercise.id] = {
               KOALA: 0,
               MEDVEBOCS: 0,
               KISMEDVE: 0,
@@ -129,9 +129,7 @@ const Compose = () => {
               JEGESMEDVE: 0,
             };
           }
-          placements[exercise.fakeId][
-            group.split("-")[0] as ExerciseAgeGroup
-          ]++;
+          placements[exercise.id][group.split("-")[0] as ExerciseAgeGroup]++;
         }
       });
     });

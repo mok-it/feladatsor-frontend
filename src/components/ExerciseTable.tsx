@@ -8,7 +8,7 @@ import { RxCross2 } from "react-icons/rx";
 import { useNavigate } from "react-router-dom";
 
 export type ExerciseItem = {
-  fakeId: string;
+  id: string;
   categoryDifficulties: { [key in ExerciseAgeGroup]: number };
   state: string;
   tags: string[];
@@ -27,7 +27,7 @@ export const ExerciseTable = (props: {
   return (
     <DataTable<ExerciseItem>
       columns={{
-        fakeId: {
+        id: {
           element: "fID",
           sortable: true,
           sx: { width: "5%" },
@@ -64,9 +64,9 @@ export const ExerciseTable = (props: {
         rowsPerPageOptions: [5, 10, 15],
         setPagination: props.setPagination,
       }}
-      onRowClick={(row) => routeChange(row.fakeId)}
+      onRowClick={(row) => routeChange(row.id)}
       rowRenderers={{
-        fakeId: (value) => <Chip label={value} />,
+        id: (value) => <Chip label={value} />,
         tags: (tags: string[]) => (
           <>
             {tags.map((tag, index) => (

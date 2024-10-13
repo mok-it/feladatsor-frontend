@@ -8,7 +8,7 @@ export enum ExerciseView {
 }
 type ComposeView = ExerciseAgeGroup | "all";
 type TState = {
-  highlightedFakeId: string | null;
+  highlightedid: string | null;
   hoverLocation: string | null;
   hoverIndex: number | null;
   view: ComposeView;
@@ -16,7 +16,7 @@ type TState = {
 };
 
 type TActions = {
-  setHighlightedFakeId: (fakeId: string | null) => void;
+  setHighlightedid: (id: string | null) => void;
   setHoverLocation: (location: string | null) => void;
   setHoverIndex: (index: number | null) => void;
   setView: (view: ComposeView) => void;
@@ -24,9 +24,8 @@ type TActions = {
   setValue: (values: Partial<TState>) => void;
 };
 
-
 const defaultState: TState = {
-  highlightedFakeId: null,
+  highlightedid: null,
   hoverLocation: null,
   hoverIndex: null,
   view: "all",
@@ -36,9 +35,9 @@ const defaultState: TState = {
 export const composeStore = create<TState & TActions>()(
   immer((set) => ({
     ...defaultState,
-    setHighlightedFakeId: (fakeId) => {
+    setHighlightedid: (id) => {
       set((state) => {
-        state.highlightedFakeId = fakeId;
+        state.highlightedid = id;
       });
     },
     setHoverLocation: (location) => {
@@ -65,6 +64,6 @@ export const composeStore = create<TState & TActions>()(
       set((state) => {
         Object.assign(state, values);
       });
-    }
+    },
   })),
 );

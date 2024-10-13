@@ -17,7 +17,7 @@ export const levels: { [key in number]: { name: string } } = {
 
 export type ExerciseCardData = {
   id: string;
-  data: Exercise & { fakeId: string };
+  data: Exercise & { id: string };
 };
 
 export type ExercisePlacements = {

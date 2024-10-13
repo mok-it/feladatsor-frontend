@@ -1,4 +1,4 @@
-mutation UpdateExercise($id: ID!, $input: ExerciseInput!) {
+mutation UpdateExercise($id: ID!, $input: ExerciseUpdateInput!) {
   updateExercise(id: $id, input: $input) {
     id
   }
