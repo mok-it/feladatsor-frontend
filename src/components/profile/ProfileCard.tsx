@@ -9,9 +9,11 @@ import Card from "@mui/material/Card";
 import Typography from "@mui/material/Typography";
 import { Box, Stack } from "@mui/system";
 import { motion } from "framer-motion";
-import { useState } from "react";
 import { IoCameraOutline } from "react-icons/io5";
 import { MdArrowDownward } from "react-icons/md";
+import ModeIcon from "@mui/icons-material/Mode";
+import { useState } from "react";
+import { ProfileModify } from "@/components/profile/ProfileModify.tsx";
 
 // STYLES
 const styles = {
@@ -30,6 +32,14 @@ const styles = {
 export default function ProfileCard(props: { name: string }) {
   const [historySort, setHistorySort] = useState<"asc" | "desc">("asc");
   const [commentSort, setCommentSort] = useState<"asc" | "desc">("asc");
+  const [open, setOpen] = useState(false);
+
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+  const handleClose = () => {
+    setOpen(false);
+  };
 
   return (
     <Card variant="outlined">
@@ -65,7 +75,11 @@ export default function ProfileCard(props: { name: string }) {
           </Badge>
 
           {/* DESCRIPTION */}
-          <Typography variant="h6">{props.name}</Typography>
+          <Stack direction="row" spacing={1}>
+            <Typography variant="h6">{props.name}</Typography>
+            <ModeIcon onClick={handleClickOpen} />
+            <ProfileModify open={open} handleClose={handleClose} />
+          </Stack>
         </Grid>
         {/* CARD HEADER END */}
       </Grid>
