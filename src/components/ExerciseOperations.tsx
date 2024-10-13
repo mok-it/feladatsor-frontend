@@ -27,7 +27,7 @@ import {
 import { Box, Stack } from "@mui/system";
 import { motion } from "framer-motion";
 import { useAtomValue } from "jotai";
-import { orderBy, times } from "lodash";
+import { orderBy, times, union, uniqBy } from "lodash";
 import { useSnackbar } from "notistack";
 import { FC, useCallback, useMemo, useState } from "react";
 import { FaArrowRight } from "react-icons/fa6";
@@ -103,6 +103,11 @@ export const ExerciseOperations: FC<{
     sort,
   ]);
 
+  const checks = uniqBy(
+    orderBy(union(exercise.checks, newChecks), "createdAt", "desc"),
+    (item) => item.user.id,
+  );
+
   //const [updateExercise] = useUpdateExerciseMutation();
 
   const loading = commentsLoading || historyLoading;
@@ -172,7 +177,7 @@ export const ExerciseOperations: FC<{
             <Typography variant="body1" mr={1}>
               Ellenőrzések
             </Typography>
-            {[...exercise.checks, ...newChecks].map((check) => (
+            {checks.map((check) => (
               <Check
                 key={check.id}
                 response={check.type}
@@ -180,8 +185,8 @@ export const ExerciseOperations: FC<{
                 timestamp={check.createdAt}
               />
             ))}
-            {exercise.checks.length + newChecks.length <= 3 &&
-              times(3 - (exercise.checks.length + newChecks.length), (i) => (
+            {checks.length <= 3 &&
+              times(3 - checks.length, (i) => (
                 <Check key={i} response={null} userName={""} timestamp={""} />
               ))}
             <Box flexGrow={1} />
