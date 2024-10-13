@@ -52,7 +52,7 @@ export const ExerciseOperations: FC<{
   const status = exercise.status;
   const { enqueueSnackbar } = useSnackbar();
   const user = useAtomValue(userAtom);
-  const [sort, setSort] = useState<"asc" | "desc">("asc");
+  const [sort, setSort] = useState<"asc" | "desc">("desc");
 
   const [comment, setComment] = useState<string>("");
   const {

@@ -46,7 +46,7 @@ const ExerciseDetails: FC = () => {
         variables: {
           id: id!,
           input: {
-            comment,
+            comment: comment.length > 0 ? comment : undefined,
             alternativeDifficultyParent:
               formDataToSend.alternativeDifficultyParent,
             description: formDataToSend.description,
