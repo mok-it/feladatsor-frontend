@@ -1,6 +1,6 @@
-import Chip from "@mui/material/Chip";
-import { categoryColors } from "@/theme/palette.ts";
 import { ExerciseAgeGroup } from "@/generated/graphql.tsx";
+import { categoryColors } from "@/theme/palette.ts";
+import Chip from "@mui/material/Chip";
 import tinycolor from "tinycolor2";
 
 type ValueProps = {
@@ -17,6 +17,8 @@ export const CategoryDifficulties = (props: ValueProps) => {
             backgroundColor: categoryColors[key],
             color: tinycolor(categoryColors[key]).isDark() ? "white" : "black",
             fontWeight: 700,
+            mr: 0.5,
+            visibility: props.value[key] === 0 ? "hidden" : "visible",
           }}
         />
       ))}

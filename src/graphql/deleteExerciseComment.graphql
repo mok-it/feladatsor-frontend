@@ -1,0 +1,5 @@
+mutation DeleteExerciseComment($deleteExerciseCommentId: ID!) {
+  deleteExerciseComment(id: $deleteExerciseCommentId) {
+    id
+  }
+}

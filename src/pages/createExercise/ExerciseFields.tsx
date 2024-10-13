@@ -69,7 +69,9 @@ const ExerciseFields: FC = () => {
         </Grid>
         <Grid item xs={6}>
           <KaTeX value={"$\\LaTeX{}$ fordítás"} />
-          <Box mt={1}>{katex}</Box>
+          <Box mt={1} py={2} maxHeight={310} overflow={"auto"}>
+            {katex}
+          </Box>
         </Grid>
         <Grid item xs={12}>
           <Section text={<>Feladat képe</>}>

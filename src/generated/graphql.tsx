@@ -352,7 +352,7 @@ export type CommentsByExerciseQueryVariables = Exact<{
 }>;
 
 
-export type CommentsByExerciseQuery = { __typename: 'Query', commentsByExercise: Array<{ __typename: 'ExerciseComment', comment: string, createdAt: string, createdBy: { __typename: 'User', id: string, name: string } }> };
+export type CommentsByExerciseQuery = { __typename: 'Query', commentsByExercise: Array<{ __typename: 'ExerciseComment', id: string, comment: string, createdAt: string, createdBy: { __typename: 'User', id: string, name: string } }> };
 
 export type CreateExerciseMutationVariables = Exact<{
   input: ExerciseInput;
@@ -368,6 +368,13 @@ export type CreateExerciseCommentMutationVariables = Exact<{
 
 
 export type CreateExerciseCommentMutation = { __typename: 'Mutation', createExerciseComment: { __typename: 'ExerciseComment', id: string } };
+
+export type DeleteExerciseCommentMutationVariables = Exact<{
+  deleteExerciseCommentId: Scalars['ID']['input'];
+}>;
+
+
+export type DeleteExerciseCommentMutation = { __typename: 'Mutation', deleteExerciseComment: { __typename: 'ExerciseComment', id: string } };
 
 export type SelectExercisesQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -499,6 +506,7 @@ export type ChangePermissionsMutationOptions = Apollo.BaseMutationOptions<Change
 export const CommentsByExerciseDocument = gql`
     query commentsByExercise($exerciseId: ID!) {
   commentsByExercise(id: $exerciseId) {
+    id
     comment
     createdAt
     createdBy {
@@ -608,6 +616,39 @@ export function useCreateExerciseCommentMutation(baseOptions?: Apollo.MutationHo
 export type CreateExerciseCommentMutationHookResult = ReturnType<typeof useCreateExerciseCommentMutation>;
 export type CreateExerciseCommentMutationResult = Apollo.MutationResult<CreateExerciseCommentMutation>;
 export type CreateExerciseCommentMutationOptions = Apollo.BaseMutationOptions<CreateExerciseCommentMutation, CreateExerciseCommentMutationVariables>;
+export const DeleteExerciseCommentDocument = gql`
+    mutation DeleteExerciseComment($deleteExerciseCommentId: ID!) {
+  deleteExerciseComment(id: $deleteExerciseCommentId) {
+    id
+  }
+}
+    `;
+export type DeleteExerciseCommentMutationFn = Apollo.MutationFunction<DeleteExerciseCommentMutation, DeleteExerciseCommentMutationVariables>;
+
+/**
+ * __useDeleteExerciseCommentMutation__
+ *
+ * To run a mutation, you first call `useDeleteExerciseCommentMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteExerciseCommentMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteExerciseCommentMutation, { data, loading, error }] = useDeleteExerciseCommentMutation({
+ *   variables: {
+ *      deleteExerciseCommentId: // value for 'deleteExerciseCommentId'
+ *   },
+ * });
+ */
+export function useDeleteExerciseCommentMutation(baseOptions?: Apollo.MutationHookOptions<DeleteExerciseCommentMutation, DeleteExerciseCommentMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DeleteExerciseCommentMutation, DeleteExerciseCommentMutationVariables>(DeleteExerciseCommentDocument, options);
+      }
+export type DeleteExerciseCommentMutationHookResult = ReturnType<typeof useDeleteExerciseCommentMutation>;
+export type DeleteExerciseCommentMutationResult = Apollo.MutationResult<DeleteExerciseCommentMutation>;
+export type DeleteExerciseCommentMutationOptions = Apollo.BaseMutationOptions<DeleteExerciseCommentMutation, DeleteExerciseCommentMutationVariables>;
 export const SelectExercisesDocument = gql`
     query selectExercises {
   exercises(take: 10, skip: 0) {

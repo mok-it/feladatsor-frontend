@@ -4,7 +4,9 @@ import Section from "@/components/Section";
 import {
   useCommentsByExerciseQuery,
   useCreateExerciseCommentMutation,
+  useDeleteExerciseCommentMutation,
 } from "@/generated/graphql";
+import { userAtom } from "@/util/atoms";
 import {
   Button,
   Card,
@@ -17,6 +19,7 @@ import {
 } from "@mui/material";
 import { Box, Stack } from "@mui/system";
 import { motion } from "framer-motion";
+import { useAtomValue } from "jotai";
 import { orderBy } from "lodash";
 import { useSnackbar } from "notistack";
 import { FC, useCallback, useMemo, useState } from "react";
@@ -26,14 +29,20 @@ import {
   MdOutlineDelete,
   MdSend,
 } from "react-icons/md";
+import { AlertDialog } from "./Dialog";
 
 export const ExerciseOperations: FC<{ exerciseId: string }> = ({
   exerciseId,
 }) => {
   const { enqueueSnackbar } = useSnackbar();
+  const user = useAtomValue(userAtom);
   const [sort, setSort] = useState<"asc" | "desc">("asc");
   const [comment, setComment] = useState<string>("");
-  const { data: commentsData, refetch } = useCommentsByExerciseQuery({
+  const {
+    data: commentsData,
+    loading: commentsLoading,
+    refetch,
+  } = useCommentsByExerciseQuery({
     variables: { exerciseId },
     fetchPolicy: "no-cache",
   });
@@ -59,8 +68,30 @@ export const ExerciseOperations: FC<{ exerciseId: string }> = ({
     );
   }, [commentsData?.commentsByExercise, sort]);
 
+  const [deleteComment] = useDeleteExerciseCommentMutation();
+  const [commentToDelete, setCommentToDelete] = useState<string | null>(null);
+
+  const loading = commentsLoading;
+
   return (
     <Grid item xs={12} lg={5}>
+      <AlertDialog
+        open={commentToDelete !== null}
+        title="Biztosan törlöd ezt a kommentedet?"
+        description={
+          commentsData?.commentsByExercise.find((c) => c.id === commentToDelete)
+            ?.comment || ""
+        }
+        secondaryClick={() => setCommentToDelete(null)}
+        primaryClick={async () => {
+          await deleteComment({
+            variables: { deleteExerciseCommentId: commentToDelete! },
+          });
+          enqueueSnackbar({ variant: "success", message: "Komment törölve" });
+          setCommentToDelete(null);
+          refetch();
+        }}
+      />
       <Card>
         <Stack p={2} gap={2}>
           <Stack
@@ -159,6 +190,7 @@ export const ExerciseOperations: FC<{ exerciseId: string }> = ({
             </motion.div>
           </Stack>
           <Stack spacing={2} py={2}>
+            {loading && <Typography>Töltés...</Typography>}
             {history.map((item, index) => {
               switch (item.type) {
                 case "comment":
@@ -168,10 +200,19 @@ export const ExerciseOperations: FC<{ exerciseId: string }> = ({
                       createdAt={item.createdAt}
                       key={index}
                     >
-                      <Box sx={{ mx: 4, mt: 1 }}>
+                      <Box sx={{ ml: 4, mr: 6, mt: 1 }}>
                         <Typography sx={{ wordBreak: "break-all" }}>
                           <i>{item.comment}</i>
                         </Typography>
+                        {item.createdBy.id === user?.user?.id && (
+                          <Box sx={{ position: "absolute", right: 0, top: 0 }}>
+                            <IconButton
+                              onClick={() => setCommentToDelete(item.id)}
+                            >
+                              <MdOutlineDelete />
+                            </IconButton>
+                          </Box>
+                        )}
                       </Box>
                     </History>
                   );

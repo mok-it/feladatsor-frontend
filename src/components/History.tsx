@@ -16,7 +16,7 @@ const History: FC<
           {dayjs(+createdAt).format("YYYY. MM. DD. HH.mm")}
         </Typography>
       </Stack>
-      <Stack>{children}</Stack>
+      <Stack sx={{ position: "relative" }}>{children}</Stack>
     </Box>
   );
 };

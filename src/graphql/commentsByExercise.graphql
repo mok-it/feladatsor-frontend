@@ -1,5 +1,6 @@
 query commentsByExercise($exerciseId: ID!) {
   commentsByExercise(id: $exerciseId) {
+    id
     comment
     createdAt
     createdBy {

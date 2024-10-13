@@ -34,7 +34,7 @@ const ExerciseRow: FC<{ data: ExerciseListElemFragment }> = ({ data }) => {
       <TableCell sx={{ minWidth: 100 }}>
         <Chip label={data.id} />
       </TableCell>
-      <TableCell sx={{ minWidth: 200 }}>
+      <TableCell sx={{ minWidth: 210 }}>
         <CategoryDifficulties value={difficulties} />
       </TableCell>
       <TableCell sx={{ verticalAlign: "middle" }}>{data.status}</TableCell>
