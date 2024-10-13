@@ -1,6 +1,5 @@
 // IMPORTS
 import { ExerciseTable } from "@/components/ExerciseTable";
-import History from "@/components/History.tsx";
 import { ProfileStatCard } from "@/components/profile/ProfileStatCard.tsx";
 import { grey } from "@/theme/palette.ts";
 import { Divider, Grid, IconButton } from "@mui/material";
@@ -115,11 +114,7 @@ export default function ProfileCard(props: { name: string }) {
                 </IconButton>
               </motion.div>
             </Stack>
-            <Stack spacing={2} py={2}>
-              <History />
-              <History />
-              <History />
-            </Stack>
+            <Stack spacing={2} py={2}></Stack>
           </Box>
           <Divider orientation="vertical" flexItem />
           <Box flexGrow={1}>
