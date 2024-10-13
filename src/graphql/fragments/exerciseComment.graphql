@@ -1,0 +1,9 @@
+fragment ExerciseComment on ExerciseComment {
+  id
+  comment
+  createdAt
+  createdBy {
+    id
+    name
+  }
+}

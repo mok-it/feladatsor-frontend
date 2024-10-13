@@ -1,0 +1,5 @@
+mutation CreateExerciseComment($exerciseId: ID!, $comment: String!) {
+  createExerciseComment(exerciseId: $exerciseId, comment: $comment) {
+    id
+  }
+}

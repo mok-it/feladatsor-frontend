@@ -1,0 +1,10 @@
+query commentsByExercise($exerciseId: ID!) {
+  commentsByExercise(id: $exerciseId) {
+    comment
+    createdAt
+    createdBy {
+      id
+      name
+    }
+  }
+}

@@ -1,6 +1,5 @@
-import Check from "@/components/Check";
+import { ExerciseOperations } from "@/components/ExerciseOperations";
 import FakeId from "@/components/FakeId";
-import History from "@/components/History";
 import { MultiSelect } from "@/components/MultiSelect.tsx";
 import Section from "@/components/Section";
 import {
@@ -14,26 +13,15 @@ import {
   Card,
   Checkbox,
   Grid,
-  IconButton,
-  MenuItem,
   Modal,
-  Select,
   TextField,
   Typography,
 } from "@mui/material";
 import { Box, Stack } from "@mui/system";
 import { Formik, useFormikContext } from "formik";
-import { motion } from "framer-motion";
 import { useSnackbar } from "notistack";
 import { FC, useCallback, useState } from "react";
-import {
-  MdArrowDownward,
-  MdCheck,
-  MdCheckCircle,
-  MdOutlineDelete,
-  MdSave,
-  MdSend,
-} from "react-icons/md";
+import { MdCheck, MdSave } from "react-icons/md";
 import { useParams } from "react-router";
 import { useToggle } from "react-use";
 import ExerciseFields from "./createExercise/ExerciseFields";
@@ -151,7 +139,6 @@ const ExerciseDetailsForm = () => {
     ExerciseFieldsType & { initial: boolean }
   >();
   const { fakeId } = useParams();
-  const [sort, setSort] = useState<"asc" | "desc">("asc");
 
   const { loading } = useSelectExerciseQuery({
     variables: { exerciseId: fakeId! },
@@ -210,99 +197,7 @@ const ExerciseDetailsForm = () => {
             </Box>
           </Card>
         </Grid>
-        <Grid item xs={12} lg={5}>
-          <Card>
-            <Stack p={2} gap={2}>
-              <Stack
-                direction={"row"}
-                alignItems={"center"}
-                justifyContent={"space-between"}
-              >
-                <Typography variant="body1">Státusz</Typography>
-                <Select size="small" defaultValue={1}>
-                  <MenuItem value={1}>
-                    <Stack direction={"row"} alignItems={"center"} gap={1}>
-                      <MdSend />
-                      Beküldve
-                    </Stack>
-                  </MenuItem>
-                  <MenuItem value={2}>
-                    <Stack direction={"row"} alignItems={"center"} gap={1}>
-                      <MdCheckCircle color="green" />
-                      Kész
-                    </Stack>
-                  </MenuItem>
-                  <MenuItem value={2}>
-                    <Stack direction={"row"} alignItems={"center"} gap={1}>
-                      <MdOutlineDelete color="red" />
-                      Törölve
-                    </Stack>
-                  </MenuItem>
-                </Select>
-              </Stack>
-              <Stack direction={"row"} alignItems={"center"} gap={0.5}>
-                <Typography variant="body1" mr={1}>
-                  Ellenőrzések
-                </Typography>
-                <Check
-                  response={"accepted"}
-                  userName="Minta János"
-                  timestamp={"2024-02-02"}
-                />
-                <Check
-                  response={"rejected"}
-                  userName="Minta János"
-                  timestamp={"2024-02-02"}
-                />
-                <Check
-                  response={"problematic"}
-                  userName="Minta János"
-                  timestamp={"2024-02-02"}
-                />
-              </Stack>
-              <Stack direction={"row"} alignItems={"center"} gap={0.5}>
-                <Typography variant="body1" mr={1}>
-                  Lektorálások
-                </Typography>
-                <Check />
-                <Check />
-              </Stack>
-              <Section text="Komment">
-                <Stack direction={"row"} gap={1}>
-                  <Box flexGrow={1}>
-                    <TextField fullWidth size="small"></TextField>
-                  </Box>
-                  <Button variant="contained" endIcon={<MdSend />}>
-                    Küld
-                  </Button>
-                </Stack>
-              </Section>
-              <Stack direction={"row"} gap={1} alignItems={"center"}>
-                <Typography variant="h5">Történet</Typography>
-                <Box flexGrow={1} />
-                <motion.div
-                  animate={{
-                    transform:
-                      sort === "asc" ? "rotate(0deg)" : "rotate(-180deg)",
-                  }}
-                >
-                  <IconButton
-                    onClick={() =>
-                      setSort((prev) => (prev === "asc" ? "desc" : "asc"))
-                    }
-                  >
-                    <MdArrowDownward />
-                  </IconButton>
-                </motion.div>
-              </Stack>
-              <Stack spacing={2} py={2}>
-                <History />
-                <History />
-                <History />
-              </Stack>
-            </Stack>
-          </Card>
-        </Grid>
+        <ExerciseOperations exerciseId={fakeId!} />
       </Grid>
     </>
   );

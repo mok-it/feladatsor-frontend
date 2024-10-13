@@ -80,6 +80,7 @@ export type ExerciseComment = {
   __typename: 'ExerciseComment';
   comment: Scalars['String']['output'];
   createdAt: Scalars['String']['output'];
+  createdBy: User;
   id: Scalars['ID']['output'];
   updatedAt: Scalars['String']['output'];
   user: User;
@@ -258,6 +259,7 @@ export type MutationUpdateExerciseTagArgs = {
 
 export type Query = {
   __typename: 'Query';
+  commentsByExercise: Array<ExerciseComment>;
   exercise?: Maybe<Exercise>;
   exerciseComment?: Maybe<ExerciseComment>;
   exerciseTag?: Maybe<ExerciseTag>;
@@ -267,6 +269,11 @@ export type Query = {
   searchExercises: ExerciseSearchResult;
   user?: Maybe<User>;
   users: Array<User>;
+};
+
+
+export type QueryCommentsByExerciseArgs = {
+  id: Scalars['ID']['input'];
 };
 
 
@@ -340,12 +347,27 @@ export type ChangePermissionsMutationVariables = Exact<{
 
 export type ChangePermissionsMutation = { __typename: 'Mutation', changePermissions: { __typename: 'User', id: string, name: string } };
 
+export type CommentsByExerciseQueryVariables = Exact<{
+  exerciseId: Scalars['ID']['input'];
+}>;
+
+
+export type CommentsByExerciseQuery = { __typename: 'Query', commentsByExercise: Array<{ __typename: 'ExerciseComment', comment: string, createdAt: string, createdBy: { __typename: 'User', id: string, name: string } }> };
+
 export type CreateExerciseMutationVariables = Exact<{
   input: ExerciseInput;
 }>;
 
 
 export type CreateExerciseMutation = { __typename: 'Mutation', createExercise: { __typename: 'Exercise', id: string } };
+
+export type CreateExerciseCommentMutationVariables = Exact<{
+  exerciseId: Scalars['ID']['input'];
+  comment: Scalars['String']['input'];
+}>;
+
+
+export type CreateExerciseCommentMutation = { __typename: 'Mutation', createExerciseComment: { __typename: 'ExerciseComment', id: string } };
 
 export type SelectExercisesQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -363,6 +385,8 @@ export type ExerciseTagsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type ExerciseTagsQuery = { __typename: 'Query', exerciseTags: Array<{ __typename: 'ExerciseTag', id: string, name: string, children: Array<{ __typename: 'ExerciseTag', id: string, name: string, children: Array<{ __typename: 'ExerciseTag', id: string, name: string }> }> }> };
+
+export type ExerciseCommentFragment = { __typename: 'ExerciseComment', id: string, comment: string, createdAt: string, createdBy: { __typename: 'User', id: string, name: string } };
 
 export type ExerciseListElemFragment = { __typename: 'Exercise', id: string, description: string, status: ExerciseStatus, exerciseImage?: { __typename: 'Image', url: string } | null, difficulty: Array<{ __typename: 'ExerciseDifficulty', ageGroup: ExerciseAgeGroup, difficulty: number }>, tags: Array<{ __typename: 'Tag', id: string, name: string }> };
 
@@ -408,6 +432,17 @@ export type UsersQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type UsersQuery = { __typename: 'Query', users: Array<{ __typename: 'User', id: string, name: string, userName: string, email: string, roles: Array<Role> }> };
 
+export const ExerciseCommentFragmentDoc = gql`
+    fragment ExerciseComment on ExerciseComment {
+  id
+  comment
+  createdAt
+  createdBy {
+    id
+    name
+  }
+}
+    `;
 export const ExerciseListElemFragmentDoc = gql`
     fragment ExerciseListElem on Exercise {
   id
@@ -461,6 +496,51 @@ export function useChangePermissionsMutation(baseOptions?: Apollo.MutationHookOp
 export type ChangePermissionsMutationHookResult = ReturnType<typeof useChangePermissionsMutation>;
 export type ChangePermissionsMutationResult = Apollo.MutationResult<ChangePermissionsMutation>;
 export type ChangePermissionsMutationOptions = Apollo.BaseMutationOptions<ChangePermissionsMutation, ChangePermissionsMutationVariables>;
+export const CommentsByExerciseDocument = gql`
+    query commentsByExercise($exerciseId: ID!) {
+  commentsByExercise(id: $exerciseId) {
+    comment
+    createdAt
+    createdBy {
+      id
+      name
+    }
+  }
+}
+    `;
+
+/**
+ * __useCommentsByExerciseQuery__
+ *
+ * To run a query within a React component, call `useCommentsByExerciseQuery` and pass it any options that fit your needs.
+ * When your component renders, `useCommentsByExerciseQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useCommentsByExerciseQuery({
+ *   variables: {
+ *      exerciseId: // value for 'exerciseId'
+ *   },
+ * });
+ */
+export function useCommentsByExerciseQuery(baseOptions: Apollo.QueryHookOptions<CommentsByExerciseQuery, CommentsByExerciseQueryVariables> & ({ variables: CommentsByExerciseQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<CommentsByExerciseQuery, CommentsByExerciseQueryVariables>(CommentsByExerciseDocument, options);
+      }
+export function useCommentsByExerciseLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<CommentsByExerciseQuery, CommentsByExerciseQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<CommentsByExerciseQuery, CommentsByExerciseQueryVariables>(CommentsByExerciseDocument, options);
+        }
+export function useCommentsByExerciseSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<CommentsByExerciseQuery, CommentsByExerciseQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<CommentsByExerciseQuery, CommentsByExerciseQueryVariables>(CommentsByExerciseDocument, options);
+        }
+export type CommentsByExerciseQueryHookResult = ReturnType<typeof useCommentsByExerciseQuery>;
+export type CommentsByExerciseLazyQueryHookResult = ReturnType<typeof useCommentsByExerciseLazyQuery>;
+export type CommentsByExerciseSuspenseQueryHookResult = ReturnType<typeof useCommentsByExerciseSuspenseQuery>;
+export type CommentsByExerciseQueryResult = Apollo.QueryResult<CommentsByExerciseQuery, CommentsByExerciseQueryVariables>;
 export const CreateExerciseDocument = gql`
     mutation createExercise($input: ExerciseInput!) {
   createExercise(input: $input) {
@@ -494,6 +574,40 @@ export function useCreateExerciseMutation(baseOptions?: Apollo.MutationHookOptio
 export type CreateExerciseMutationHookResult = ReturnType<typeof useCreateExerciseMutation>;
 export type CreateExerciseMutationResult = Apollo.MutationResult<CreateExerciseMutation>;
 export type CreateExerciseMutationOptions = Apollo.BaseMutationOptions<CreateExerciseMutation, CreateExerciseMutationVariables>;
+export const CreateExerciseCommentDocument = gql`
+    mutation CreateExerciseComment($exerciseId: ID!, $comment: String!) {
+  createExerciseComment(exerciseId: $exerciseId, comment: $comment) {
+    id
+  }
+}
+    `;
+export type CreateExerciseCommentMutationFn = Apollo.MutationFunction<CreateExerciseCommentMutation, CreateExerciseCommentMutationVariables>;
+
+/**
+ * __useCreateExerciseCommentMutation__
+ *
+ * To run a mutation, you first call `useCreateExerciseCommentMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateExerciseCommentMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createExerciseCommentMutation, { data, loading, error }] = useCreateExerciseCommentMutation({
+ *   variables: {
+ *      exerciseId: // value for 'exerciseId'
+ *      comment: // value for 'comment'
+ *   },
+ * });
+ */
+export function useCreateExerciseCommentMutation(baseOptions?: Apollo.MutationHookOptions<CreateExerciseCommentMutation, CreateExerciseCommentMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateExerciseCommentMutation, CreateExerciseCommentMutationVariables>(CreateExerciseCommentDocument, options);
+      }
+export type CreateExerciseCommentMutationHookResult = ReturnType<typeof useCreateExerciseCommentMutation>;
+export type CreateExerciseCommentMutationResult = Apollo.MutationResult<CreateExerciseCommentMutation>;
+export type CreateExerciseCommentMutationOptions = Apollo.BaseMutationOptions<CreateExerciseCommentMutation, CreateExerciseCommentMutationVariables>;
 export const SelectExercisesDocument = gql`
     query selectExercises {
   exercises(take: 10, skip: 0) {
