@@ -243,6 +243,7 @@ export type Mutation = {
   createExerciseSheet: ExerciseSheet;
   createExerciseTag: ExerciseTag;
   deleteExerciseComment: ExerciseComment;
+  deleteExerciseSheet: Scalars['Boolean']['output'];
   deleteExerciseTag: Scalars['Boolean']['output'];
   login?: Maybe<LoginResponse>;
   loginWithGoogle?: Maybe<LoginResponse>;
@@ -290,6 +291,11 @@ export type MutationCreateExerciseTagArgs = {
 
 
 export type MutationDeleteExerciseCommentArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
+export type MutationDeleteExerciseSheetArgs = {
   id: Scalars['ID']['input'];
 };
 
@@ -515,6 +521,13 @@ export type DeleteExerciseCommentMutationVariables = Exact<{
 
 
 export type DeleteExerciseCommentMutation = { __typename: 'Mutation', deleteExerciseComment: { __typename: 'ExerciseComment', id: string } };
+
+export type DeleteExerciseSheetMutationVariables = Exact<{
+  deleteExerciseSheetId: Scalars['ID']['input'];
+}>;
+
+
+export type DeleteExerciseSheetMutation = { __typename: 'Mutation', deleteExerciseSheet: boolean };
 
 export type SelectExercisesQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -904,6 +917,37 @@ export function useDeleteExerciseCommentMutation(baseOptions?: Apollo.MutationHo
 export type DeleteExerciseCommentMutationHookResult = ReturnType<typeof useDeleteExerciseCommentMutation>;
 export type DeleteExerciseCommentMutationResult = Apollo.MutationResult<DeleteExerciseCommentMutation>;
 export type DeleteExerciseCommentMutationOptions = Apollo.BaseMutationOptions<DeleteExerciseCommentMutation, DeleteExerciseCommentMutationVariables>;
+export const DeleteExerciseSheetDocument = gql`
+    mutation deleteExerciseSheet($deleteExerciseSheetId: ID!) {
+  deleteExerciseSheet(id: $deleteExerciseSheetId)
+}
+    `;
+export type DeleteExerciseSheetMutationFn = Apollo.MutationFunction<DeleteExerciseSheetMutation, DeleteExerciseSheetMutationVariables>;
+
+/**
+ * __useDeleteExerciseSheetMutation__
+ *
+ * To run a mutation, you first call `useDeleteExerciseSheetMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteExerciseSheetMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteExerciseSheetMutation, { data, loading, error }] = useDeleteExerciseSheetMutation({
+ *   variables: {
+ *      deleteExerciseSheetId: // value for 'deleteExerciseSheetId'
+ *   },
+ * });
+ */
+export function useDeleteExerciseSheetMutation(baseOptions?: Apollo.MutationHookOptions<DeleteExerciseSheetMutation, DeleteExerciseSheetMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DeleteExerciseSheetMutation, DeleteExerciseSheetMutationVariables>(DeleteExerciseSheetDocument, options);
+      }
+export type DeleteExerciseSheetMutationHookResult = ReturnType<typeof useDeleteExerciseSheetMutation>;
+export type DeleteExerciseSheetMutationResult = Apollo.MutationResult<DeleteExerciseSheetMutation>;
+export type DeleteExerciseSheetMutationOptions = Apollo.BaseMutationOptions<DeleteExerciseSheetMutation, DeleteExerciseSheetMutationVariables>;
 export const SelectExercisesDocument = gql`
     query selectExercises {
   exercises(take: 10, skip: 0) {

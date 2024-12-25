@@ -6,27 +6,33 @@ import {
   CardContent,
   Divider,
   Grid2,
+  IconButton,
   TextField,
   Typography,
 } from "@mui/material";
 import {
   ExerciseSheetsDocument,
   useCreateExerciseSheetMutation,
+  useDeleteExerciseSheetMutation,
   useExerciseSheetsQuery,
 } from "@/generated/graphql.tsx";
 import dayjs from "dayjs";
 import { Stack } from "@mui/system";
 import { LoadingButton } from "@mui/lab";
+import { AlertDialog } from "@/components/Dialog.tsx";
+import { enqueueSnackbar } from "notistack";
+import { MdOutlineDelete } from "react-icons/md";
 
 export const ExerciseSheets: FC = () => {
   const { data, loading } = useExerciseSheetsQuery();
-
-  const [newSheetName, setNewSheetName] = useState("");
-
   const [createExerciseSheet, createExerciseSheetData] =
     useCreateExerciseSheetMutation({
       refetchQueries: [ExerciseSheetsDocument],
     });
+  const [deleteExerciseSheet] = useDeleteExerciseSheetMutation();
+
+  const [newSheetName, setNewSheetName] = useState("");
+  const [sheetToDelete, setSheetToDelete] = useState<string | null>(null);
 
   const createSheet = async () => {
     if (newSheetName === "") return;
@@ -42,6 +48,26 @@ export const ExerciseSheets: FC = () => {
 
   return (
     <Box mb={16}>
+      <AlertDialog
+        open={sheetToDelete !== null}
+        title="Biztosan törlöd ezt a feladatsort?"
+        description={
+          data?.exerciseSheets.find((sheet) => sheet.id === sheetToDelete)
+            ?.name || ""
+        }
+        secondaryClick={() => setSheetToDelete(null)}
+        primaryClick={async () => {
+          await deleteExerciseSheet({
+            variables: { deleteExerciseSheetId: sheetToDelete! },
+            refetchQueries: [ExerciseSheetsDocument],
+          });
+          enqueueSnackbar({
+            variant: "success",
+            message: "Feladatsor törölve",
+          });
+          setSheetToDelete(null);
+        }}
+      />
       <Typography variant="h4" style={{ margin: "16px" }}>
         Feladatsorok
       </Typography>
@@ -72,13 +98,29 @@ export const ExerciseSheets: FC = () => {
         {loading ?? "Loading..."}
         <Grid2 container spacing={2}>
           {data?.exerciseSheets.map((sheet) => (
-            <Grid2 size={4}>
+            <Grid2
+              size={{
+                xs: 12,
+                sm: 6,
+                md: 4,
+                lg: 3,
+              }}
+            >
               <Card>
                 <CardActionArea>
                   <CardContent>
-                    <Typography gutterBottom variant="h5" component="div">
-                      {sheet.name}
-                    </Typography>
+                    <Stack
+                      direction={"row"}
+                      justifyContent={"space-between"}
+                      gap={1}
+                    >
+                      <Typography gutterBottom variant="h5" component="div">
+                        {sheet.name}
+                      </Typography>
+                      <IconButton onClick={() => setSheetToDelete(sheet.id)}>
+                        <MdOutlineDelete />
+                      </IconButton>
+                    </Stack>
                     <Typography
                       variant="body2"
                       sx={{ color: "text.secondary" }}
