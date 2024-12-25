@@ -1,0 +1,7 @@
+mutation createExerciseSheet($sheetData: ExerciseSheetInput!) {
+  createExerciseSheet(sheetData: $sheetData) {
+    id
+    name
+    createdAt
+  }
+}

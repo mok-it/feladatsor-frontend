@@ -147,6 +147,7 @@ export type ExerciseInput = {
 export type ExerciseSearchQuery = {
   difficulty?: InputMaybe<Array<ExerciseDifficultyRange>>;
   excludeTags?: InputMaybe<Array<Scalars['ID']['input']>>;
+  isCompetitionFinal?: InputMaybe<Scalars['Boolean']['input']>;
   queryStr?: InputMaybe<Scalars['String']['input']>;
   skip: Scalars['Int']['input'];
   tags?: InputMaybe<Array<Scalars['ID']['input']>>;
@@ -157,6 +158,35 @@ export type ExerciseSearchResult = {
   __typename: 'ExerciseSearchResult';
   exercises: Array<Exercise>;
   totalCount: Scalars['Int']['output'];
+};
+
+export type ExerciseSheet = {
+  __typename: 'ExerciseSheet';
+  createdAt: Scalars['String']['output'];
+  createdBy: User;
+  id: Scalars['ID']['output'];
+  name: Scalars['String']['output'];
+  sheetItems: Array<ExerciseSheetItem>;
+  updatedAt: Scalars['String']['output'];
+};
+
+export type ExerciseSheetInput = {
+  name: Scalars['String']['input'];
+  sheetItems?: InputMaybe<Array<ExerciseSheetItemInput>>;
+};
+
+export type ExerciseSheetItem = {
+  __typename: 'ExerciseSheetItem';
+  ageGroup: ExerciseAgeGroup;
+  exercises: Array<Exercise>;
+  id: Scalars['ID']['output'];
+  level: Scalars['Int']['output'];
+};
+
+export type ExerciseSheetItemInput = {
+  ageGroup: ExerciseAgeGroup;
+  exercises: Array<Scalars['ID']['input']>;
+  level: Scalars['Int']['input'];
 };
 
 export type ExerciseStatus =
@@ -210,6 +240,7 @@ export type Mutation = {
   createExercise: Exercise;
   createExerciseCheck: ExerciseCheck;
   createExerciseComment: ExerciseComment;
+  createExerciseSheet: ExerciseSheet;
   createExerciseTag: ExerciseTag;
   deleteExerciseComment: ExerciseComment;
   deleteExerciseTag: Scalars['Boolean']['output'];
@@ -218,7 +249,9 @@ export type Mutation = {
   register: User;
   updateExercise: Exercise;
   updateExerciseComment: ExerciseComment;
+  updateExerciseSheet: ExerciseSheet;
   updateExerciseTag: ExerciseTag;
+  /** Update by id, or if not provided, use the user from the JWT token */
   updateUser: User;
 };
 
@@ -242,6 +275,11 @@ export type MutationCreateExerciseCheckArgs = {
 export type MutationCreateExerciseCommentArgs = {
   comment: Scalars['String']['input'];
   exerciseId: Scalars['ID']['input'];
+};
+
+
+export type MutationCreateExerciseSheetArgs = {
+  sheetData: ExerciseSheetInput;
 };
 
 
@@ -289,6 +327,12 @@ export type MutationUpdateExerciseCommentArgs = {
 };
 
 
+export type MutationUpdateExerciseSheetArgs = {
+  id: Scalars['ID']['input'];
+  sheetData: UpdateExerciseSheetInput;
+};
+
+
 export type MutationUpdateExerciseTagArgs = {
   id: Scalars['ID']['input'];
   name: Scalars['String']['input'];
@@ -297,7 +341,7 @@ export type MutationUpdateExerciseTagArgs = {
 
 export type MutationUpdateUserArgs = {
   data: UserUpdateInput;
-  id?: InputMaybe<Scalars['String']['input']>;
+  id?: InputMaybe<Scalars['ID']['input']>;
 };
 
 export type Query = {
@@ -307,6 +351,8 @@ export type Query = {
   exercise?: Maybe<Exercise>;
   exerciseComment?: Maybe<ExerciseComment>;
   exerciseHistoryByExercise: Array<ExerciseHistory>;
+  exerciseSheet?: Maybe<ExerciseSheet>;
+  exerciseSheets: Array<ExerciseSheet>;
   exerciseTag?: Maybe<ExerciseTag>;
   exerciseTags: Array<ExerciseTag>;
   exercises: Array<Exercise>;
@@ -334,6 +380,11 @@ export type QueryExerciseCommentArgs = {
 
 
 export type QueryExerciseHistoryByExerciseArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
+export type QueryExerciseSheetArgs = {
   id: Scalars['ID']['input'];
 };
 
@@ -379,6 +430,11 @@ export type Tag = {
   id: Scalars['ID']['output'];
   name: Scalars['String']['output'];
   parent?: Maybe<Tag>;
+};
+
+export type UpdateExerciseSheetInput = {
+  name?: InputMaybe<Scalars['String']['input']>;
+  sheetItems?: InputMaybe<Array<ExerciseSheetItemInput>>;
 };
 
 export type User = {
@@ -446,6 +502,13 @@ export type CreateExerciseCommentMutationVariables = Exact<{
 
 export type CreateExerciseCommentMutation = { __typename: 'Mutation', createExerciseComment: { __typename: 'ExerciseComment', id: string } };
 
+export type CreateExerciseSheetMutationVariables = Exact<{
+  sheetData: ExerciseSheetInput;
+}>;
+
+
+export type CreateExerciseSheetMutation = { __typename: 'Mutation', createExerciseSheet: { __typename: 'ExerciseSheet', id: string, name: string, createdAt: string } };
+
 export type DeleteExerciseCommentMutationVariables = Exact<{
   deleteExerciseCommentId: Scalars['ID']['input'];
 }>;
@@ -471,6 +534,11 @@ export type ExerciseHistoryByExerciseQueryVariables = Exact<{
 
 
 export type ExerciseHistoryByExerciseQuery = { __typename: 'Query', exerciseHistoryByExercise: Array<{ __typename: 'ExerciseHistory', id: string, field: string, oldValue: string, newValue: string, createdAt: string, createdBy: { __typename: 'User', id: string, name: string } }> };
+
+export type ExerciseSheetsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type ExerciseSheetsQuery = { __typename: 'Query', exerciseSheets: Array<{ __typename: 'ExerciseSheet', id: string, name: string, createdAt: string, updatedAt: string, createdBy: { __typename: 'User', name: string, avatarUrl?: string | null } }> };
 
 export type ExerciseTagsQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -768,6 +836,41 @@ export function useCreateExerciseCommentMutation(baseOptions?: Apollo.MutationHo
 export type CreateExerciseCommentMutationHookResult = ReturnType<typeof useCreateExerciseCommentMutation>;
 export type CreateExerciseCommentMutationResult = Apollo.MutationResult<CreateExerciseCommentMutation>;
 export type CreateExerciseCommentMutationOptions = Apollo.BaseMutationOptions<CreateExerciseCommentMutation, CreateExerciseCommentMutationVariables>;
+export const CreateExerciseSheetDocument = gql`
+    mutation createExerciseSheet($sheetData: ExerciseSheetInput!) {
+  createExerciseSheet(sheetData: $sheetData) {
+    id
+    name
+    createdAt
+  }
+}
+    `;
+export type CreateExerciseSheetMutationFn = Apollo.MutationFunction<CreateExerciseSheetMutation, CreateExerciseSheetMutationVariables>;
+
+/**
+ * __useCreateExerciseSheetMutation__
+ *
+ * To run a mutation, you first call `useCreateExerciseSheetMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateExerciseSheetMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createExerciseSheetMutation, { data, loading, error }] = useCreateExerciseSheetMutation({
+ *   variables: {
+ *      sheetData: // value for 'sheetData'
+ *   },
+ * });
+ */
+export function useCreateExerciseSheetMutation(baseOptions?: Apollo.MutationHookOptions<CreateExerciseSheetMutation, CreateExerciseSheetMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateExerciseSheetMutation, CreateExerciseSheetMutationVariables>(CreateExerciseSheetDocument, options);
+      }
+export type CreateExerciseSheetMutationHookResult = ReturnType<typeof useCreateExerciseSheetMutation>;
+export type CreateExerciseSheetMutationResult = Apollo.MutationResult<CreateExerciseSheetMutation>;
+export type CreateExerciseSheetMutationOptions = Apollo.BaseMutationOptions<CreateExerciseSheetMutation, CreateExerciseSheetMutationVariables>;
 export const DeleteExerciseCommentDocument = gql`
     mutation DeleteExerciseComment($deleteExerciseCommentId: ID!) {
   deleteExerciseComment(id: $deleteExerciseCommentId) {
@@ -979,6 +1082,52 @@ export type ExerciseHistoryByExerciseQueryHookResult = ReturnType<typeof useExer
 export type ExerciseHistoryByExerciseLazyQueryHookResult = ReturnType<typeof useExerciseHistoryByExerciseLazyQuery>;
 export type ExerciseHistoryByExerciseSuspenseQueryHookResult = ReturnType<typeof useExerciseHistoryByExerciseSuspenseQuery>;
 export type ExerciseHistoryByExerciseQueryResult = Apollo.QueryResult<ExerciseHistoryByExerciseQuery, ExerciseHistoryByExerciseQueryVariables>;
+export const ExerciseSheetsDocument = gql`
+    query exerciseSheets {
+  exerciseSheets {
+    id
+    name
+    createdBy {
+      name
+      avatarUrl
+    }
+    createdAt
+    updatedAt
+  }
+}
+    `;
+
+/**
+ * __useExerciseSheetsQuery__
+ *
+ * To run a query within a React component, call `useExerciseSheetsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useExerciseSheetsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useExerciseSheetsQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useExerciseSheetsQuery(baseOptions?: Apollo.QueryHookOptions<ExerciseSheetsQuery, ExerciseSheetsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<ExerciseSheetsQuery, ExerciseSheetsQueryVariables>(ExerciseSheetsDocument, options);
+      }
+export function useExerciseSheetsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ExerciseSheetsQuery, ExerciseSheetsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<ExerciseSheetsQuery, ExerciseSheetsQueryVariables>(ExerciseSheetsDocument, options);
+        }
+export function useExerciseSheetsSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<ExerciseSheetsQuery, ExerciseSheetsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<ExerciseSheetsQuery, ExerciseSheetsQueryVariables>(ExerciseSheetsDocument, options);
+        }
+export type ExerciseSheetsQueryHookResult = ReturnType<typeof useExerciseSheetsQuery>;
+export type ExerciseSheetsLazyQueryHookResult = ReturnType<typeof useExerciseSheetsLazyQuery>;
+export type ExerciseSheetsSuspenseQueryHookResult = ReturnType<typeof useExerciseSheetsSuspenseQuery>;
+export type ExerciseSheetsQueryResult = Apollo.QueryResult<ExerciseSheetsQuery, ExerciseSheetsQueryVariables>;
 export const ExerciseTagsDocument = gql`
     query ExerciseTags {
   exerciseTags {

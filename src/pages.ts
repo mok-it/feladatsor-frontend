@@ -5,14 +5,13 @@ import { FaRegUser, FaUsers } from "react-icons/fa";
 import { FaPencil } from "react-icons/fa6";
 import { HiOutlineHome } from "react-icons/hi";
 import { IoNewspaperOutline, IoSearch } from "react-icons/io5";
-import { MdDashboard } from "react-icons/md";
+import { MdDashboard, MdOutlineNewLabel } from "react-icons/md";
 import { ExerciseListPage } from "./pages/ExerciseListPage/ExerciseListPage.tsx";
 import { HomePage } from "./pages/HomePage";
-import ComposePage from "./pages/compose/ComposePage.tsx";
 import { CreateExercise } from "./pages/createExercise/CreateExercise.tsx";
 import { AdminPage } from "./pages/Admin.tsx";
-import { MdOutlineNewLabel } from "react-icons/md";
 import { TagsPage } from "./pages/TagsPage.tsx";
+import { ExerciseSheets } from "@/pages/exerciseSheets/exerciseSheets.tsx";
 
 interface Page {
   name: string;
@@ -55,7 +54,7 @@ export const pages: Page[] = [
   {
     name: "Feladatsor",
     path: "/exercise-compose",
-    component: ComposePage,
+    component: ExerciseSheets,
     icon: MdDashboard,
   },
   {
