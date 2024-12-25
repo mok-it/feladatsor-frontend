@@ -1,4 +1,4 @@
-import { Box, Card, Typography } from "@mui/material";
+import { Avatar, Box, Card, Stack, Typography } from "@mui/material";
 import Checkbox from "@mui/material/Checkbox";
 import TextField from "@mui/material/TextField";
 import Autocomplete from "@mui/material/Autocomplete";
@@ -52,6 +52,12 @@ export const AdminPage = () => {
               },
             }}
             rowRenderers={{
+              name: (name, row) => (
+                <Stack direction="row" alignItems="center" gap={2}>
+                  <Avatar src={row.avatarUrl ?? undefined} />
+                  <Typography variant="body1">{name}</Typography>
+                </Stack>
+              ),
               roles: (userRoles: string[], row) => (
                 <Autocomplete
                   multiple

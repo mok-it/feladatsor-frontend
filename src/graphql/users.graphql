@@ -6,5 +6,6 @@ query users {
     email
     userName
     roles
+    avatarUrl
   }
 }

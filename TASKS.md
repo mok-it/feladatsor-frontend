@@ -3,10 +3,13 @@
 ### Bug
 
 - [ ] Képfeltöltés beragad ha szerver error van
+- [ ] Sima login esetén hibakezelés -> error mezők meg egy szöveg hogy nem sikerült belépni
 
 ### Fejleszthető
 
 - [ ] Feladat megoldás mező is lehet LaTeX
+- [ ] Feladat createAt, updatedAt mezők megjelenítése
+- [ ] Feladat source mező megjelenítés, módosítás, létrehozás
 - [ ] Bármelyik feladat mező lehet latex, esetleg egy modal-os LaTeX editor?
 - [ ] Feladat megnyitása ID alapján
 - [ ] Feladat ellenörzés oldal, a menüben is
@@ -21,12 +24,14 @@
 - [ ] Teljes oldal mobil responsivitás
 - [ ] Profil módosítás, profilkép feltöltés
 - [ ] Feladat képre kattintás esetén nyíljon meg nagyban
+- [ ] Tag nyilvántartó oldal, lehessen átnevezni szülő <-> gyerek kapcsolatok kezelése
+  - [ ] Tag-re kattintva nyíljon meg a keresőben beszűrve arra a tag-re.
+- [ ] Feladat oldal tag-kezelés
+- [ ] Keresőben tag, excludeTag, isFinal alapján keresés
 
 ### Backend-re vár
 
 - [ ] Feladatsorok listázása oldal
-- [ ] Feladat oldal tag-kezelés
-- [ ] Keresőben tag, excludeTag, isFinal alapján keresés
 - [ ] Feladat keresőben eremény rendezhetősége
 
 ### Üzletre vár

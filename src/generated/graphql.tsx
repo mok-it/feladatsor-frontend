@@ -17,6 +17,16 @@ export type Scalars = {
   Float: { input: number; output: number; }
 };
 
+export type AlternativeDifficultyExerciseGroup = {
+  __typename: 'AlternativeDifficultyExerciseGroup';
+  createdAt: Scalars['String']['output'];
+  createdBy: User;
+  description?: Maybe<Scalars['String']['output']>;
+  exercises: Array<Exercise>;
+  id: Scalars['String']['output'];
+  updatedAt: Scalars['String']['output'];
+};
+
 export type Exercise = {
   __typename: 'Exercise';
   alternativeDifficultyExercises: Array<Exercise>;
@@ -117,13 +127,13 @@ export type ExerciseHistory = {
 };
 
 export type ExerciseInput = {
-  alternativeDifficultyParent?: InputMaybe<Scalars['ID']['input']>;
+  alternativeDifficultyGroup?: InputMaybe<Scalars['ID']['input']>;
   description: Scalars['String']['input'];
   difficulty: Array<ExerciseDifficultyInput>;
   exerciseImage?: InputMaybe<Scalars['String']['input']>;
   helpingQuestions: Array<Scalars['String']['input']>;
   isCompetitionFinal?: InputMaybe<Scalars['Boolean']['input']>;
-  sameLogicParent?: InputMaybe<Scalars['ID']['input']>;
+  sameLogicGroup?: InputMaybe<Scalars['ID']['input']>;
   solution: Scalars['String']['input'];
   solutionImage?: InputMaybe<Scalars['String']['input']>;
   solutionOptions: Array<Scalars['String']['input']>;
@@ -164,14 +174,14 @@ export type ExerciseTag = {
 };
 
 export type ExerciseUpdateInput = {
-  alternativeDifficultyParent?: InputMaybe<Scalars['ID']['input']>;
+  alternativeDifficultyGroup?: InputMaybe<Scalars['ID']['input']>;
   comment?: InputMaybe<Scalars['String']['input']>;
   description?: InputMaybe<Scalars['String']['input']>;
   difficulty?: InputMaybe<Array<ExerciseDifficultyInput>>;
   exerciseImage?: InputMaybe<Scalars['String']['input']>;
   helpingQuestions?: InputMaybe<Array<Scalars['String']['input']>>;
   isCompetitionFinal?: InputMaybe<Scalars['Boolean']['input']>;
-  sameLogicParent?: InputMaybe<Scalars['ID']['input']>;
+  sameLogicGroup?: InputMaybe<Scalars['ID']['input']>;
   solution?: InputMaybe<Scalars['String']['input']>;
   solutionImage?: InputMaybe<Scalars['String']['input']>;
   solutionOptions?: InputMaybe<Array<Scalars['String']['input']>>;
@@ -292,6 +302,7 @@ export type MutationUpdateUserArgs = {
 
 export type Query = {
   __typename: 'Query';
+  alternativeDifficultyExerciseGroups: Array<AlternativeDifficultyExerciseGroup>;
   commentsByExercise: Array<ExerciseComment>;
   exercise?: Maybe<Exercise>;
   exerciseComment?: Maybe<ExerciseComment>;
@@ -300,6 +311,7 @@ export type Query = {
   exerciseTags: Array<ExerciseTag>;
   exercises: Array<Exercise>;
   exercisesCount: Scalars['Int']['output'];
+  sameLogicExerciseGroups: Array<SameLogicExerciseGroup>;
   searchExercises: ExerciseSearchResult;
   user?: Maybe<User>;
   users: Array<User>;
@@ -349,6 +361,16 @@ export type QueryUserArgs = {
 export type Role =
   | 'ADMIN'
   | 'USER';
+
+export type SameLogicExerciseGroup = {
+  __typename: 'SameLogicExerciseGroup';
+  createdAt: Scalars['String']['output'];
+  createdBy: User;
+  description?: Maybe<Scalars['String']['output']>;
+  exercises: Array<Exercise>;
+  id: Scalars['String']['output'];
+  updatedAt: Scalars['String']['output'];
+};
 
 export type Tag = {
   __typename: 'Tag';
@@ -510,7 +532,7 @@ export type UpdateUserMutation = { __typename: 'Mutation', updateUser: { __typen
 export type UsersQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type UsersQuery = { __typename: 'Query', users: Array<{ __typename: 'User', id: string, name: string, userName: string, email: string, roles: Array<Role> }> };
+export type UsersQuery = { __typename: 'Query', users: Array<{ __typename: 'User', id: string, name: string, userName: string, email: string, roles: Array<Role>, avatarUrl?: string | null }> };
 
 export const ExerciseCheckFragmentDoc = gql`
     fragment ExerciseCheck on ExerciseCheck {
@@ -1246,6 +1268,7 @@ export const UsersDocument = gql`
     email
     userName
     roles
+    avatarUrl
   }
 }
     `;
