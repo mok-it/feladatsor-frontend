@@ -49,8 +49,8 @@ const ExerciseDetails: FC = () => {
             id: id!,
             input: {
               comment: comment.length > 0 ? comment : undefined,
-              alternativeDifficultyParent:
-                formDataToSend.alternativeDifficultyParent,
+              alternativeDifficultyGroup:
+                formDataToSend.alternativeDifficultyGroup,
               description: formDataToSend.description,
               difficulty: formDataToSend.difficulty.map((d) => ({
                 ageGroup: d.ageGroup,
@@ -58,7 +58,6 @@ const ExerciseDetails: FC = () => {
               })),
               helpingQuestions: formDataToSend.helpingQuestions,
               isCompetitionFinal: formDataToSend.isCompetitionFinal,
-              sameLogicParent: formDataToSend.sameLogicParent,
               solution: formDataToSend.solution,
               // solutionOptions: formDataToSend.solutionOptions,
               solveIdea: formDataToSend.solveIdea,

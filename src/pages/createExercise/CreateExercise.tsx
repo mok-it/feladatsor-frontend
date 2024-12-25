@@ -42,13 +42,12 @@ export const CreateExercise = () => {
       const createResult = await createExercise({
         variables: {
           input: {
-            alternativeDifficultyParent:
-              formDataToSend.alternativeDifficultyParent,
+            alternativeDifficultyGroup:
+              formDataToSend.alternativeDifficultyGroup,
             description: formDataToSend.description,
             difficulty: formDataToSend.difficulty,
             helpingQuestions: formDataToSend.helpingQuestions,
             isCompetitionFinal: formDataToSend.isCompetitionFinal,
-            sameLogicParent: formDataToSend.sameLogicParent,
             solution: formDataToSend.solution,
             solutionOptions: formDataToSend.solutionOptions,
             solveIdea: formDataToSend.solveIdea,
