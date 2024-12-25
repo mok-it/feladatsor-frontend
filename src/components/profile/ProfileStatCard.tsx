@@ -3,23 +3,28 @@ import Avatar from "@mui/material/Avatar";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import Stack from "@mui/material/Stack";
-import type { SxProps } from "@mui/material/styles";
 import Typography from "@mui/material/Typography";
 import { IoIosStats } from "react-icons/io";
+import { grey } from "@/theme/palette.ts";
 
 export interface ProfileStatProps {
-  sx?: SxProps;
   value: number;
   title: string;
 }
 
 export function ProfileStatCard({
   value,
-  sx,
   title,
 }: ProfileStatProps): React.JSX.Element {
   return (
-    <Card sx={sx}>
+    <Card
+      sx={{
+        background: (theme) =>
+          theme.palette.mode === "light"
+            ? grey[200]
+            : theme.palette.action.disabledBackground,
+      }}
+    >
       <CardContent>
         <Stack
           direction="row"

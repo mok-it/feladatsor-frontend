@@ -33,7 +33,6 @@ export const DifficultySelector = (props: {
             props.setDifficulty(value as [number, number])
           }
           step={1}
-          marks
           min={0}
           max={4}
           valueLabelDisplay="auto"
