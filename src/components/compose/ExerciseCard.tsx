@@ -1,6 +1,6 @@
-import { Exercise, ExerciseAgeGroup } from "@/generated/graphql";
+import { ExerciseAgeGroup, SelectExerciseQuery } from "@/generated/graphql";
 import { exercisePlacementsAtom } from "@/util/atoms";
-import { ExerciseView, composeStore } from "@/util/composeStore";
+import { composeStore, ExerciseView } from "@/util/composeStore";
 import { ageGroups } from "@/util/types";
 import { UniqueIdentifier } from "@dnd-kit/core";
 import {
@@ -25,7 +25,7 @@ const ExerciseCard: FC<{
   id: UniqueIdentifier;
   isTalon?: boolean;
   isDragging?: boolean;
-  exercise: Exercise & { id: string };
+  exercise: SelectExerciseQuery["exercise"] & { id: string };
 }> = ({ exercise, isTalon, isDragging }) => {
   const containerId = useContext(ContainerContext);
   const highlightedid = composeStore((state) => state.highlightedid);
@@ -34,7 +34,6 @@ const ExerciseCard: FC<{
   const placements = useAtomValue(exercisePlacementsAtom);
   const isSingleView = view !== "all";
   const isDetailedView = exerciseView === ExerciseView.LIST;
-  const tags = ["Geometria"];
   const ageGroup = containerId?.split("-")[0];
   const countInGroup = placements[exercise.id]?.[ageGroup as ExerciseAgeGroup];
   const isAgeGroupBad = useMemo(
@@ -125,7 +124,9 @@ const ExerciseCard: FC<{
             )}
             <MdStar color="gold" />
             {isSingleView &&
-              tags.map((tag) => <Chip key={tag} size="small" label={tag} />)}
+              exercise.tags.map((tag) => (
+                <Chip key={tag.id} size="small" label={tag.name} />
+              ))}
             {/* <Typography variant="caption">{id}</Typography> */}
             <Box flexGrow={1} />
             {isSingleView && difficultiesElem}

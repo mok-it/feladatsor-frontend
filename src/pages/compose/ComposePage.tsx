@@ -72,7 +72,7 @@ const ComposePage: FC = () => {
           </ToggleButton>
         </ToggleButtonGroup>
       </Stack>
-      <Compose />
+      <Compose exerciseSheet={exerciseSheetResult.data?.exerciseSheet} />
     </>
   );
 };

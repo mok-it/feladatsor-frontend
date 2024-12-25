@@ -38,6 +38,7 @@ query selectExercise($exerciseId: ID!) {
     id
     status
     description
+    solutionOptions
     alternativeDifficultyExercises {
       id
     }

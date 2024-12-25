@@ -11,7 +11,7 @@ import { HomePage } from "./pages/HomePage";
 import { CreateExercise } from "./pages/createExercise/CreateExercise.tsx";
 import { AdminPage } from "./pages/Admin.tsx";
 import { TagsPage } from "./pages/TagsPage.tsx";
-import { ExerciseSheets } from "@/pages/exerciseSheets/exerciseSheets.tsx";
+import { ExerciseSheets } from "@/pages/exerciseSheets/ExerciseSheets.tsx";
 
 interface Page {
   name: string;

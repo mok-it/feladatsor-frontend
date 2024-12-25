@@ -6,31 +6,31 @@ import type {
   UniqueIdentifier,
 } from "@dnd-kit/core";
 import {
+  closestCenter,
   DndContext,
   DragOverlay,
+  getFirstCollision,
   KeyboardSensor,
   MeasuringStrategy,
   MouseSensor,
-  TouchSensor,
-  closestCenter,
-  getFirstCollision,
   pointerWithin,
   rectIntersection,
+  TouchSensor,
   useSensor,
   useSensors,
 } from "@dnd-kit/core";
 import { arrayMove, sortableKeyboardCoordinates } from "@dnd-kit/sortable";
-import { Fragment, useCallback, useEffect, useRef, useState } from "react";
+import { FC, Fragment, useCallback, useEffect, useRef, useState } from "react";
 
 import { Item } from "@/components/compose/SortableItem";
 import Talon from "@/components/compose/Talon";
-import { ExerciseAgeGroup } from "@/generated/graphql";
+import { ExerciseAgeGroup, ExerciseSheetQuery } from "@/generated/graphql";
 import {
   composeAtom,
   exerciseCardsAtom,
   exercisePlacementsAtom,
 } from "@/util/atoms";
-import { ExerciseView, composeStore } from "@/util/composeStore";
+import { composeStore, ExerciseView } from "@/util/composeStore";
 import { ExercisePlacements } from "@/util/types";
 import { Box, Grid, Stack, Typography } from "@mui/material";
 import { useAtom, useSetAtom } from "jotai";
@@ -38,13 +38,30 @@ import { entries, keys, times } from "lodash";
 import { useImmer } from "use-immer";
 import Container from "../../components/compose/Container";
 
-const Compose = () => {
+const Compose: FC<{
+  exerciseSheet?: ExerciseSheetQuery["exerciseSheet"] | null;
+}> = ({ exerciseSheet }) => {
   const [talon, setTalon] = useImmer<UniqueIdentifier[]>(["1", "2", "3"]);
   const [exercises, setExercises] = useAtom(exerciseCardsAtom);
   const view = composeStore((state) => state.view);
   const exerciseView = composeStore((state) => state.exerciseView);
   const [items, setItems] = useAtom(composeAtom);
   const setPlacements = useSetAtom(exercisePlacementsAtom);
+
+  useEffect(() => {
+    setItems((draft) => {
+      exerciseSheet?.sheetItems?.forEach(
+        (item) => {
+          draft[`${item.ageGroup}-${item.level}`] = item.exercises.map(
+            (exercise) => exercise.id,
+          );
+        },
+        [exerciseSheet],
+      );
+
+      return draft;
+    });
+  }, [exerciseSheet?.sheetItems, setItems]);
 
   //console.log({ items });
 

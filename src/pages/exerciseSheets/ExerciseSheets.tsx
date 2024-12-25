@@ -121,7 +121,12 @@ export const ExerciseSheets: FC = () => {
                       <Typography gutterBottom variant="h5" component="div">
                         {sheet.name}
                       </Typography>
-                      <IconButton onClick={() => setSheetToDelete(sheet.id)}>
+                      <IconButton
+                        onClick={(event) => {
+                          event.stopPropagation();
+                          setSheetToDelete(sheet.id);
+                        }}
+                      >
                         <MdOutlineDelete />
                       </IconButton>
                     </Stack>

@@ -10,6 +10,9 @@ import {
   Stack,
   Typography,
   alpha,
+  useColorScheme,
+  ToggleButtonGroup,
+  ToggleButton,
 } from "@mui/material";
 import { signOut as firebaseSignout } from "firebase/auth";
 import { useSetAtom } from "jotai";
@@ -35,6 +38,8 @@ export const Sidebar = () => {
   const setUser = useSetAtom(userAtom);
   const setToken = useSetAtom(tokenAtom);
 
+  const { mode, setMode } = useColorScheme();
+
   const signOut = useCallback(() => {
     firebaseSignout(auth).then(() => {
       setUser({ isLoggedIn: false, user: null });
@@ -48,56 +53,78 @@ export const Sidebar = () => {
       variant="permanent"
       sx={{
         width: drawerWidth,
+        height: "100vh",
       }}
     >
-      <Box sx={{ width: drawerWidth }} role="presentation" pt={2}>
-        <Typography width="100%" textAlign="center">
-          Feladatbeküldő
-        </Typography>
-        <Stack gap={1} sx={{ p: 2 }}>
-          {pages.map((page) => {
-            const active = location.pathname === page.path;
-            return (
-              <ListItem
-                key={page.name}
-                disablePadding
-                onClick={() => {
-                  navigate(page.path);
-                }}
-              >
-                <ListItemButton
-                  sx={{
-                    ...style,
-                    ...(active && {
-                      fontWeight: "fontWeightSemiBold",
-                      bgcolor: (theme) =>
-                        alpha(theme.palette.primary.main, 0.08),
-                      "&:hover": {
-                        bgcolor: (theme) =>
-                          alpha(theme.palette.primary.main, 0.16),
-                      },
-                    }),
+      <Box sx={{ width: drawerWidth }} role="presentation" pt={2} height="100%">
+        <Stack height="100%" sx={{ p: 2 }}>
+          <Typography width="100%" textAlign="center">
+            Feladatbeküldő
+          </Typography>
+          <Stack gap={1}>
+            {pages.map((page) => {
+              const active = location.pathname === page.path;
+              return (
+                <ListItem
+                  key={page.name}
+                  disablePadding
+                  onClick={() => {
+                    navigate(page.path);
                   }}
                 >
-                  <Stack direction="row" gap={2} alignItems="center">
-                    <Typography fontSize={22} lineHeight={0}>
-                      <page.icon />
-                    </Typography>
-                    <ListItemText primary={page.name} />
-                  </Stack>
-                </ListItemButton>
-              </ListItem>
-            );
-          })}
-          <Divider />
-          <ListItemButton sx={style} onClick={signOut}>
-            <Stack direction="row" gap={2} alignItems="center">
-              <Typography fontSize={22} lineHeight={0}>
-                <FaPersonRunning />
-              </Typography>
-              <ListItemText primary="Kijelentkezés" />
-            </Stack>
-          </ListItemButton>
+                  <ListItemButton
+                    sx={{
+                      ...style,
+                      ...(active && {
+                        fontWeight: "fontWeightSemiBold",
+                        bgcolor: (theme) =>
+                          alpha(theme.palette.primary.main, 0.08),
+                        "&:hover": {
+                          bgcolor: (theme) =>
+                            alpha(theme.palette.primary.main, 0.16),
+                        },
+                      }),
+                    }}
+                  >
+                    <Stack direction="row" gap={2} alignItems="center">
+                      <Typography fontSize={22} lineHeight={0}>
+                        <page.icon />
+                      </Typography>
+                      <ListItemText primary={page.name} />
+                    </Stack>
+                  </ListItemButton>
+                </ListItem>
+              );
+            })}
+            <Divider />
+            <ListItemButton sx={style} onClick={signOut}>
+              <Stack direction="row" gap={2} alignItems="center">
+                <Typography fontSize={22} lineHeight={0}>
+                  <FaPersonRunning />
+                </Typography>
+                <ListItemText primary="Kijelentkezés" />
+              </Stack>
+            </ListItemButton>
+          </Stack>
+          <ToggleButtonGroup
+            sx={{ mt: "auto" }}
+            color="primary"
+            value={mode}
+            exclusive
+            onChange={(_, value) => {
+              setMode(value);
+            }}
+          >
+            <ToggleButton sx={{ flexGrow: 1 }} value="light">
+              Light
+            </ToggleButton>
+            <ToggleButton sx={{ flexGrow: 1 }} value="dark">
+              Dark
+            </ToggleButton>
+            <ToggleButton sx={{ flexGrow: 1 }} value="system">
+              System
+            </ToggleButton>
+          </ToggleButtonGroup>
         </Stack>
       </Box>
     </Drawer>
