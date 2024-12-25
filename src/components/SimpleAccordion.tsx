@@ -64,7 +64,13 @@ export const SimpleAccordion = (
         {props.summary}
       </Typography>
     </AccordionSummary>
-    <AccordionDetails sx={{ borderTopLeftRadius: 0, borderTopRightRadius: 0 }}>
+    <AccordionDetails
+      sx={{
+        borderTopLeftRadius: 0,
+        borderTopRightRadius: 0,
+        backgroundColor: (theme) => theme.palette.action.hover,
+      }}
+    >
       {props.children}
     </AccordionDetails>
   </Accordion>

@@ -19,9 +19,7 @@ import {
   Stack,
   Table,
   TableBody,
-  TableCell,
   TableHead,
-  TableRow,
   TextField,
   Typography,
 } from "@mui/material";
@@ -30,6 +28,8 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { IoSearch } from "react-icons/io5";
 import { useEffectOnce, useToggle } from "react-use";
 import { useImmer } from "use-immer";
+import { StyledTableRow } from "@/components/StyledTableRow.tsx";
+import { StyledTableCell } from "@/components/StyledTableCell.tsx";
 
 export type DifficultySelect = {
   [key in ExerciseAgeGroup]: {
@@ -138,7 +138,7 @@ export const ExerciseListPage = () => {
             size="small"
           />
           {exerciseQuery.searchQuery}
-          <SimpleAccordion summary="Nehétség szűrő">
+          <SimpleAccordion summary="Nehézség szűrő">
             <DifficultySelectorList
               difficulties={exerciseQuery.difficulty}
               setExerciseQuery={setExerciseQuery}
@@ -173,14 +173,14 @@ export const ExerciseListPage = () => {
             }}
             aria-label="simple table"
           >
-            <TableHead sx={{}}>
-              <TableRow>
-                <TableCell>fID</TableCell>
-                <TableCell>Nehézség</TableCell>
-                <TableCell>Státusz</TableCell>
-                <TableCell sx={{ pl: 2.5 }}>Címkék</TableCell>
-                <TableCell>Feladat</TableCell>
-              </TableRow>
+            <TableHead>
+              <StyledTableRow>
+                <StyledTableCell>fID</StyledTableCell>
+                <StyledTableCell>Nehézség</StyledTableCell>
+                <StyledTableCell>Státusz</StyledTableCell>
+                <StyledTableCell sx={{ pl: 2.5 }}>Címkék</StyledTableCell>
+                <StyledTableCell>Feladat</StyledTableCell>
+              </StyledTableRow>
             </TableHead>
             <TableBody>
               <InfiniteLoad<ExerciseListElemFragment>
