@@ -10,10 +10,20 @@ import {
 import { Stack } from "@mui/system";
 import { FC } from "react";
 import Compose from "./Compose";
+import { useParams } from "react-router";
+import { useExerciseSheetQuery } from "@/generated/graphql.tsx";
 
 const styles = { fontWeight: 500 };
 
 const ComposePage: FC = () => {
+  const { id } = useParams();
+
+  const exerciseSheetResult = useExerciseSheetQuery({
+    variables: {
+      exerciseSheetId: id ?? "",
+    },
+  });
+
   const view = composeStore((state) => state.view);
   const exerciseView = composeStore((state) => state.exerciseView);
   const setValue = composeStore((state) => state.setValue);
@@ -22,7 +32,7 @@ const ComposePage: FC = () => {
   return (
     <>
       <Typography variant="h2" sx={{ mb: 2 }}>
-        Feladatsor-összeállítás
+        Feladatsor-összeállítás: {exerciseSheetResult.data?.exerciseSheet?.name}
       </Typography>
       <Stack direction="row" alignItems={"start"}>
         <Tabs

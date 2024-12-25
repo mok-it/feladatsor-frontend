@@ -1,0 +1,26 @@
+query exerciseSheet($exerciseSheetId: ID!) {
+  exerciseSheet(id: $exerciseSheetId) {
+    id
+    name
+    sheetItems {
+      id
+      ageGroup
+      level
+      exercises {
+        exerciseImage {
+          url
+        }
+        difficulty {
+          ageGroup
+          difficulty
+        }
+        description
+      }
+    }
+    createdAt
+    updatedAt
+    createdBy {
+      name
+    }
+  }
+}

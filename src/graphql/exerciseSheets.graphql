@@ -4,7 +4,6 @@ query exerciseSheets {
     name
     createdBy {
       name
-      avatarUrl
     }
     createdAt
     updatedAt

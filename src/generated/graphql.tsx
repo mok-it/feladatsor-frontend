@@ -548,10 +548,17 @@ export type ExerciseHistoryByExerciseQueryVariables = Exact<{
 
 export type ExerciseHistoryByExerciseQuery = { __typename: 'Query', exerciseHistoryByExercise: Array<{ __typename: 'ExerciseHistory', id: string, field: string, oldValue: string, newValue: string, createdAt: string, createdBy: { __typename: 'User', id: string, name: string } }> };
 
+export type ExerciseSheetQueryVariables = Exact<{
+  exerciseSheetId: Scalars['ID']['input'];
+}>;
+
+
+export type ExerciseSheetQuery = { __typename: 'Query', exerciseSheet?: { __typename: 'ExerciseSheet', id: string, name: string, createdAt: string, updatedAt: string, sheetItems: Array<{ __typename: 'ExerciseSheetItem', id: string, ageGroup: ExerciseAgeGroup, level: number, exercises: Array<{ __typename: 'Exercise', description: string, exerciseImage?: { __typename: 'Image', url: string } | null, difficulty: Array<{ __typename: 'ExerciseDifficulty', ageGroup: ExerciseAgeGroup, difficulty: number }> }> }>, createdBy: { __typename: 'User', name: string } } | null };
+
 export type ExerciseSheetsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type ExerciseSheetsQuery = { __typename: 'Query', exerciseSheets: Array<{ __typename: 'ExerciseSheet', id: string, name: string, createdAt: string, updatedAt: string, createdBy: { __typename: 'User', name: string, avatarUrl?: string | null } }> };
+export type ExerciseSheetsQuery = { __typename: 'Query', exerciseSheets: Array<{ __typename: 'ExerciseSheet', id: string, name: string, createdAt: string, updatedAt: string, createdBy: { __typename: 'User', name: string } }> };
 
 export type ExerciseTagsQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -1126,6 +1133,67 @@ export type ExerciseHistoryByExerciseQueryHookResult = ReturnType<typeof useExer
 export type ExerciseHistoryByExerciseLazyQueryHookResult = ReturnType<typeof useExerciseHistoryByExerciseLazyQuery>;
 export type ExerciseHistoryByExerciseSuspenseQueryHookResult = ReturnType<typeof useExerciseHistoryByExerciseSuspenseQuery>;
 export type ExerciseHistoryByExerciseQueryResult = Apollo.QueryResult<ExerciseHistoryByExerciseQuery, ExerciseHistoryByExerciseQueryVariables>;
+export const ExerciseSheetDocument = gql`
+    query exerciseSheet($exerciseSheetId: ID!) {
+  exerciseSheet(id: $exerciseSheetId) {
+    id
+    name
+    sheetItems {
+      id
+      ageGroup
+      level
+      exercises {
+        exerciseImage {
+          url
+        }
+        difficulty {
+          ageGroup
+          difficulty
+        }
+        description
+      }
+    }
+    createdAt
+    updatedAt
+    createdBy {
+      name
+    }
+  }
+}
+    `;
+
+/**
+ * __useExerciseSheetQuery__
+ *
+ * To run a query within a React component, call `useExerciseSheetQuery` and pass it any options that fit your needs.
+ * When your component renders, `useExerciseSheetQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useExerciseSheetQuery({
+ *   variables: {
+ *      exerciseSheetId: // value for 'exerciseSheetId'
+ *   },
+ * });
+ */
+export function useExerciseSheetQuery(baseOptions: Apollo.QueryHookOptions<ExerciseSheetQuery, ExerciseSheetQueryVariables> & ({ variables: ExerciseSheetQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<ExerciseSheetQuery, ExerciseSheetQueryVariables>(ExerciseSheetDocument, options);
+      }
+export function useExerciseSheetLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ExerciseSheetQuery, ExerciseSheetQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<ExerciseSheetQuery, ExerciseSheetQueryVariables>(ExerciseSheetDocument, options);
+        }
+export function useExerciseSheetSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<ExerciseSheetQuery, ExerciseSheetQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<ExerciseSheetQuery, ExerciseSheetQueryVariables>(ExerciseSheetDocument, options);
+        }
+export type ExerciseSheetQueryHookResult = ReturnType<typeof useExerciseSheetQuery>;
+export type ExerciseSheetLazyQueryHookResult = ReturnType<typeof useExerciseSheetLazyQuery>;
+export type ExerciseSheetSuspenseQueryHookResult = ReturnType<typeof useExerciseSheetSuspenseQuery>;
+export type ExerciseSheetQueryResult = Apollo.QueryResult<ExerciseSheetQuery, ExerciseSheetQueryVariables>;
 export const ExerciseSheetsDocument = gql`
     query exerciseSheets {
   exerciseSheets {
@@ -1133,7 +1201,6 @@ export const ExerciseSheetsDocument = gql`
     name
     createdBy {
       name
-      avatarUrl
     }
     createdAt
     updatedAt

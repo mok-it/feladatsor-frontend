@@ -22,6 +22,7 @@ import { LoadingButton } from "@mui/lab";
 import { AlertDialog } from "@/components/Dialog.tsx";
 import { enqueueSnackbar } from "notistack";
 import { MdOutlineDelete } from "react-icons/md";
+import { useNavigate } from "react-router-dom";
 
 export const ExerciseSheets: FC = () => {
   const { data, loading } = useExerciseSheetsQuery();
@@ -30,6 +31,7 @@ export const ExerciseSheets: FC = () => {
       refetchQueries: [ExerciseSheetsDocument],
     });
   const [deleteExerciseSheet] = useDeleteExerciseSheetMutation();
+  const navigate = useNavigate();
 
   const [newSheetName, setNewSheetName] = useState("");
   const [sheetToDelete, setSheetToDelete] = useState<string | null>(null);
@@ -107,7 +109,9 @@ export const ExerciseSheets: FC = () => {
               }}
             >
               <Card>
-                <CardActionArea>
+                <CardActionArea
+                  onClick={() => navigate(`/exercise-compose/${sheet.id}`)}
+                >
                   <CardContent>
                     <Stack
                       direction={"row"}
