@@ -5261,6 +5261,11 @@ react-chartjs-2@^5.2.0:
   resolved "https://registry.yarnpkg.com/react-chartjs-2/-/react-chartjs-2-5.2.0.tgz#43c1e3549071c00a1a083ecbd26c1ad34d385f5d"
   integrity sha512-98iN5aguJyVSxp5U3CblRLH67J8gkfyGNbiK3c+l1QI/G4irHMPQw44aEPmjVag+YKTyQ260NcF82GTQ3bdscA==
 
+react-contribution-calendar@^1.5.3:
+  version "1.5.3"
+  resolved "https://registry.yarnpkg.com/react-contribution-calendar/-/react-contribution-calendar-1.5.3.tgz#4762315ef23ba6bfd0ecdb46a8af36b7ec945dd0"
+  integrity sha512-XImSo3QHUGdAXO4IqtJI2RdUR9t7MAWo71lNRMNCE5tkbf1nfWnLMs+5Ngl768hk8TXYpo6UVu2pEdWp72u9uA==
+
 react-diff-viewer@^3.1.1:
   version "3.1.1"
   resolved "https://registry.yarnpkg.com/react-diff-viewer/-/react-diff-viewer-3.1.1.tgz#21ac9c891193d05a3734bfd6bd54b107ee6d46cc"

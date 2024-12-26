@@ -27,6 +27,20 @@ export type AlternativeDifficultyExerciseGroup = {
   updatedAt: Scalars['String']['output'];
 };
 
+export type ContributionCalendar = {
+  __typename: 'ContributionCalendar';
+  data: Array<ContributionCalendarDay>;
+  fromDate: Scalars['String']['output'];
+  toDate: Scalars['String']['output'];
+};
+
+export type ContributionCalendarDay = {
+  __typename: 'ContributionCalendarDay';
+  count: Scalars['Int']['output'];
+  date: Scalars['String']['output'];
+  level: Scalars['Int']['output'];
+};
+
 export type Exercise = {
   __typename: 'Exercise';
   alternativeDifficultyExercises: Array<Exercise>;
@@ -231,6 +245,7 @@ export type ExerciseUpdateInput = {
 export type GlobalStats = {
   __typename: 'GlobalStats';
   checkedExerciseCount: Scalars['Int']['output'];
+  contributionCalendar: ContributionCalendar;
   exerciseHourlyCount: Array<ExerciseHourlyGroup>;
   totalExerciseCount: Scalars['Int']['output'];
   userLeaderboard: Array<LeaderBoardUser>;
@@ -627,7 +642,7 @@ export type SearchExercisesQuery = { __typename: 'Query', searchExercises: { __t
 export type StatsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type StatsQuery = { __typename: 'Query', globalStats?: { __typename: 'GlobalStats', checkedExerciseCount: number, totalExerciseCount: number, exerciseHourlyCount: Array<{ __typename: 'ExerciseHourlyGroup', count: number, hour: string }>, userLeaderboard: Array<{ __typename: 'LeaderBoardUser', rank: number, submittedExerciseCount: number, user: { __typename: 'User', id: string, name: string, avatarUrl?: string | null } }> } | null };
+export type StatsQuery = { __typename: 'Query', globalStats?: { __typename: 'GlobalStats', checkedExerciseCount: number, totalExerciseCount: number, contributionCalendar: { __typename: 'ContributionCalendar', fromDate: string, toDate: string, data: Array<{ __typename: 'ContributionCalendarDay', date: string, level: number, count: number }> }, exerciseHourlyCount: Array<{ __typename: 'ExerciseHourlyGroup', count: number, hour: string }>, userLeaderboard: Array<{ __typename: 'LeaderBoardUser', rank: number, submittedExerciseCount: number, user: { __typename: 'User', id: string, name: string, avatarUrl?: string | null } }> } | null };
 
 export type UpdateExerciseMutationVariables = Exact<{
   id: Scalars['ID']['input'];
@@ -1483,6 +1498,15 @@ export const StatsDocument = gql`
   globalStats {
     checkedExerciseCount
     totalExerciseCount
+    contributionCalendar {
+      fromDate
+      toDate
+      data {
+        date
+        level
+        count
+      }
+    }
     exerciseHourlyCount {
       count
       hour

@@ -2,6 +2,15 @@ query stats {
   globalStats {
     checkedExerciseCount
     totalExerciseCount
+    contributionCalendar {
+      fromDate
+      toDate
+      data {
+        date
+        level
+        count
+      }
+    }
     exerciseHourlyCount {
       count
       hour
