@@ -1,0 +1,17 @@
+query stats {
+  globalStats {
+    exerciseHourlyCount {
+      count
+      hour
+    }
+    userLeaderboard {
+      rank
+      submittedExerciseCount
+      user {
+        id
+        name
+        avatarUrl
+      }
+    }
+  }
+}

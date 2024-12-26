@@ -126,6 +126,12 @@ export type ExerciseHistory = {
   updatedAt: Scalars['String']['output'];
 };
 
+export type ExerciseHourlyGroup = {
+  __typename: 'ExerciseHourlyGroup';
+  count: Scalars['Int']['output'];
+  hour: Scalars['String']['output'];
+};
+
 export type ExerciseInput = {
   alternativeDifficultyGroup?: InputMaybe<Scalars['ID']['input']>;
   description: Scalars['String']['input'];
@@ -222,10 +228,23 @@ export type ExerciseUpdateInput = {
   tags?: InputMaybe<Array<Scalars['ID']['input']>>;
 };
 
+export type GlobalStats = {
+  __typename: 'GlobalStats';
+  exerciseHourlyCount: Array<ExerciseHourlyGroup>;
+  userLeaderboard: Array<LeaderBoardUser>;
+};
+
 export type Image = {
   __typename: 'Image';
   id: Scalars['ID']['output'];
   url: Scalars['String']['output'];
+};
+
+export type LeaderBoardUser = {
+  __typename: 'LeaderBoardUser';
+  rank: Scalars['Int']['output'];
+  submittedExerciseCount: Scalars['Int']['output'];
+  user: User;
 };
 
 export type LoginResponse = {
@@ -363,6 +382,7 @@ export type Query = {
   exerciseTags: Array<ExerciseTag>;
   exercises: Array<Exercise>;
   exercisesCount: Scalars['Int']['output'];
+  globalStats?: Maybe<GlobalStats>;
   sameLogicExerciseGroups: Array<SameLogicExerciseGroup>;
   searchExercises: ExerciseSearchResult;
   user?: Maybe<User>;
@@ -601,6 +621,11 @@ export type SearchExercisesQueryVariables = Exact<{
 
 
 export type SearchExercisesQuery = { __typename: 'Query', searchExercises: { __typename: 'ExerciseSearchResult', totalCount: number, exercises: Array<{ __typename: 'Exercise', id: string, description: string, status: ExerciseStatus, exerciseImage?: { __typename: 'Image', url: string } | null, difficulty: Array<{ __typename: 'ExerciseDifficulty', ageGroup: ExerciseAgeGroup, difficulty: number }>, tags: Array<{ __typename: 'Tag', id: string, name: string }> }> } };
+
+export type StatsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type StatsQuery = { __typename: 'Query', globalStats?: { __typename: 'GlobalStats', exerciseHourlyCount: Array<{ __typename: 'ExerciseHourlyGroup', count: number, hour: string }>, userLeaderboard: Array<{ __typename: 'LeaderBoardUser', rank: number, submittedExerciseCount: number, user: { __typename: 'User', id: string, name: string, avatarUrl?: string | null } }> } | null };
 
 export type UpdateExerciseMutationVariables = Exact<{
   id: Scalars['ID']['input'];
@@ -1451,6 +1476,57 @@ export type SearchExercisesQueryHookResult = ReturnType<typeof useSearchExercise
 export type SearchExercisesLazyQueryHookResult = ReturnType<typeof useSearchExercisesLazyQuery>;
 export type SearchExercisesSuspenseQueryHookResult = ReturnType<typeof useSearchExercisesSuspenseQuery>;
 export type SearchExercisesQueryResult = Apollo.QueryResult<SearchExercisesQuery, SearchExercisesQueryVariables>;
+export const StatsDocument = gql`
+    query stats {
+  globalStats {
+    exerciseHourlyCount {
+      count
+      hour
+    }
+    userLeaderboard {
+      rank
+      submittedExerciseCount
+      user {
+        id
+        name
+        avatarUrl
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useStatsQuery__
+ *
+ * To run a query within a React component, call `useStatsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useStatsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useStatsQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useStatsQuery(baseOptions?: Apollo.QueryHookOptions<StatsQuery, StatsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<StatsQuery, StatsQueryVariables>(StatsDocument, options);
+      }
+export function useStatsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<StatsQuery, StatsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<StatsQuery, StatsQueryVariables>(StatsDocument, options);
+        }
+export function useStatsSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<StatsQuery, StatsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<StatsQuery, StatsQueryVariables>(StatsDocument, options);
+        }
+export type StatsQueryHookResult = ReturnType<typeof useStatsQuery>;
+export type StatsLazyQueryHookResult = ReturnType<typeof useStatsLazyQuery>;
+export type StatsSuspenseQueryHookResult = ReturnType<typeof useStatsSuspenseQuery>;
+export type StatsQueryResult = Apollo.QueryResult<StatsQuery, StatsQueryVariables>;
 export const UpdateExerciseDocument = gql`
     mutation UpdateExercise($id: ID!, $input: ExerciseUpdateInput!) {
   updateExercise(id: $id, input: $input) {

@@ -1,11 +1,15 @@
 import { userAtom } from "@/util/atoms.ts";
-import { Card, Grid2, Typography } from "@mui/material";
+import { Grid2 } from "@mui/material";
 import { useAtomValue } from "jotai";
 import { useToggle } from "react-use";
+import { useStatsQuery } from "@/generated/graphql.tsx";
+import { LeaderBoardCard } from "@/pages/home/LeaderBoardCard.tsx";
 
 export const HomePage = () => {
   const user = useAtomValue(userAtom);
   const [show, toggle] = useToggle(false);
+
+  const { data, loading } = useStatsQuery();
 
   return (
     <div>
@@ -25,10 +29,13 @@ export const HomePage = () => {
         </div>
       )}
       <Grid2 container>
-        <Grid2 size={2}>
-          <Card>
-            <Typography variant="h4">Beküldött feladatok</Typography>
-          </Card>
+        <Grid2
+          size={{
+            xs: 12,
+            md: 6,
+          }}
+        >
+          <LeaderBoardCard loading={loading} stats={data?.globalStats} />
         </Grid2>
       </Grid2>
     </div>
