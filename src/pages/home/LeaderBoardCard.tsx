@@ -3,6 +3,7 @@ import { StatsQuery } from "@/generated/graphql.tsx";
 import {
   Avatar,
   Table,
+  TableBody,
   TableContainer,
   TableHead,
   Typography,
@@ -32,7 +33,7 @@ export const LeaderBoardCard: FC<{
     },
   ];
   return (
-    <StatCard title="Leaderboard">
+    <StatCard title="Ranglista">
       {props.loading ? (
         <p>Loading...</p>
       ) : (
@@ -68,36 +69,41 @@ export const LeaderBoardCard: FC<{
                 </StyledTableCell>
               </StyledTableRow>
             </TableHead>
+            <TableBody>
+              {props.stats?.userLeaderboard.map((item) => (
+                <StyledTableRow key={item.user.id}>
+                  <StyledTableCell size="small">
+                    <Stack direction="row" alignItems="center" gap={2}>
+                      {winnerPodium.map(
+                        (podium) =>
+                          item.rank === podium.rank && (
+                            <FaCrown
+                              key={podium.rank}
+                              color={podium.color}
+                              size="28px"
+                            />
+                          ),
+                      )}
+                      {!winnerPodium.map((a) => a.rank).includes(item.rank) && (
+                        <div style={{ width: "28px" }} />
+                      )}
 
-            {props.stats?.userLeaderboard.map((item) => (
-              <StyledTableRow key={item.user.id}>
-                <StyledTableCell size="small">
-                  <Stack direction="row" alignItems="center" gap={2}>
-                    {winnerPodium.map(
-                      (podium) =>
-                        item.rank === podium.rank && (
-                          <FaCrown color={podium.color} size="28px" />
-                        ),
-                    )}
-                    {!winnerPodium.map((a) => a.rank).includes(item.rank) && (
-                      <div style={{ width: "28px" }} />
-                    )}
+                      <Avatar
+                        sx={{ position: "unset" }}
+                        src={item.user.avatarUrl ?? undefined}
+                      />
 
-                    <Avatar
-                      sx={{ position: "unset" }}
-                      src={item.user.avatarUrl ?? undefined}
-                    />
-
-                    <Typography variant="body1">{item.user.name}</Typography>
-                  </Stack>
-                </StyledTableCell>
-                <StyledTableCell size="small">
-                  <Typography variant="body1" textAlign="center">
-                    {item.submittedExerciseCount}
-                  </Typography>
-                </StyledTableCell>
-              </StyledTableRow>
-            ))}
+                      <Typography variant="body1">{item.user.name}</Typography>
+                    </Stack>
+                  </StyledTableCell>
+                  <StyledTableCell size="small">
+                    <Typography variant="body1" textAlign="center">
+                      {item.submittedExerciseCount} db
+                    </Typography>
+                  </StyledTableCell>
+                </StyledTableRow>
+              ))}
+            </TableBody>
           </Table>
         </TableContainer>
       )}
