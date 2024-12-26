@@ -9,10 +9,9 @@ import { Bar } from "react-chartjs-2";
 import { CategoryScale, Chart, LinearScale } from "chart.js/auto";
 import { useEffect } from "react";
 import { ProfileStatCard } from "@/components/profile/ProfileStatCard.tsx";
-import { MdOutlineSummarize } from "react-icons/md";
 import { FaDiceD6 } from "react-icons/fa6";
 import { FaCheck } from "react-icons/fa";
-import { green, lightBlue, lightGreen } from "@mui/material/colors";
+import { lightBlue, lightGreen } from "@mui/material/colors";
 
 export const HomePage = () => {
   const user = useAtomValue(userAtom);
