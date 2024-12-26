@@ -230,7 +230,9 @@ export type ExerciseUpdateInput = {
 
 export type GlobalStats = {
   __typename: 'GlobalStats';
+  checkedExerciseCount: Scalars['Int']['output'];
   exerciseHourlyCount: Array<ExerciseHourlyGroup>;
+  totalExerciseCount: Scalars['Int']['output'];
   userLeaderboard: Array<LeaderBoardUser>;
 };
 
@@ -625,7 +627,7 @@ export type SearchExercisesQuery = { __typename: 'Query', searchExercises: { __t
 export type StatsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type StatsQuery = { __typename: 'Query', globalStats?: { __typename: 'GlobalStats', exerciseHourlyCount: Array<{ __typename: 'ExerciseHourlyGroup', count: number, hour: string }>, userLeaderboard: Array<{ __typename: 'LeaderBoardUser', rank: number, submittedExerciseCount: number, user: { __typename: 'User', id: string, name: string, avatarUrl?: string | null } }> } | null };
+export type StatsQuery = { __typename: 'Query', globalStats?: { __typename: 'GlobalStats', checkedExerciseCount: number, totalExerciseCount: number, exerciseHourlyCount: Array<{ __typename: 'ExerciseHourlyGroup', count: number, hour: string }>, userLeaderboard: Array<{ __typename: 'LeaderBoardUser', rank: number, submittedExerciseCount: number, user: { __typename: 'User', id: string, name: string, avatarUrl?: string | null } }> } | null };
 
 export type UpdateExerciseMutationVariables = Exact<{
   id: Scalars['ID']['input'];
@@ -1479,6 +1481,8 @@ export type SearchExercisesQueryResult = Apollo.QueryResult<SearchExercisesQuery
 export const StatsDocument = gql`
     query stats {
   globalStats {
+    checkedExerciseCount
+    totalExerciseCount
     exerciseHourlyCount {
       count
       hour

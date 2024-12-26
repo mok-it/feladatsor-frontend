@@ -8,6 +8,11 @@ import { StatCard } from "@/components/StatCard.tsx";
 import { Bar } from "react-chartjs-2";
 import { CategoryScale, Chart, LinearScale } from "chart.js/auto";
 import { useEffect } from "react";
+import { ProfileStatCard } from "@/components/profile/ProfileStatCard.tsx";
+import { MdOutlineSummarize } from "react-icons/md";
+import { FaDiceD6 } from "react-icons/fa6";
+import { FaCheck } from "react-icons/fa";
+import { green, lightBlue, lightGreen } from "@mui/material/colors";
 
 export const HomePage = () => {
   const user = useAtomValue(userAtom);
@@ -38,6 +43,34 @@ export const HomePage = () => {
         </div>
       )}
       <Grid2 container spacing={2}>
+        <Grid2 container size={12}>
+          <Grid2
+            size={{
+              xs: 6,
+              md: 3,
+            }}
+          >
+            <ProfileStatCard
+              value={data?.globalStats?.totalExerciseCount + " db"}
+              title="Összes feladat"
+              icon={FaDiceD6}
+              iconColor={lightBlue["600"]}
+            />
+          </Grid2>
+          <Grid2
+            size={{
+              xs: 6,
+              md: 3,
+            }}
+          >
+            <ProfileStatCard
+              value={data?.globalStats?.checkedExerciseCount + " db"}
+              title="Ellenőrzött feladat"
+              icon={FaCheck}
+              iconColor={lightGreen["600"]}
+            />
+          </Grid2>
+        </Grid2>
         <Grid2
           size={{
             xs: 12,
