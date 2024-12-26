@@ -168,6 +168,8 @@ export type ExerciseSearchQuery = {
   difficulty?: InputMaybe<Array<ExerciseDifficultyRange>>;
   excludeTags?: InputMaybe<Array<Scalars['ID']['input']>>;
   isCompetitionFinal?: InputMaybe<Scalars['Boolean']['input']>;
+  orderBy?: InputMaybe<Scalars['String']['input']>;
+  orderDirection?: InputMaybe<OrderDirection>;
   queryStr?: InputMaybe<Scalars['String']['input']>;
   skip: Scalars['Int']['input'];
   tags?: InputMaybe<Array<Scalars['ID']['input']>>;
@@ -385,6 +387,10 @@ export type MutationUpdateUserArgs = {
   data: UserUpdateInput;
   id?: InputMaybe<Scalars['ID']['input']>;
 };
+
+export type OrderDirection =
+  | 'ASC'
+  | 'DESC';
 
 export type Query = {
   __typename: 'Query';
@@ -608,7 +614,7 @@ export type ExerciseCommentFragment = { __typename: 'ExerciseComment', id: strin
 
 export type ExerciseHistoryFragment = { __typename: 'ExerciseHistory', id: string, field: string, oldValue: string, newValue: string, createdAt: string, createdBy: { __typename: 'User', id: string, name: string } };
 
-export type ExerciseListElemFragment = { __typename: 'Exercise', id: string, description: string, status: ExerciseStatus, exerciseImage?: { __typename: 'Image', url: string } | null, difficulty: Array<{ __typename: 'ExerciseDifficulty', ageGroup: ExerciseAgeGroup, difficulty: number }>, tags: Array<{ __typename: 'Tag', id: string, name: string }> };
+export type ExerciseListElemFragment = { __typename: 'Exercise', id: string, description: string, status: ExerciseStatus, createdAt: string, exerciseImage?: { __typename: 'Image', url: string } | null, difficulty: Array<{ __typename: 'ExerciseDifficulty', ageGroup: ExerciseAgeGroup, difficulty: number }>, tags: Array<{ __typename: 'Tag', id: string, name: string }> };
 
 export type LoginMutationVariables = Exact<{
   name: Scalars['String']['input'];
@@ -637,7 +643,7 @@ export type SearchExercisesQueryVariables = Exact<{
 }>;
 
 
-export type SearchExercisesQuery = { __typename: 'Query', searchExercises: { __typename: 'ExerciseSearchResult', totalCount: number, exercises: Array<{ __typename: 'Exercise', id: string, description: string, status: ExerciseStatus, exerciseImage?: { __typename: 'Image', url: string } | null, difficulty: Array<{ __typename: 'ExerciseDifficulty', ageGroup: ExerciseAgeGroup, difficulty: number }>, tags: Array<{ __typename: 'Tag', id: string, name: string }> }> } };
+export type SearchExercisesQuery = { __typename: 'Query', searchExercises: { __typename: 'ExerciseSearchResult', totalCount: number, exercises: Array<{ __typename: 'Exercise', id: string, description: string, status: ExerciseStatus, createdAt: string, exerciseImage?: { __typename: 'Image', url: string } | null, difficulty: Array<{ __typename: 'ExerciseDifficulty', ageGroup: ExerciseAgeGroup, difficulty: number }>, tags: Array<{ __typename: 'Tag', id: string, name: string }> }> } };
 
 export type StatsQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -715,6 +721,7 @@ export const ExerciseListElemFragmentDoc = gql`
     id
     name
   }
+  createdAt
 }
     `;
 export const ChangePermissionsDocument = gql`

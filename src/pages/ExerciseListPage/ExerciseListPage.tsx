@@ -3,6 +3,7 @@ import { InfiniteLoad } from "@/components/InfiniteLoad/InfiniteLoad";
 import { MultiSelect } from "@/components/MultiSelect.tsx";
 import { SimpleAccordion } from "@/components/SimpleAccordion.tsx";
 import {
+  Exercise,
   ExerciseAgeGroup,
   ExerciseListElemFragment,
   useSearchExercisesLazyQuery,
@@ -20,6 +21,7 @@ import {
   Table,
   TableBody,
   TableHead,
+  TableSortLabel,
   TextField,
   Typography,
 } from "@mui/material";
@@ -68,6 +70,8 @@ export const ExerciseListPage = () => {
   const [getData, { loading }] = useSearchExercisesLazyQuery({
     fetchPolicy: "cache-and-network",
   });
+  const [orderBy, setOrderBy] = useState<keyof Exercise | null>(null);
+  const [order, setOrder] = useState<"asc" | "desc">("asc");
 
   const fetchMore = useCallback(async () => {
     const skip = data.length || 0;
@@ -80,6 +84,8 @@ export const ExerciseListPage = () => {
           take: LIMIT,
           difficulty,
           queryStr: exerciseQuery.searchQuery,
+          orderBy: orderBy,
+          orderDirection: order === "asc" ? "ASC" : "DESC",
         },
       },
     });
@@ -94,6 +100,8 @@ export const ExerciseListPage = () => {
     getData,
     difficulty,
     exerciseQuery.searchQuery,
+    orderBy,
+    order,
     setData,
     setHasMore,
   ]);
@@ -113,7 +121,44 @@ export const ExerciseListPage = () => {
     setHasMore(true);
     reset();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [exerciseQuery]);
+  }, [exerciseQuery, orderBy, order]);
+
+  const headCells: {
+    id: keyof Exercise;
+    label: string;
+    sortable: boolean;
+  }[] = [
+    {
+      id: "id",
+      label: "fID",
+      sortable: true,
+    },
+    {
+      id: "difficulty",
+      label: "Nehézség",
+      sortable: false,
+    },
+    {
+      id: "status",
+      label: "Státusz",
+      sortable: true,
+    },
+    {
+      id: "tags",
+      label: "Címkék",
+      sortable: false,
+    },
+    {
+      id: "description",
+      label: "Feladat",
+      sortable: true,
+    },
+    {
+      id: "createdAt",
+      label: "Létrehozva",
+      sortable: true,
+    },
+  ];
 
   return (
     <Card>
@@ -175,11 +220,30 @@ export const ExerciseListPage = () => {
           >
             <TableHead>
               <StyledTableRow>
-                <StyledTableCell>fID</StyledTableCell>
-                <StyledTableCell>Nehézség</StyledTableCell>
-                <StyledTableCell>Státusz</StyledTableCell>
-                <StyledTableCell sx={{ pl: 2.5 }}>Címkék</StyledTableCell>
-                <StyledTableCell>Feladat</StyledTableCell>
+                {headCells.map((headCell) => (
+                  <StyledTableCell
+                    key={headCell.id}
+                    sortDirection={orderBy === headCell.id ? order : false}
+                    sx={headCell.id === "tags" ? { pl: 2.5 } : {}}
+                  >
+                    {headCell.sortable ? (
+                      <TableSortLabel
+                        active={orderBy === headCell.id}
+                        direction={orderBy === headCell.id ? order : "asc"}
+                        onClick={() => {
+                          setOrderBy(headCell.id);
+                          setOrder((order) =>
+                            order === "asc" ? "desc" : "asc",
+                          );
+                        }}
+                      >
+                        {headCell.label}
+                      </TableSortLabel>
+                    ) : (
+                      headCell.label
+                    )}
+                  </StyledTableCell>
+                ))}
               </StyledTableRow>
             </TableHead>
             <TableBody>

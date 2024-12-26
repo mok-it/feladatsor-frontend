@@ -8,6 +8,7 @@ import { useNavigate } from "react-router-dom";
 import { CategoryDifficulties } from "../CategoryDifficulties";
 import { KaTeX } from "../Katex";
 import { StyledTableRow } from "@/components/StyledTableRow.tsx";
+import dayjs from "dayjs";
 
 const ExerciseRow: FC<{ data: ExerciseListElemFragment }> = ({ data }) => {
   const navigate = useNavigate();
@@ -31,7 +32,7 @@ const ExerciseRow: FC<{ data: ExerciseListElemFragment }> = ({ data }) => {
       }}
     >
       <TableCell sx={{ minWidth: 100 }}>
-        <Chip label={data.id} />
+        <Chip label={"#" + data.id} />
       </TableCell>
       <TableCell sx={{ minWidth: 210 }}>
         <CategoryDifficulties value={difficulties} />
@@ -57,6 +58,9 @@ const ExerciseRow: FC<{ data: ExerciseListElemFragment }> = ({ data }) => {
             <KaTeX value={data.description} />
           </Box>
         </Tooltip>
+      </TableCell>
+      <TableCell sx={{ verticalAlign: "left" }}>
+        {dayjs(+data.createdAt).format("YYYY. MM. DD.")}
       </TableCell>
     </StyledTableRow>
   );
