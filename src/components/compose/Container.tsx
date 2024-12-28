@@ -7,7 +7,7 @@ import { Item } from "./Item";
 
 export const ContainerContext = createContext<string | null>(null);
 
-const Container: FC<{ items: UniqueIdentifier[]; id: string }> = ({
+const Container: FC<{ items: (UniqueIdentifier | null)[]; id: string }> = ({
   items,
   id,
 }) => {
@@ -16,17 +16,19 @@ const Container: FC<{ items: UniqueIdentifier[]; id: string }> = ({
   });
 
   return (
-    <Stack
-      ref={setNodeRef}
-      height={"100%"}
-      alignItems={"center"}
-      gap={1}
-      pb={4}
-    >
-      {items.map((cardId: UniqueIdentifier) => (
-        <Item key={cardId} id={cardId} />
-      ))}
-    </Stack>
+    <ContainerContext.Provider value={id}>
+      <Stack
+        ref={setNodeRef}
+        height={"100%"}
+        alignItems={"center"}
+        gap={1}
+        pb={4}
+      >
+        {items.map((cardId: UniqueIdentifier | null, i) => (
+          <Item key={i} order={i} id={cardId} />
+        ))}
+      </Stack>
+    </ContainerContext.Provider>
   );
 };
 

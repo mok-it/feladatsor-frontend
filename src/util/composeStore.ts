@@ -8,16 +8,16 @@ export enum ExerciseView {
 }
 type ComposeView = ExerciseAgeGroup | "all";
 type TState = {
-  selectedId: string | null;
-  hoverLocation: string | null;
-  hoverIndex: number | null;
+  selectedContainer: string | null;
+  selectedOrder: number | null;
   view: ComposeView;
   exerciseView: ExerciseView;
   name: string;
 };
 
 type TActions = {
-  setSelectedId: (id: string | null) => void;
+  setSelected: (containerId: string, order: number) => void;
+  clear: () => void;
   setView: (view: ComposeView) => void;
   setExerciseView: (view: ExerciseView) => void;
   setValue: (values: Partial<TState>) => void;
@@ -25,9 +25,8 @@ type TActions = {
 };
 
 const defaultState: TState = {
-  selectedId: null,
-  hoverLocation: null,
-  hoverIndex: null,
+  selectedContainer: null,
+  selectedOrder: null,
   view: "all",
   exerciseView: ExerciseView.CARD,
   name: "",
@@ -36,9 +35,16 @@ const defaultState: TState = {
 export const composeStore = create<TState & TActions>()(
   immer((set) => ({
     ...defaultState,
-    setSelectedId: (id) => {
+    setSelected: (containerId, order) => {
       set((state) => {
-        state.selectedId = id;
+        state.selectedContainer = containerId;
+        state.selectedOrder = order;
+      });
+    },
+    clear: () => {
+      set((state) => {
+        state.selectedContainer = null;
+        state.selectedOrder = null;
       });
     },
     setView: (view) => {
