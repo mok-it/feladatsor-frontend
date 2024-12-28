@@ -7,7 +7,14 @@ const Layout: FC = () => {
   return (
     <Stack direction="row" sx={{ height: "100%" }}>
       <Sidebar />
-      <Box p={4} width={`calc(100% - ${drawerWidth}px)`}>
+      <Box
+        sx={{
+          width: { md: `calc(100% - ${drawerWidth}px)` },
+          py: { xs: 8, md: 4 },
+          px: { xs: 2, md: 4 },
+        }}
+        component={"div"}
+      >
         <Outlet />
       </Box>
     </Stack>
