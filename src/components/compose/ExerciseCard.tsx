@@ -90,7 +90,7 @@ const ExerciseCard: FC<{
     exerciseView === ExerciseView.CARD
       ? view === "all"
         ? 72
-        : 198
+        : 196
       : "fit-content";
 
   return (

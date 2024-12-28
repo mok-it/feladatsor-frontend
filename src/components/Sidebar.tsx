@@ -8,8 +8,7 @@ import {
   ListItemButton,
   ListItemText,
   Stack,
-  ToggleButton,
-  ToggleButtonGroup,
+  Switch,
   Typography,
   alpha,
   useColorScheme,
@@ -106,25 +105,26 @@ export const Sidebar = () => {
               </Stack>
             </ListItemButton>
           </Stack>
-          <ToggleButtonGroup
-            sx={{ mt: "auto" }}
-            color="primary"
-            value={mode}
-            exclusive
-            onChange={(_, value) => {
-              setMode(value);
-            }}
-          >
-            <ToggleButton sx={{ flexGrow: 1 }} value="light">
-              Light
-            </ToggleButton>
-            <ToggleButton sx={{ flexGrow: 1 }} value="dark">
-              Dark
-            </ToggleButton>
-            <ToggleButton sx={{ flexGrow: 1 }} value="system">
-              System
-            </ToggleButton>
-          </ToggleButtonGroup>
+          <Stack direction={"row"} alignItems={"center"} sx={{ mt: "auto" }}>
+            <Switch
+              checked={mode === "dark"}
+              onChange={(_, value) => {
+                setMode(value ? "dark" : "light");
+              }}
+            />
+            <Typography
+              variant="caption"
+              sx={{
+                borderRadius: 0.75,
+                typography: "body2",
+                color: "text.secondary",
+                textTransform: "capitalize",
+                fontWeight: "fontWeightMedium",
+              }}
+            >
+              Dark mode
+            </Typography>
+          </Stack>
         </Stack>
       </Box>
     </Drawer>
