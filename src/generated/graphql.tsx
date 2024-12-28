@@ -626,7 +626,7 @@ export type ExerciseSheetsQuery = { __typename: 'Query', exerciseSheets: Array<{
 export type ExerciseTagsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type ExerciseTagsQuery = { __typename: 'Query', exerciseTags: Array<{ __typename: 'ExerciseTag', id: string, name: string, exerciseCount: number, children: Array<{ __typename: 'ExerciseTag', id: string, name: string, children: Array<{ __typename: 'ExerciseTag', id: string, name: string }> }> }> };
+export type ExerciseTagsQuery = { __typename: 'Query', flatExerciseTags: Array<{ __typename: 'ExerciseTag', id: string, name: string, exerciseCount: number, children: Array<{ __typename: 'ExerciseTag', id: string }> }> };
 
 export type FlatExerciseTagsQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -1335,17 +1335,12 @@ export type ExerciseSheetsSuspenseQueryHookResult = ReturnType<typeof useExercis
 export type ExerciseSheetsQueryResult = Apollo.QueryResult<ExerciseSheetsQuery, ExerciseSheetsQueryVariables>;
 export const ExerciseTagsDocument = gql`
     query ExerciseTags {
-  exerciseTags {
+  flatExerciseTags {
     id
     name
     exerciseCount
     children {
       id
-      name
-      children {
-        id
-        name
-      }
     }
   }
 }

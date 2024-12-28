@@ -1,45 +1,119 @@
-import { Card, Skeleton, Typography } from "@mui/material";
+import { useExerciseTagsQuery } from "@/generated/graphql.tsx";
+import { ExerciseTag } from "@/util/types";
+import {
+  Card,
+  Grid2,
+  InputAdornment,
+  Stack,
+  TextField,
+  Typography,
+} from "@mui/material";
 import Box from "@mui/material/Box";
-import { ExerciseTag, useExerciseTagsQuery } from "@/generated/graphql.tsx";
-import { FC } from "react";
 import Chip from "@mui/material/Chip";
+import { FC, useMemo, useState } from "react";
+import { IoSearch } from "react-icons/io5";
+import { useDebounce } from "react-use";
 
 export const TagsPage = () => {
-  const { data, loading } = useExerciseTagsQuery();
+  const { data } = useExerciseTagsQuery();
+  const [search, setSearch] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
+
+  useDebounce(
+    () => {
+      setDebouncedSearch(search);
+    },
+    500,
+    [search],
+  );
+
+  const memoizedTags = useMemo(
+    () =>
+      data?.flatExerciseTags
+        .filter((t) =>
+          t.name.toLowerCase().includes(debouncedSearch.toLowerCase()),
+        )
+        .map((tag) => (
+          <Grid2 size={3}>
+            <TagLabel key={tag.id} tag={tag} tags={data?.flatExerciseTags} />
+          </Grid2>
+        )),
+    [data, debouncedSearch],
+  );
   return (
     <Box mb={16}>
-      <Typography variant="h4" style={{ margin: "16px" }}>
-        Címkék
-      </Typography>
-      {loading && <Skeleton variant="rounded" height={20} width={"100%"} />}
-      <Card>
-        {data && (
-          <Box p={2}>
-            {data.exerciseTags.map((tag) => (
-              // @ts-ignore
-              <Tag key={tag.id} tag={tag} />
-            ))}
-          </Box>
-        )}
-      </Card>
+      <Stack direction={"row"} mx={2}>
+        <Typography variant="h4" mb={2} sx={{ flexGrow: 1 }}>
+          Címkék
+        </Typography>
+      </Stack>
+      <Grid2 container columns={2} spacing={2}>
+        <Grid2 size={1}>
+          <Card sx={{ p: 2 }}>
+            <Grid2 columns={1} container spacing={2} pb={6}>
+              {memoizedTags}
+            </Grid2>
+          </Card>
+        </Grid2>
+        <Grid2 size={1}>
+          <Card sx={{ p: 2 }}>
+            <TextField
+              onChange={(event) => {
+                setSearch(event.target.value);
+              }}
+              label="Keresés"
+              value={search}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <IoSearch />
+                  </InputAdornment>
+                ),
+              }}
+              size="small"
+            />
+          </Card>
+        </Grid2>
+      </Grid2>
     </Box>
   );
 };
 
-const Tag: FC<{
-  tag: Omit<ExerciseTag, "children"> & Partial<Pick<ExerciseTag, "children">>;
-}> = ({ tag }) => {
+const TagLabel: FC<{
+  tag: Partial<ExerciseTag>;
+  tags: ExerciseTag[];
+}> = ({ tag, tags }) => {
+  const [expanded, setExpanded] = useState(false);
+
+  const hasChildren = Boolean(tag.children?.length);
+
   return (
-    <Box>
-      <Chip label={tag.name} />
-      <Typography variant="body2">Feladat db: {tag.exerciseCount}</Typography>
-      {tag.children && (
-        <Box ml={2}>
-          {tag.children.map((child) => (
-            <Tag key={child.id} tag={child} />
-          ))}
-        </Box>
+    <Stack gap={1} alignItems={"start"}>
+      <Chip
+        label={`${tag.name} ${tag.exerciseCount ? `(${tag.exerciseCount})` : ""}`}
+      />
+      {hasChildren && (
+        <Typography
+          fontSize={12}
+          sx={{
+            ml: 2,
+            cursor: "pointer",
+            userSelect: "none",
+            ":hover": { textDecoration: "underline" },
+          }}
+          onClick={() => hasChildren && setExpanded((prev) => !prev)}
+        >
+          {tag.children?.length} alcímke
+        </Typography>
       )}
-    </Box>
+      {expanded && hasChildren && (
+        <Stack pl={2} gap={1} alignItems={"start"}>
+          {tag.children?.map((child) => {
+            const tag = tags.find((t) => t.id === child.id);
+            return tag && <TagLabel key={child.id} tag={tag} tags={tags} />;
+          })}
+        </Stack>
+      )}
+    </Stack>
   );
 };
