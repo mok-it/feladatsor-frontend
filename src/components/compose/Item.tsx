@@ -4,7 +4,9 @@ import { composeAtom } from "@/util/atoms";
 import { composeStore, ExerciseView } from "@/util/composeStore";
 import type { UniqueIdentifier } from "@dnd-kit/core";
 import { Box, Skeleton } from "@mui/material";
-import { useAtomValue, useSetAtom } from "jotai";
+import { motion } from "framer-motion";
+import { useSetAtom } from "jotai";
+import { uniqueId } from "lodash";
 import { FC, useContext } from "react";
 import { ContainerContext } from "./Container";
 import { Placeholder } from "./Placeholder";
@@ -12,7 +14,8 @@ import { Placeholder } from "./Placeholder";
 export const Item: FC<{
   order: number;
   id: UniqueIdentifier | null;
-}> = ({ id, order }) => {
+  cardId: string;
+}> = ({ id, order, cardId }) => {
   const { data, loading } = useSelectExerciseQuery({
     variables: {
       exerciseId: String(id),
@@ -27,7 +30,6 @@ export const Item: FC<{
   const exerciseView = composeStore((state) => state.exerciseView);
   const view = composeStore((state) => state.view);
   const setItems = useSetAtom(composeAtom);
-  const items = useAtomValue(composeAtom);
 
   const height =
     exerciseView === ExerciseView.CARD
@@ -38,6 +40,7 @@ export const Item: FC<{
   if (loading) {
     return <Skeleton width={"100%"} height={height} />;
   }
+
   return (
     <Box
       width={"100%"}
@@ -57,17 +60,6 @@ export const Item: FC<{
       onClick={() => {
         if (exerciseView !== ExerciseView.CARD) return;
         if (!containerId) return;
-        console.log({
-          selectedContainer,
-          selectedOrder,
-          containerId,
-          order,
-          items,
-          id:
-            selectedContainer &&
-            selectedOrder &&
-            items[selectedContainer][selectedOrder],
-        });
 
         if (containerId === selectedContainer && order === selectedOrder) {
           // same as selected
@@ -76,10 +68,18 @@ export const Item: FC<{
           // something is selected
           if (containerId === "talon") return;
           setItems((draft) => {
-            const tempId = draft[selectedContainer][selectedOrder];
-            draft[containerId][order] = tempId;
+            const aId = draft[selectedContainer][selectedOrder].id;
+            const aCardId = draft[selectedContainer][selectedOrder].cardId;
+            const bId = draft[containerId][order].id;
+            const bCardId = draft[containerId][order].cardId;
+            draft[containerId][order] = { id: aId, cardId: aCardId };
             if (selectedContainer !== "talon") {
-              draft[selectedContainer][selectedOrder] = id;
+              draft[selectedContainer][selectedOrder] = {
+                id: bId,
+                cardId: bCardId,
+              };
+            } else {
+              draft[selectedContainer][selectedOrder].cardId = uniqueId();
             }
           });
           clear();
@@ -90,7 +90,17 @@ export const Item: FC<{
       }}
     >
       {id && data?.exercise ? (
-        <ExerciseCard id={id} exercise={data.exercise} />
+        <motion.div layout layoutId={cardId}>
+          {/* <Typography
+            variant="body1"
+            fontSize={10}
+            sx={{ opacity: 0.5 }}
+            zIndex={50}
+          >
+            {cardId}
+          </Typography> */}
+          <ExerciseCard id={id} exercise={data.exercise} />
+        </motion.div>
       ) : (
         <Placeholder order={order} />
       )}

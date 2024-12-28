@@ -1,5 +1,4 @@
 import type { UniqueIdentifier } from "@dnd-kit/core";
-import { useDroppable } from "@dnd-kit/core";
 import { createContext, memo, type FC } from "react";
 
 import { Stack } from "@mui/material";
@@ -7,25 +6,15 @@ import { Item } from "./Item";
 
 export const ContainerContext = createContext<string | null>(null);
 
-const Container: FC<{ items: (UniqueIdentifier | null)[]; id: string }> = ({
-  items,
-  id,
-}) => {
-  const { setNodeRef } = useDroppable({
-    id: id,
-  });
-
+const Container: FC<{
+  items: { id: UniqueIdentifier | null; cardId: string }[];
+  id: string;
+}> = ({ items, id }) => {
   return (
     <ContainerContext.Provider value={id}>
-      <Stack
-        ref={setNodeRef}
-        height={"100%"}
-        alignItems={"center"}
-        gap={1}
-        pb={4}
-      >
-        {items.map((cardId: UniqueIdentifier | null, i) => (
-          <Item key={i} order={i} id={cardId} />
+      <Stack height={"100%"} alignItems={"center"} gap={1} pb={4}>
+        {items.map(({ id, cardId }, i) => (
+          <Item key={cardId} order={i} id={id} cardId={cardId} />
         ))}
       </Stack>
     </ContainerContext.Provider>

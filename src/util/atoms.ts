@@ -3,7 +3,7 @@ import { ExerciseFieldsType } from "@/types/ExerciseFieldsType";
 import { UniqueIdentifier } from "@dnd-kit/core";
 import { atomWithImmer } from "jotai-immer";
 import { atomWithStorage, createJSONStorage } from "jotai/utils";
-import { keys, times } from "lodash";
+import { keys, times, uniqueId } from "lodash";
 import { mock, mock3 } from "./mocks";
 import { ageGroups, ExerciseCardData, ExercisePlacements } from "./types";
 
@@ -27,8 +27,11 @@ export const exerciseCardsAtom = atomWithImmer<ExerciseCardData[]>([
   mock,
   mock3,
 ]);
-const composeAtomDefault: Record<string, (UniqueIdentifier | null)[]> = {
-  talon: ["2024361"],
+const composeAtomDefault: Record<
+  string,
+  { id: UniqueIdentifier | null; cardId: string }[]
+> = {
+  talon: [{ id: "2024361", cardId: uniqueId() }],
 };
 
 const difficultyItemCount: Record<number, number> = {
@@ -40,15 +43,15 @@ const difficultyItemCount: Record<number, number> = {
 for (let i = 0; i < 4; i++) {
   keys(ageGroups).forEach((ageGroup) => {
     composeAtomDefault[`${ageGroup}-${i}`] = times(difficultyItemCount[i]).map(
-      () => null,
+      () => ({ id: null, cardId: uniqueId() }),
     );
   });
 }
 
 export const composeAtom =
-  atomWithImmer<Record<string, (UniqueIdentifier | null)[]>>(
-    composeAtomDefault,
-  );
+  atomWithImmer<
+    Record<string, { id: UniqueIdentifier | null; cardId: string }[]>
+  >(composeAtomDefault);
 
 export const exercisePlacementsAtom = atomWithImmer<ExercisePlacements>({});
 

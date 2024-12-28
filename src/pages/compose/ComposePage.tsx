@@ -63,7 +63,7 @@ const ComposePage: FC = () => {
       data.sheetItems?.push({
         ageGroup: ageGroup as ExerciseAgeGroup,
         level: parseInt(level),
-        exercises: exercises.filter((x) => x) as string[],
+        exercises: exercises.filter((x) => x.id).map((x) => x.id) as string[],
       });
     });
     await mutate({
