@@ -52,6 +52,13 @@ query selectExercise($exerciseId: ID!) {
       url
     }
     solveIdea
+    source
+    createdAt
+    createdBy {
+      id
+      name
+      avatarUrl
+    }
     solveIdeaImage {
       id
       url
