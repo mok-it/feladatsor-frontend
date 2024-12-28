@@ -4,9 +4,11 @@ import { MdMenu } from "react-icons/md";
 import { Outlet } from "react-router-dom";
 import { useToggle } from "react-use";
 import { drawerWidth, Sidebar } from "./components/Sidebar";
+import { useScrollRestoration } from "./util/useScrollRestoration";
 
 const Layout: FC = () => {
   const [open, toggle] = useToggle(false);
+  useScrollRestoration();
 
   return (
     <Stack direction="row" sx={{ height: "100%" }}>
