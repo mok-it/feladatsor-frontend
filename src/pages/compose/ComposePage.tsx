@@ -4,7 +4,7 @@ import {
   useExerciseSheetQuery,
   useUpdateExerciseSheetMutation,
 } from "@/generated/graphql.tsx";
-import { composeAtom } from "@/util/atoms";
+import { useComposeAtom } from "@/util/atoms";
 import { ExerciseView, composeStore } from "@/util/composeStore";
 import { LoadingButton } from "@mui/lab";
 import {
@@ -18,8 +18,7 @@ import {
   Typography,
 } from "@mui/material";
 import { Stack } from "@mui/system";
-import { useAtomValue } from "jotai";
-import { entries } from "lodash";
+import { entries, uniqueId } from "lodash";
 import { useSnackbar } from "notistack";
 import { FC, useCallback } from "react";
 import { MdDone, MdEdit } from "react-icons/md";
@@ -33,12 +32,29 @@ const ComposePage: FC = () => {
   const { id } = useParams();
 
   const setName = composeStore((state) => state.setName);
-  const exerciseSheetResult = useExerciseSheetQuery({
+  const { items, setItems, reset } = useComposeAtom();
+  const { loading } = useExerciseSheetQuery({
     variables: {
       exerciseSheetId: id ?? "",
     },
     onCompleted: (data) => {
       setName(data.exerciseSheet?.name ?? "");
+      reset();
+      setItems((draft) => {
+        data.exerciseSheet?.sheetItems?.forEach((item) => {
+          item.exercises.forEach((exercise, i) => {
+            const key = `${item.ageGroup}-${item.level}`;
+            if (!draft[key]) {
+              return;
+            }
+            draft[`${item.ageGroup}-${item.level}`][i] = {
+              id: exercise.exercise.id,
+              cardId: uniqueId(),
+            };
+          });
+        });
+        return draft;
+      });
     },
   });
   const [mutate, mutationState] = useUpdateExerciseSheetMutation();
@@ -49,7 +65,6 @@ const ComposePage: FC = () => {
   const setValue = composeStore((state) => state.setValue);
   const setView = composeStore((state) => state.setView);
   const [isNameEditing, toggleNameEditing] = useToggle(false);
-  const items = useAtomValue(composeAtom);
   const snack = useSnackbar();
 
   const save = useCallback(async () => {
@@ -63,7 +78,12 @@ const ComposePage: FC = () => {
       data.sheetItems?.push({
         ageGroup: ageGroup as ExerciseAgeGroup,
         level: parseInt(level),
-        exercises: exercises.filter((x) => x.id).map((x) => x.id) as string[],
+        exercises: exercises
+          .filter((x) => x.id)
+          .map((item, i) => ({
+            exerciseID: item.id! as string,
+            order: i,
+          })),
       });
     });
     await mutate({
@@ -145,7 +165,7 @@ const ComposePage: FC = () => {
           </LoadingButton>
         </Stack>
       </Stack>
-      <Compose exerciseSheet={exerciseSheetResult.data?.exerciseSheet} />
+      {!loading && <Compose />}
     </>
   );
 };

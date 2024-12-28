@@ -32,11 +32,11 @@ export const Item: FC<{
   const setItems = useSetAtom(composeAtom);
 
   const height =
-    exerciseView === ExerciseView.CARD
-      ? view === "all"
-        ? 76
-        : 200
-      : "fit-content";
+    view === "all"
+      ? 76
+      : exerciseView === ExerciseView.CARD
+        ? 200
+        : "fit-content";
   if (loading) {
     return <Skeleton width={"100%"} height={height} />;
   }
@@ -102,7 +102,7 @@ export const Item: FC<{
           <ExerciseCard id={id} exercise={data.exercise} />
         </motion.div>
       ) : (
-        <Placeholder order={order} />
+        <Placeholder order={order} height={height} />
       )}
     </Box>
   );

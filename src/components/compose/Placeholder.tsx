@@ -1,13 +1,16 @@
 import { Card, Stack, Typography } from "@mui/material";
 import { FC } from "react";
 
-export const Placeholder: FC<{ order: number }> = ({ order }) => {
+export const Placeholder: FC<{ order: number; height: number | string }> = ({
+  order,
+  height,
+}) => {
   return (
     <Card
       component={"div"}
       sx={{
         width: "100%",
-        height: 76,
+        height,
         borderRadius: 1,
         background: "transparent",
         transition: "0.2s",

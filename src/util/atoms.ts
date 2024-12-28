@@ -1,6 +1,7 @@
 import { User as TotalUser } from "@/generated/graphql.tsx";
 import { ExerciseFieldsType } from "@/types/ExerciseFieldsType";
 import { UniqueIdentifier } from "@dnd-kit/core";
+import { useAtom } from "jotai";
 import { atomWithImmer } from "jotai-immer";
 import { atomWithStorage, createJSONStorage } from "jotai/utils";
 import { keys, times, uniqueId } from "lodash";
@@ -52,6 +53,14 @@ export const composeAtom =
   atomWithImmer<
     Record<string, { id: UniqueIdentifier | null; cardId: string }[]>
   >(composeAtomDefault);
+
+export const useComposeAtom = () => {
+  const [items, setItems] = useAtom(composeAtom);
+  const reset = () => {
+    setItems(composeAtomDefault);
+  };
+  return { items, setItems, reset };
+};
 
 export const exercisePlacementsAtom = atomWithImmer<ExercisePlacements>({});
 

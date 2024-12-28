@@ -7,17 +7,36 @@ query exerciseSheet($exerciseSheetId: ID!) {
       ageGroup
       level
       exercises {
-        id
-        exerciseImage {
-          url
+        order
+        exercise {
+          id
+          exerciseImage {
+            url
+          }
+          difficulty {
+            ageGroup
+            difficulty
+          }
+          description
         }
-        difficulty {
-          ageGroup
-          difficulty
-        }
-        description
       }
     }
+    # talonItems {
+    #   exercises {
+    #     order
+    #     exercise {
+    #       id
+    #       exerciseImage {
+    #         url
+    #       }
+    #       difficulty {
+    #         ageGroup
+    #         difficulty
+    #       }
+    #       description
+    #     }
+    #   }
+    # }
     createdAt
     updatedAt
     createdBy {

@@ -1,41 +1,16 @@
-import { FC, Fragment, useEffect } from "react";
+import { FC, Fragment } from "react";
 
-import { ExerciseSheetQuery } from "@/generated/graphql";
-import { composeAtom } from "@/util/atoms";
+import { useComposeAtom } from "@/util/atoms";
 import { composeStore, ExerciseView } from "@/util/composeStore";
 import { Box, Grid2, Stack, Typography } from "@mui/material";
 import { LayoutGroup } from "framer-motion";
-import { useAtom } from "jotai";
-import { entries, keys, times, uniqueId } from "lodash";
+import { entries, keys, times } from "lodash";
 import Container from "../../components/compose/Container";
 
-const Compose: FC<{
-  exerciseSheet?: ExerciseSheetQuery["exerciseSheet"] | null;
-}> = ({ exerciseSheet }) => {
+const Compose: FC = () => {
   const view = composeStore((state) => state.view);
   const exerciseView = composeStore((state) => state.exerciseView);
-  const [items, setItems] = useAtom(composeAtom);
-
-  useEffect(() => {
-    setItems((draft) => {
-      exerciseSheet?.sheetItems?.forEach(
-        (item) => {
-          item.exercises.forEach((exercise, i) => {
-            const key = `${item.ageGroup}-${item.level}`;
-            if (!draft[key]) {
-              return;
-            }
-            draft[`${item.ageGroup}-${item.level}`][i] = {
-              id: exercise.id,
-              cardId: uniqueId(),
-            };
-          });
-        },
-        [exerciseSheet],
-      );
-      return draft;
-    });
-  }, [exerciseSheet, exerciseSheet?.sheetItems, setItems]);
+  const { items } = useComposeAtom();
 
   return (
     <LayoutGroup>
@@ -66,7 +41,7 @@ const Compose: FC<{
                   {index % 5 === 0 && (
                     <Grid2 size={1} component={"div"}>
                       <Box position={"sticky"} top={12}>
-                        <Stack height={"100%"} justifyContent={"start"} p={4}>
+                        <Stack height={"100%"} justifyContent={"start"} pt={4}>
                           <Typography variant="body1" textAlign={"center"}>
                             {index === 0 && "Zöld"}
                             {index === 5 && "Bronz"}

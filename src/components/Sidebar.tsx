@@ -8,11 +8,11 @@ import {
   ListItemButton,
   ListItemText,
   Stack,
+  ToggleButton,
+  ToggleButtonGroup,
   Typography,
   alpha,
   useColorScheme,
-  ToggleButtonGroup,
-  ToggleButton,
 } from "@mui/material";
 import { signOut as firebaseSignout } from "firebase/auth";
 import { useSetAtom } from "jotai";
@@ -58,7 +58,7 @@ export const Sidebar = () => {
     >
       <Box sx={{ width: drawerWidth }} role="presentation" pt={2} height="100%">
         <Stack height="100%" sx={{ p: 2 }}>
-          <Typography width="100%" textAlign="center">
+          <Typography width="100%" textAlign="center" mb={2}>
             Feladatbeküldő
           </Typography>
           <Stack gap={1}>
