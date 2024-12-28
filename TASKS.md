@@ -35,8 +35,8 @@
 
 ### Backend-re vár
 
-- [ ] Feladatsorok listázása oldal
-- [ ] Feladat keresőben eremény rendezhetősége
+- [X] Feladatsorok listázása oldal
+- [X] Feladat keresőben eremény rendezhetősége
 
 ### Üzletre vár
 

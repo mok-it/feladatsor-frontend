@@ -6,13 +6,12 @@ import {
 } from "@/generated/graphql";
 
 export type ExerciseFieldsType = {
-  alternativeDifficultyGroup?: InputMaybe<Scalars["ID"]["input"]>;
   description: Scalars["String"]["input"];
   difficulty: Array<ExerciseDifficultyInput>;
   exerciseImage?: InputMaybe<Scalars["String"]["input"]>;
   helpingQuestions: Array<Scalars["String"]["input"]>;
   isCompetitionFinal?: InputMaybe<Scalars["Boolean"]["input"]>;
-  sameLogicParent?: InputMaybe<Scalars["ID"]["input"]>;
+  sameLogicGroup: InputMaybe<Scalars["ID"]["input"]>;
   solution: Scalars["String"]["input"];
   solutionImage?: InputMaybe<Scalars["String"]["input"]>;
   solutionOptions: Array<Scalars["String"]["input"]>;

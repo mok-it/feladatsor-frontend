@@ -1,0 +1,21 @@
+fragment SameLogicExercise on Exercise {
+  id
+  description
+  difficulty {
+    difficulty
+    ageGroup
+  }
+  exerciseImage {
+    url
+  }
+  tags {
+    id
+    name
+  }
+  createdAt
+  createdBy {
+    id
+    userName
+    avatarUrl
+  }
+}

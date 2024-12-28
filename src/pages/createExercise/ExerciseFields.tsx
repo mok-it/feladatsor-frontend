@@ -7,6 +7,7 @@ import { UploadWithPreview } from "@/components/UploadWithPreview.tsx";
 import { useFlatExerciseTagsQuery } from "@/generated/graphql.tsx";
 import { ExerciseFieldsType } from "@/types/ExerciseFieldsType";
 import {
+  Alert,
   Box,
   Grid2,
   Skeleton,
@@ -66,6 +67,11 @@ const ExerciseFields: FC = () => {
   return (
     <Box>
       <Grid2 container spacing={2}>
+        <Grid2 size={{ xs: 12 }}>
+          <Alert severity="info">
+            Ez valami nagyon fontos infó a feladatról
+          </Alert>
+        </Grid2>
         <Grid2
           size={{
             xs: 12,
@@ -83,7 +89,7 @@ const ExerciseFields: FC = () => {
             <TextField
               id="outlined-required"
               name="description"
-              defaultValue={values.description}
+              value={values.description}
               onChange={handleChange}
               onBlur={handleBlur}
               minRows={10}
@@ -137,7 +143,7 @@ const ExerciseFields: FC = () => {
           >
             <TextField
               name="solution"
-              defaultValue={values.solution}
+              value={values.solution}
               onChange={handleChange}
               onBlur={handleBlur}
               margin="none"
@@ -188,7 +194,7 @@ const ExerciseFields: FC = () => {
             <TextField
               name="solveIdea"
               size="small"
-              defaultValue={values.solveIdea || undefined}
+              value={values.solveIdea || undefined}
               onChange={handleChange}
               onBlur={handleBlur}
               maxRows={1}

@@ -28,6 +28,7 @@ import { useParams } from "react-router";
 import { useToggle } from "react-use";
 import { createExerciseInitialValue } from "./createExercise/createExerciseInitialValue";
 import ExerciseFields from "./createExercise/ExerciseFields";
+import { SameGroupExerciseCard } from "@/components/SameGroupExerciseCard.tsx";
 
 const ExerciseDetails: FC = () => {
   const { enqueueSnackbar } = useSnackbar();
@@ -50,8 +51,7 @@ const ExerciseDetails: FC = () => {
             id: id!,
             input: {
               comment: comment.length > 0 ? comment : undefined,
-              alternativeDifficultyGroup:
-                formDataToSend.alternativeDifficultyGroup,
+              sameLogicGroup: formDataToSend.sameLogicGroup,
               description: formDataToSend.description,
               difficulty: formDataToSend.difficulty.map((d) => ({
                 ageGroup: d.ageGroup,
@@ -167,6 +167,8 @@ const ExerciseDetailsForm: FC<{ updateSignal: boolean }> = ({
       setValues({
         ...data.exercise,
         initial: false,
+        status: "CREATED",
+        sameLogicGroup: "",
         solutionOptions: [],
         exerciseImageUrl: data.exercise.exerciseImage?.url,
         solutionImageUrl: data.exercise.solutionImage?.url,
@@ -194,6 +196,11 @@ const ExerciseDetailsForm: FC<{ updateSignal: boolean }> = ({
   if (!loading && !exercise) return <div>Exercise not found</div>;
   if (!exercise) return <div>Exercise not found</div>;
 
+  const similarExercises =
+    fetchedExercise?.exercise?.sameLogicExerciseGroup?.exercises.filter(
+      (ex) => ex.id !== exercise.id,
+    );
+
   return (
     <>
       <Stack mb={2} direction={"row"} gap={1} alignItems={"center"}>
@@ -211,9 +218,17 @@ const ExerciseDetailsForm: FC<{ updateSignal: boolean }> = ({
               <Box>
                 <ExerciseFields />
               </Box>
-              <Typography variant="h5">Hasonló feladatok</Typography>
-              {fetchedExercise?.exercise?.alternativeDifficultyExercises.map(
-                (a) => a.id,
+              {similarExercises && similarExercises.length > 0 && (
+                <>
+                  <Divider />
+                  <Typography variant="subtitle1">Hasonló feladatok</Typography>
+                  {similarExercises.map((exercise) => (
+                    <SameGroupExerciseCard
+                      key={exercise.id}
+                      exercise={exercise}
+                    />
+                  ))}
+                </>
               )}
               <Divider />
               <Box>
