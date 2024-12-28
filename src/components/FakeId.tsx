@@ -1,4 +1,4 @@
-import { Link, Typography } from "@mui/material";
+import { Typography } from "@mui/material";
 import { useSnackbar } from "notistack";
 import { FC, PropsWithChildren } from "react";
 import { useCopyToClipboard } from "react-use";
@@ -8,17 +8,26 @@ const FakeId: FC<PropsWithChildren> = ({ children }) => {
   const { enqueueSnackbar } = useSnackbar();
 
   return (
-    <Link
-      style={{ cursor: "pointer" }}
-      onClick={() => {
+    <Typography
+      sx={{
+        cursor: "pointer",
+        textDecoration: "underline",
+        textDecorationColor: (theme) => theme.palette.primary.main,
+      }}
+      onClick={(event) => {
         if (!children) return;
+        event.stopPropagation();
         const url = `${window.location.hostname}${window.location.port ? ":" + window.location.port : ""}/exercise/${children.toString()}`;
         copyToClipboard(url);
-        enqueueSnackbar("Másolva a vágólapra");
+        enqueueSnackbar("Másolva a vágólapra", {
+          variant: "info",
+        });
       }}
     >
-      <Typography color={"gray"}>#{children}</Typography>
-    </Link>
+      <Typography component="span" color="gray">
+        #{children}
+      </Typography>
+    </Typography>
   );
 };
 

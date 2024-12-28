@@ -2,11 +2,13 @@ import { KaTeX } from "@/components/Katex.tsx";
 import { useCreateExerciseMutation } from "@/generated/graphql.tsx";
 import { ExerciseFieldsType } from "@/types/ExerciseFieldsType.ts";
 import { createExerciseAtom } from "@/util/atoms.ts";
+import { ExerciseStatusEnum } from "@/util/types.ts";
 import { LoadingButton } from "@mui/lab";
 import {
   Box,
   Button,
   Card,
+  Checkbox,
   Dialog,
   DialogActions,
   DialogContent,
@@ -52,7 +54,7 @@ export const CreateExercise = () => {
             solutionOptions: formDataToSend.solutionOptions,
             solveIdea: formDataToSend.solveIdea,
             source: formDataToSend.source,
-            status: formDataToSend.status,
+            status: formDataToSend.status || ExerciseStatusEnum.CREATED,
             tags: formDataToSend.tags,
 
             exerciseImage: formDataToSend.exerciseImage,
@@ -125,7 +127,8 @@ export const CreateExercise = () => {
 };
 
 const CreateExerciseForm = () => {
-  const { submitForm, values } = useFormikContext<ExerciseFieldsType>();
+  const { submitForm, values, setFieldValue } =
+    useFormikContext<ExerciseFieldsType>();
   const setPersistedValues = useSetAtom(createExerciseAtom);
 
   useDebounce(
@@ -141,14 +144,31 @@ const CreateExerciseForm = () => {
       <Stack
         width="100%"
         direction="row"
-        alignItems="baseline"
-        justifyContent="space-between"
+        alignItems="center"
         pr={2}
         pt={2}
+        gap={2}
       >
-        <Typography variant="h2" m={2}>
+        <Typography variant="h2" m={2} sx={{ flexGrow: 1 }}>
           Feladat létrehozása
         </Typography>
+        <Box>
+          <Checkbox
+            id="draft"
+            checked={values.status === ExerciseStatusEnum.DRAFT}
+            onChange={() => {
+              setFieldValue(
+                "status",
+                values.status === ExerciseStatusEnum.DRAFT
+                  ? ExerciseStatusEnum.CREATED
+                  : ExerciseStatusEnum.DRAFT,
+              );
+            }}
+          />
+          <label htmlFor="draft" style={{ cursor: "pointer" }}>
+            Piszkozat
+          </label>
+        </Box>
         <Button
           onClick={() => {
             submitForm();

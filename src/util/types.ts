@@ -32,3 +32,10 @@ export enum ExerciseStatusEnum {
   DELETED = "DELETED",
   DRAFT = "DRAFT",
 }
+
+export type ExerciseTag = {
+  id: string;
+  name: string;
+  exerciseCount: number;
+  children: Partial<ExerciseTag>[];
+};

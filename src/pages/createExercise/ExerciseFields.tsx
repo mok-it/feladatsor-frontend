@@ -4,8 +4,10 @@ import { Required } from "@/components/Required.tsx";
 import Section from "@/components/Section.tsx";
 import { SimpleAccordion } from "@/components/SimpleAccordion.tsx";
 import { UploadWithPreview } from "@/components/UploadWithPreview.tsx";
+import { useFlatExerciseTagsQuery } from "@/generated/graphql.tsx";
 import { ExerciseFieldsType } from "@/types/ExerciseFieldsType";
 import {
+  Alert,
   Box,
   Grid2,
   Skeleton,
@@ -18,7 +20,6 @@ import { FC, useMemo, useState } from "react";
 import { useDebounce } from "react-use";
 import { KaTeX } from "../../components/Katex.tsx";
 import { MultiSelect } from "../../components/MultiSelect.tsx";
-import { useFlatExerciseTagsQuery } from "@/generated/graphql.tsx";
 
 const ExerciseFields: FC = () => {
   const { values, handleChange, handleBlur, setFieldValue } =
@@ -66,9 +67,15 @@ const ExerciseFields: FC = () => {
   return (
     <Box>
       <Grid2 container spacing={2}>
+        <Grid2 size={{ xs: 12 }}>
+          <Alert severity="info">
+            Ez valami nagyon fontos infó a feladatról
+          </Alert>
+        </Grid2>
         <Grid2
           size={{
-            xs: 6,
+            xs: 12,
+            sm: 6,
           }}
         >
           <Section
@@ -82,7 +89,7 @@ const ExerciseFields: FC = () => {
             <TextField
               id="outlined-required"
               name="description"
-              defaultValue={values.description}
+              value={values.description}
               onChange={handleChange}
               onBlur={handleBlur}
               minRows={10}
@@ -95,7 +102,8 @@ const ExerciseFields: FC = () => {
         </Grid2>
         <Grid2
           size={{
-            xs: 6,
+            xs: 12,
+            sm: 6,
           }}
         >
           <KaTeX value={"$\\LaTeX{}$ fordítás"} />
@@ -121,7 +129,8 @@ const ExerciseFields: FC = () => {
         </Grid2>
         <Grid2
           size={{
-            xs: 6,
+            xs: 12,
+            sm: 6,
           }}
         >
           <Section
@@ -134,7 +143,7 @@ const ExerciseFields: FC = () => {
           >
             <TextField
               name="solution"
-              defaultValue={values.solution}
+              value={values.solution}
               onChange={handleChange}
               onBlur={handleBlur}
               margin="none"
@@ -147,7 +156,8 @@ const ExerciseFields: FC = () => {
         </Grid2>
         <Grid2
           size={{
-            xs: 6,
+            xs: 12,
+            sm: 6,
           }}
         >
           <KaTeX value={"$\\LaTeX{}$ megoldás fordítás"} />
@@ -176,14 +186,15 @@ const ExerciseFields: FC = () => {
         </Grid2>
         <Grid2
           size={{
-            xs: 6,
+            xs: 12,
+            sm: 6,
           }}
         >
           <Section text="Ötlet a megoldáshoz">
             <TextField
               name="solveIdea"
               size="small"
-              defaultValue={values.solveIdea}
+              value={values.solveIdea || undefined}
               onChange={handleChange}
               onBlur={handleBlur}
               maxRows={1}
@@ -195,7 +206,8 @@ const ExerciseFields: FC = () => {
         </Grid2>
         <Grid2
           size={{
-            xs: 6,
+            xs: 12,
+            sm: 6,
           }}
         >
           <Section text="Ötlet a megoldáshoz kép">
@@ -217,10 +229,11 @@ const ExerciseFields: FC = () => {
         </Grid2>
       </Grid2>
 
-      <Grid2 container spacing={2} mt={2}>
+      <Grid2 container spacing={2} mt={2} mb={2}>
         <Grid2
           size={{
-            xs: 6,
+            xs: 12,
+            sm: 6,
           }}
         >
           <Stack spacing={2}>
@@ -254,7 +267,7 @@ const ExerciseFields: FC = () => {
               <TextField
                 name="source"
                 size="small"
-                value={values.source}
+                value={values.source || undefined}
                 onChange={handleChange}
                 onBlur={handleBlur}
                 maxRows={1}
@@ -267,7 +280,8 @@ const ExerciseFields: FC = () => {
         </Grid2>
         <Grid2
           size={{
-            xs: 6,
+            xs: 12,
+            sm: 6,
           }}
         >
           <Typography>
@@ -277,11 +291,9 @@ const ExerciseFields: FC = () => {
         </Grid2>
       </Grid2>
       <HelpingQuestions
+        value={values.helpingQuestions}
         onChange={(value) => {
-          setFieldValue(
-            "helpingQuestions",
-            value.map((v) => v.label),
-          );
+          setFieldValue("helpingQuestions", value);
         }}
       />
     </Box>

@@ -1,4 +1,5 @@
 import { NotFoundPage } from "@/pages/404Page.tsx";
+import ComposePage from "@/pages/compose/ComposePage.tsx";
 import Login from "@/pages/Login.tsx";
 import RegisterPage from "@/pages/RegisterPage.tsx";
 import { useAtom } from "jotai";
@@ -9,7 +10,6 @@ import Layout from "./Layout";
 import { pages } from "./pages";
 import ExerciseDetails from "./pages/ExerciseDetails";
 import { userAtom } from "./util/atoms";
-import ComposePage from "@/pages/compose/ComposePage.tsx";
 
 function App() {
   const [user, setUser] = useAtom(userAtom);

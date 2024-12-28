@@ -39,8 +39,11 @@ query selectExercise($exerciseId: ID!) {
     status
     description
     solutionOptions
-    alternativeDifficultyExercises {
-      id
+    sameLogicExerciseGroup {
+      description
+      exercises {
+        ...SameLogicExercise
+      }
     }
     exerciseImage {
       id

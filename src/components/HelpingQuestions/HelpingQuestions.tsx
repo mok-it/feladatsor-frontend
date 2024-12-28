@@ -1,66 +1,70 @@
-import { useEffect, useState } from "react";
-import { HelpingQuestion } from "./HelpingQuestion.tsx";
-import { HelpingQuestionComposer } from "./HelpingQuestionComposer.tsx";
 import { SimpleAccordion } from "@/components/SimpleAccordion.tsx";
-import { Stack } from "@mui/material";
-
-export type HelpingQuestionData = {
-  id: string;
-  label: string;
-};
+import {
+  Button,
+  IconButton,
+  InputAdornment,
+  Stack,
+  TextField,
+} from "@mui/material";
+import { MdAdd, MdOutlineDelete } from "react-icons/md";
+import { useDebounce } from "react-use";
+import { useImmer } from "use-immer";
 
 type HelpingQuestionProps = {
-  onChange: (helpingQuestions: HelpingQuestionData[]) => void;
+  value: string[];
+  onChange: (helpingQuestions: string[]) => void;
 };
 
-export const HelpingQuestions = (props: HelpingQuestionProps) => {
-  const [helpingQuestions, setHelpingQuestions] = useState<
-    HelpingQuestionData[]
-  >([]);
+export const HelpingQuestions = ({ onChange, value }: HelpingQuestionProps) => {
+  const [data, setData] = useImmer<string[]>(value);
 
-  useEffect(() => {
-    props.onChange(helpingQuestions);
-  }, [helpingQuestions]);
-
-  const handleUpdateHelpingQuestion = (
-    updatedHelpingQuestion: HelpingQuestionData,
-  ) => {
-    const newHelpingQuestions = helpingQuestions.map((helpingQuestion) =>
-      helpingQuestion.id === updatedHelpingQuestion.id
-        ? updatedHelpingQuestion
-        : helpingQuestion,
-    );
-    setHelpingQuestions(newHelpingQuestions);
-  };
-
-  const handleDeleteHelpingQuestion = (id: string) => {
-    const newHelpingQuestions = helpingQuestions.filter(
-      (helpingQuestion) => helpingQuestion.id !== id,
-    );
-    setHelpingQuestions(newHelpingQuestions);
-  };
-
-  const handleAddHelpingQuestion = (
-    newHelpingQuestion: HelpingQuestionData,
-  ) => {
-    const newHelpingQuestions = [...helpingQuestions, newHelpingQuestion];
-    setHelpingQuestions(newHelpingQuestions);
-  };
+  useDebounce(
+    () => {
+      onChange(data);
+    },
+    100,
+    [data],
+  );
 
   return (
     <SimpleAccordion summary="Segítő kérdések">
       <Stack gap={1}>
-        <HelpingQuestionComposer
-          handleAddHelpingQuestion={handleAddHelpingQuestion}
-        />
-        {helpingQuestions.map((helpingQuestion) => (
-          <HelpingQuestion
-            key={helpingQuestion.id}
-            helpingQuestion={helpingQuestion}
-            handleUpdateHelpingQuestion={handleUpdateHelpingQuestion}
-            handleDeleteHelpingQuestion={handleDeleteHelpingQuestion}
+        {data.map((helpingQuestion, i) => (
+          <TextField
+            key={i}
+            fullWidth
+            variant="outlined"
+            placeholder="Írd ide a segítő kérdést"
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton
+                    edge="end"
+                    onClick={() => {
+                      setData(data.filter((_, index) => index !== i));
+                    }}
+                  >
+                    <MdOutlineDelete />
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
+            value={helpingQuestion}
+            onChange={(e) => {
+              setData((draft) => {
+                draft[i] = e.target.value;
+              });
+            }}
           />
         ))}
+        <Button
+          onClick={() => {
+            setData([...value, ""]);
+          }}
+        >
+          Új segítő kérdés
+          <MdAdd />
+        </Button>
       </Stack>
     </SimpleAccordion>
   );
