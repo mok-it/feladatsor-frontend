@@ -1,6 +1,8 @@
 import { ExerciseQuery } from "@/pages/ExerciseListPage/ExerciseListPage.tsx";
 
 export const searchDefaultValues: ExerciseQuery = {
+  excludeTags: [],
+  includeTags: [],
   searchQuery: "",
   isFinal: false,
   difficulty: {

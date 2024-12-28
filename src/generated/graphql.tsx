@@ -167,12 +167,12 @@ export type ExerciseInput = {
 export type ExerciseSearchQuery = {
   difficulty?: InputMaybe<Array<ExerciseDifficultyRange>>;
   excludeTags?: InputMaybe<Array<Scalars['ID']['input']>>;
+  includeTags?: InputMaybe<Array<Scalars['ID']['input']>>;
   isCompetitionFinal?: InputMaybe<Scalars['Boolean']['input']>;
   orderBy?: InputMaybe<Scalars['String']['input']>;
   orderDirection?: InputMaybe<OrderDirection>;
   queryStr?: InputMaybe<Scalars['String']['input']>;
   skip: Scalars['Int']['input'];
-  tags?: InputMaybe<Array<Scalars['ID']['input']>>;
   take: Scalars['Int']['input'];
 };
 
