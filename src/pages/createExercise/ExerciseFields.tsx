@@ -5,18 +5,26 @@ import Section from "@/components/Section.tsx";
 import { SimpleAccordion } from "@/components/SimpleAccordion.tsx";
 import { UploadWithPreview } from "@/components/UploadWithPreview.tsx";
 import { ExerciseFieldsType } from "@/types/ExerciseFieldsType";
-import { Box, Grid, Stack, TextField, Typography } from "@mui/material";
+import {
+  Box,
+  Grid,
+  Skeleton,
+  Stack,
+  TextField,
+  Typography,
+} from "@mui/material";
 import { useFormikContext } from "formik";
 import { FC, useMemo, useState } from "react";
 import { useDebounce } from "react-use";
 import { KaTeX } from "../../components/Katex.tsx";
 import { MultiSelect } from "../../components/MultiSelect.tsx";
-
-const tags = ["Geometria", "Algebra"];
+import { useFlatExerciseTagsQuery } from "@/generated/graphql.tsx";
 
 const ExerciseFields: FC = () => {
   const { values, handleChange, handleBlur, setFieldValue } =
     useFormikContext<ExerciseFieldsType>();
+
+  const { data: tags, loading: tagsLoading } = useFlatExerciseTagsQuery();
 
   const categoryDifficultySelect = useMemo(() => {
     return (
@@ -149,13 +157,27 @@ const ExerciseFields: FC = () => {
         <Grid item xs={6}>
           <Stack spacing={1}>
             <Typography>Címkék, alcímkék</Typography>
-            <MultiSelect
-              items={tags}
-              onChange={(items) => {
-                //TODO: We have to send tagID to the server
-                setFieldValue("tags", items);
-              }}
-            />
+            {tagsLoading && (
+              <Skeleton variant="rectangular" width={210} height={118} />
+            )}
+            {tags && (
+              <MultiSelect<{ id: string; name: string }>
+                items={tags.flatExerciseTags}
+                value={values.tags.map((tag) => ({
+                  id: tag ?? "",
+                  name:
+                    tags.flatExerciseTags.find((t) => t.id === tag)?.name ?? "",
+                }))}
+                getItemLabel={(item) => item.name}
+                getItemKey={(item) => item.id}
+                onChange={(items) => {
+                  setFieldValue(
+                    "tags",
+                    items.map((item) => item.id),
+                  );
+                }}
+              />
+            )}
           </Stack>
         </Grid>
         <Grid item xs={6}>

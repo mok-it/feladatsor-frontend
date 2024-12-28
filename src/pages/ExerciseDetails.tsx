@@ -63,7 +63,7 @@ const ExerciseDetails: FC = () => {
               solveIdea: formDataToSend.solveIdea,
               source: formDataToSend.source,
               status: formDataToSend.status,
-              // tags: (formDataToSend.tags.filter((a) => a) as string[]) || [],
+              tags: (formDataToSend.tags.filter((a) => a) as string[]) || [],
 
               exerciseImage: formDataToSend.exerciseImage,
               solutionImage: formDataToSend.solutionImage,
@@ -175,7 +175,7 @@ const ExerciseDetailsForm: FC<{ updateSignal: boolean }> = ({
         exerciseImage: data.exercise.exerciseImage?.id,
         solutionImage: data.exercise.solutionImage?.id,
         solveIdeaImage: data.exercise.solveIdeaImage?.id,
-        tags: data.exercise.tags.map((tag) => tag.name),
+        tags: data.exercise.tags.map((tag) => tag.id),
       });
       setExercise(data.exercise);
     },

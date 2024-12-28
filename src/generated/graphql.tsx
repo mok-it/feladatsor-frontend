@@ -406,6 +406,7 @@ export type Query = {
   exerciseTags: Array<ExerciseTag>;
   exercises: Array<Exercise>;
   exercisesCount: Scalars['Int']['output'];
+  flatExerciseTags: Array<ExerciseTag>;
   globalStats?: Maybe<GlobalStats>;
   sameLogicExerciseGroups: Array<SameLogicExerciseGroup>;
   searchExercises: ExerciseSearchResult;
@@ -608,6 +609,11 @@ export type ExerciseTagsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type ExerciseTagsQuery = { __typename: 'Query', exerciseTags: Array<{ __typename: 'ExerciseTag', id: string, name: string, exerciseCount: number, children: Array<{ __typename: 'ExerciseTag', id: string, name: string, children: Array<{ __typename: 'ExerciseTag', id: string, name: string }> }> }> };
+
+export type FlatExerciseTagsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type FlatExerciseTagsQuery = { __typename: 'Query', flatExerciseTags: Array<{ __typename: 'ExerciseTag', id: string, name: string }> };
 
 export type ExerciseCheckFragment = { __typename: 'ExerciseCheck', id: string, type: ExerciseCheckType, createdAt: string, user: { __typename: 'User', id: string, name: string } };
 
@@ -1340,6 +1346,46 @@ export type ExerciseTagsQueryHookResult = ReturnType<typeof useExerciseTagsQuery
 export type ExerciseTagsLazyQueryHookResult = ReturnType<typeof useExerciseTagsLazyQuery>;
 export type ExerciseTagsSuspenseQueryHookResult = ReturnType<typeof useExerciseTagsSuspenseQuery>;
 export type ExerciseTagsQueryResult = Apollo.QueryResult<ExerciseTagsQuery, ExerciseTagsQueryVariables>;
+export const FlatExerciseTagsDocument = gql`
+    query flatExerciseTags {
+  flatExerciseTags {
+    id
+    name
+  }
+}
+    `;
+
+/**
+ * __useFlatExerciseTagsQuery__
+ *
+ * To run a query within a React component, call `useFlatExerciseTagsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useFlatExerciseTagsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useFlatExerciseTagsQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useFlatExerciseTagsQuery(baseOptions?: Apollo.QueryHookOptions<FlatExerciseTagsQuery, FlatExerciseTagsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<FlatExerciseTagsQuery, FlatExerciseTagsQueryVariables>(FlatExerciseTagsDocument, options);
+      }
+export function useFlatExerciseTagsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<FlatExerciseTagsQuery, FlatExerciseTagsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<FlatExerciseTagsQuery, FlatExerciseTagsQueryVariables>(FlatExerciseTagsDocument, options);
+        }
+export function useFlatExerciseTagsSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<FlatExerciseTagsQuery, FlatExerciseTagsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<FlatExerciseTagsQuery, FlatExerciseTagsQueryVariables>(FlatExerciseTagsDocument, options);
+        }
+export type FlatExerciseTagsQueryHookResult = ReturnType<typeof useFlatExerciseTagsQuery>;
+export type FlatExerciseTagsLazyQueryHookResult = ReturnType<typeof useFlatExerciseTagsLazyQuery>;
+export type FlatExerciseTagsSuspenseQueryHookResult = ReturnType<typeof useFlatExerciseTagsSuspenseQuery>;
+export type FlatExerciseTagsQueryResult = Apollo.QueryResult<FlatExerciseTagsQuery, FlatExerciseTagsQueryVariables>;
 export const LoginDocument = gql`
     mutation login($name: String!, $password: String!) {
   login(name: $name, password: $password) {
