@@ -42,6 +42,7 @@ import {
 import { AlertDialog } from "./Dialog";
 import { DiffModal } from "./DiffModal";
 import { ExerciseChecks } from "./ExerciseChecks";
+import { IoHourglassOutline } from "react-icons/io5";
 
 export const ExerciseOperations: FC<{
   exercise: SelectExerciseQuery["exercise"];
@@ -169,6 +170,12 @@ export const ExerciseOperations: FC<{
                 });
               }}
             >
+              <MenuItem value={ExerciseStatusEnum.DRAFT}>
+                <Stack direction={"row"} alignItems={"center"} gap={1}>
+                  <IoHourglassOutline color="orange" />
+                  Vázlat
+                </Stack>
+              </MenuItem>
               <MenuItem value={ExerciseStatusEnum.CREATED}>
                 <Stack direction={"row"} alignItems={"center"} gap={1}>
                   <MdSend />
