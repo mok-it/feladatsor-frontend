@@ -57,13 +57,13 @@ const ComposePage: FC = () => {
       name,
       sheetItems: [],
     };
-
     entries(items).forEach(([key, exercises]) => {
       const [ageGroup, level] = key.split("-");
+      if (ageGroup === "talon") return;
       data.sheetItems?.push({
         ageGroup: ageGroup as ExerciseAgeGroup,
         level: parseInt(level),
-        exercises: exercises as string[],
+        exercises: exercises.filter((x) => x) as string[],
       });
     });
     await mutate({

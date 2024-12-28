@@ -18,21 +18,21 @@ import { useAtomValue } from "jotai";
 import { entries } from "lodash";
 import { FC, memo, useContext, useMemo } from "react";
 import { MdEdit, MdStar } from "react-icons/md";
+import { Link } from "react-router-dom";
 import FakeId from "../FakeId";
 import { ContainerContext } from "./Container";
 
 const ExerciseCard: FC<{
   id: UniqueIdentifier;
   isTalon?: boolean;
-  isDragging?: boolean;
   exercise: SelectExerciseQuery["exercise"] & { id: string };
-}> = ({ exercise, isTalon, isDragging }) => {
+}> = ({ exercise, isTalon }) => {
   const containerId = useContext(ContainerContext);
   const view = composeStore((state) => state.view);
   const exerciseView = composeStore((state) => state.exerciseView);
   const placements = useAtomValue(exercisePlacementsAtom);
   const isSingleView = view !== "all";
-  const isDetailedView = exerciseView === ExerciseView.LIST;
+  const isDetailedView = exerciseView === ExerciseView.LIST && view !== "all";
   const ageGroup = containerId?.split("-")[0];
   const countInGroup = placements[exercise.id]?.[ageGroup as ExerciseAgeGroup];
   const isAgeGroupBad = useMemo(
@@ -44,56 +44,71 @@ const ExerciseCard: FC<{
     [ageGroup, exercise.difficulty, isTalon, countInGroup],
   );
 
-  const difficultiesElem = (
-    <Stack
-      direction="row"
-      justifyContent={"space-evenly"}
-      divider={<Divider orientation="vertical" flexItem />}
-    >
-      {entries(ageGroups).map(([group]) => {
-        const value = exercise.difficulty.find(
-          (d) => d.ageGroup === group,
-        )?.difficulty;
-        const isMissing =
-          !isTalon &&
-          placements[exercise.id]?.[group as ExerciseAgeGroup] === 0 &&
-          value;
+  const difficultiesElem = useMemo(
+    () => (
+      <Stack
+        direction="row"
+        justifyContent={"space-evenly"}
+        divider={<Divider orientation="vertical" flexItem />}
+      >
+        {entries(ageGroups).map(([group]) => {
+          const value = exercise.difficulty.find(
+            (d) => d.ageGroup === group,
+          )?.difficulty;
+          const isMissing =
+            !isTalon &&
+            placements[exercise.id]?.[group as ExerciseAgeGroup] === 0 &&
+            value;
 
-        return (
-          <Stack
-            key={group}
-            width={20}
-            height={20}
-            alignItems={"center"}
-            justifyContent={"center"}
-            borderRadius={50}
-          >
-            <Typography
-              variant="caption"
-              sx={{
-                fontWeight: isMissing ? "600" : "400",
-                opacity: value ? 1 : 0.2,
-              }}
+          return (
+            <Stack
+              key={group}
+              width={20}
+              height={20}
+              alignItems={"center"}
+              justifyContent={"center"}
+              borderRadius={50}
             >
-              {value}
-            </Typography>
-          </Stack>
-        );
-      })}
-    </Stack>
+              <Typography
+                variant="caption"
+                sx={{
+                  fontWeight: isMissing ? "600" : "400",
+                  opacity: value ? 1 : 0.2,
+                }}
+              >
+                {value}
+              </Typography>
+            </Stack>
+          );
+        })}
+      </Stack>
+    ),
+    [exercise.difficulty, isTalon, placements, exercise.id],
   );
 
+  const height =
+    exerciseView === ExerciseView.CARD
+      ? view === "all"
+        ? 72
+        : 200
+      : "fit-content";
+
   return (
-    <Tooltip title={!isDetailedView && !isDragging && exercise.description}>
+    <Tooltip
+      enterDelay={1000}
+      enterNextDelay={1000}
+      title={!isDetailedView && exercise.description}
+    >
       <Card
         sx={{
+          width: "100%",
+          height: height,
           alignSelf: "stretch",
           borderRadius: 1,
           padding: 1,
           paddingBottom: 1.5,
-          cursor: "pointer",
+          cursor: exerciseView === ExerciseView.CARD ? "pointer" : "default",
           userSelect: isDetailedView ? "auto" : "none",
-          opacity: isDragging ? 0.5 : 1,
           borderColor: isAgeGroupBad ? "red" : "divider",
           borderWidth: 1,
           borderStyle: "solid",
@@ -106,7 +121,7 @@ const ExerciseCard: FC<{
             alignItems={"center"}
             gap={1}
           >
-            {isDetailedView ? (
+            {exerciseView === ExerciseView.LIST ? (
               <FakeId>{exercise.id}</FakeId>
             ) : (
               <Typography variant="caption" whiteSpace={"nowrap"}>
@@ -124,9 +139,11 @@ const ExerciseCard: FC<{
             <Box flexGrow={1} />
             {isSingleView && difficultiesElem}
             {isSingleView && (
-              <IconButton size="small">
-                <MdEdit />
-              </IconButton>
+              <Link to={`/exercise/${exercise.id}`}>
+                <IconButton size="small">
+                  <MdEdit />
+                </IconButton>
+              </Link>
             )}
           </Stack>
           {isSingleView && (
@@ -144,17 +161,19 @@ const ExerciseCard: FC<{
                 >
                   {exercise.description}
                 </Typography>
-                <Box
-                  overflow={"hidden"}
-                  sx={{
-                    flexGrow: 0,
-                    flexShrink: 0,
-                    height: "3cm",
-                    width: "3cm",
-                  }}
-                >
-                  <img src={exercise.exerciseImage?.url || ""}></img>
-                </Box>
+                {exercise.exerciseImage?.url && (
+                  <Box
+                    overflow={"hidden"}
+                    sx={{
+                      flexGrow: 0,
+                      flexShrink: 0,
+                      height: "3cm",
+                      width: "3cm",
+                    }}
+                  >
+                    <img src={exercise.exerciseImage?.url || ""}></img>
+                  </Box>
+                )}
               </Stack>
               {isDetailedView && (
                 <>

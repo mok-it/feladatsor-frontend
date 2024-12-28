@@ -1,6 +1,6 @@
-import { Grid, Slider, Stack, Switch } from "@mui/material";
 import { ExerciseAgeGroup } from "@/generated/graphql.tsx";
-import { ageGroupHumanize } from "@/util/ageGroupHumanize.ts";
+import { ageGroupHumanize } from "@/util/ageGroupHumanize";
+import { Grid, Slider, Stack, Switch } from "@mui/material";
 
 export const DifficultySelector = (props: {
   ageGroup: ExerciseAgeGroup;

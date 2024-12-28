@@ -3,8 +3,9 @@ import { ExerciseFieldsType } from "@/types/ExerciseFieldsType";
 import { UniqueIdentifier } from "@dnd-kit/core";
 import { atomWithImmer } from "jotai-immer";
 import { atomWithStorage, createJSONStorage } from "jotai/utils";
+import { keys, times } from "lodash";
 import { mock, mock3 } from "./mocks";
-import { ExerciseCardData, ExercisePlacements } from "./types";
+import { ageGroups, ExerciseCardData, ExercisePlacements } from "./types";
 
 type UserAtomType = { isLoggedIn: boolean; user: User | null } | undefined;
 const storage = createJSONStorage<UserAtomType>(() => sessionStorage);
@@ -26,33 +27,28 @@ export const exerciseCardsAtom = atomWithImmer<ExerciseCardData[]>([
   mock,
   mock3,
 ]);
-export const composeAtom = atomWithImmer<{
-  [key in string]: UniqueIdentifier[];
-}>({
-  "KOALA-0": [],
-  "MEDVEBOCS-0": [],
-  "KISMEDVE-0": [],
-  "NAGYMEDVE-0": [],
-  "JEGESMEDVE-0": [],
+const composeAtomDefault: Record<string, (UniqueIdentifier | null)[]> = {
+  talon: ["2024361"],
+};
 
-  "KOALA-1": [],
-  "MEDVEBOCS-1": [],
-  "KISMEDVE-1": [],
-  "NAGYMEDVE-1": [],
-  "JEGESMEDVE-1": [],
+const difficultyItemCount: Record<number, number> = {
+  0: 5,
+  1: 5,
+  2: 4,
+  3: 3,
+};
+for (let i = 0; i < 4; i++) {
+  keys(ageGroups).forEach((ageGroup) => {
+    composeAtomDefault[`${ageGroup}-${i}`] = times(difficultyItemCount[i]).map(
+      () => null,
+    );
+  });
+}
 
-  "KOALA-2": [],
-  "MEDVEBOCS-2": [],
-  "KISMEDVE-2": [],
-  "NAGYMEDVE-2": [],
-  "JEGESMEDVE-2": [],
-
-  "KOALA-3": [],
-  "MEDVEBOCS-3": [],
-  "KISMEDVE-3": [],
-  "NAGYMEDVE-3": [],
-  "JEGESMEDVE-3": [],
-});
+export const composeAtom =
+  atomWithImmer<Record<string, (UniqueIdentifier | null)[]>>(
+    composeAtomDefault,
+  );
 
 export const exercisePlacementsAtom = atomWithImmer<ExercisePlacements>({});
 
