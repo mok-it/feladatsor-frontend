@@ -27,7 +27,8 @@
 - [ ] Tag nyilvántartó oldal, lehessen átnevezni szülő <-> gyerek kapcsolatok kezelése
   - [ ] Tag-re kattintva nyíljon meg a keresőben beszűrve arra a tag-re.
 - [ ] Feladat oldal tag-kezelés
-- [ ] Keresőben tag, excludeTag, isFinal alapján keresés
+- [X] Keresőben tag, excludeTag, isFinal alapján keresés
+- [ ] Oldal frissítésekor a dolgok megmaradjanak (feladat, kereső, stb)
 
 ### Backend-re vár
 

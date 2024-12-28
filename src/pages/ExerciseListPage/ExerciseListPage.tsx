@@ -6,6 +6,7 @@ import {
   Exercise,
   ExerciseAgeGroup,
   ExerciseListElemFragment,
+  useFlatExerciseTagsQuery,
   useSearchExercisesLazyQuery,
 } from "@/generated/graphql.tsx";
 import { DifficultySelectorList } from "@/pages/ExerciseListPage/DifficultySelectorList.tsx";
@@ -32,6 +33,7 @@ import { useEffectOnce, useToggle } from "react-use";
 import { useImmer } from "use-immer";
 import { StyledTableRow } from "@/components/StyledTableRow.tsx";
 import { StyledTableCell } from "@/components/StyledTableCell.tsx";
+import { TagSelector } from "@/pages/ExerciseListPage/TagSelector.tsx";
 
 export type DifficultySelect = {
   [key in ExerciseAgeGroup]: {
@@ -44,6 +46,8 @@ export type ExerciseQuery = {
   difficulty: DifficultySelect;
   searchQuery: string;
   isFinal: boolean;
+  includeTags: string[];
+  excludeTags: string[];
 };
 
 const LIMIT = 20;
@@ -73,6 +77,8 @@ export const ExerciseListPage = () => {
   const [orderBy, setOrderBy] = useState<keyof Exercise | null>(null);
   const [order, setOrder] = useState<"asc" | "desc">("asc");
 
+  const { data: tags } = useFlatExerciseTagsQuery();
+
   const fetchMore = useCallback(async () => {
     const skip = data.length || 0;
     if (loadingSkip >= skip) return;
@@ -86,6 +92,8 @@ export const ExerciseListPage = () => {
           queryStr: exerciseQuery.searchQuery,
           orderBy: orderBy,
           orderDirection: order === "asc" ? "ASC" : "DESC",
+          includeTags: exerciseQuery.includeTags,
+          excludeTags: exerciseQuery.excludeTags,
         },
       },
     });
@@ -99,6 +107,8 @@ export const ExerciseListPage = () => {
     loadingSkip,
     getData,
     difficulty,
+    exerciseQuery.includeTags,
+    exerciseQuery.excludeTags,
     exerciseQuery.searchQuery,
     orderBy,
     order,
@@ -189,6 +199,17 @@ export const ExerciseListPage = () => {
               setExerciseQuery={setExerciseQuery}
             />
           </SimpleAccordion>
+          <SimpleAccordion summary="Címke szűrő">
+            {tags && (
+              <TagSelector
+                tags={tags?.flatExerciseTags}
+                selectedTags={exerciseQuery.includeTags}
+                excludeTags={exerciseQuery.excludeTags}
+                setFieldValue={setExerciseQuery}
+              />
+            )}
+          </SimpleAccordion>
+
           <Stack direction="row" alignItems="center" gap={2}>
             <Typography>Döntő</Typography>
             <Checkbox
