@@ -1,0 +1,379 @@
+.dayNightSwitch * {
+  transition: all 1s ease-in-out;
+  -webkit-tap-highlight-color: transparent;
+  --scale: 0.15;
+}
+
+.dayNightSwitch label {
+  user-select: none;
+  display: flex;
+  align-items: center;
+}
+
+@media (max-width: 768px) {
+  .dayNightSwitch label {
+    flex-direction: column;
+  }
+  .dayNightSwitch label span {
+    margin: 0;
+  }
+}
+
+.dayNightSwitch input {
+  display: none;
+}
+
+.dayNightSwitch .container {
+  position: relative;
+  width: calc(369px * var(--scale));
+  height: calc(145px * var(--scale));
+  border-radius: calc(100px * var(--scale));
+  overflow: hidden;
+  box-shadow: 0 calc(5px * var(--scale)) calc(5px * var(--scale)) #fff;
+  filter: drop-shadow(0 0 calc(5px * var(--scale)) rgba(0, 0, 0, 0.2));
+  margin: 5px;
+  cursor: pointer;
+}
+
+.dayNightSwitch .container:before {
+  z-index: 10;
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: calc(100px * var(--scale));
+  box-shadow: inset 0 calc(10px * var(--scale)) calc(15px * var(--scale)) rgba(0, 0, 0, 0.6);
+  pointer-events: none;
+}
+
+.dayNightSwitch .bg {
+  width: 100%;
+  height: 100%;
+  background: rgb(78, 134, 181);
+}
+
+.dayNightSwitch input:checked ~ .container .bg {
+  background: rgb(31, 34, 51);
+}
+
+.sun {
+  width: calc(120px * var(--scale));
+  height: calc(120px * var(--scale));
+  border-radius: 100%;
+  margin: calc(13px * var(--scale)) calc(20px * var(--scale));
+  background: rgb(238, 203, 80);
+  filter: drop-shadow(
+    0px calc(10px * var(--scale)) calc(10px * var(--scale)) rgba(44, 44, 44, 0.8)
+  );
+  box-shadow:
+    inset 0 calc(-5px * var(--scale)) calc(3px * var(--scale)) rgba(100, 40, 80, 0.4),
+    inset calc(3px * var(--scale)) calc(3px * var(--scale)) calc(3px * var(--scale)) #fff;
+  position: absolute;
+  top: 0;
+  left: 0;
+  overflow: hidden;
+}
+
+.dayNightSwitch input:checked ~ .container .sun {
+  left: calc(209px * var(--scale));
+}
+
+.dayNightSwitch .ray-inner {
+  top: calc(-42.5px * var(--scale));
+  left: calc(-42.5px * var(--scale));
+  width: calc(230px * var(--scale));
+  height: calc(230px * var(--scale));
+}
+
+.dayNightSwitch .ray-medium {
+  top: calc(-88.5px * var(--scale));
+  left: calc(-88.5px * var(--scale));
+  width: calc(322px * var(--scale));
+  height: calc(322px * var(--scale));
+}
+
+.dayNightSwitch .ray-far {
+  top: calc(-136.5px * var(--scale));
+  left: calc(-136.5px * var(--scale));
+  width: calc(418px * var(--scale));
+  height: calc(418px * var(--scale));
+}
+
+.dayNightSwitch input:checked ~ .container .ray-inner {
+  top: calc(-42.5px * var(--scale));
+  left: calc(181.5px * var(--scale));
+}
+
+.dayNightSwitch input:checked ~ .container .ray-medium {
+  top: calc(-88.5px * var(--scale));
+  left: calc(135.5px * var(--scale));
+}
+
+.dayNightSwitch input:checked ~ .container .ray-far {
+  top: calc(-136.5px * var(--scale));
+  left: calc(87.5px * var(--scale));
+}
+
+.dayNightSwitch .ray {
+  position: absolute;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 100%;
+  filter: blur(2px);
+}
+
+.dayNightSwitch input:checked ~ .container .ray {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.dayNightSwitch .cloud,
+.dayNightSwitch .cloud-shadow {
+  background: #fff;
+  position: absolute;
+  border-radius: 100%;
+}
+
+.dayNightSwitch input:checked ~ .container .cloud,
+.dayNightSwitch input:checked ~ .container .cloud-shadow {
+  transform: translateY(calc(140px * var(--scale)));
+}
+
+.dayNightSwitch .cloud-shadows {
+  opacity: 0.6;
+}
+
+.dayNightSwitch .cloud-shadow {
+  transform: translateY(calc(-15px * var(--scale))) translateX(calc(-2px * var(--scale)));
+  background: rgb(214, 225, 238);
+}
+
+.dayNightSwitch .cloud-1 {
+  width: calc(134px * var(--scale));
+  height: calc(134px * var(--scale));
+  right: calc(-70px * var(--scale));
+  bottom: calc(-10px * var(--scale));
+}
+
+.dayNightSwitch .cloud-2 {
+  width: calc(95px * var(--scale));
+  height: calc(95px * var(--scale));
+  border-radius: 100%;
+  right: calc(-10px * var(--scale));
+  bottom: calc(-10px * var(--scale));
+}
+
+.dayNightSwitch .cloud-3 {
+  width: calc(87px * var(--scale));
+  height: calc(87px * var(--scale));
+  border-radius: 100%;
+  right: calc(50px * var(--scale));
+  bottom: calc(-40px * var(--scale));
+}
+
+.dayNightSwitch .cloud-4 {
+  width: calc(78px * var(--scale));
+  height: calc(78px * var(--scale));
+  border-radius: 100%;
+  right: calc(100px * var(--scale));
+  bottom: calc(-45px * var(--scale));
+}
+
+.dayNightSwitch .cloud-5 {
+  width: calc(87px * var(--scale));
+  height: calc(87px * var(--scale));
+  border-radius: 100%;
+  right: calc(150px * var(--scale));
+  bottom: calc(-45px * var(--scale));
+}
+
+.dayNightSwitch .cloud-6 {
+  width: calc(78px * var(--scale));
+  height: calc(78px * var(--scale));
+  border-radius: 100%;
+  right: calc(220px * var(--scale));
+  bottom: calc(-45px * var(--scale));
+}
+
+.dayNightSwitch .cloud-7 {
+  width: calc(78px * var(--scale));
+  height: calc(78px * var(--scale));
+  border-radius: 100%;
+  right: calc(280px * var(--scale));
+  bottom: calc(-50px * var(--scale));
+}
+
+.dayNightSwitch .cloud-shadow.cloud-1 {
+  bottom: calc(20px * var(--scale));
+  right: calc(-60px * var(--scale));
+}
+
+.dayNightSwitch .cloud-shadow.cloud-2 {
+  bottom: calc(0px * var(--scale));
+  right: calc(30px * var(--scale));
+}
+
+.dayNightSwitch .cloud-shadow.cloud-3 {
+  bottom: calc(-5px * var(--scale));
+  right: calc(75px * var(--scale));
+}
+
+.dayNightSwitch .cloud-shadow.cloud-4 {
+  bottom: calc(-20px * var(--scale));
+  right: calc(110px * var(--scale));
+}
+
+.dayNightSwitch .cloud-shadow.cloud-5 {
+  bottom: calc(-30px * var(--scale));
+  right: calc(150px * var(--scale));
+}
+
+.dayNightSwitch .cloud-shadow.cloud-6 {
+  bottom: calc(-40px * var(--scale));
+  right: calc(220px * var(--scale));
+}
+
+.dayNightSwitch input:checked ~ .container:before {
+  box-shadow: inset 0 calc(10px * var(--scale)) calc(15px * var(--scale)) rgba(20, 33, 45, 1);
+  pointer-events: none;
+}
+
+.dayNightSwitch .moon {
+  left: calc(130px * var(--scale));
+  width: calc(120px * var(--scale));
+  height: calc(120px * var(--scale));
+  border-radius: 100%;
+  background: rgb(204, 207, 212);
+  filter: drop-shadow(
+    0px calc(10px * var(--scale)) calc(10px * var(--scale)) rgba(44, 44, 44, 0.8)
+  );
+  backdrop-filter: blur(2px);
+  box-shadow:
+    inset 0 calc(-5px * var(--scale)) calc(3px * var(--scale)) rgba(40, 40, 80, 0.2),
+    inset calc(3px * var(--scale)) calc(3px * var(--scale)) calc(3px * var(--scale)) #fff;
+  position: absolute;
+  top: 0;
+}
+
+.dayNightSwitch input:checked ~ .container .moon {
+  left: 0;
+}
+
+.dayNightSwitch .crater {
+  background: rgb(160, 168, 182);
+  border-radius: 100%;
+  position: absolute;
+  box-shadow: inset calc(1px * var(--scale)) calc(1px * var(--scale)) calc(2px * var(--scale))
+    rgba(44, 44, 44, 0.2);
+}
+
+.dayNightSwitch .crater-1 {
+  width: calc(40px * var(--scale));
+  height: calc(40px * var(--scale));
+  top: calc(50px * var(--scale));
+  left: calc(25px * var(--scale));
+}
+
+.dayNightSwitch .crater-2 {
+  width: calc(25px * var(--scale));
+  height: calc(25px * var(--scale));
+  top: calc(17px * var(--scale));
+  left: calc(50px * var(--scale));
+}
+
+.dayNightSwitch .crater-3 {
+  width: calc(25px * var(--scale));
+  height: calc(25px * var(--scale));
+  top: calc(68px * var(--scale));
+  left: calc(78px * var(--scale));
+}
+
+.dayNightSwitch .star {
+  background: #fff;
+  position: absolute;
+  border-radius: 100%;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M50 50H0A50 50 0 0 0 50 0m0 50H0a50 50 0 0 1 50 50m0-50h50A50 50 0 0 1 50 0m0 50h50a50 50 0 0 0-50 50Z' fill='%23FFF'/%3E%3C/svg%3E");
+  filter: drop-shadow(0px 0px calc(2px * var(--scale)) #fff);
+  transform: translateY(calc(-130px * var(--scale)));
+}
+
+.dayNightSwitch input:checked ~ .container .star {
+  transform: translateY(0px);
+}
+
+.dayNightSwitch .star-1 {
+  top: calc(40px * var(--scale));
+  right: calc(155px * var(--scale));
+  width: calc(25px * var(--scale));
+  height: calc(25px * var(--scale));
+}
+
+.dayNightSwitch .star-2 {
+  top: calc(40px * var(--scale));
+  right: calc(205px * var(--scale));
+  width: calc(8px * var(--scale));
+  height: calc(8px * var(--scale));
+}
+
+.dayNightSwitch .star-3 {
+  top: calc(88px * var(--scale));
+  right: calc(170px * var(--scale));
+  width: calc(8px * var(--scale));
+  height: calc(8px * var(--scale));
+}
+
+.dayNightSwitch .star-4 {
+  top: calc(70px * var(--scale));
+  right: calc(220px * var(--scale));
+  width: calc(8px * var(--scale));
+  height: calc(8px * var(--scale));
+}
+
+.dayNightSwitch .star-5 {
+  top: calc(105px * var(--scale));
+  right: calc(200px * var(--scale));
+  width: calc(15px * var(--scale));
+  height: calc(15px * var(--scale));
+}
+
+.dayNightSwitch .star-6 {
+  top: calc(15px * var(--scale));
+  right: calc(285px * var(--scale));
+  width: calc(22px * var(--scale));
+  height: calc(22px * var(--scale));
+}
+
+.dayNightSwitch .star-7 {
+  top: calc(45px * var(--scale));
+  right: calc(320px * var(--scale));
+  width: calc(10px * var(--scale));
+  height: calc(10px * var(--scale));
+}
+
+.dayNightSwitch .star-8 {
+  top: calc(60px * var(--scale));
+  right: calc(290px * var(--scale));
+  width: calc(10px * var(--scale));
+  height: calc(10px * var(--scale));
+}
+
+.dayNightSwitch .star-9 {
+  top: calc(95px * var(--scale));
+  right: calc(310px * var(--scale));
+  width: calc(6px * var(--scale));
+  height: calc(6px * var(--scale));
+}
+
+.dayNightSwitch .star-10 {
+  top: calc(110px * var(--scale));
+  right: calc(325px * var(--scale));
+  width: calc(6px * var(--scale));
+  height: calc(6px * var(--scale));
+}
+
+.dayNightSwitch .star-11 {
+  top: calc(120px * var(--scale));
+  right: calc(285px * var(--scale));
+  width: calc(6px * var(--scale));
+  height: calc(6px * var(--scale));
+}

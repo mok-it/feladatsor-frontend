@@ -160,7 +160,7 @@ const ExerciseDetailsForm: FC<{ updateSignal: boolean }> = ({
     SelectExerciseQuery["exercise"] | null
   >(null);
 
-  const { loading } = useSelectExerciseQuery({
+  const { loading, data: fetchedExercise } = useSelectExerciseQuery({
     variables: { exerciseId: id! },
     fetchPolicy: "no-cache",
     onCompleted: (data) => {
@@ -209,48 +209,57 @@ const ExerciseDetailsForm: FC<{ updateSignal: boolean }> = ({
       <Grid2 container spacing={2} pb={10}>
         <Grid2 size={{ xs: 12, lg: 7 }}>
           <Card>
-            <Box p={2}>
-              <ExerciseFields />
-            </Box>
-            <Divider />
-            <Box p={2}>
-              <Stack
-                direction="row"
-                width="100%"
-                justifyContent="space-between"
-                alignItems="center"
-              >
-                <Stack direction="row" gap={1} alignItems="center">
+            <Stack gap={2} p={2}>
+              <Box>
+                <ExerciseFields />
+              </Box>
+              <Typography variant="h5">Hasonló feladatok</Typography>
+              {fetchedExercise?.exercise?.alternativeDifficultyExercises.map(
+                (a) => a.id,
+              )}
+              <Divider />
+              <Box>
+                <Stack
+                  direction="row"
+                  width="100%"
+                  justifyContent="space-between"
+                  alignItems="center"
+                >
+                  <Stack direction="row" gap={1} alignItems="center">
+                    <Typography
+                      variant="body2"
+                      component="span"
+                      sx={{ color: "text.primary" }}
+                    >
+                      Beküldő:{" "}
+                    </Typography>
+                    <Avatar
+                      src={exercise.createdBy.avatarUrl ?? undefined}
+                      sx={{ height: 24, width: 24 }}
+                    />
+                    <Typography
+                      variant="body2"
+                      sx={{ color: "text.secondary" }}
+                    >
+                      {exercise.createdBy.name}
+                    </Typography>
+                  </Stack>
                   <Typography
                     variant="body2"
-                    component="span"
-                    sx={{ color: "text.primary" }}
+                    sx={{ color: "text.secondary", textAlign: "right" }}
                   >
-                    Beküldő:{" "}
-                  </Typography>
-                  <Avatar
-                    src={exercise.createdBy.avatarUrl ?? undefined}
-                    sx={{ height: 24, width: 24 }}
-                  />
-                  <Typography variant="body2" sx={{ color: "text.secondary" }}>
-                    {exercise.createdBy.name}
+                    <Typography
+                      variant="body2"
+                      component="span"
+                      sx={{ color: "text.primary" }}
+                    >
+                      Készült:{" "}
+                    </Typography>
+                    {dayjs(+exercise?.createdAt).format("YYYY. MM. DD. HH.mm")}
                   </Typography>
                 </Stack>
-                <Typography
-                  variant="body2"
-                  sx={{ color: "text.secondary", textAlign: "right" }}
-                >
-                  <Typography
-                    variant="body2"
-                    component="span"
-                    sx={{ color: "text.primary" }}
-                  >
-                    Készült:{" "}
-                  </Typography>
-                  {dayjs(+exercise?.createdAt).format("YYYY. MM. DD. HH.mm")}
-                </Typography>
-              </Stack>
-            </Box>
+              </Box>
+            </Stack>
           </Card>
         </Grid2>
         {operations}
