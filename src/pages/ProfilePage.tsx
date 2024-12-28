@@ -4,9 +4,5 @@ import { userAtom } from "@/util/atoms.ts";
 
 export const ProfilePage = () => {
   const user = useAtomValue(userAtom);
-  return (
-    <ProfileCard
-      name={user && user.user ? user.user.name : " - "}
-    ></ProfileCard>
-  );
+  return <ProfileCard id={user?.user?.id}></ProfileCard>;
 };

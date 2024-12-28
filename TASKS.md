@@ -22,11 +22,11 @@
   - Esetleg bejelentkezéskor egy jegyezzen meg 30 napra gomb? és akkor hosszú lejáratú tokent generálna a backend
 - [ ] Feladat létrehozás mobil responsivitás
 - [ ] Teljes oldal mobil responsivitás
-- [ ] Profil módosítás, profilkép feltöltés
+- [X] Profil módosítás, profilkép feltöltés
 - [X] Feladat képre kattintás esetén nyíljon meg nagyban
 - [ ] Tag nyilvántartó oldal, lehessen átnevezni szülő <-> gyerek kapcsolatok kezelése
   - [ ] Tag-re kattintva nyíljon meg a keresőben beszűrve arra a tag-re.
-- [ ] Feladat oldal tag-kezelés
+- [X] Feladat oldal tag-kezelés
 - [X] Keresőben tag, excludeTag, isFinal alapján keresés
 - [ ] Oldal frissítésekor a dolgok megmaradjanak (feladat, kereső, stb)
 

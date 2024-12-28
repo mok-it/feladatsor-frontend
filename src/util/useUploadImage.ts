@@ -5,8 +5,11 @@ import { fromBase64 } from "./toBase64";
 export const useUploadImage = () => {
   const token = useAtomValue(tokenAtom);
 
-  return async (base64: string): Promise<{ id: string; url: string }> => {
-    const file = fromBase64(base64);
+  return async (
+    base64: string | File,
+  ): Promise<{ id: string; url: string }> => {
+    const file = typeof base64 == "string" ? fromBase64(base64) : base64;
+    console.log(file);
     const formData = new FormData();
     formData.append("file", file as Blob);
     const res = await fetch(

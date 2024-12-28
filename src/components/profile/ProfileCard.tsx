@@ -11,8 +11,15 @@ import { motion } from "framer-motion";
 import { IoCameraOutline } from "react-icons/io5";
 import { MdArrowDownward } from "react-icons/md";
 import ModeIcon from "@mui/icons-material/Mode";
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { ProfileModify } from "@/components/profile/ProfileModify.tsx";
+import {
+  UserDocument,
+  useUpdateUserMutation,
+  useUserQuery,
+} from "@/generated/graphql.tsx";
+import { useDropzone } from "react-dropzone";
+import { useUploadImage } from "@/util/useUploadImage.ts";
 
 // STYLES
 const styles = {
@@ -27,32 +34,74 @@ const styles = {
   },
 };
 
-//APP
-export default function ProfileCard(props: { name: string }) {
+export default function ProfileCard(props: { id?: string }) {
   const [historySort, setHistorySort] = useState<"asc" | "desc">("asc");
   const [commentSort, setCommentSort] = useState<"asc" | "desc">("asc");
   const [open, setOpen] = useState(false);
 
-  const handleClickOpen = () => {
+  const { data: user } = useUserQuery({
+    variables: { userId: props.id ?? "" },
+  });
+
+  const handleProfileModifyOpen = () => {
     setOpen(true);
   };
-  const handleClose = () => {
+  const handleProfileModifyClose = () => {
     setOpen(false);
   };
 
+  const {
+    getInputProps,
+    open: openFileDialog,
+    acceptedFiles,
+  } = useDropzone({
+    // Disable click and keydown behavior
+    noClick: true,
+    noKeyboard: true,
+    maxFiles: 1,
+    multiple: false,
+    accept: {
+      "image/*": [".jpg", ".jpeg", ".png", ".gif"],
+    },
+  });
+
+  const uploadImage = useUploadImage();
+
+  useEffect(() => {
+    //Upload the file to our server
+    if (acceptedFiles.length === 0) return;
+    uploadImage(acceptedFiles[0]).then(({ id }) => {
+      updateUser({
+        variables: {
+          data: {
+            customAvatarId: id,
+          },
+        },
+      });
+    });
+  }, [acceptedFiles]);
+
+  const [updateUser] = useUpdateUserMutation({
+    refetchQueries: [UserDocument],
+  });
+
+  const handleFileUpload = useCallback(() => {
+    openFileDialog();
+  }, [openFileDialog]);
+
   return (
     <Card variant="outlined">
+      <input {...getInputProps()} />
       <Grid
         container
         direction="column"
         justifyContent="center"
         alignItems="center"
       >
-        {/* CARD HEADER START */}
         <Grid item sx={{ p: "1.5rem 0rem", textAlign: "center" }}>
-          {/* PROFILE PHOTO */}
           <Badge
             overlap="circular"
+            sx={{ cursor: "pointer" }}
             anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
             badgeContent={
               <IoCameraOutline
@@ -66,21 +115,27 @@ export default function ProfileCard(props: { name: string }) {
                 }}
               />
             }
+            onClick={() => handleFileUpload()}
           >
             <Avatar
               sx={{ width: 100, height: 100, mb: 1.5 }}
-              src="https://t4.ftcdn.net/jpg/04/54/19/43/360_F_454194340_S5Dxu8CJilzPGmqSU44azVccOuvvEj1i.jpg"
+              src={
+                user?.user?.avatarUrl ??
+                //If deleted the program breaks
+                "https://t4.ftcdn.net/jpg/04/54/19/43/360_F_454194340_S5Dxu8CJilzPGmqSU44azVccOuvvEj1i.jpg"
+              }
             ></Avatar>
           </Badge>
 
-          {/* DESCRIPTION */}
           <Stack direction="row" spacing={1}>
-            <Typography variant="h6">{props.name}</Typography>
-            <ModeIcon onClick={handleClickOpen} />
-            <ProfileModify open={open} handleClose={handleClose} />
+            <Typography variant="h6">{user?.user?.name}</Typography>
+            <ModeIcon
+              sx={{ cursor: "pointer" }}
+              onClick={handleProfileModifyOpen}
+            />
+            <ProfileModify open={open} handleClose={handleProfileModifyClose} />
           </Stack>
         </Grid>
-        {/* CARD HEADER END */}
       </Grid>
       <Stack direction="column" spacing={2} sx={styles.details}>
         <Box>
