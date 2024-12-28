@@ -220,6 +220,7 @@ export type ExerciseStatus =
 export type ExerciseTag = {
   __typename: 'ExerciseTag';
   children: Array<ExerciseTag>;
+  exerciseCount: Scalars['Int']['output'];
   id: Scalars['ID']['output'];
   name: Scalars['String']['output'];
   parent?: Maybe<ExerciseTag>;
@@ -606,7 +607,7 @@ export type ExerciseSheetsQuery = { __typename: 'Query', exerciseSheets: Array<{
 export type ExerciseTagsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type ExerciseTagsQuery = { __typename: 'Query', exerciseTags: Array<{ __typename: 'ExerciseTag', id: string, name: string, children: Array<{ __typename: 'ExerciseTag', id: string, name: string, children: Array<{ __typename: 'ExerciseTag', id: string, name: string }> }> }> };
+export type ExerciseTagsQuery = { __typename: 'Query', exerciseTags: Array<{ __typename: 'ExerciseTag', id: string, name: string, exerciseCount: number, children: Array<{ __typename: 'ExerciseTag', id: string, name: string, children: Array<{ __typename: 'ExerciseTag', id: string, name: string }> }> }> };
 
 export type ExerciseCheckFragment = { __typename: 'ExerciseCheck', id: string, type: ExerciseCheckType, createdAt: string, user: { __typename: 'User', id: string, name: string } };
 
@@ -1295,6 +1296,7 @@ export const ExerciseTagsDocument = gql`
   exerciseTags {
     id
     name
+    exerciseCount
     children {
       id
       name
