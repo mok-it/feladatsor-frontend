@@ -1,6 +1,7 @@
 import { tokenAtom, userAtom } from "@/util/atoms";
 import { auth } from "@/util/firebase";
 import {
+  alpha,
   Box,
   Divider,
   Drawer,
@@ -8,9 +9,7 @@ import {
   ListItemButton,
   ListItemText,
   Stack,
-  Switch,
   Typography,
-  alpha,
   useColorScheme,
 } from "@mui/material";
 import { signOut as firebaseSignout } from "firebase/auth";
@@ -19,6 +18,7 @@ import { useCallback } from "react";
 import { FaPersonRunning } from "react-icons/fa6";
 import { useLocation, useNavigate } from "react-router-dom";
 import { pages } from "../pages";
+import { DayNightSwitch } from "@/components/DayNightSwitch/DayNightSwitch.tsx";
 
 const style = {
   minHeight: 44,
@@ -106,9 +106,9 @@ export const Sidebar = () => {
             </ListItemButton>
           </Stack>
           <Stack direction={"row"} alignItems={"center"} sx={{ mt: "auto" }}>
-            <Switch
+            <DayNightSwitch
               checked={mode === "dark"}
-              onChange={(_, value) => {
+              onChange={(value) => {
                 setMode(value ? "dark" : "light");
               }}
             />
