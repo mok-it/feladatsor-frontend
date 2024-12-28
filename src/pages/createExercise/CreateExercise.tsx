@@ -2,6 +2,7 @@ import { KaTeX } from "@/components/Katex.tsx";
 import { useCreateExerciseMutation } from "@/generated/graphql.tsx";
 import { ExerciseFieldsType } from "@/types/ExerciseFieldsType.ts";
 import { createExerciseAtom } from "@/util/atoms.ts";
+import { ExerciseStatusEnum } from "@/util/types.ts";
 import { LoadingButton } from "@mui/lab";
 import {
   Box,
@@ -52,7 +53,7 @@ export const CreateExercise = () => {
             solutionOptions: formDataToSend.solutionOptions,
             solveIdea: formDataToSend.solveIdea,
             source: formDataToSend.source,
-            status: formDataToSend.status,
+            status: ExerciseStatusEnum.CREATED,
             tags: formDataToSend.tags,
 
             exerciseImage: formDataToSend.exerciseImage,

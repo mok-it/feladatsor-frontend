@@ -1,6 +1,5 @@
 import {
   ExerciseDifficultyInput,
-  ExerciseStatus,
   InputMaybe,
   Scalars,
 } from "@/generated/graphql";
@@ -19,7 +18,6 @@ export type ExerciseFieldsType = {
   solveIdea?: InputMaybe<Scalars["String"]["input"]>;
   solveIdeaImage?: InputMaybe<Scalars["String"]["input"]>;
   source?: InputMaybe<Scalars["String"]["input"]>;
-  status: ExerciseStatus;
   tags: Array<InputMaybe<Scalars["ID"]["input"]>>;
 
   exerciseImageUrl?: string | null | undefined;

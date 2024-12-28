@@ -19,6 +19,7 @@ import {
   Typography,
 } from "@mui/material";
 import { Box, Stack } from "@mui/system";
+import dayjs from "dayjs";
 import { Formik, useFormikContext } from "formik";
 import { useSnackbar } from "notistack";
 import { FC, useCallback, useMemo, useState } from "react";
@@ -27,7 +28,6 @@ import { useParams } from "react-router";
 import { useToggle } from "react-use";
 import { createExerciseInitialValue } from "./createExercise/createExerciseInitialValue";
 import ExerciseFields from "./createExercise/ExerciseFields";
-import dayjs from "dayjs";
 
 const ExerciseDetails: FC = () => {
   const { enqueueSnackbar } = useSnackbar();
@@ -63,7 +63,6 @@ const ExerciseDetails: FC = () => {
               // solutionOptions: formDataToSend.solutionOptions,
               solveIdea: formDataToSend.solveIdea,
               source: formDataToSend.source,
-              status: formDataToSend.status,
               tags: (formDataToSend.tags.filter((a) => a) as string[]) || [],
 
               exerciseImage: formDataToSend.exerciseImage,
@@ -168,7 +167,6 @@ const ExerciseDetailsForm: FC<{ updateSignal: boolean }> = ({
       setValues({
         ...data.exercise,
         initial: false,
-        status: "CREATED",
         solutionOptions: [],
         exerciseImageUrl: data.exercise.exerciseImage?.url,
         solutionImageUrl: data.exercise.solutionImage?.url,

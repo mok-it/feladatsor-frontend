@@ -188,7 +188,7 @@ const ExerciseFields: FC = () => {
             <TextField
               name="solveIdea"
               size="small"
-              defaultValue={values.solveIdea}
+              defaultValue={values.solveIdea || undefined}
               onChange={handleChange}
               onBlur={handleBlur}
               maxRows={1}
@@ -261,7 +261,7 @@ const ExerciseFields: FC = () => {
               <TextField
                 name="source"
                 size="small"
-                value={values.source}
+                value={values.source || undefined}
                 onChange={handleChange}
                 onBlur={handleBlur}
                 maxRows={1}
