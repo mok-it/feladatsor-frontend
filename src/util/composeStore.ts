@@ -8,46 +8,37 @@ export enum ExerciseView {
 }
 type ComposeView = ExerciseAgeGroup | "all";
 type TState = {
-  highlightedid: string | null;
+  selectedId: string | null;
   hoverLocation: string | null;
   hoverIndex: number | null;
   view: ComposeView;
   exerciseView: ExerciseView;
+  name: string;
 };
 
 type TActions = {
-  setHighlightedid: (id: string | null) => void;
-  setHoverLocation: (location: string | null) => void;
-  setHoverIndex: (index: number | null) => void;
+  setSelectedId: (id: string | null) => void;
   setView: (view: ComposeView) => void;
   setExerciseView: (view: ExerciseView) => void;
   setValue: (values: Partial<TState>) => void;
+  setName: (name: string) => void;
 };
 
 const defaultState: TState = {
-  highlightedid: null,
+  selectedId: null,
   hoverLocation: null,
   hoverIndex: null,
   view: "all",
   exerciseView: ExerciseView.CARD,
+  name: "",
 };
 
 export const composeStore = create<TState & TActions>()(
   immer((set) => ({
     ...defaultState,
-    setHighlightedid: (id) => {
+    setSelectedId: (id) => {
       set((state) => {
-        state.highlightedid = id;
-      });
-    },
-    setHoverLocation: (location) => {
-      set((state) => {
-        state.hoverLocation = location;
-      });
-    },
-    setHoverIndex: (index) => {
-      set((state) => {
-        state.hoverIndex = index;
+        state.selectedId = id;
       });
     },
     setView: (view) => {
@@ -63,6 +54,11 @@ export const composeStore = create<TState & TActions>()(
     setValue: (values: Partial<TState>) => {
       set((state) => {
         Object.assign(state, values);
+      });
+    },
+    setName: (name: string) => {
+      set((state) => {
+        state.name = name;
       });
     },
   })),
