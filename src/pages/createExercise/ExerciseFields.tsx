@@ -115,6 +115,7 @@ const ExerciseFields: FC = () => {
                 setFieldValue("exerciseImage", id);
                 setFieldValue("exerciseImageUrl", url);
               }}
+              title="Feladat képe"
             />
           </Section>
         </Grid2>
@@ -150,7 +151,7 @@ const ExerciseFields: FC = () => {
           }}
         >
           <KaTeX value={"$\\LaTeX{}$ megoldás fordítás"} />
-          <Box mt={1} py={2} maxHeight={50} overflow={"auto"}>
+          <Box mt={2} maxHeight={100} overflow={"auto"}>
             {katexSolution}
           </Box>
         </Grid2>
@@ -160,7 +161,7 @@ const ExerciseFields: FC = () => {
           }}
         >
           <SimpleAccordion
-            summary="Megoldás kép feltöltés"
+            summary="Megoldás kép"
             defaultExpanded={values.solutionImageUrl !== undefined}
           >
             <UploadWithPreview
@@ -169,6 +170,7 @@ const ExerciseFields: FC = () => {
                 setFieldValue("solutionImage", id);
                 setFieldValue("solutionImageUrl", url);
               }}
+              title="Megoldás kép"
             />
           </SimpleAccordion>
         </Grid2>
@@ -196,9 +198,9 @@ const ExerciseFields: FC = () => {
             xs: 6,
           }}
         >
-          <Section text="Ötlet a megoldáshoz kpe">
+          <Section text="Ötlet a megoldáshoz kép">
             <SimpleAccordion
-              summary="Megoldás ötlet feltöltés"
+              summary="Megoldás ötlet"
               defaultExpanded={values.solveIdeaImageUrl !== undefined}
             >
               <UploadWithPreview
@@ -207,6 +209,8 @@ const ExerciseFields: FC = () => {
                   setFieldValue("solveIdeaImage", id);
                   setFieldValue("solveIdeaImageUrl", url);
                 }}
+                title="Megoldás ötlet"
+                imageMaxWidth="100%"
               />
             </SimpleAccordion>
           </Section>

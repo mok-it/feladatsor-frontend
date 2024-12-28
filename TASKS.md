@@ -9,7 +9,7 @@
 
 - [x] Feladat megoldás mező is lehet LaTeX
 - [X] Feladat createAt, updatedAt mezők megjelenítése
-- [ ] Feladat source mező megjelenítés, módosítás, létrehozás
+- [X] Feladat source mező megjelenítés, módosítás, létrehozás
 - [ ] Bármelyik feladat mező lehet latex, esetleg egy modal-os LaTeX editor?
 - [X] Feladat megnyitása ID alapján
 - [ ] Feladat ellenörzés oldal, a menüben is
@@ -23,7 +23,7 @@
 - [ ] Feladat létrehozás mobil responsivitás
 - [ ] Teljes oldal mobil responsivitás
 - [ ] Profil módosítás, profilkép feltöltés
-- [ ] Feladat képre kattintás esetén nyíljon meg nagyban
+- [X] Feladat képre kattintás esetén nyíljon meg nagyban
 - [ ] Tag nyilvántartó oldal, lehessen átnevezni szülő <-> gyerek kapcsolatok kezelése
   - [ ] Tag-re kattintva nyíljon meg a keresőben beszűrve arra a tag-re.
 - [ ] Feladat oldal tag-kezelés
