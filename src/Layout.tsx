@@ -1,20 +1,33 @@
-import { Box, Stack } from "@mui/material";
+import { Box, IconButton, Stack } from "@mui/material";
 import { FC } from "react";
+import { MdMenu } from "react-icons/md";
 import { Outlet } from "react-router-dom";
+import { useToggle } from "react-use";
 import { drawerWidth, Sidebar } from "./components/Sidebar";
 
 const Layout: FC = () => {
+  const [open, toggle] = useToggle(false);
+
   return (
     <Stack direction="row" sx={{ height: "100%" }}>
-      <Sidebar />
+      <Sidebar open={open} onClose={() => toggle(false)} />
       <Box
+        component={"div"}
         sx={{
           width: { md: `calc(100% - ${drawerWidth}px)` },
-          py: { xs: 8, md: 4 },
+          py: { xs: 2 },
           px: { xs: 2, md: 4 },
         }}
-        component={"div"}
       >
+        <IconButton
+          onClick={toggle}
+          sx={{
+            display: { md: "none" },
+            mb: 2,
+          }}
+        >
+          <MdMenu />
+        </IconButton>
         <Outlet />
       </Box>
     </Stack>

@@ -6,7 +6,6 @@ import {
   Box,
   Divider,
   Drawer,
-  IconButton,
   ListItem,
   ListItemButton,
   ListItemText,
@@ -17,11 +16,9 @@ import {
 } from "@mui/material";
 import { signOut as firebaseSignout } from "firebase/auth";
 import { useSetAtom } from "jotai";
-import { useCallback } from "react";
+import { FC, useCallback } from "react";
 import { FaPersonRunning } from "react-icons/fa6";
-import { MdMenu } from "react-icons/md";
 import { useLocation, useNavigate } from "react-router-dom";
-import { useToggle } from "react-use";
 import { pages } from "../pages";
 
 const style = {
@@ -35,13 +32,15 @@ const style = {
 
 export const drawerWidth = 250;
 
-export const Sidebar = () => {
+export const Sidebar: FC<{ open: boolean; onClose: () => void }> = ({
+  open,
+  onClose,
+}) => {
   const isDesktop = useMediaQuery("(min-width:900px)");
   const navigate = useNavigate();
   const location = useLocation();
   const setUser = useSetAtom(userAtom);
   const setToken = useSetAtom(tokenAtom);
-  const [open, toggle] = useToggle(true);
 
   const { mode, setMode } = useColorScheme();
 
@@ -54,12 +53,6 @@ export const Sidebar = () => {
 
   return (
     <>
-      <IconButton
-        onClick={toggle}
-        sx={{ position: "fixed", top: 16, left: 24, display: { md: "none" } }}
-      >
-        <MdMenu />
-      </IconButton>
       <Drawer
         anchor="left"
         variant={isDesktop ? "permanent" : "temporary"}
@@ -68,7 +61,7 @@ export const Sidebar = () => {
           width: drawerWidth,
           height: "100vh",
         }}
-        onClose={toggle}
+        onClose={onClose}
       >
         <Box
           sx={{ width: drawerWidth }}
@@ -89,7 +82,7 @@ export const Sidebar = () => {
                     disablePadding
                     onClick={() => {
                       navigate(page.path);
-                      toggle(false);
+                      onClose();
                     }}
                   >
                     <ListItemButton

@@ -4,6 +4,7 @@ import { Required } from "@/components/Required.tsx";
 import Section from "@/components/Section.tsx";
 import { SimpleAccordion } from "@/components/SimpleAccordion.tsx";
 import { UploadWithPreview } from "@/components/UploadWithPreview.tsx";
+import { useFlatExerciseTagsQuery } from "@/generated/graphql.tsx";
 import { ExerciseFieldsType } from "@/types/ExerciseFieldsType";
 import {
   Box,
@@ -18,7 +19,6 @@ import { FC, useMemo, useState } from "react";
 import { useDebounce } from "react-use";
 import { KaTeX } from "../../components/Katex.tsx";
 import { MultiSelect } from "../../components/MultiSelect.tsx";
-import { useFlatExerciseTagsQuery } from "@/generated/graphql.tsx";
 
 const ExerciseFields: FC = () => {
   const { values, handleChange, handleBlur, setFieldValue } =
@@ -68,7 +68,8 @@ const ExerciseFields: FC = () => {
       <Grid2 container spacing={2}>
         <Grid2
           size={{
-            xs: 6,
+            xs: 12,
+            sm: 6,
           }}
         >
           <Section
@@ -95,7 +96,8 @@ const ExerciseFields: FC = () => {
         </Grid2>
         <Grid2
           size={{
-            xs: 6,
+            xs: 12,
+            sm: 6,
           }}
         >
           <KaTeX value={"$\\LaTeX{}$ fordítás"} />
@@ -121,7 +123,8 @@ const ExerciseFields: FC = () => {
         </Grid2>
         <Grid2
           size={{
-            xs: 6,
+            xs: 12,
+            sm: 6,
           }}
         >
           <Section
@@ -147,7 +150,8 @@ const ExerciseFields: FC = () => {
         </Grid2>
         <Grid2
           size={{
-            xs: 6,
+            xs: 12,
+            sm: 6,
           }}
         >
           <KaTeX value={"$\\LaTeX{}$ megoldás fordítás"} />
@@ -176,7 +180,8 @@ const ExerciseFields: FC = () => {
         </Grid2>
         <Grid2
           size={{
-            xs: 6,
+            xs: 12,
+            sm: 6,
           }}
         >
           <Section text="Ötlet a megoldáshoz">
@@ -195,7 +200,8 @@ const ExerciseFields: FC = () => {
         </Grid2>
         <Grid2
           size={{
-            xs: 6,
+            xs: 12,
+            sm: 6,
           }}
         >
           <Section text="Ötlet a megoldáshoz kép">
@@ -217,10 +223,11 @@ const ExerciseFields: FC = () => {
         </Grid2>
       </Grid2>
 
-      <Grid2 container spacing={2} mt={2}>
+      <Grid2 container spacing={2} mt={2} mb={2}>
         <Grid2
           size={{
-            xs: 6,
+            xs: 12,
+            sm: 6,
           }}
         >
           <Stack spacing={2}>
@@ -267,7 +274,8 @@ const ExerciseFields: FC = () => {
         </Grid2>
         <Grid2
           size={{
-            xs: 6,
+            xs: 12,
+            sm: 6,
           }}
         >
           <Typography>
