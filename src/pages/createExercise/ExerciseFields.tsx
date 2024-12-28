@@ -36,6 +36,8 @@ const ExerciseFields: FC = () => {
   }, [setFieldValue, values.difficulty]);
 
   const [debouncedDescription, setDebouncedDescription] = useState("");
+  const [debouncedDescriptionSolution, setDebouncedDescriptionSolution] =
+    useState("");
 
   useDebounce(
     () => {
@@ -45,9 +47,21 @@ const ExerciseFields: FC = () => {
     [values.description],
   );
 
+  useDebounce(
+    () => {
+      setDebouncedDescriptionSolution(values.solution);
+    },
+    500,
+    [values.solution],
+  );
+
   const katex = useMemo(() => {
     return <KaTeX value={debouncedDescription} />;
   }, [debouncedDescription]);
+
+  const katexSolution = useMemo(() => {
+    return <KaTeX value={debouncedDescriptionSolution} />;
+  }, [debouncedDescriptionSolution]);
 
   return (
     <Box>
@@ -111,19 +125,27 @@ const ExerciseFields: FC = () => {
               maxRows={1}
               fullWidth
             />
-            <SimpleAccordion
-              summary="Fájl feltöltés"
-              defaultExpanded={values.solutionImageUrl !== undefined}
-            >
-              <UploadWithPreview
-                defaultUrl={values.solutionImageUrl}
-                onChange={({ id, url }) => {
-                  setFieldValue("solutionImage", id);
-                  setFieldValue("solutionImageUrl", url);
-                }}
-              />
-            </SimpleAccordion>
+            <Grid item xs={6}>
+              <SimpleAccordion
+                summary="Fájl feltöltés"
+                defaultExpanded={values.solutionImageUrl !== undefined}
+              >
+                <UploadWithPreview
+                  defaultUrl={values.solutionImageUrl}
+                  onChange={({ id, url }) => {
+                    setFieldValue("solutionImage", id);
+                    setFieldValue("solutionImageUrl", url);
+                  }}
+                />
+              </SimpleAccordion>
+            </Grid>
           </Section>
+        </Grid>
+        <Grid item xs={6}>
+          <KaTeX value={"$\\LaTeX{}$ megoldás fordítás"} />
+          <Box mt={1} py={2} maxHeight={50} overflow={"auto"}>
+            {katexSolution}
+          </Box>
         </Grid>
         <Grid item xs={6}>
           <Section text="Ötlet a megoldáshoz">
@@ -137,6 +159,10 @@ const ExerciseFields: FC = () => {
               multiline
               fullWidth
             />
+          </Section>
+        </Grid>
+        <Grid item xs={6}>
+          <Section text="Ötlet a megoldáshoz file">
             <SimpleAccordion
               summary="Fájl feltöltés"
               defaultExpanded={values.solveIdeaImageUrl !== undefined}
