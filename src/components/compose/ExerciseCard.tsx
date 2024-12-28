@@ -8,7 +8,7 @@ import {
   Card,
   Chip,
   Divider,
-  Grid,
+  Grid2,
   IconButton,
   Stack,
   Tooltip,
@@ -16,7 +16,7 @@ import {
 } from "@mui/material";
 import { useAtomValue } from "jotai";
 import { entries } from "lodash";
-import { FC, useContext, useMemo } from "react";
+import { FC, memo, useContext, useMemo } from "react";
 import { MdEdit, MdStar } from "react-icons/md";
 import FakeId from "../FakeId";
 import { ContainerContext } from "./Container";
@@ -28,7 +28,6 @@ const ExerciseCard: FC<{
   exercise: SelectExerciseQuery["exercise"] & { id: string };
 }> = ({ exercise, isTalon, isDragging }) => {
   const containerId = useContext(ContainerContext);
-  const highlightedid = composeStore((state) => state.highlightedid);
   const view = composeStore((state) => state.view);
   const exerciseView = composeStore((state) => state.exerciseView);
   const placements = useAtomValue(exercisePlacementsAtom);
@@ -63,7 +62,6 @@ const ExerciseCard: FC<{
         return (
           <Stack
             key={group}
-            bgcolor={isMissing ? "red" : "none"}
             width={20}
             height={20}
             alignItems={"center"}
@@ -73,7 +71,6 @@ const ExerciseCard: FC<{
             <Typography
               variant="caption"
               sx={{
-                color: isMissing ? "white" : "black",
                 fontWeight: isMissing ? "600" : "400",
                 opacity: value ? 1 : 0.2,
               }}
@@ -94,19 +91,13 @@ const ExerciseCard: FC<{
           borderRadius: 1,
           padding: 1,
           paddingBottom: 1.5,
-          cursor: isDetailedView ? "auto" : "grab",
+          cursor: "pointer",
           userSelect: isDetailedView ? "auto" : "none",
-          backgroundColor:
-            highlightedid === exercise.id ? "lightblue" : "white",
           opacity: isDragging ? 0.5 : 1,
-          border: isAgeGroupBad ? "1px solid red" : "none",
+          borderColor: isAgeGroupBad ? "red" : "divider",
+          borderWidth: 1,
+          borderStyle: "solid",
         }}
-        // onMouseEnter={() => {
-        //   setHighlightedid(exercise.id);
-        // }}
-        // onMouseLeave={() => {
-        //   setHighlightedid(null);
-        // }}
       >
         <Stack gap={1} p={isSingleView ? 1 : 0}>
           <Stack
@@ -122,7 +113,9 @@ const ExerciseCard: FC<{
                 #{exercise.id}
               </Typography>
             )}
-            <MdStar color="gold" />
+            <Box flexShrink={0}>
+              <MdStar color="gold" />
+            </Box>
             {isSingleView &&
               exercise.tags.map((tag) => (
                 <Chip key={tag.id} size="small" label={tag.name} />
@@ -165,9 +158,9 @@ const ExerciseCard: FC<{
               </Stack>
               {isDetailedView && (
                 <>
-                  <Grid container columns={2} spacing={2}>
+                  <Grid2 container columns={2} spacing={2}>
                     {exercise.helpingQuestions.length > 0 && (
-                      <Grid item xs={1}>
+                      <Grid2 size={1}>
                         <Typography variant="body2">Segítőkérdések:</Typography>
                         <ul>
                           {exercise.helpingQuestions.map((question) => (
@@ -178,10 +171,10 @@ const ExerciseCard: FC<{
                             </li>
                           ))}
                         </ul>
-                      </Grid>
+                      </Grid2>
                     )}
                     {exercise.solutionOptions.length > 0 && (
-                      <Grid item xs={1}>
+                      <Grid2 size={1}>
                         <Typography variant="body2">Válaszopciók:</Typography>
                         <ul>
                           {exercise.solutionOptions.map((question) => (
@@ -192,9 +185,9 @@ const ExerciseCard: FC<{
                             </li>
                           ))}
                         </ul>
-                      </Grid>
+                      </Grid2>
                     )}
-                  </Grid>
+                  </Grid2>
                   <Typography variant="body2">
                     Megoldás: <b>{exercise.solution}</b>
                   </Typography>
@@ -209,4 +202,5 @@ const ExerciseCard: FC<{
   );
 };
 
-export default ExerciseCard;
+const MemoizedExerciseCard = memo(ExerciseCard);
+export default MemoizedExerciseCard;

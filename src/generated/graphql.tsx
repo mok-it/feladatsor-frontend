@@ -665,6 +665,14 @@ export type UpdateExerciseMutationVariables = Exact<{
 
 export type UpdateExerciseMutation = { __typename: 'Mutation', updateExercise: { __typename: 'Exercise', id: string } };
 
+export type UpdateExerciseSheetMutationVariables = Exact<{
+  updateExerciseSheetId: Scalars['ID']['input'];
+  sheetData: UpdateExerciseSheetInput;
+}>;
+
+
+export type UpdateExerciseSheetMutation = { __typename: 'Mutation', updateExerciseSheet: { __typename: 'ExerciseSheet', id: string } };
+
 export type UpdateUserMutationVariables = Exact<{
   data: UserUpdateInput;
 }>;
@@ -1644,6 +1652,40 @@ export function useUpdateExerciseMutation(baseOptions?: Apollo.MutationHookOptio
 export type UpdateExerciseMutationHookResult = ReturnType<typeof useUpdateExerciseMutation>;
 export type UpdateExerciseMutationResult = Apollo.MutationResult<UpdateExerciseMutation>;
 export type UpdateExerciseMutationOptions = Apollo.BaseMutationOptions<UpdateExerciseMutation, UpdateExerciseMutationVariables>;
+export const UpdateExerciseSheetDocument = gql`
+    mutation updateExerciseSheet($updateExerciseSheetId: ID!, $sheetData: UpdateExerciseSheetInput!) {
+  updateExerciseSheet(id: $updateExerciseSheetId, sheetData: $sheetData) {
+    id
+  }
+}
+    `;
+export type UpdateExerciseSheetMutationFn = Apollo.MutationFunction<UpdateExerciseSheetMutation, UpdateExerciseSheetMutationVariables>;
+
+/**
+ * __useUpdateExerciseSheetMutation__
+ *
+ * To run a mutation, you first call `useUpdateExerciseSheetMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateExerciseSheetMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateExerciseSheetMutation, { data, loading, error }] = useUpdateExerciseSheetMutation({
+ *   variables: {
+ *      updateExerciseSheetId: // value for 'updateExerciseSheetId'
+ *      sheetData: // value for 'sheetData'
+ *   },
+ * });
+ */
+export function useUpdateExerciseSheetMutation(baseOptions?: Apollo.MutationHookOptions<UpdateExerciseSheetMutation, UpdateExerciseSheetMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpdateExerciseSheetMutation, UpdateExerciseSheetMutationVariables>(UpdateExerciseSheetDocument, options);
+      }
+export type UpdateExerciseSheetMutationHookResult = ReturnType<typeof useUpdateExerciseSheetMutation>;
+export type UpdateExerciseSheetMutationResult = Apollo.MutationResult<UpdateExerciseSheetMutation>;
+export type UpdateExerciseSheetMutationOptions = Apollo.BaseMutationOptions<UpdateExerciseSheetMutation, UpdateExerciseSheetMutationVariables>;
 export const UpdateUserDocument = gql`
     mutation UpdateUser($data: UserUpdateInput!) {
   updateUser(data: $data) {

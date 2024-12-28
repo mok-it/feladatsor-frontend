@@ -1,0 +1,8 @@
+mutation updateExerciseSheet(
+  $updateExerciseSheetId: ID!
+  $sheetData: UpdateExerciseSheetInput!
+) {
+  updateExerciseSheet(id: $updateExerciseSheetId, sheetData: $sheetData) {
+    id
+  }
+}
