@@ -1,0 +1,3 @@
+mutation deleteExerciseSheet($deleteExerciseSheetId: ID!) {
+  deleteExerciseSheet(id: $deleteExerciseSheetId)
+}

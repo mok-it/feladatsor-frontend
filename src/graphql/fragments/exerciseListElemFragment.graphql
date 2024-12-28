@@ -13,4 +13,5 @@ fragment ExerciseListElem on Exercise {
     id
     name
   }
+  createdAt
 }

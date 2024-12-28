@@ -12,11 +12,11 @@ export const searchDefaultValues: ExerciseQuery = {
       difficulty: [0, 4],
       isEnabled: false,
     },
-    NAGYMEDVE: {
+    KISMEDVE: {
       difficulty: [0, 4],
       isEnabled: false,
     },
-    KISMEDVE: {
+    NAGYMEDVE: {
       difficulty: [0, 4],
       isEnabled: false,
     },

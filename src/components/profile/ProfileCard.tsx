@@ -1,7 +1,6 @@
 // IMPORTS
 import { ExerciseTable } from "@/components/ExerciseTable";
 import { ProfileStatCard } from "@/components/profile/ProfileStatCard.tsx";
-import { grey } from "@/theme/palette.ts";
 import { Divider, Grid, IconButton } from "@mui/material";
 import Avatar from "@mui/material/Avatar";
 import Badge from "@mui/material/Badge";
@@ -156,25 +155,13 @@ export default function ProfileCard(props: { name: string }) {
         <Typography variant="h6">Statisztikák</Typography>
         <Grid container spacing={3}>
           <Grid item lg={3} sm={6} xs={12}>
-            <ProfileStatCard
-              sx={{ backgroundColor: grey[200] }}
-              title={"Beküldött feladatok"}
-              value={3}
-            />
+            <ProfileStatCard title={"Beküldött feladatok"} value={3} />
           </Grid>
           <Grid item lg={3} sm={6} xs={12}>
-            <ProfileStatCard
-              sx={{ backgroundColor: grey[200] }}
-              title={"Ellenőrzött feladatok"}
-              value={3}
-            />
+            <ProfileStatCard title={"Ellenőrzött feladatok"} value={3} />
           </Grid>
           <Grid item lg={3} sm={6} xs={12}>
-            <ProfileStatCard
-              sx={{ backgroundColor: grey[200] }}
-              title={"Kacsák száma"}
-              value={1000}
-            />
+            <ProfileStatCard title={"Kacsák száma"} value={1000} />
           </Grid>
         </Grid>
       </Stack>

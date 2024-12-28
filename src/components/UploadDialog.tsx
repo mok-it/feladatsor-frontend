@@ -31,7 +31,7 @@ export const UploadDialog = (props: UploadDialogProps) => {
       sx={{
         flexGrow: 1,
         width: "100%",
-        backgroundColor: "grey.100",
+        backgroundColor: (theme) => theme.palette.action.hover,
         cursor: "pointer",
         borderRadius: 2,
         display: "flex",
@@ -55,8 +55,13 @@ export const UploadDialog = (props: UploadDialogProps) => {
         <MdOutlineCloudUpload size={40} />
         <input {...getInputProps()} />
         <Typography variant="body1">
-          <span style={{ color: "#8F1C6B" }}>Töltsd fel</span> vagy húzd ide a
-          file-t!
+          <Typography
+            component="span"
+            sx={{ color: (theme) => theme.palette.primary.main }}
+          >
+            Töltsd fel
+          </Typography>{" "}
+          vagy húzd ide a file-t!
         </Typography>
       </Stack>
     </Box>

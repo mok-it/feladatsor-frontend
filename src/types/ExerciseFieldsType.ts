@@ -6,7 +6,7 @@ import {
 } from "@/generated/graphql";
 
 export type ExerciseFieldsType = {
-  alternativeDifficultyParent?: InputMaybe<Scalars["ID"]["input"]>;
+  alternativeDifficultyGroup?: InputMaybe<Scalars["ID"]["input"]>;
   description: Scalars["String"]["input"];
   difficulty: Array<ExerciseDifficultyInput>;
   exerciseImage?: InputMaybe<Scalars["String"]["input"]>;

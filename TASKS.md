@@ -11,7 +11,7 @@
 - [ ] Feladat createAt, updatedAt mezők megjelenítése
 - [ ] Feladat source mező megjelenítés, módosítás, létrehozás
 - [ ] Bármelyik feladat mező lehet latex, esetleg egy modal-os LaTeX editor?
-- [ ] Feladat megnyitása ID alapján
+- [X] Feladat megnyitása ID alapján
 - [ ] Feladat ellenörzés oldal, a menüben is
 - [ ] Új feladat létrehozása meglévő alapján, alternativeDifficultyExerciseGroups, sameLogicExerciseGroups
 - [ ] Feladatok listázása a csoportokban (alternativeDifficultyExerciseGroups, sameLogicExerciseGroups)

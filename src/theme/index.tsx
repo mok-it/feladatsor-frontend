@@ -29,6 +29,9 @@ export function ThemeProvider({ children }) {
   const memoizedValue = useMemo(
     () => ({
       palette: palette(),
+      colorSchemes: {
+        dark: true,
+      },
       typography,
       shadows: shadows(),
       customShadows: customShadows(),

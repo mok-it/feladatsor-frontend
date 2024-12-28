@@ -2,6 +2,7 @@ query ExerciseTags {
   exerciseTags {
     id
     name
+    exerciseCount
     children {
       id
       name

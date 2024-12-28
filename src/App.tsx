@@ -9,6 +9,7 @@ import Layout from "./Layout";
 import { pages } from "./pages";
 import ExerciseDetails from "./pages/ExerciseDetails";
 import { userAtom } from "./util/atoms";
+import ComposePage from "@/pages/compose/ComposePage.tsx";
 
 function App() {
   const [user, setUser] = useAtom(userAtom);
@@ -49,6 +50,7 @@ function App() {
             />
           ))}
           <Route path={"/exercise/:id"} element={<ExerciseDetails />} />
+          <Route path={"/exercise-compose/:id"} element={<ComposePage />} />
           <Route path="*" element={<NotFoundPage />} />
         </Route>
       </Routes>

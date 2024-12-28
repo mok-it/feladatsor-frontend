@@ -4,7 +4,7 @@ import {
   DifficultySelect,
   ExerciseQuery,
 } from "@/pages/ExerciseListPage/ExerciseListPage.tsx";
-import { Stack } from "@mui/material";
+import { Grid, Stack, Typography } from "@mui/material";
 import { entries } from "lodash";
 import { Updater } from "use-immer";
 
@@ -16,6 +16,15 @@ export const DifficultySelectorList = ({
   setExerciseQuery: Updater<ExerciseQuery>;
 }) => (
   <Stack>
+    <Grid container>
+      <Grid item xs={3}></Grid>
+      <Grid item xs={8} px={5} pt={1}>
+        <Stack direction="row" justifyContent="space-between" height={"100%"}>
+          <Typography>Könnyű</Typography>
+          <Typography>Nehéz</Typography>
+        </Stack>
+      </Grid>
+    </Grid>
     {entries(difficulties).map(([difficultyName, ageGroup]) => {
       return (
         <DifficultySelector

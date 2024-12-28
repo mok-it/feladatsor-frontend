@@ -1,11 +1,30 @@
 import { userAtom } from "@/util/atoms.ts";
-import { Card, Grid2, Typography } from "@mui/material";
+import { Grid2, useColorScheme } from "@mui/material";
 import { useAtomValue } from "jotai";
 import { useToggle } from "react-use";
+import { useStatsQuery } from "@/generated/graphql.tsx";
+import { LeaderBoardCard } from "@/pages/home/LeaderBoardCard.tsx";
+import { StatCard } from "@/components/StatCard.tsx";
+import { Bar } from "react-chartjs-2";
+import { CategoryScale, Chart, LinearScale } from "chart.js/auto";
+import { useEffect } from "react";
+import { ProfileStatCard } from "@/components/profile/ProfileStatCard.tsx";
+import { FaDiceD6 } from "react-icons/fa6";
+import { FaCheck } from "react-icons/fa";
+import { lightBlue, lightGreen } from "@mui/material/colors";
+import { ContributionCalendar } from "react-contribution-calendar";
 
 export const HomePage = () => {
   const user = useAtomValue(userAtom);
   const [show, toggle] = useToggle(false);
+
+  const { data, loading } = useStatsQuery();
+  const { mode } = useColorScheme();
+
+  useEffect(() => {
+    Chart.register(CategoryScale);
+    Chart.register(LinearScale);
+  }, []);
 
   return (
     <div>
@@ -24,12 +43,104 @@ export const HomePage = () => {
           ></iframe>
         </div>
       )}
-      <Grid2 container>
-        <Grid2 size={2}>
-          <Card>
-            <Typography variant="h4">Beküldött feladatok</Typography>
-          </Card>
+      <Grid2 container spacing={2} pb={2}>
+        <Grid2 container size={12}>
+          <Grid2
+            size={{
+              xs: 6,
+              md: 3,
+            }}
+          >
+            <ProfileStatCard
+              value={data?.globalStats?.totalExerciseCount + " db"}
+              title="Összes feladat"
+              icon={FaDiceD6}
+              iconColor={lightBlue["600"]}
+            />
+          </Grid2>
+          <Grid2
+            size={{
+              xs: 6,
+              md: 3,
+            }}
+          >
+            <ProfileStatCard
+              value={data?.globalStats?.checkedExerciseCount + " db"}
+              title="Ellenőrzött feladat"
+              icon={FaCheck}
+              iconColor={lightGreen["600"]}
+            />
+          </Grid2>
         </Grid2>
+        <Grid2
+          size={{
+            xs: 12,
+            md: 6,
+          }}
+        >
+          <LeaderBoardCard loading={loading} stats={data?.globalStats} />
+        </Grid2>
+        <Grid2
+          size={{
+            xs: 12,
+            md: 6,
+          }}
+        >
+          <StatCard title="Feladatbeküldések napos gyakorisága">
+            {data?.globalStats?.exerciseHourlyCount && (
+              <Bar
+                data={{
+                  labels: data.globalStats.exerciseHourlyCount.map(
+                    (e) => e.hour + " óra",
+                  ),
+                  datasets: [
+                    {
+                      data: data.globalStats.exerciseHourlyCount.map(
+                        (e) => e.count,
+                      ),
+                      label: "Feladat db",
+                      backgroundColor: "rgba(54, 162, 235, 0.2)",
+                      borderColor: "rgba(54, 162, 235, 1)",
+                      borderRadius: 5,
+                      borderWidth: 1,
+                    },
+                  ],
+                }}
+              />
+            )}
+          </StatCard>
+        </Grid2>
+        <StatCard title="Feladatbeküldések éves eloszlása">
+          <ContributionCalendar
+            data={
+              data?.globalStats?.contributionCalendar.data.map((d) => ({
+                [d.date]: {
+                  level: d.count,
+                },
+              })) || []
+            }
+            startsOnSunday={false}
+            start={data?.globalStats?.contributionCalendar.fromDate}
+            end={data?.globalStats?.contributionCalendar.toDate}
+            daysOfTheWeek={[
+              "Vasárnap",
+              "Hétfő",
+              "Kedd",
+              "Szerda",
+              "Csütörtök",
+              "Péntek",
+              "Szombat",
+            ]}
+            textColor={mode === "light" ? "black" : "white"}
+            includeBoundary={false}
+            theme={mode === "light" ? "grass" : "dark_grass"}
+            onCellClick={(_, data) => console.log(data)}
+            scroll={false}
+            hideDescription={false}
+            hideMonthLabels={false}
+            hideDayLabels={false}
+          />
+        </StatCard>
       </Grid2>
     </div>
   );

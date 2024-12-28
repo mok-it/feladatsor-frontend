@@ -1,20 +1,25 @@
 import ExerciseCard from "@/components/compose/ExerciseCard";
-import { exerciseCardsAtom } from "@/util/atoms";
 import type { UniqueIdentifier } from "@dnd-kit/core";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { Card, Stack, Typography } from "@mui/material";
-import { useAtomValue } from "jotai";
 import type { FC } from "react";
+import { useSelectExerciseQuery } from "@/generated/graphql.tsx";
 
 export const Item: FC<{
   id: UniqueIdentifier;
   isDragging?: boolean;
 }> = ({ id, isDragging = false }) => {
-  const exercises = useAtomValue(exerciseCardsAtom);
-  const exercise = exercises.find((exercise) => exercise.id === id);
+  //const exercises = useAtomValue(exerciseCardsAtom);
+  //const exercise = exercises.find((exercise) => exercise.id === id);
 
-  if (!exercise) {
+  const { data, loading } = useSelectExerciseQuery({
+    variables: {
+      exerciseId: String(id),
+    },
+  });
+
+  if (!data || !data.exercise) {
     return (
       <Card
         sx={{
@@ -31,14 +36,16 @@ export const Item: FC<{
       >
         <Stack gap={2}>
           <Stack direction={"row"} justifyContent={"space-between"}>
-            <Typography variant="caption">Not found {id}</Typography>
+            <Typography variant="caption">
+              {loading ? "Loading" : `Not found ${id}`}
+            </Typography>
           </Stack>
         </Stack>
       </Card>
     );
   }
   return (
-    <ExerciseCard id={id} exercise={exercise.data} isDragging={isDragging} />
+    <ExerciseCard id={id} exercise={data.exercise} isDragging={isDragging} />
   );
 };
 
