@@ -7,8 +7,8 @@
 
 ### Fejleszthető
 
-- [ ] Feladat megoldás mező is lehet LaTeX
-- [ ] Feladat createAt, updatedAt mezők megjelenítése
+- [x] Feladat megoldás mező is lehet LaTeX
+- [X] Feladat createAt, updatedAt mezők megjelenítése
 - [ ] Feladat source mező megjelenítés, módosítás, létrehozás
 - [ ] Bármelyik feladat mező lehet latex, esetleg egy modal-os LaTeX editor?
 - [X] Feladat megnyitása ID alapján

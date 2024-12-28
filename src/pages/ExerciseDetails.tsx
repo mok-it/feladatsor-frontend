@@ -1,6 +1,5 @@
 import { ExerciseOperations } from "@/components/ExerciseOperations";
 import FakeId from "@/components/FakeId";
-import { MultiSelect } from "@/components/MultiSelect";
 import Section from "@/components/Section";
 import {
   SelectExerciseQuery,
@@ -10,9 +9,10 @@ import {
 import { ExerciseFieldsType } from "@/types/ExerciseFieldsType";
 import { LoadingButton } from "@mui/lab";
 import {
+  Avatar,
   Button,
   Card,
-  Checkbox,
+  Divider,
   Grid2,
   Modal,
   TextField,
@@ -27,6 +27,7 @@ import { useParams } from "react-router";
 import { useToggle } from "react-use";
 import { createExerciseInitialValue } from "./createExercise/createExerciseInitialValue";
 import ExerciseFields from "./createExercise/ExerciseFields";
+import dayjs from "dayjs";
 
 const ExerciseDetails: FC = () => {
   const { enqueueSnackbar } = useSnackbar();
@@ -63,7 +64,7 @@ const ExerciseDetails: FC = () => {
               solveIdea: formDataToSend.solveIdea,
               source: formDataToSend.source,
               status: formDataToSend.status,
-              // tags: (formDataToSend.tags.filter((a) => a) as string[]) || [],
+              tags: (formDataToSend.tags.filter((a) => a) as string[]) || [],
 
               exerciseImage: formDataToSend.exerciseImage,
               solutionImage: formDataToSend.solutionImage,
@@ -175,7 +176,8 @@ const ExerciseDetailsForm: FC<{ updateSignal: boolean }> = ({
         exerciseImage: data.exercise.exerciseImage?.id,
         solutionImage: data.exercise.solutionImage?.id,
         solveIdeaImage: data.exercise.solveIdeaImage?.id,
-        tags: data.exercise.tags.map((tag) => tag.name),
+        source: data.exercise.source,
+        tags: data.exercise.tags.map((tag) => tag.id),
       });
       setExercise(data.exercise);
     },
@@ -190,6 +192,9 @@ const ExerciseDetailsForm: FC<{ updateSignal: boolean }> = ({
   }, [exercise, updateSignal]);
 
   if (loading || values.initial) return <div>Loading...</div>;
+
+  if (!loading && !exercise) return <div>Exercise not found</div>;
+  if (!exercise) return <div>Exercise not found</div>;
 
   return (
     <>
@@ -207,17 +212,43 @@ const ExerciseDetailsForm: FC<{ updateSignal: boolean }> = ({
             <Box p={2}>
               <ExerciseFields />
             </Box>
+            <Divider />
             <Box p={2}>
-              <Stack direction={"row"} gap={1} alignItems={"center"}>
-                <Typography>Döntő</Typography>
-                <Checkbox />
-              </Stack>
-              <Stack direction={"row"} gap={1} alignItems={"center"}>
-                <Typography>Talonba rakom</Typography>
-                <MultiSelect
-                  sx={{ width: "80%" }}
-                  items={["Gellért hegy", "Városliget"]}
-                />
+              <Stack
+                direction="row"
+                width="100%"
+                justifyContent="space-between"
+                alignItems="center"
+              >
+                <Stack direction="row" gap={1} alignItems="center">
+                  <Typography
+                    variant="body2"
+                    component="span"
+                    sx={{ color: "text.primary" }}
+                  >
+                    Beküldő:{" "}
+                  </Typography>
+                  <Avatar
+                    src={exercise.createdBy.avatarUrl ?? undefined}
+                    sx={{ height: 24, width: 24 }}
+                  />
+                  <Typography variant="body2" sx={{ color: "text.secondary" }}>
+                    {exercise.createdBy.name}
+                  </Typography>
+                </Stack>
+                <Typography
+                  variant="body2"
+                  sx={{ color: "text.secondary", textAlign: "right" }}
+                >
+                  <Typography
+                    variant="body2"
+                    component="span"
+                    sx={{ color: "text.primary" }}
+                  >
+                    Készült:{" "}
+                  </Typography>
+                  {dayjs(+exercise?.createdAt).format("YYYY. MM. DD. HH.mm")}
+                </Typography>
               </Stack>
             </Box>
           </Card>
