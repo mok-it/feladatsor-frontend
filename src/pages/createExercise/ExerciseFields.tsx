@@ -285,11 +285,9 @@ const ExerciseFields: FC = () => {
         </Grid2>
       </Grid2>
       <HelpingQuestions
+        value={values.helpingQuestions}
         onChange={(value) => {
-          setFieldValue(
-            "helpingQuestions",
-            value.map((v) => v.label),
-          );
+          setFieldValue("helpingQuestions", value);
         }}
       />
     </Box>
