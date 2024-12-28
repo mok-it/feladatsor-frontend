@@ -578,6 +578,13 @@ export type CreateExerciseSheetMutationVariables = Exact<{
 
 export type CreateExerciseSheetMutation = { __typename: 'Mutation', createExerciseSheet: { __typename: 'ExerciseSheet', id: string, name: string, createdAt: string } };
 
+export type CreateExerciseTagMutationVariables = Exact<{
+  name: Scalars['String']['input'];
+}>;
+
+
+export type CreateExerciseTagMutation = { __typename: 'Mutation', createExerciseTag: { __typename: 'ExerciseTag', id: string } };
+
 export type DeleteExerciseCommentMutationVariables = Exact<{
   deleteExerciseCommentId: Scalars['ID']['input'];
 }>;
@@ -973,6 +980,39 @@ export function useCreateExerciseSheetMutation(baseOptions?: Apollo.MutationHook
 export type CreateExerciseSheetMutationHookResult = ReturnType<typeof useCreateExerciseSheetMutation>;
 export type CreateExerciseSheetMutationResult = Apollo.MutationResult<CreateExerciseSheetMutation>;
 export type CreateExerciseSheetMutationOptions = Apollo.BaseMutationOptions<CreateExerciseSheetMutation, CreateExerciseSheetMutationVariables>;
+export const CreateExerciseTagDocument = gql`
+    mutation CreateExerciseTag($name: String!) {
+  createExerciseTag(name: $name) {
+    id
+  }
+}
+    `;
+export type CreateExerciseTagMutationFn = Apollo.MutationFunction<CreateExerciseTagMutation, CreateExerciseTagMutationVariables>;
+
+/**
+ * __useCreateExerciseTagMutation__
+ *
+ * To run a mutation, you first call `useCreateExerciseTagMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateExerciseTagMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createExerciseTagMutation, { data, loading, error }] = useCreateExerciseTagMutation({
+ *   variables: {
+ *      name: // value for 'name'
+ *   },
+ * });
+ */
+export function useCreateExerciseTagMutation(baseOptions?: Apollo.MutationHookOptions<CreateExerciseTagMutation, CreateExerciseTagMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateExerciseTagMutation, CreateExerciseTagMutationVariables>(CreateExerciseTagDocument, options);
+      }
+export type CreateExerciseTagMutationHookResult = ReturnType<typeof useCreateExerciseTagMutation>;
+export type CreateExerciseTagMutationResult = Apollo.MutationResult<CreateExerciseTagMutation>;
+export type CreateExerciseTagMutationOptions = Apollo.BaseMutationOptions<CreateExerciseTagMutation, CreateExerciseTagMutationVariables>;
 export const DeleteExerciseCommentDocument = gql`
     mutation DeleteExerciseComment($deleteExerciseCommentId: ID!) {
   deleteExerciseComment(id: $deleteExerciseCommentId) {

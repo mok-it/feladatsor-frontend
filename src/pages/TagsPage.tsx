@@ -1,6 +1,10 @@
-import { useExerciseTagsQuery } from "@/generated/graphql.tsx";
+import {
+  useCreateExerciseTagMutation,
+  useExerciseTagsQuery,
+} from "@/generated/graphql.tsx";
 import { ExerciseTag } from "@/util/types";
 import {
+  Button,
   Card,
   Grid2,
   InputAdornment,
@@ -10,6 +14,7 @@ import {
 } from "@mui/material";
 import Box from "@mui/material/Box";
 import Chip from "@mui/material/Chip";
+import { useSnackbar } from "notistack";
 import { FC, useMemo, useState } from "react";
 import { IoSearch } from "react-icons/io5";
 import { useDebounce } from "react-use";
@@ -40,6 +45,11 @@ export const TagsPage = () => {
         )),
     [data, debouncedSearch],
   );
+
+  const snakbar = useSnackbar();
+  const [name, setName] = useState("");
+  const [create] = useCreateExerciseTagMutation();
+
   return (
     <Box mb={16}>
       <Stack direction={"row"} mx={2}>
@@ -57,21 +67,44 @@ export const TagsPage = () => {
         </Grid2>
         <Grid2 size={1}>
           <Card sx={{ p: 2 }}>
-            <TextField
-              onChange={(event) => {
-                setSearch(event.target.value);
-              }}
-              label="Keresés"
-              value={search}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <IoSearch />
-                  </InputAdornment>
-                ),
-              }}
-              size="small"
-            />
+            <Stack gap={2}>
+              <TextField
+                onChange={(event) => {
+                  setSearch(event.target.value);
+                }}
+                label="Keresés"
+                value={search}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <IoSearch />
+                    </InputAdornment>
+                  ),
+                }}
+                size="small"
+              />
+              <Typography variant="h5" mt={2}>
+                Új címke
+              </Typography>
+              <TextField
+                size="small"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+              />
+              <Button
+                variant="contained"
+                onClick={async () => {
+                  if (!name) return;
+                  setName("");
+                  await create({ variables: { name } });
+                  snakbar.enqueueSnackbar("Címke létrehozva", {
+                    variant: "success",
+                  });
+                }}
+              >
+                Mentés
+              </Button>
+            </Stack>
           </Card>
         </Grid2>
       </Grid2>

@@ -1,0 +1,5 @@
+mutation CreateExerciseTag($name: String!) {
+  createExerciseTag(name: $name) {
+    id
+  }
+}
