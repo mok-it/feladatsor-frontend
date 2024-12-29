@@ -37,6 +37,10 @@ query selectExercise($exerciseId: ID!) {
   exercise(id: $exerciseId) {
     id
     status
+    alert {
+      description
+      severity
+    }
     description
     solutionOptions
     sameLogicExerciseGroup {

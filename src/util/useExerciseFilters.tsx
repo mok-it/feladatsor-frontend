@@ -1,4 +1,3 @@
-import { MultiSelect } from "@/components/MultiSelect.tsx";
 import { SimpleAccordion } from "@/components/SimpleAccordion.tsx";
 import {
   ExerciseAgeGroup,
@@ -91,13 +90,6 @@ export const useExerciseFilters = () => {
                 draft.isFinal = checked;
               });
             }}
-          />
-        </Stack>
-        <Stack direction="row" alignItems="center" gap={2}>
-          <MultiSelect
-            label={"Talon"}
-            sx={{ flexGrow: 1 }}
-            items={["Gellért hegy", "Városliget"]}
           />
         </Stack>
       </Stack>

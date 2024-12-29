@@ -12,6 +12,7 @@ import { createExerciseInitialValue } from "@/util/const";
 import { ExerciseFieldsType } from "@/util/types";
 import { LoadingButton } from "@mui/lab";
 import {
+  Alert,
   Avatar,
   Button,
   Card,
@@ -32,6 +33,7 @@ import { useToggle } from "react-use";
 import ExerciseFields from "./createExercise/ExerciseFields";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import { useNavigate } from "react-router-dom";
+import { AlertColor } from "@mui/material/Alert/Alert";
 
 const ExerciseDetails: FC = () => {
   const { enqueueSnackbar } = useSnackbar();
@@ -247,6 +249,15 @@ const ExerciseDetailsForm: FC<{ updateSignal: boolean }> = ({
         <Grid2 size={{ xs: 12, lg: 7 }}>
           <Card>
             <Stack gap={2} p={2}>
+              {exercise.alert && (
+                <Alert
+                  severity={
+                    exercise.alert.severity.toLocaleLowerCase() as AlertColor
+                  }
+                >
+                  {exercise.alert.description}
+                </Alert>
+              )}
               <Box>
                 <ExerciseFields />
               </Box>

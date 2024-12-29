@@ -17,6 +17,12 @@ export type Scalars = {
   Float: { input: number; output: number; }
 };
 
+export type AlertSeverity =
+  | 'ERROR'
+  | 'INFO'
+  | 'SUCCESS'
+  | 'WARNING';
+
 export type ContributionCalendar = {
   __typename: 'ContributionCalendar';
   data: Array<ContributionCalendarDay>;
@@ -33,6 +39,7 @@ export type ContributionCalendarDay = {
 
 export type Exercise = {
   __typename: 'Exercise';
+  alert?: Maybe<ExerciseAlert>;
   checks: Array<ExerciseCheck>;
   comments: Array<ExerciseComment>;
   createdAt: Scalars['String']['output'];
@@ -62,6 +69,17 @@ export type ExerciseAgeGroup =
   | 'KOALA'
   | 'MEDVEBOCS'
   | 'NAGYMEDVE';
+
+export type ExerciseAlert = {
+  __typename: 'ExerciseAlert';
+  description: Scalars['String']['output'];
+  severity: AlertSeverity;
+};
+
+export type ExerciseAlertInput = {
+  description: Scalars['String']['input'];
+  severity: AlertSeverity;
+};
 
 export type ExerciseCheck = {
   __typename: 'ExerciseCheck';
@@ -136,6 +154,7 @@ export type ExerciseHourlyGroup = {
 };
 
 export type ExerciseInput = {
+  alert?: InputMaybe<ExerciseAlertInput>;
   description: Scalars['String']['input'];
   difficulty: Array<ExerciseDifficultyInput>;
   exerciseImage?: InputMaybe<Scalars['String']['input']>;
@@ -216,6 +235,7 @@ export type ExerciseTag = {
 };
 
 export type ExerciseUpdateInput = {
+  alert?: InputMaybe<ExerciseAlertInput>;
   comment?: InputMaybe<Scalars['String']['input']>;
   description?: InputMaybe<Scalars['String']['input']>;
   difficulty?: InputMaybe<Array<ExerciseDifficultyInput>>;
@@ -512,12 +532,14 @@ export type UpdateExerciseSheetInput = {
 export type User = {
   __typename: 'User';
   avatarUrl?: Maybe<Scalars['String']['output']>;
+  comments: Array<ExerciseComment>;
   createdAt: Scalars['String']['output'];
   email: Scalars['String']['output'];
   exercises: Array<Exercise>;
   id: Scalars['ID']['output'];
   name: Scalars['String']['output'];
   roles: Array<Role>;
+  stats: UserStats;
   updatedAt: Scalars['String']['output'];
   userName: Scalars['String']['output'];
 };
@@ -527,6 +549,13 @@ export type UserRegisterInput = {
   name: Scalars['String']['input'];
   password: Scalars['String']['input'];
   userName: Scalars['String']['input'];
+};
+
+export type UserStats = {
+  __typename: 'UserStats';
+  checkedExerciseCount: Scalars['Int']['output'];
+  contributionCalendar: ContributionCalendar;
+  totalExerciseCount: Scalars['Int']['output'];
 };
 
 export type UserUpdateInput = {
@@ -627,7 +656,7 @@ export type SelectExerciseQueryVariables = Exact<{
 }>;
 
 
-export type SelectExerciseQuery = { __typename: 'Query', exercise?: { __typename: 'Exercise', id: string, status: ExerciseStatus, description: string, solutionOptions: Array<string>, solution: string, solveIdea?: string | null, source?: string | null, createdAt: string, helpingQuestions: Array<string>, sameLogicExerciseGroup?: { __typename: 'SameLogicExerciseGroup', exercises: Array<{ __typename: 'Exercise', id: string, description: string, createdAt: string, difficulty: Array<{ __typename: 'ExerciseDifficulty', difficulty: number, ageGroup: ExerciseAgeGroup }>, exerciseImage?: { __typename: 'Image', url: string } | null, tags: Array<{ __typename: 'Tag', id: string, name: string }>, createdBy: { __typename: 'User', id: string, userName: string, avatarUrl?: string | null } }> } | null, exerciseImage?: { __typename: 'Image', id: string, url: string } | null, solutionImage?: { __typename: 'Image', id: string, url: string } | null, createdBy: { __typename: 'User', id: string, name: string, avatarUrl?: string | null }, solveIdeaImage?: { __typename: 'Image', id: string, url: string } | null, tags: Array<{ __typename: 'Tag', id: string, name: string }>, difficulty: Array<{ __typename: 'ExerciseDifficulty', ageGroup: ExerciseAgeGroup, difficulty: number }>, checks: Array<{ __typename: 'ExerciseCheck', id: string, type: ExerciseCheckType, createdAt: string, user: { __typename: 'User', id: string, name: string } }> } | null };
+export type SelectExerciseQuery = { __typename: 'Query', exercise?: { __typename: 'Exercise', id: string, status: ExerciseStatus, description: string, solutionOptions: Array<string>, solution: string, solveIdea?: string | null, source?: string | null, createdAt: string, helpingQuestions: Array<string>, alert?: { __typename: 'ExerciseAlert', description: string, severity: AlertSeverity } | null, sameLogicExerciseGroup?: { __typename: 'SameLogicExerciseGroup', exercises: Array<{ __typename: 'Exercise', id: string, description: string, createdAt: string, difficulty: Array<{ __typename: 'ExerciseDifficulty', difficulty: number, ageGroup: ExerciseAgeGroup }>, exerciseImage?: { __typename: 'Image', url: string } | null, tags: Array<{ __typename: 'Tag', id: string, name: string }>, createdBy: { __typename: 'User', id: string, userName: string, avatarUrl?: string | null } }> } | null, exerciseImage?: { __typename: 'Image', id: string, url: string } | null, solutionImage?: { __typename: 'Image', id: string, url: string } | null, createdBy: { __typename: 'User', id: string, name: string, avatarUrl?: string | null }, solveIdeaImage?: { __typename: 'Image', id: string, url: string } | null, tags: Array<{ __typename: 'Tag', id: string, name: string }>, difficulty: Array<{ __typename: 'ExerciseDifficulty', ageGroup: ExerciseAgeGroup, difficulty: number }>, checks: Array<{ __typename: 'ExerciseCheck', id: string, type: ExerciseCheckType, createdAt: string, user: { __typename: 'User', id: string, name: string } }> } | null };
 
 export type ExerciseHistoryByExerciseQueryVariables = Exact<{
   exerciseId: Scalars['ID']['input'];
@@ -1272,6 +1301,10 @@ export const SelectExerciseDocument = gql`
   exercise(id: $exerciseId) {
     id
     status
+    alert {
+      description
+      severity
+    }
     description
     solutionOptions
     sameLogicExerciseGroup {

@@ -42,6 +42,7 @@
 
 - [X] Feladatsorok listázása oldal
 - [X] Feladat keresőben eremény rendezhetősége
+- [ ] Feladat oldalon, a feladathoz jelenjen meg egy (vagy több) Alert, amikbe valami fontos infót lehet a feladathoz megadni
 
 ### Üzletre vár
 
