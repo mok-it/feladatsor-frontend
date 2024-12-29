@@ -1,0 +1,5 @@
+mutation VoteOnDeveloper($voteOnDeveloperId: ID!) {
+  voteOnDeveloper(id: $voteOnDeveloperId) {
+    id
+  }
+}

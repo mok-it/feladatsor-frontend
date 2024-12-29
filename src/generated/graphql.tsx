@@ -37,11 +37,19 @@ export type ContributionCalendarDay = {
   level: Scalars['Int']['output'];
 };
 
+export type Developer = {
+  __typename: 'Developer';
+  count: Scalars['Int']['output'];
+  id: Scalars['ID']['output'];
+  name: Scalars['String']['output'];
+};
+
 export type Exercise = {
   __typename: 'Exercise';
   alert?: Maybe<ExerciseAlert>;
   checks: Array<ExerciseCheck>;
   comments: Array<ExerciseComment>;
+  contributors: Array<User>;
   createdAt: Scalars['String']['output'];
   createdBy: User;
   description: Scalars['String']['output'];
@@ -83,6 +91,7 @@ export type ExerciseAlertInput = {
 
 export type ExerciseCheck = {
   __typename: 'ExerciseCheck';
+  contributors: Array<User>;
   createdAt: Scalars['String']['output'];
   exercise: Exercise;
   id: Scalars['ID']['output'];
@@ -94,6 +103,7 @@ export type ExerciseCheck = {
 
 export type ExerciseCheckInput = {
   comment?: InputMaybe<Scalars['String']['input']>;
+  contributors?: InputMaybe<Array<Scalars['ID']['input']>>;
   exerciseId: Scalars['ID']['input'];
   type: ExerciseCheckType;
 };
@@ -111,6 +121,7 @@ export type ExerciseCheckType =
 export type ExerciseComment = {
   __typename: 'ExerciseComment';
   comment: Scalars['String']['output'];
+  contributors: Array<User>;
   createdAt: Scalars['String']['output'];
   createdBy: User;
   id: Scalars['ID']['output'];
@@ -155,6 +166,7 @@ export type ExerciseHourlyGroup = {
 
 export type ExerciseInput = {
   alert?: InputMaybe<ExerciseAlertInput>;
+  contributors?: InputMaybe<Array<Scalars['ID']['input']>>;
   description: Scalars['String']['input'];
   difficulty: Array<ExerciseDifficultyInput>;
   exerciseImage?: InputMaybe<Scalars['String']['input']>;
@@ -237,6 +249,7 @@ export type ExerciseTag = {
 export type ExerciseUpdateInput = {
   alert?: InputMaybe<ExerciseAlertInput>;
   comment?: InputMaybe<Scalars['String']['input']>;
+  contributors?: InputMaybe<Array<Scalars['ID']['input']>>;
   description?: InputMaybe<Scalars['String']['input']>;
   difficulty?: InputMaybe<Array<ExerciseDifficultyInput>>;
   exerciseImage?: InputMaybe<Scalars['String']['input']>;
@@ -309,6 +322,7 @@ export type Mutation = {
   updateExerciseTag: ExerciseTag;
   /** Update by id, or if not provided, use the user from the JWT token */
   updateUser: User;
+  voteOnDeveloper?: Maybe<Developer>;
 };
 
 
@@ -335,6 +349,7 @@ export type MutationCreateExerciseCheckArgs = {
 
 export type MutationCreateExerciseCommentArgs = {
   comment: Scalars['String']['input'];
+  contributors?: InputMaybe<Array<Scalars['ID']['input']>>;
   exerciseId: Scalars['ID']['input'];
 };
 
@@ -394,6 +409,7 @@ export type MutationUpdateExerciseArgs = {
 
 export type MutationUpdateExerciseCommentArgs = {
   comment: Scalars['String']['input'];
+  contributors?: InputMaybe<Array<Scalars['ID']['input']>>;
   id: Scalars['ID']['input'];
 };
 
@@ -413,6 +429,11 @@ export type MutationUpdateExerciseTagArgs = {
 export type MutationUpdateUserArgs = {
   data: UserUpdateInput;
   id?: InputMaybe<Scalars['ID']['input']>;
+};
+
+
+export type MutationVoteOnDeveloperArgs = {
+  id: Scalars['ID']['input'];
 };
 
 export type OrderDirection =
@@ -443,6 +464,7 @@ export type Query = {
   exercises: Array<Exercise>;
   exercisesCount: Scalars['Int']['output'];
   flatExerciseTags: Array<ExerciseTag>;
+  funkyPool: Array<Developer>;
   globalStats?: Maybe<GlobalStats>;
   sameLogicExerciseGroups: Array<SameLogicExerciseGroup>;
   searchExercises: ExerciseSearchResult;
@@ -697,6 +719,11 @@ export type ExerciseListElemFragment = { __typename: 'Exercise', id: string, des
 
 export type SameLogicExerciseFragment = { __typename: 'Exercise', id: string, description: string, createdAt: string, difficulty: Array<{ __typename: 'ExerciseDifficulty', difficulty: number, ageGroup: ExerciseAgeGroup }>, exerciseImage?: { __typename: 'Image', url: string } | null, tags: Array<{ __typename: 'Tag', id: string, name: string }>, createdBy: { __typename: 'User', id: string, userName: string, avatarUrl?: string | null } };
 
+export type FunkyPoolQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type FunkyPoolQuery = { __typename: 'Query', funkyPool: Array<{ __typename: 'Developer', id: string, count: number, name: string }> };
+
 export type LoginMutationVariables = Exact<{
   name: Scalars['String']['input'];
   password: Scalars['String']['input'];
@@ -773,6 +800,13 @@ export type UsersQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type UsersQuery = { __typename: 'Query', users: Array<{ __typename: 'User', id: string, name: string, userName: string, email: string, roles: Array<Role>, avatarUrl?: string | null }> };
+
+export type VoteOnDeveloperMutationVariables = Exact<{
+  voteOnDeveloperId: Scalars['ID']['input'];
+}>;
+
+
+export type VoteOnDeveloperMutation = { __typename: 'Mutation', voteOnDeveloper?: { __typename: 'Developer', id: string } | null };
 
 export const ExerciseCheckFragmentDoc = gql`
     fragment ExerciseCheck on ExerciseCheck {
@@ -1633,6 +1667,47 @@ export type FlatExerciseTagsQueryHookResult = ReturnType<typeof useFlatExerciseT
 export type FlatExerciseTagsLazyQueryHookResult = ReturnType<typeof useFlatExerciseTagsLazyQuery>;
 export type FlatExerciseTagsSuspenseQueryHookResult = ReturnType<typeof useFlatExerciseTagsSuspenseQuery>;
 export type FlatExerciseTagsQueryResult = Apollo.QueryResult<FlatExerciseTagsQuery, FlatExerciseTagsQueryVariables>;
+export const FunkyPoolDocument = gql`
+    query FunkyPool {
+  funkyPool {
+    id
+    count
+    name
+  }
+}
+    `;
+
+/**
+ * __useFunkyPoolQuery__
+ *
+ * To run a query within a React component, call `useFunkyPoolQuery` and pass it any options that fit your needs.
+ * When your component renders, `useFunkyPoolQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useFunkyPoolQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useFunkyPoolQuery(baseOptions?: Apollo.QueryHookOptions<FunkyPoolQuery, FunkyPoolQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<FunkyPoolQuery, FunkyPoolQueryVariables>(FunkyPoolDocument, options);
+      }
+export function useFunkyPoolLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<FunkyPoolQuery, FunkyPoolQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<FunkyPoolQuery, FunkyPoolQueryVariables>(FunkyPoolDocument, options);
+        }
+export function useFunkyPoolSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<FunkyPoolQuery, FunkyPoolQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<FunkyPoolQuery, FunkyPoolQueryVariables>(FunkyPoolDocument, options);
+        }
+export type FunkyPoolQueryHookResult = ReturnType<typeof useFunkyPoolQuery>;
+export type FunkyPoolLazyQueryHookResult = ReturnType<typeof useFunkyPoolLazyQuery>;
+export type FunkyPoolSuspenseQueryHookResult = ReturnType<typeof useFunkyPoolSuspenseQuery>;
+export type FunkyPoolQueryResult = Apollo.QueryResult<FunkyPoolQuery, FunkyPoolQueryVariables>;
 export const LoginDocument = gql`
     mutation login($name: String!, $password: String!) {
   login(name: $name, password: $password) {
@@ -2083,3 +2158,36 @@ export type UsersQueryHookResult = ReturnType<typeof useUsersQuery>;
 export type UsersLazyQueryHookResult = ReturnType<typeof useUsersLazyQuery>;
 export type UsersSuspenseQueryHookResult = ReturnType<typeof useUsersSuspenseQuery>;
 export type UsersQueryResult = Apollo.QueryResult<UsersQuery, UsersQueryVariables>;
+export const VoteOnDeveloperDocument = gql`
+    mutation VoteOnDeveloper($voteOnDeveloperId: ID!) {
+  voteOnDeveloper(id: $voteOnDeveloperId) {
+    id
+  }
+}
+    `;
+export type VoteOnDeveloperMutationFn = Apollo.MutationFunction<VoteOnDeveloperMutation, VoteOnDeveloperMutationVariables>;
+
+/**
+ * __useVoteOnDeveloperMutation__
+ *
+ * To run a mutation, you first call `useVoteOnDeveloperMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useVoteOnDeveloperMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [voteOnDeveloperMutation, { data, loading, error }] = useVoteOnDeveloperMutation({
+ *   variables: {
+ *      voteOnDeveloperId: // value for 'voteOnDeveloperId'
+ *   },
+ * });
+ */
+export function useVoteOnDeveloperMutation(baseOptions?: Apollo.MutationHookOptions<VoteOnDeveloperMutation, VoteOnDeveloperMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<VoteOnDeveloperMutation, VoteOnDeveloperMutationVariables>(VoteOnDeveloperDocument, options);
+      }
+export type VoteOnDeveloperMutationHookResult = ReturnType<typeof useVoteOnDeveloperMutation>;
+export type VoteOnDeveloperMutationResult = Apollo.MutationResult<VoteOnDeveloperMutation>;
+export type VoteOnDeveloperMutationOptions = Apollo.BaseMutationOptions<VoteOnDeveloperMutation, VoteOnDeveloperMutationVariables>;
