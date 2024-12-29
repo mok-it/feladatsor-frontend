@@ -16,6 +16,7 @@ import {
   Typography,
 } from "@mui/material";
 import { useFormikContext } from "formik";
+import { sortBy } from "lodash";
 import { FC, useMemo, useState } from "react";
 import { useDebounce } from "react-use";
 import { KaTeX } from "../../components/Katex.tsx";
@@ -244,7 +245,12 @@ const ExerciseFields: FC = () => {
               )}
               {tags && (
                 <MultiSelect<{ id: string; name: string }>
-                  items={tags.flatExerciseTags}
+                  items={sortBy(
+                    tags.flatExerciseTags.filter(
+                      (tag) => !values.tags.some((id) => id === tag.id),
+                    ),
+                    "name",
+                  )}
                   value={values.tags.map((tag) => ({
                     id: tag ?? "",
                     name:
