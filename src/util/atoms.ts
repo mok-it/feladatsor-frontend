@@ -5,8 +5,7 @@ import { useAtom } from "jotai";
 import { atomWithImmer } from "jotai-immer";
 import { atomWithStorage, createJSONStorage } from "jotai/utils";
 import { keys, times, uniqueId } from "lodash";
-import { mock, mock3 } from "./mocks";
-import { ExerciseCardData, ExerciseFieldsType } from "./types";
+import { ExerciseFieldsType } from "./types";
 
 type UserAtomType = { isLoggedIn: boolean; user: User | null } | undefined;
 const storage = createJSONStorage<UserAtomType>(() => sessionStorage);
@@ -15,7 +14,7 @@ export const userAtom = atomWithStorage<UserAtomType>(
   undefined,
   storage,
 );
-type User = Omit<Omit<TotalUser, "exercises">, "__typename">;
+type User = Omit<TotalUser, "exercises" | "__typename" | "comments" | "stats">;
 
 const tokenStore = createJSONStorage<string | null>(() => sessionStorage);
 export const tokenAtom = atomWithStorage<string | null>(
@@ -24,10 +23,6 @@ export const tokenAtom = atomWithStorage<string | null>(
   tokenStore,
 );
 
-export const exerciseCardsAtom = atomWithImmer<ExerciseCardData[]>([
-  mock,
-  mock3,
-]);
 const composeAtomDefault: Record<
   string,
   { id: UniqueIdentifier | null; cardId: string }[]
