@@ -6,9 +6,8 @@ import {
 import { Box, LinearProgress, Stack, Typography } from "@mui/material";
 import { useSnackbar } from "notistack";
 import { FC, useState } from "react";
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-import ChromeDinoGame from "react-chrome-dino";
+import DinoGame from "react-chrome-dino-ts";
+import "react-chrome-dino-ts/index.css";
 
 export const Page404: FC = () => {
   const [choice, setChoice] = useState<string | null>(null);
@@ -80,8 +79,11 @@ export const Page404: FC = () => {
           </button>
         )}
       </Stack>
+
       <Box width={600} height={300}>
-        <ChromeDinoGame />
+        <DinoGame
+          instructions={<Typography textAlign="center">SPACE</Typography>}
+        />
       </Box>
     </Stack>
   );

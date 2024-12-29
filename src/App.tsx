@@ -1,4 +1,3 @@
-import { NotFoundPage } from "@/pages/404Page.tsx";
 import ComposePage from "@/pages/compose/ComposePage.tsx";
 import Login from "@/pages/Login.tsx";
 import RegisterPage from "@/pages/RegisterPage.tsx";
@@ -10,6 +9,7 @@ import Layout from "./Layout";
 import { pages } from "./pages";
 import ExerciseDetails from "./pages/ExerciseDetails";
 import { userAtom } from "./util/atoms";
+import { Page404 } from "@/components/404.tsx";
 
 function App() {
   const [user, setUser] = useAtom(userAtom);
@@ -51,7 +51,7 @@ function App() {
           ))}
           <Route path={"/exercise/:id"} element={<ExerciseDetails />} />
           <Route path={"/exercise-compose/:id"} element={<ComposePage />} />
-          <Route path="*" element={<NotFoundPage />} />
+          <Route path="*" element={<Page404 />} />
         </Route>
       </Routes>
     </BrowserRouter>
