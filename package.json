@@ -37,6 +37,7 @@
     "immer": "^10.0.3",
     "jotai": "^2.6.5",
     "jotai-immer": "^0.3.0",
+    "jwt-decode": "^4.0.0",
     "lodash": "^4.17.21",
     "mui-datatables": "^4.3.0",
     "notistack": "^3.0.1",

@@ -20,7 +20,7 @@
 
    - Pl.: Ha valakinek nincs USER joga akkor csak beküldeni lehessen
 
-- [ ] Ha lejár a JWT token session, akkor dobjon ki az oldal
+- [X] Ha lejár a JWT token session, akkor dobjon ki az oldal
 
    - Esetleg bejelentkezéskor egy jegyezzen meg 30 napra gomb? és akkor hosszú lejáratú tokent generálna a backend
 

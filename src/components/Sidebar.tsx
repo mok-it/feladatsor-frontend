@@ -14,12 +14,17 @@ import {
   useColorScheme,
   useMediaQuery,
 } from "@mui/material";
+import dayjs from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime";
 import { signOut as firebaseSignout } from "firebase/auth";
-import { useSetAtom } from "jotai";
-import { FC, useCallback } from "react";
+import { useAtomValue, useSetAtom } from "jotai";
+import { jwtDecode } from "jwt-decode";
+import { FC, useCallback, useEffect } from "react";
 import { FaPersonRunning } from "react-icons/fa6";
 import { useLocation, useNavigate } from "react-router-dom";
 import { pages } from "../pages";
+
+dayjs.extend(relativeTime);
 
 const style = {
   minHeight: 44,
@@ -40,6 +45,7 @@ export const Sidebar: FC<{ open: boolean; onClose: () => void }> = ({
   const navigate = useNavigate();
   const location = useLocation();
   const setUser = useSetAtom(userAtom);
+  const token = useAtomValue(tokenAtom);
   const setToken = useSetAtom(tokenAtom);
 
   const { mode, setMode } = useColorScheme();
@@ -50,6 +56,22 @@ export const Sidebar: FC<{ open: boolean; onClose: () => void }> = ({
       setToken(null);
     });
   }, [setUser, setToken]);
+
+  useEffect(() => {
+    if (!token) return;
+    const decoded = jwtDecode(token);
+    if (!decoded.exp) return;
+    console.log(
+      "token exp",
+      dayjs(decoded.exp * 1000).format("YYYY-MM-DD HH:mm:ss"),
+    );
+    console.log("logging out", dayjs(decoded.exp * 1000).fromNow());
+    const timeout = setTimeout(
+      signOut,
+      dayjs(decoded.exp * 1000).diff(dayjs(), "ms"),
+    );
+    return () => clearTimeout(timeout);
+  }, [setToken, setUser, signOut, token]);
 
   return (
     <>
