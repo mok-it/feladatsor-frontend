@@ -43,12 +43,12 @@ const ComposePage: FC = () => {
       reset();
       setItems((draft) => {
         data.exerciseSheet?.sheetItems?.forEach((item) => {
-          item.exercises.forEach((exercise, i) => {
+          item.exercises.forEach((exercise) => {
             const key = `${item.ageGroup}-${item.level}`;
             if (!draft[key]) {
               return;
             }
-            draft[key][i] = {
+            draft[key][exercise.order] = {
               id: exercise.exercise.id,
               cardId: uniqueId(),
             };
@@ -91,11 +91,11 @@ const ComposePage: FC = () => {
         ageGroup: ageGroup as ExerciseAgeGroup,
         level: parseInt(level),
         exercises: exercises
-          .filter((x) => x.id)
           .map((item, i) => ({
-            exerciseID: item.id! as string,
+            exerciseID: item.id ? item.id.toString() : "",
             order: i,
-          })),
+          }))
+          .filter((x) => x.exerciseID && x.exerciseID.length > 0),
       });
     });
     await mutate({
