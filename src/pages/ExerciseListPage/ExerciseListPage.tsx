@@ -7,7 +7,7 @@ import {
 import { useExerciseFilters } from "@/util/useExerciseFilters";
 import { useTableOrder } from "@/util/useTableOrder";
 import { Card, CardContent, CardHeader } from "@mui/material";
-import { useCallback } from "react";
+import { useCallback, useEffect } from "react";
 
 const LIMIT = 20;
 
@@ -50,13 +50,17 @@ export const ExerciseListPage = () => {
       ],
     );
 
-  const { data, fetchMore, hasMore } =
+  const { data, fetchMore, hasMore, reset } =
     useInfiniteLoad<ExerciseListElemFragment>({
       fetch,
       limit: LIMIT,
       order,
       orderBy,
     });
+
+  useEffect(() => {
+    reset();
+  }, [exerciseQuery, difficulty, orderBy, order, reset]);
 
   return (
     <Card>

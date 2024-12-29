@@ -50,5 +50,6 @@ export const useInfiniteLoad = <T>({
     data,
     fetchMore,
     hasMore,
+    reset,
   };
 };
