@@ -44,8 +44,6 @@ export const CreateExercise = () => {
       const createResult = await createExercise({
         variables: {
           input: {
-            alternativeDifficultyGroup:
-              formDataToSend.alternativeDifficultyGroup,
             description: formDataToSend.description,
             difficulty: formDataToSend.difficulty,
             helpingQuestions: formDataToSend.helpingQuestions,
