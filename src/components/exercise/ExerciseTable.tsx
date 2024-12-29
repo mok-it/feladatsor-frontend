@@ -1,82 +1,124 @@
-import { CategoryDifficulties } from "@/components/CategoryDifficulties.tsx";
-import { DataTable } from "@/components/DataTable/DataTable.tsx";
-import { DataTableDataSource } from "@/components/DataTable/DataTable.types.ts";
-import { ExerciseAgeGroup } from "@/generated/graphql.tsx";
-import Chip from "@mui/material/Chip";
-import { FaCheck } from "react-icons/fa";
-import { RxCross2 } from "react-icons/rx";
-import { useNavigate } from "react-router-dom";
+import { ExerciseRow } from "@/components/InfiniteLoad/ExerciseRow";
+import { InfiniteLoad } from "@/components/InfiniteLoad/InfiniteLoad";
+import { StyledTableCell } from "@/components/StyledTableCell.tsx";
+import { StyledTableRow } from "@/components/StyledTableRow.tsx";
+import { ExerciseListElemFragment } from "@/generated/graphql.tsx";
+import { TableOrder } from "@/util/useTableOrder";
+import {
+  Box,
+  Table,
+  TableBody,
+  TableHead,
+  TableSortLabel,
+} from "@mui/material";
+import { FC } from "react";
 
-export type ExerciseItem = {
-  id: string;
-  categoryDifficulties: { [key in ExerciseAgeGroup]: number };
-  state: string;
-  tags: string[];
-  hasPicture: boolean;
-  description: string;
-};
+const headCells: {
+  id: keyof ExerciseListElemFragment;
+  label: string;
+  sortable: boolean;
+}[] = [
+  {
+    id: "id",
+    label: "fID",
+    sortable: true,
+  },
+  {
+    id: "difficulty",
+    label: "Nehézség",
+    sortable: false,
+  },
+  {
+    id: "status",
+    label: "Státusz",
+    sortable: true,
+  },
+  {
+    id: "tags",
+    label: "Címkék",
+    sortable: false,
+  },
+  {
+    id: "description",
+    label: "Feladat",
+    sortable: true,
+  },
+  {
+    id: "createdAt",
+    label: "Létrehozva",
+    sortable: true,
+  },
+];
 
-export const ExerciseTable = (props: {
-  setPagination?: (pagination: { fromRow: number; toRow: number }) => void;
-  dataSource: DataTableDataSource<ExerciseItem>;
+export const ExerciseTable: FC<
+  TableOrder<ExerciseListElemFragment> & {
+    data: ExerciseListElemFragment[];
+    fetchMore: () => Promise<void>;
+    hasMore: boolean;
+    loading: boolean;
+  }
+> = ({
+  data,
+  fetchMore,
+  hasMore,
+  loading,
+  order,
+  orderBy,
+  setOrder,
+  setOrderBy,
 }) => {
-  const navigate = useNavigate();
-  const routeChange = (id: string) => {
-    navigate(`/exercise/${id}`);
-  };
   return (
-    <DataTable<ExerciseItem>
-      columns={{
-        id: {
-          element: "fID",
-          sortable: true,
-          sx: { width: "5%" },
-        },
-        categoryDifficulties: {
-          element: "Kategóriák",
-          sortable: true,
-          sx: { width: "5%" },
-        },
-        state: {
-          element: "Állapot",
-          sortable: true,
-          sx: { width: "5%" },
-        },
-        tags: {
-          element: "Címkék",
-          sx: { width: "5%" },
-        },
-        hasPicture: {
-          element: "Van ábra",
-          sx: { width: "1%" },
-        },
-        description: {
-          element: "Leírás",
-          sortable: true,
-          sx: { width: "50%" },
-        },
-      }}
-      dataSource={props.dataSource}
-      hoverable
-      maxHeight="400px"
-      pagination={{
-        defaultRowsPerPage: 5,
-        rowsPerPageOptions: [5, 10, 15],
-        setPagination: props.setPagination,
-      }}
-      onRowClick={(row) => routeChange(row.id)}
-      rowRenderers={{
-        id: (value) => <Chip label={value} />,
-        tags: (tags: string[]) => (
-          <>
-            {tags.map((tag, index) => (
-              <Chip key={index} label={tag} />
+    <Box sx={{ overflowX: "auto", mx: -2 }}>
+      <Table
+        sx={{
+          minWidth: 650,
+          mt: 4,
+          overflow: "hidden",
+        }}
+        aria-label="simple table"
+      >
+        <TableHead>
+          <StyledTableRow>
+            {headCells.map((headCell) => (
+              <StyledTableCell
+                key={headCell.id}
+                sortDirection={orderBy === headCell.id ? order : false}
+                sx={headCell.id === "tags" ? { pl: 2.5 } : {}}
+              >
+                {headCell.sortable ? (
+                  <TableSortLabel
+                    active={orderBy === headCell.id}
+                    direction={orderBy === headCell.id ? order : "asc"}
+                    onClick={() => {
+                      setOrderBy(headCell.id);
+                      setOrder(order === "asc" ? "desc" : "asc");
+                    }}
+                  >
+                    {headCell.label}
+                  </TableSortLabel>
+                ) : (
+                  headCell.label
+                )}
+              </StyledTableCell>
             ))}
-          </>
-        ),
-        hasPicture: (value) => (value ? <FaCheck /> : <RxCross2 />),
-        categoryDifficulties: (value) => <CategoryDifficulties value={value} />,
-      }}
-    />
+          </StyledTableRow>
+        </TableHead>
+        <TableBody>
+          <InfiniteLoad<ExerciseListElemFragment>
+            data={data}
+            hasMore={hasMore}
+            isInitialLoading={loading && data.length === 0}
+            isFetchingNextPage={loading}
+            fetchNextPage={async () => {
+              await fetchMore();
+            }}
+          >
+            {(row) => {
+              return <ExerciseRow key={row.id} data={row} />;
+            }}
+          </InfiniteLoad>
+        </TableBody>
+      </Table>
+    </Box>
   );
 };

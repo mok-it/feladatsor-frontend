@@ -1,192 +1,75 @@
-import { ExerciseRow } from "@/components/InfiniteLoad/ExerciseRow";
-import { InfiniteLoad } from "@/components/InfiniteLoad/InfiniteLoad";
-import { StyledTableCell } from "@/components/StyledTableCell.tsx";
-import { StyledTableRow } from "@/components/StyledTableRow.tsx";
+import { ExerciseTable } from "@/components/exercise/ExerciseTable";
+import { useInfiniteLoad } from "@/components/InfiniteLoad/useInfiniteLoad";
 import {
-  Exercise,
   ExerciseListElemFragment,
   useSearchExercisesLazyQuery,
 } from "@/generated/graphql.tsx";
 import { useExerciseFilters } from "@/util/useExerciseFilters";
-import {
-  Box,
-  Card,
-  CardContent,
-  CardHeader,
-  Table,
-  TableBody,
-  TableHead,
-  TableSortLabel,
-} from "@mui/material";
-import { uniqBy } from "lodash";
-import { useCallback, useEffect, useState } from "react";
-import { useEffectOnce, useToggle } from "react-use";
-import { useImmer } from "use-immer";
+import { useTableOrder } from "@/util/useTableOrder";
+import { Card, CardContent, CardHeader } from "@mui/material";
+import { useCallback } from "react";
 
 const LIMIT = 20;
 
 export const ExerciseListPage = () => {
   const { exerciseQuery, difficulty, filterComponents } = useExerciseFilters();
+  const tableOrder = useTableOrder<ExerciseListElemFragment>();
+  const { orderBy, order } = tableOrder;
 
-  const [hasMore, setHasMore] = useToggle(true);
-  const [loadingSkip, setLoadingSkip] = useState(-1);
-  const [data, setData] = useImmer<ExerciseListElemFragment[]>([]);
   const [getData, { loading }] = useSearchExercisesLazyQuery({
     fetchPolicy: "cache-and-network",
   });
-  const [orderBy, setOrderBy] = useState<keyof Exercise | null>(null);
-  const [order, setOrder] = useState<"asc" | "desc">("asc");
 
-  const fetchMore = useCallback(async () => {
-    const skip = data.length || 0;
-    if (loadingSkip >= skip) return;
-    setLoadingSkip(skip);
-    const res = await getData({
-      variables: {
-        query: {
-          skip: skip,
-          take: LIMIT,
-          difficulty,
-          queryStr: exerciseQuery.searchQuery,
-          orderBy: orderBy,
-          orderDirection: order === "asc" ? "ASC" : "DESC",
-          includeTags: exerciseQuery.includeTags,
-          excludeTags: exerciseQuery.excludeTags,
-        },
+  const fetch: (skip: number) => Promise<ExerciseListElemFragment[]> =
+    useCallback(
+      async (skip: number) => {
+        const res = await getData({
+          variables: {
+            query: {
+              skip,
+              take: LIMIT,
+              difficulty,
+              queryStr: exerciseQuery.searchQuery,
+              orderBy: orderBy,
+              orderDirection: order === "asc" ? "ASC" : "DESC",
+              includeTags: exerciseQuery.includeTags,
+              excludeTags: exerciseQuery.excludeTags,
+            },
+          },
+        });
+        return res.data?.searchExercises.exercises || [];
       },
+      [
+        getData,
+        difficulty,
+        exerciseQuery.includeTags,
+        exerciseQuery.excludeTags,
+        exerciseQuery.searchQuery,
+        orderBy,
+        order,
+      ],
+    );
+
+  const { data, fetchMore, hasMore } =
+    useInfiniteLoad<ExerciseListElemFragment>({
+      fetch,
+      limit: LIMIT,
+      order,
+      orderBy,
     });
-    const newData = res.data?.searchExercises.exercises || [];
-    setData((prev) => uniqBy([...prev, ...newData], "id"));
-    if (newData.length < LIMIT) {
-      setHasMore(false);
-    }
-  }, [
-    data.length,
-    loadingSkip,
-    getData,
-    difficulty,
-    exerciseQuery.includeTags,
-    exerciseQuery.excludeTags,
-    exerciseQuery.searchQuery,
-    orderBy,
-    order,
-    setData,
-    setHasMore,
-  ]);
-
-  const [resetSignal, reset] = useToggle(false);
-  useEffectOnce(() => {
-    fetchMore();
-  });
-  useEffect(() => {
-    fetchMore();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [resetSignal]);
-
-  useEffect(() => {
-    setData([]);
-    setLoadingSkip(-1);
-    setHasMore(true);
-    reset();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [exerciseQuery, orderBy, order]);
-
-  const headCells: {
-    id: keyof Exercise;
-    label: string;
-    sortable: boolean;
-  }[] = [
-    {
-      id: "id",
-      label: "fID",
-      sortable: true,
-    },
-    {
-      id: "difficulty",
-      label: "Nehézség",
-      sortable: false,
-    },
-    {
-      id: "status",
-      label: "Státusz",
-      sortable: true,
-    },
-    {
-      id: "tags",
-      label: "Címkék",
-      sortable: false,
-    },
-    {
-      id: "description",
-      label: "Feladat",
-      sortable: true,
-    },
-    {
-      id: "createdAt",
-      label: "Létrehozva",
-      sortable: true,
-    },
-  ];
 
   return (
     <Card>
       <CardHeader title="Feladatok keresése" />
       <CardContent>
         {filterComponents}
-        <Box sx={{ overflowX: "auto", mx: -2 }}>
-          <Table
-            sx={{
-              minWidth: 650,
-              mt: 4,
-              overflow: "hidden",
-            }}
-            aria-label="simple table"
-          >
-            <TableHead>
-              <StyledTableRow>
-                {headCells.map((headCell) => (
-                  <StyledTableCell
-                    key={headCell.id}
-                    sortDirection={orderBy === headCell.id ? order : false}
-                    sx={headCell.id === "tags" ? { pl: 2.5 } : {}}
-                  >
-                    {headCell.sortable ? (
-                      <TableSortLabel
-                        active={orderBy === headCell.id}
-                        direction={orderBy === headCell.id ? order : "asc"}
-                        onClick={() => {
-                          setOrderBy(headCell.id);
-                          setOrder((order) =>
-                            order === "asc" ? "desc" : "asc",
-                          );
-                        }}
-                      >
-                        {headCell.label}
-                      </TableSortLabel>
-                    ) : (
-                      headCell.label
-                    )}
-                  </StyledTableCell>
-                ))}
-              </StyledTableRow>
-            </TableHead>
-            <TableBody>
-              <InfiniteLoad<ExerciseListElemFragment>
-                data={data}
-                hasMore={hasMore}
-                isInitialLoading={loading && data.length === 0}
-                isFetchingNextPage={loading}
-                fetchNextPage={async () => {
-                  await fetchMore();
-                }}
-              >
-                {(row) => {
-                  return <ExerciseRow key={row.id} data={row} />;
-                }}
-              </InfiniteLoad>
-            </TableBody>
-          </Table>
-        </Box>
+        <ExerciseTable
+          {...tableOrder}
+          data={data}
+          fetchMore={fetchMore}
+          hasMore={hasMore}
+          loading={loading}
+        />
       </CardContent>
     </Card>
   );

@@ -92,7 +92,7 @@ export const Sidebar: FC<{ open: boolean; onClose: () => void }> = ({
           height="100%"
         >
           <Stack height="100%" sx={{ p: 2 }}>
-            <Typography width="100%" textAlign="center" mb={2}>
+            <Typography width="100%" textAlign="center" fontWeight={600} mb={2}>
               Feladatbeküldő
             </Typography>
             <Stack gap={1}>
