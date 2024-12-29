@@ -1,3 +1,4 @@
+import { Page404 } from "@/components/404";
 import {
   ExerciseAgeGroup,
   UpdateExerciseSheetInput,
@@ -34,11 +35,12 @@ const ComposePage: FC = () => {
 
   const store = useStore();
   const { reset, setItems } = useResetComposeAtom();
-  const { loading } = useExerciseSheetQuery({
+  const { data, loading } = useExerciseSheetQuery({
     variables: {
       exerciseSheetId: id ?? "",
     },
     onCompleted: (data) => {
+      if (!data.exerciseSheet) return;
       setName(data.exerciseSheet?.name ?? "");
       reset();
       setItems((draft) => {
@@ -107,6 +109,10 @@ const ComposePage: FC = () => {
     snack.enqueueSnackbar("Mentve", { variant: "success" });
     toggleNameEditing(false);
   }, [id, mutate, name, snack, store, toggleNameEditing]);
+
+  if (data && !data.exerciseSheet) {
+    return <Page404 />;
+  }
 
   return (
     <>
