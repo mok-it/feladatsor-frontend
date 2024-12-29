@@ -1,5 +1,5 @@
-mutation CreateExerciseTag($name: String!) {
-  createExerciseTag(name: $name) {
+mutation CreateExerciseTag($name: String!, $parentId: ID) {
+  createExerciseTag(name: $name, parentId: $parentId) {
     id
   }
 }

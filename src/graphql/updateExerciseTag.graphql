@@ -1,0 +1,5 @@
+mutation UpdateExerciseTag($updateExerciseTagId: ID!, $name: String!) {
+  updateExerciseTag(id: $updateExerciseTagId, name: $name) {
+    id
+  }
+}

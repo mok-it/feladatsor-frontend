@@ -39,11 +39,8 @@ query selectExercise($exerciseId: ID!) {
     status
     description
     solutionOptions
-    sameLogicExerciseGroup {
+    sameLogicExercises {
       description
-      exercises {
-        ...SameLogicExercise
-      }
     }
     exerciseImage {
       id

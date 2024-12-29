@@ -1,12 +1,16 @@
 import {
+  ExerciseTagsDocument,
   useCreateExerciseTagMutation,
+  useDeleteExerciseTagMutation,
   useExerciseTagsQuery,
+  useUpdateExerciseTagMutation,
 } from "@/generated/graphql.tsx";
 import { ExerciseTag } from "@/util/types";
 import {
   Button,
   Card,
   Grid2,
+  IconButton,
   InputAdornment,
   Stack,
   TextField,
@@ -17,18 +21,22 @@ import Chip from "@mui/material/Chip";
 import { useSnackbar } from "notistack";
 import { FC, useMemo, useState } from "react";
 import { IoSearch } from "react-icons/io5";
+import { MdDone, MdEdit, MdOutlineDelete } from "react-icons/md";
 import { useDebounce } from "react-use";
 
 export const TagsPage = () => {
   const { data } = useExerciseTagsQuery();
   const [search, setSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
+  const [selectedTag, setSelectedTag] = useState<Partial<ExerciseTag> | null>(
+    null,
+  );
 
   useDebounce(
     () => {
       setDebouncedSearch(search);
     },
-    500,
+    200,
     [search],
   );
 
@@ -38,17 +46,49 @@ export const TagsPage = () => {
         .filter((t) =>
           t.name.toLowerCase().includes(debouncedSearch.toLowerCase()),
         )
+        .sort((a, b) => a.name.localeCompare(b.name))
         .map((tag) => (
-          <Grid2 size={3}>
-            <TagLabel key={tag.id} tag={tag} tags={data?.flatExerciseTags} />
+          <Grid2 key={tag.id} size={3}>
+            <TagLabel
+              tag={tag}
+              tags={data?.flatExerciseTags}
+              selectedTag={selectedTag || undefined}
+              onSelect={(tag) => {
+                if (selectedTag?.id === tag.id) {
+                  setSelectedTag(null);
+                } else {
+                  setSelectedTag(tag);
+                }
+              }}
+            />
           </Grid2>
         )),
-    [data, debouncedSearch],
+    [data?.flatExerciseTags, debouncedSearch, selectedTag],
   );
 
   const snakbar = useSnackbar();
   const [name, setName] = useState("");
-  const [create] = useCreateExerciseTagMutation();
+  const [create] = useCreateExerciseTagMutation({
+    refetchQueries: [{ query: ExerciseTagsDocument }],
+  });
+
+  const save = async () => {
+    if (!name) return;
+    setName("");
+    if (selectedTag?.id) {
+      await create({
+        variables: { name, parentId: selectedTag?.id },
+      });
+    } else {
+      await create({ variables: { name } });
+    }
+    snakbar.enqueueSnackbar("Címke létrehozva", {
+      variant: "success",
+    });
+  };
+
+  const duplicateTag =
+    name && data?.flatExerciseTags.some((t) => t.name === name);
 
   return (
     <Box mb={16}>
@@ -86,21 +126,32 @@ export const TagsPage = () => {
               <Typography variant="h5" mt={2}>
                 Új címke
               </Typography>
-              <TextField
-                size="small"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-              />
+              {selectedTag && (
+                <Typography variant="body1">
+                  A {selectedTag?.name} címke alá
+                </Typography>
+              )}
+              <form
+                onSubmit={(e) => {
+                  e?.preventDefault();
+                  save();
+                }}
+              >
+                <TextField
+                  size="small"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                />
+              </form>
+              {duplicateTag && (
+                <Typography variant="body2" color="error">
+                  Már létezik ilyen címke
+                </Typography>
+              )}
               <Button
                 variant="contained"
-                onClick={async () => {
-                  if (!name) return;
-                  setName("");
-                  await create({ variables: { name } });
-                  snakbar.enqueueSnackbar("Címke létrehozva", {
-                    variant: "success",
-                  });
-                }}
+                disabled={Boolean(!name || duplicateTag)}
+                onClick={save}
               >
                 Mentés
               </Button>
@@ -115,16 +166,90 @@ export const TagsPage = () => {
 const TagLabel: FC<{
   tag: Partial<ExerciseTag>;
   tags: ExerciseTag[];
-}> = ({ tag, tags }) => {
+  selectedTag?: Partial<ExerciseTag>;
+  onSelect: (tag: Partial<ExerciseTag>) => void;
+}> = ({ tag, tags, onSelect, selectedTag }) => {
   const [expanded, setExpanded] = useState(false);
+  const [name, setName] = useState(tag.name);
 
   const hasChildren = Boolean(tag.children?.length);
 
+  const [mutation] = useUpdateExerciseTagMutation({
+    refetchQueries: [{ query: ExerciseTagsDocument }],
+  });
+  const [deleteMutation] = useDeleteExerciseTagMutation({
+    refetchQueries: [{ query: ExerciseTagsDocument }],
+  });
+  const snakcbar = useSnackbar();
+
+  const save = async () => {
+    if (duplicateTag || !tag.id || !name) return;
+    onSelect(tag);
+    await mutation({
+      variables: { updateExerciseTagId: tag.id, name },
+    });
+    snakcbar.enqueueSnackbar("Címke frissítve", {
+      variant: "success",
+    });
+  };
+
+  const deleteTag = async () => {
+    if (!tag.id) return;
+    onSelect({});
+    await deleteMutation({
+      variables: { deleteExerciseTagId: tag.id },
+    });
+    snakcbar.enqueueSnackbar("Címke törölve", {
+      variant: "success",
+    });
+  };
+
+  const duplicateTag =
+    name && tags.filter((t) => t.id !== tag.id).some((t) => t.name === name);
+
   return (
     <Stack gap={1} alignItems={"start"}>
-      <Chip
-        label={`${tag.name} ${tag.exerciseCount ? `(${tag.exerciseCount})` : ""}`}
-      />
+      {selectedTag?.id === tag.id ? (
+        <form
+          onSubmit={(e) => {
+            e?.preventDefault();
+            save();
+          }}
+        >
+          <Stack direction={"row"} alignItems={"center"} gap={1}>
+            <TextField
+              value={name}
+              onChange={(event) => {
+                setName(event.target.value);
+              }}
+              fullWidth
+              size="small"
+            ></TextField>
+            <IconButton onClick={save}>
+              <MdDone size={16} />
+            </IconButton>
+            {!(hasChildren || tag.exerciseCount) && (
+              <IconButton onClick={deleteTag}>
+                <MdOutlineDelete color="red" size={16} />
+              </IconButton>
+            )}
+          </Stack>
+          {duplicateTag && (
+            <Typography variant="body2" color="error">
+              Már létezik ilyen címke
+            </Typography>
+          )}
+        </form>
+      ) : (
+        <Stack direction={"row"} alignItems={"center"} gap={1}>
+          <Chip
+            label={`${tag.name} ${tag.exerciseCount ? `(${tag.exerciseCount})` : ""}`}
+          />
+          <IconButton onClick={() => onSelect(tag)}>
+            <MdEdit size={14} />
+          </IconButton>
+        </Stack>
+      )}
       {hasChildren && (
         <Typography
           fontSize={12}
@@ -143,7 +268,17 @@ const TagLabel: FC<{
         <Stack pl={2} gap={1} alignItems={"start"}>
           {tag.children?.map((child) => {
             const tag = tags.find((t) => t.id === child.id);
-            return tag && <TagLabel key={child.id} tag={tag} tags={tags} />;
+            return (
+              tag && (
+                <TagLabel
+                  key={child.id}
+                  tag={tag}
+                  tags={tags}
+                  onSelect={onSelect}
+                  selectedTag={selectedTag}
+                />
+              )
+            );
           })}
         </Stack>
       )}
