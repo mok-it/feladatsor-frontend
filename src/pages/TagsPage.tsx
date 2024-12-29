@@ -246,7 +246,7 @@ const TagLabel: FC<{
           <Link to={`/list-exercises?tag=${tag.id}`}>
             <Chip
               sx={{ cursor: "pointer" }}
-              label={`${tag.name} ${tag.exerciseCount ? `(${tag.exerciseCount})` : ""}`}
+              label={`${tag.name} ${tag.exerciseCount ? `(${tag.exerciseCount} db)` : ""}`}
             />
           </Link>
           <IconButton onClick={() => onSelect(tag)}>
