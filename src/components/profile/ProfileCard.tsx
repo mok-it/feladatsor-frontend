@@ -1,5 +1,4 @@
 // IMPORTS
-import { ExerciseTable } from "@/components/exercise/ExerciseTable";
 import { ProfileModify } from "@/components/profile/ProfileModify.tsx";
 import { ProfileStatCard } from "@/components/profile/ProfileStatCard.tsx";
 import {
@@ -140,27 +139,6 @@ export default function ProfileCard(props: { id?: string }) {
       <Stack direction="column" spacing={2} sx={styles.details}>
         <Box>
           <Typography variant="h6">Beküldött feladatok</Typography>
-          <ExerciseTable
-            dataSource={{
-              data: [
-                {
-                  id: "ab-012",
-                  categoryDifficulties: {
-                    JEGESMEDVE: 1,
-                    KISMEDVE: 2,
-                    MEDVEBOCS: 3,
-                    NAGYMEDVE: 4,
-                    KOALA: 2,
-                  },
-                  hasPicture: false,
-                  description:
-                    "Ez egy példa feladat kacsa kacsakacsakacsakacsakacsakacsa ",
-                  state: "Checked",
-                  tags: ["Kombinatorika", "Permutáció"],
-                },
-              ],
-            }}
-          />
         </Box>
         <Stack direction="row" spacing={2} sx={styles.value}>
           <Box flexGrow={1}>
