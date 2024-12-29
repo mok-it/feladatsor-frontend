@@ -20,7 +20,14 @@ export const DifficultySelector = (props: {
         />
       </Grid>
       <Grid item xs={2}>
-        <Stack justifyContent={"center"} height={"100%"}>
+        <Stack
+          mt={-0.5}
+          pl={2}
+          height={"100%"}
+          direction={"row"}
+          alignItems={"center"}
+          fontSize={14}
+        >
           {ageGroupTexts[props.ageGroup]}
         </Stack>
       </Grid>

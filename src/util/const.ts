@@ -114,3 +114,8 @@ export const createExerciseInitialValue: ExerciseFieldsType = {
   tags: [],
   sameLogicGroup: "",
 };
+
+export const COMPOSE_HEIGHT = {
+  SHORT: 100,
+  TALL: 200,
+};

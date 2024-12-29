@@ -9,6 +9,7 @@ type Props<T> = {
   hasMore: boolean;
   fetchNextPage: () => void;
   children: (item: T) => ReactNode;
+  loadingElement?: ReactNode;
 };
 
 export function InfiniteLoad<T>({
@@ -18,6 +19,7 @@ export function InfiniteLoad<T>({
   hasMore,
   isInitialLoading,
   fetchNextPage,
+  loadingElement,
 }: Props<T>) {
   const intersectionRef = useRef(null);
   const intersection = useIntersection(intersectionRef, {
@@ -57,15 +59,16 @@ export function InfiniteLoad<T>({
             const isLoaderRow = index > data.length - 1;
             return !isLoaderRow && children(row as T);
           })}
-          {hasMore && (
-            <TableRow>
-              <TableCell />
-              <TableCell>Loading...</TableCell>
-              <TableCell />
-              <TableCell />
-              <TableCell />
-            </TableRow>
-          )}
+          {hasMore &&
+            (loadingElement || (
+              <TableRow>
+                <TableCell />
+                <TableCell>Loading...</TableCell>
+                <TableCell />
+                <TableCell />
+                <TableCell />
+              </TableRow>
+            ))}
         </>
       )}
       {!hasMore && !isFetchingNextPage && (

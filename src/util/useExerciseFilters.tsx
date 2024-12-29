@@ -1,4 +1,3 @@
-import { MultiSelect } from "@/components/MultiSelect.tsx";
 import { SimpleAccordion } from "@/components/SimpleAccordion.tsx";
 import {
   ExerciseAgeGroup,
@@ -6,13 +5,7 @@ import {
 } from "@/generated/graphql";
 import { DifficultySelectorList } from "@/pages/ExerciseListPage/DifficultySelectorList.tsx";
 import { TagSelector } from "@/pages/ExerciseListPage/TagSelector.tsx";
-import {
-  Checkbox,
-  InputAdornment,
-  Stack,
-  TextField,
-  Typography,
-} from "@mui/material";
+import { InputAdornment, Stack, TextField } from "@mui/material";
 import { entries } from "lodash";
 import { useMemo } from "react";
 import { IoSearch } from "react-icons/io5";
@@ -81,32 +74,12 @@ export const useExerciseFilters = () => {
             />
           )}
         </SimpleAccordion>
-        <Stack direction="row" alignItems="center" gap={2}>
-          <Typography>Döntő</Typography>
-          <Checkbox
-            checked={exerciseQuery.isFinal}
-            onChange={(_, checked) => {
-              setExerciseQuery((draft) => {
-                if (checked === draft.isFinal) return;
-                draft.isFinal = checked;
-              });
-            }}
-          />
-        </Stack>
-        <Stack direction="row" alignItems="center" gap={2}>
-          <MultiSelect
-            label={"Talon"}
-            sx={{ flexGrow: 1 }}
-            items={["Gellért hegy", "Városliget"]}
-          />
-        </Stack>
       </Stack>
     );
   }, [
     exerciseQuery.difficulty,
     exerciseQuery.excludeTags,
     exerciseQuery.includeTags,
-    exerciseQuery.isFinal,
     exerciseQuery.searchQuery,
     paramTag,
     setExerciseQuery,

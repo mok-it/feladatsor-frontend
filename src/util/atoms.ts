@@ -1,7 +1,7 @@
 import { User as TotalUser } from "@/generated/graphql.tsx";
 import { ageGroupTexts, difficultyItemCount } from "@/util/const";
 import { UniqueIdentifier } from "@dnd-kit/core";
-import { useAtom } from "jotai";
+import { useSetAtom } from "jotai";
 import { atomWithImmer } from "jotai-immer";
 import { atomWithStorage, createJSONStorage } from "jotai/utils";
 import { keys, times, uniqueId } from "lodash";
@@ -32,7 +32,7 @@ const composeAtomDefault: Record<
   string,
   { id: UniqueIdentifier | null; cardId: string }[]
 > = {
-  talon: [{ id: "2024361", cardId: uniqueId() }],
+  talon: [],
 };
 
 for (let i = 0; i < 4; i++) {
@@ -48,12 +48,12 @@ export const composeAtom =
     Record<string, { id: UniqueIdentifier | null; cardId: string }[]>
   >(composeAtomDefault);
 
-export const useComposeAtom = () => {
-  const [items, setItems] = useAtom(composeAtom);
+export const useResetComposeAtom = () => {
+  const setItems = useSetAtom(composeAtom);
   const reset = () => {
     setItems(composeAtomDefault);
   };
-  return { items, setItems, reset };
+  return { setItems, reset };
 };
 
 export const createExerciseAtom = atomWithStorage<ExerciseFieldsType | null>(

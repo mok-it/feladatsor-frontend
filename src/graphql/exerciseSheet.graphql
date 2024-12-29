@@ -21,22 +21,20 @@ query exerciseSheet($exerciseSheetId: ID!) {
         }
       }
     }
-    # talonItems {
-    #   exercises {
-    #     order
-    #     exercise {
-    #       id
-    #       exerciseImage {
-    #         url
-    #       }
-    #       difficulty {
-    #         ageGroup
-    #         difficulty
-    #       }
-    #       description
-    #     }
-    #   }
-    # }
+    talonItems {
+      order
+      exercise {
+        id
+        exerciseImage {
+          url
+        }
+        difficulty {
+          ageGroup
+          difficulty
+        }
+        description
+      }
+    }
     createdAt
     updatedAt
     createdBy {

@@ -1,105 +1,50 @@
-import { SelectExerciseQuery } from "@/generated/graphql";
-import { useComposeAtom } from "@/util/atoms";
+import { ExerciseListElemFragment } from "@/generated/graphql";
 import { composeStore, ExerciseView } from "@/util/composeStore";
-import { ageGroupTexts } from "@/util/const";
+import { COMPOSE_HEIGHT } from "@/util/const";
 import { UniqueIdentifier } from "@dnd-kit/core";
 import {
   Box,
   Card,
   Chip,
-  Divider,
   Grid2,
   IconButton,
   Stack,
   Tooltip,
   Typography,
 } from "@mui/material";
-import { red } from "@mui/material/colors";
-import { entries } from "lodash";
 import { FC, memo, useContext, useMemo } from "react";
 import { MdEdit, MdStar } from "react-icons/md";
 import { Link } from "react-router-dom";
 import FakeId from "../FakeId";
 import { ContainerContext } from "./Container";
+import { Difficulties, DifficultiesWithWarnings } from "./Difficulties";
 
-const ExerciseCard: FC<{
+const ExerciseCardComponent: FC<{
   id: UniqueIdentifier;
-  isTalon?: boolean;
-  exercise: SelectExerciseQuery["exercise"] & { id: string };
-}> = ({ exercise, isTalon }) => {
+  exercise: ExerciseListElemFragment;
+}> = ({ exercise }) => {
   const containerId = useContext(ContainerContext);
+  const isTalon = containerId === "talon";
   const view = composeStore((state) => state.view);
   const exerciseView = composeStore((state) => state.exerciseView);
-  const { items } = useComposeAtom();
   const isSingleView = view !== "all";
   const isDetailedView = exerciseView === ExerciseView.LIST && view !== "all";
-  const ageGroup = containerId?.split("-")[0];
-  const isAgeGroupBad = useMemo(() => {
-    let countInCategory = 0;
-    for (let i = 0; i < 4; i++) {
-      countInCategory += items[`${ageGroup}-${i}`].filter(
-        (e) => e.id === exercise.id,
-      ).length;
-    }
-    return countInCategory > 1;
-  }, [ageGroup, exercise.id, items]);
 
   const difficultiesElem = useMemo(
-    () => (
-      <Stack
-        direction="row"
-        justifyContent={"space-evenly"}
-        divider={<Divider orientation="vertical" flexItem />}
-      >
-        {entries(ageGroupTexts).map(([group]) => {
-          const value = exercise.difficulty.find(
-            (d) => d.ageGroup === group,
-          )?.difficulty;
-
-          let count = 0;
-          for (let i = 0; i < 4; i++) {
-            count += items[`${group}-${i}`].filter(
-              (e) => e.id === exercise.id,
-            ).length;
-          }
-          const isMissing = !isTalon && value && count === 0;
-
-          return (
-            <Stack
-              key={group}
-              width={20}
-              height={20}
-              alignItems={"center"}
-              justifyContent={"center"}
-              borderRadius={50}
-              sx={{
-                backgroundColor: isMissing ? red[500] : "transparent",
-                borderRadius: 50,
-                transition: ".5s",
-              }}
-            >
-              <Typography
-                variant="caption"
-                sx={{
-                  opacity: value ? 1 : 0.2,
-                  ...(isMissing && { color: "white" }),
-                }}
-              >
-                {value}
-              </Typography>
-            </Stack>
-          );
-        })}
-      </Stack>
-    ),
-    [exercise.difficulty, exercise.id, isTalon, items],
+    () =>
+      isTalon ? (
+        <Difficulties exercise={exercise} />
+      ) : (
+        <DifficultiesWithWarnings exercise={exercise} />
+      ),
+    [exercise, isTalon],
   );
 
   const height =
     exerciseView === ExerciseView.CARD
       ? view === "all"
-        ? 72
-        : 196
+        ? COMPOSE_HEIGHT.SHORT - 4
+        : COMPOSE_HEIGHT.TALL - 4
       : "fit-content";
 
   return (
@@ -118,7 +63,7 @@ const ExerciseCard: FC<{
           paddingBottom: 1.5,
           cursor: exerciseView === ExerciseView.CARD ? "pointer" : "default",
           userSelect: isDetailedView ? "auto" : "none",
-          borderColor: isAgeGroupBad ? "red" : "divider",
+          borderColor: "divider",
           borderWidth: 1,
           borderStyle: "solid",
         }}
@@ -155,74 +100,77 @@ const ExerciseCard: FC<{
               </Link>
             )}
           </Stack>
-          {isSingleView && (
-            <>
-              <Stack direction={"row"} gap={2}>
-                <Typography
-                  variant="body2"
+          <>
+            <Stack direction={"row"} gap={2}>
+              <Typography
+                variant="body2"
+                sx={{
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  display: "-webkit-box",
+                  WebkitLineClamp:
+                    view === "all"
+                      ? "1"
+                      : exerciseView === ExerciseView.LIST
+                        ? "3"
+                        : "unset",
+                  WebkitBoxOrient: "vertical",
+                }}
+              >
+                {exercise.description}
+              </Typography>
+              {exercise.exerciseImage?.url && (
+                <Box
+                  overflow={"hidden"}
                   sx={{
-                    overflow: "hidden",
-                    textOverflow: "ellipsis",
-                    display: "-webkit-box",
-                    ...(!isDetailedView && { WebkitLineClamp: "3" }),
-                    WebkitBoxOrient: "vertical",
+                    flexGrow: 0,
+                    flexShrink: 0,
+                    height: "3cm",
+                    width: "3cm",
                   }}
                 >
-                  {exercise.description}
-                </Typography>
-                {exercise.exerciseImage?.url && (
-                  <Box
-                    overflow={"hidden"}
-                    sx={{
-                      flexGrow: 0,
-                      flexShrink: 0,
-                      height: "3cm",
-                      width: "3cm",
-                    }}
-                  >
-                    <img src={exercise.exerciseImage?.url || ""}></img>
-                  </Box>
-                )}
-              </Stack>
-              {isDetailedView && (
-                <>
-                  <Grid2 container columns={2} spacing={2}>
-                    {exercise.helpingQuestions.length > 0 && (
-                      <Grid2 size={1}>
-                        <Typography variant="body2">Segítőkérdések:</Typography>
-                        <ul>
-                          {exercise.helpingQuestions.map((question) => (
-                            <li>
-                              <Typography key={question} variant="body2">
-                                {question}
-                              </Typography>
-                            </li>
-                          ))}
-                        </ul>
-                      </Grid2>
-                    )}
-                    {exercise.solutionOptions.length > 0 && (
-                      <Grid2 size={1}>
-                        <Typography variant="body2">Válaszopciók:</Typography>
-                        <ul>
-                          {exercise.solutionOptions.map((question) => (
-                            <li>
-                              <Typography key={question} variant="body2">
-                                {question}
-                              </Typography>
-                            </li>
-                          ))}
-                        </ul>
-                      </Grid2>
-                    )}
-                  </Grid2>
-                  <Typography variant="body2">
-                    Megoldás: <b>{exercise.solution}</b>
-                  </Typography>
-                </>
+                  <img src={exercise.exerciseImage?.url || ""}></img>
+                </Box>
               )}
-            </>
-          )}
+            </Stack>
+            {isDetailedView && (
+              <>
+                <Grid2 container columns={2} spacing={2}>
+                  {exercise.helpingQuestions.length > 0 && (
+                    <Grid2 size={1}>
+                      <Typography variant="body2">Segítőkérdések:</Typography>
+                      <ul>
+                        {exercise.helpingQuestions.map((question) => (
+                          <li>
+                            <Typography key={question} variant="body2">
+                              {question}
+                            </Typography>
+                          </li>
+                        ))}
+                      </ul>
+                    </Grid2>
+                  )}
+                  {exercise.solutionOptions.length > 0 && (
+                    <Grid2 size={1}>
+                      <Typography variant="body2">Válaszopciók:</Typography>
+                      <ul>
+                        {exercise.solutionOptions.map((question) => (
+                          <li>
+                            <Typography key={question} variant="body2">
+                              {question}
+                            </Typography>
+                          </li>
+                        ))}
+                      </ul>
+                    </Grid2>
+                  )}
+                </Grid2>
+                <Typography variant="body2">
+                  Megoldás: <b>{exercise.solution}</b>
+                </Typography>
+              </>
+            )}
+          </>
           {!isSingleView && difficultiesElem}
         </Stack>
       </Card>
@@ -230,5 +178,5 @@ const ExerciseCard: FC<{
   );
 };
 
-const MemoizedExerciseCard = memo(ExerciseCard);
-export default MemoizedExerciseCard;
+const ExerciseCard = memo(ExerciseCardComponent);
+export default ExerciseCard;

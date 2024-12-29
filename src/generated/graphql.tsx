@@ -177,7 +177,7 @@ export type ExerciseSheet = {
   id: Scalars['ID']['output'];
   name: Scalars['String']['output'];
   sheetItems: Array<ExerciseSheetItem>;
-  talonItems: Array<ExerciseSheetTalonItem>;
+  talonItems: Array<OrderedExercise>;
   updatedAt: Scalars['String']['output'];
 };
 
@@ -198,12 +198,6 @@ export type ExerciseSheetItemInput = {
   ageGroup: ExerciseAgeGroup;
   exercises: Array<OrderedExerciseInput>;
   level: Scalars['Int']['input'];
-};
-
-export type ExerciseSheetTalonItem = {
-  __typename: 'ExerciseSheetTalonItem';
-  exercises: Array<OrderedExercise>;
-  id: Scalars['ID']['output'];
 };
 
 export type ExerciseStatus =
@@ -275,6 +269,7 @@ export type LoginResponse = {
 export type Mutation = {
   __typename: 'Mutation';
   changePermissions: User;
+  cloneExerciseToNew: Exercise;
   createExercise: Exercise;
   createExerciseCheck: ExerciseCheck;
   createExerciseComment: ExerciseComment;
@@ -300,6 +295,11 @@ export type Mutation = {
 export type MutationChangePermissionsArgs = {
   permissions: Array<Role>;
   userId: Scalars['ID']['input'];
+};
+
+
+export type MutationCloneExerciseToNewArgs = {
+  id: Scalars['ID']['input'];
 };
 
 
@@ -506,6 +506,7 @@ export type Tag = {
 export type UpdateExerciseSheetInput = {
   name?: InputMaybe<Scalars['String']['input']>;
   sheetItems?: InputMaybe<Array<ExerciseSheetItemInput>>;
+  talonItems?: InputMaybe<Array<OrderedExerciseInput>>;
 };
 
 export type User = {
@@ -633,7 +634,7 @@ export type ExerciseSheetQueryVariables = Exact<{
 }>;
 
 
-export type ExerciseSheetQuery = { __typename: 'Query', exerciseSheet?: { __typename: 'ExerciseSheet', id: string, name: string, createdAt: string, updatedAt: string, sheetItems: Array<{ __typename: 'ExerciseSheetItem', id: string, ageGroup: ExerciseAgeGroup, level: number, exercises: Array<{ __typename: 'OrderedExercise', order: number, exercise: { __typename: 'Exercise', id: string, description: string, exerciseImage?: { __typename: 'Image', url: string } | null, difficulty: Array<{ __typename: 'ExerciseDifficulty', ageGroup: ExerciseAgeGroup, difficulty: number }> } }> }>, createdBy: { __typename: 'User', name: string } } | null };
+export type ExerciseSheetQuery = { __typename: 'Query', exerciseSheet?: { __typename: 'ExerciseSheet', id: string, name: string, createdAt: string, updatedAt: string, sheetItems: Array<{ __typename: 'ExerciseSheetItem', id: string, ageGroup: ExerciseAgeGroup, level: number, exercises: Array<{ __typename: 'OrderedExercise', order: number, exercise: { __typename: 'Exercise', id: string, description: string, exerciseImage?: { __typename: 'Image', url: string } | null, difficulty: Array<{ __typename: 'ExerciseDifficulty', ageGroup: ExerciseAgeGroup, difficulty: number }> } }> }>, talonItems: Array<{ __typename: 'OrderedExercise', order: number, exercise: { __typename: 'Exercise', id: string, description: string, exerciseImage?: { __typename: 'Image', url: string } | null, difficulty: Array<{ __typename: 'ExerciseDifficulty', ageGroup: ExerciseAgeGroup, difficulty: number }> } }>, createdBy: { __typename: 'User', name: string } } | null };
 
 export type ExerciseSheetsQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -656,7 +657,7 @@ export type ExerciseCommentFragment = { __typename: 'ExerciseComment', id: strin
 
 export type ExerciseHistoryFragment = { __typename: 'ExerciseHistory', id: string, field: string, oldValue: string, newValue: string, createdAt: string, createdBy: { __typename: 'User', id: string, name: string } };
 
-export type ExerciseListElemFragment = { __typename: 'Exercise', id: string, description: string, status: ExerciseStatus, createdAt: string, exerciseImage?: { __typename: 'Image', url: string } | null, difficulty: Array<{ __typename: 'ExerciseDifficulty', ageGroup: ExerciseAgeGroup, difficulty: number }>, tags: Array<{ __typename: 'Tag', id: string, name: string }> };
+export type ExerciseListElemFragment = { __typename: 'Exercise', id: string, description: string, status: ExerciseStatus, helpingQuestions: Array<string>, solutionOptions: Array<string>, solution: string, createdAt: string, exerciseImage?: { __typename: 'Image', url: string } | null, difficulty: Array<{ __typename: 'ExerciseDifficulty', ageGroup: ExerciseAgeGroup, difficulty: number }>, tags: Array<{ __typename: 'Tag', id: string, name: string }> };
 
 export type SameLogicExerciseFragment = { __typename: 'Exercise', id: string, description: string, createdAt: string, difficulty: Array<{ __typename: 'ExerciseDifficulty', difficulty: number, ageGroup: ExerciseAgeGroup }>, exerciseImage?: { __typename: 'Image', url: string } | null, tags: Array<{ __typename: 'Tag', id: string, name: string }>, createdBy: { __typename: 'User', id: string, userName: string, avatarUrl?: string | null } };
 
@@ -687,7 +688,7 @@ export type SearchExercisesQueryVariables = Exact<{
 }>;
 
 
-export type SearchExercisesQuery = { __typename: 'Query', searchExercises: { __typename: 'ExerciseSearchResult', totalCount: number, exercises: Array<{ __typename: 'Exercise', id: string, description: string, status: ExerciseStatus, createdAt: string, exerciseImage?: { __typename: 'Image', url: string } | null, difficulty: Array<{ __typename: 'ExerciseDifficulty', ageGroup: ExerciseAgeGroup, difficulty: number }>, tags: Array<{ __typename: 'Tag', id: string, name: string }> }> } };
+export type SearchExercisesQuery = { __typename: 'Query', searchExercises: { __typename: 'ExerciseSearchResult', totalCount: number, exercises: Array<{ __typename: 'Exercise', id: string, description: string, status: ExerciseStatus, helpingQuestions: Array<string>, solutionOptions: Array<string>, solution: string, createdAt: string, exerciseImage?: { __typename: 'Image', url: string } | null, difficulty: Array<{ __typename: 'ExerciseDifficulty', ageGroup: ExerciseAgeGroup, difficulty: number }>, tags: Array<{ __typename: 'Tag', id: string, name: string }> }> } };
 
 export type StatsQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -788,6 +789,9 @@ export const ExerciseListElemFragmentDoc = gql`
     id
     name
   }
+  helpingQuestions
+  solutionOptions
+  solution
   createdAt
 }
     `;
@@ -1370,6 +1374,20 @@ export const ExerciseSheetDocument = gql`
           }
           description
         }
+      }
+    }
+    talonItems {
+      order
+      exercise {
+        id
+        exerciseImage {
+          url
+        }
+        difficulty {
+          ageGroup
+          difficulty
+        }
+        description
       }
     }
     createdAt

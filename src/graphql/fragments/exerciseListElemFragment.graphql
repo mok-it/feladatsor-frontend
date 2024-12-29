@@ -13,5 +13,8 @@ fragment ExerciseListElem on Exercise {
     id
     name
   }
+  helpingQuestions
+  solutionOptions
+  solution
   createdAt
 }

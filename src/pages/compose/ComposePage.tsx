@@ -4,7 +4,7 @@ import {
   useExerciseSheetQuery,
   useUpdateExerciseSheetMutation,
 } from "@/generated/graphql.tsx";
-import { useComposeAtom } from "@/util/atoms";
+import { composeAtom, useResetComposeAtom } from "@/util/atoms";
 import { ExerciseView, composeStore } from "@/util/composeStore";
 import { LoadingButton } from "@mui/lab";
 import {
@@ -18,7 +18,8 @@ import {
   Typography,
 } from "@mui/material";
 import { Stack } from "@mui/system";
-import { entries, uniqueId } from "lodash";
+import { useStore } from "jotai";
+import { entries, sortBy, uniqueId } from "lodash";
 import { useSnackbar } from "notistack";
 import { FC, useCallback } from "react";
 import { MdDone, MdEdit } from "react-icons/md";
@@ -31,8 +32,8 @@ const styles = { fontWeight: 500 };
 const ComposePage: FC = () => {
   const { id } = useParams();
 
-  const setName = composeStore((state) => state.setName);
-  const { items, setItems, reset } = useComposeAtom();
+  const store = useStore();
+  const { reset, setItems } = useResetComposeAtom();
   const { loading } = useExerciseSheetQuery({
     variables: {
       exerciseSheetId: id ?? "",
@@ -47,13 +48,22 @@ const ComposePage: FC = () => {
             if (!draft[key]) {
               return;
             }
-            draft[`${item.ageGroup}-${item.level}`][i] = {
+            draft[key][i] = {
               id: exercise.exercise.id,
               cardId: uniqueId(),
             };
           });
         });
         return draft;
+      });
+      setItems((draft) => {
+        draft["talon"] = [];
+        sortBy(data.exerciseSheet?.talonItems, "order")?.forEach((exercise) => {
+          draft["talon"].push({
+            id: exercise.exercise.id,
+            cardId: uniqueId(),
+          });
+        });
       });
     },
   });
@@ -62,6 +72,7 @@ const ComposePage: FC = () => {
   const view = composeStore((state) => state.view);
   const exerciseView = composeStore((state) => state.exerciseView);
   const name = composeStore((state) => state.name);
+  const setName = composeStore((state) => state.setName);
   const setValue = composeStore((state) => state.setValue);
   const setView = composeStore((state) => state.setView);
   const [isNameEditing, toggleNameEditing] = useToggle(false);
@@ -72,6 +83,7 @@ const ComposePage: FC = () => {
       name,
       sheetItems: [],
     };
+    const items = store.get(composeAtom);
     entries(items).forEach(([key, exercises]) => {
       const [ageGroup, level] = key.split("-");
       if (ageGroup === "talon") return;
@@ -94,7 +106,7 @@ const ComposePage: FC = () => {
     });
     snack.enqueueSnackbar("Mentve", { variant: "success" });
     toggleNameEditing(false);
-  }, [id, items, mutate, name, snack, toggleNameEditing]);
+  }, [id, mutate, name, snack, store, toggleNameEditing]);
 
   return (
     <>
