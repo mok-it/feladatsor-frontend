@@ -1,9 +1,6 @@
 import { ExerciseAgeGroup } from "@/generated/graphql.tsx";
 import { DifficultySelector } from "@/pages/ExerciseListPage/DifficultySelector.tsx";
-import {
-  DifficultySelect,
-  ExerciseQuery,
-} from "@/pages/ExerciseListPage/ExerciseListPage.tsx";
+import { DifficultySelect, ExerciseQuery } from "@/util/types";
 import { Grid, Stack, Typography } from "@mui/material";
 import { entries } from "lodash";
 import { Updater } from "use-immer";

@@ -3,7 +3,7 @@ import {
   ExerciseCheckType,
   useCreateExerciseCheckMutation,
 } from "@/generated/graphql";
-import { translateCheck } from "@/util/translateCheck";
+import { translateCheck } from "@/util/const";
 import { LoadingButton } from "@mui/lab";
 import {
   Button,
@@ -17,7 +17,7 @@ import {
 import { Stack } from "@mui/system";
 import { FC, useState } from "react";
 import { useToggle } from "react-use";
-import Section from "./Section";
+import Section from "../Section";
 
 export const ExerciseChecks: FC<{
   exerciseId: string;

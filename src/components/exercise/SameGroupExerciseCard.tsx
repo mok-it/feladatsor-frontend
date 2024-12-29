@@ -1,11 +1,11 @@
-import { FC, useMemo } from "react";
-import { SameLogicExerciseFragment } from "@/generated/graphql.tsx";
-import { Card, Divider, Tooltip, Typography } from "@mui/material";
-import { Box, Stack } from "@mui/system";
 import FakeId from "@/components/FakeId.tsx";
+import { SameLogicExerciseFragment } from "@/generated/graphql.tsx";
+import { ageGroupTexts } from "@/util/const";
+import { Card, Divider, Tooltip, Typography } from "@mui/material";
 import Chip from "@mui/material/Chip";
+import { Box, Stack } from "@mui/system";
 import { entries } from "lodash";
-import { ageGroups } from "@/util/types.ts";
+import { FC, useMemo } from "react";
 import { Link } from "react-router-dom";
 
 export const SameGroupExerciseCard: FC<{
@@ -18,7 +18,7 @@ export const SameGroupExerciseCard: FC<{
         justifyContent={"space-evenly"}
         divider={<Divider orientation="vertical" flexItem />}
       >
-        {entries(ageGroups).map(([group]) => {
+        {entries(ageGroupTexts).map(([group]) => {
           const value = props.exercise.difficulty.find(
             (d) => d.ageGroup === group,
           )?.difficulty;
@@ -45,7 +45,7 @@ export const SameGroupExerciseCard: FC<{
         })}
       </Stack>
     ),
-    [props.exercise.difficulty, props.exercise.id],
+    [props.exercise.difficulty],
   );
 
   return (

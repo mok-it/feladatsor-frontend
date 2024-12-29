@@ -1,9 +1,9 @@
-import { FlatExerciseTagsQuery } from "@/generated/graphql.tsx";
-import { Stack } from "@mui/system";
-import { Typography } from "@mui/material";
 import { MultiSelect } from "@/components/MultiSelect.tsx";
+import { FlatExerciseTagsQuery } from "@/generated/graphql.tsx";
+import { ExerciseQuery } from "@/util/types";
+import { Typography } from "@mui/material";
+import { Stack } from "@mui/system";
 import { FC } from "react";
-import { ExerciseQuery } from "@/pages/ExerciseListPage/ExerciseListPage.tsx";
 import { Updater } from "use-immer";
 
 export const TagSelector: FC<{

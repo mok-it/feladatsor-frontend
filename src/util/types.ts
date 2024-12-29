@@ -1,19 +1,10 @@
 import { Exercise, ExerciseAgeGroup } from "@/generated/graphql";
 
-export const ageGroups: { [key in ExerciseAgeGroup]: { name: string } } = {
-  KOALA: { name: "Koala" },
-  MEDVEBOCS: { name: "Medvebocs" },
-  KISMEDVE: { name: "Kismedve" },
-  NAGYMEDVE: { name: "Nagymedve" },
-  JEGESMEDVE: { name: "Jegesmedve" },
-};
-
-export const levels: { [key in number]: { name: string } } = {
-  0: { name: "Zöld" },
-  1: { name: "Bronz" },
-  2: { name: "Ezüst" },
-  3: { name: "Arany" },
-};
+declare global {
+  interface Window {
+    MathJax: unknown;
+  }
+}
 
 export type ExerciseCardData = {
   id: string;
@@ -38,4 +29,47 @@ export type ExerciseTag = {
   name: string;
   exerciseCount: number;
   children: Partial<ExerciseTag>[];
+};
+
+export type DifficultySelect = {
+  [key in ExerciseAgeGroup]: {
+    difficulty: [number, number]; // [min, max]
+    isEnabled: boolean;
+  };
+};
+
+export type ExerciseQuery = {
+  difficulty: DifficultySelect;
+  searchQuery: string;
+  isFinal: boolean;
+  includeTags: string[];
+  excludeTags: string[];
+};
+
+import {
+  ExerciseDifficultyInput,
+  ExerciseStatus,
+  InputMaybe,
+  Scalars,
+} from "@/generated/graphql";
+
+export type ExerciseFieldsType = {
+  description: Scalars["String"]["input"];
+  difficulty: Array<ExerciseDifficultyInput>;
+  exerciseImage?: InputMaybe<Scalars["String"]["input"]>;
+  helpingQuestions: Array<Scalars["String"]["input"]>;
+  isCompetitionFinal?: InputMaybe<Scalars["Boolean"]["input"]>;
+  sameLogicGroup: InputMaybe<Scalars["ID"]["input"]>;
+  solution: Scalars["String"]["input"];
+  solutionImage?: InputMaybe<Scalars["String"]["input"]>;
+  solutionOptions: Array<Scalars["String"]["input"]>;
+  solveIdea?: InputMaybe<Scalars["String"]["input"]>;
+  solveIdeaImage?: InputMaybe<Scalars["String"]["input"]>;
+  source?: InputMaybe<Scalars["String"]["input"]>;
+  status?: ExerciseStatus;
+  tags: Array<InputMaybe<Scalars["ID"]["input"]>>;
+
+  exerciseImageUrl?: string | null | undefined;
+  solutionImageUrl?: string | null | undefined;
+  solveIdeaImageUrl?: string | null | undefined;
 };

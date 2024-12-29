@@ -1,5 +1,5 @@
 import { ExerciseCheckType } from "@/generated/graphql";
-import { translateCheck } from "@/util/translateCheck";
+import { translateCheck } from "@/util/const";
 import { Tooltip } from "@mui/material";
 import { Box } from "@mui/system";
 import dayjs from "dayjs";

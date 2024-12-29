@@ -2,7 +2,7 @@ import {
   ExerciseAgeGroup,
   ExerciseDifficultyInput,
 } from "@/generated/graphql.tsx";
-import { ageGroupTexts } from "@/types/ageGroupTexts.ts";
+import { ageGroupTexts } from "@/util/const";
 import { Grid, Stack, Switch, Typography } from "@mui/material";
 import Radio from "@mui/material/Radio";
 import { blueGrey, brown } from "@mui/material/colors";

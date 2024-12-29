@@ -14,8 +14,7 @@ import {
   useUpdateExerciseMutation,
 } from "@/generated/graphql";
 import { userAtom } from "@/util/atoms";
-import { translateCheck } from "@/util/translateCheck";
-import { translateFieldName } from "@/util/translateFieldName";
+import { translateCheck, translateFieldName } from "@/util/const";
 import { ExerciseStatusEnum } from "@/util/types";
 import {
   Button,
@@ -33,16 +32,16 @@ import { orderBy, times, union, uniqBy } from "lodash";
 import { useSnackbar } from "notistack";
 import { FC, useCallback, useEffect, useMemo, useState } from "react";
 import { FaArrowRight } from "react-icons/fa6";
+import { IoHourglassOutline } from "react-icons/io5";
 import {
   MdArrowDownward,
   MdCheckCircle,
   MdOutlineDelete,
   MdSend,
 } from "react-icons/md";
-import { AlertDialog } from "./Dialog";
-import { DiffModal } from "./DiffModal";
+import { AlertDialog } from "../Dialog";
+import { DiffModal } from "../DiffModal";
 import { ExerciseChecks } from "./ExerciseChecks";
-import { IoHourglassOutline } from "react-icons/io5";
 
 export const ExerciseOperations: FC<{
   exercise: SelectExerciseQuery["exercise"];

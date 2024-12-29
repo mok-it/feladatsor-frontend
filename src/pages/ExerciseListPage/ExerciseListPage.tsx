@@ -1,75 +1,32 @@
 import { ExerciseRow } from "@/components/InfiniteLoad/ExerciseRow";
 import { InfiniteLoad } from "@/components/InfiniteLoad/InfiniteLoad";
-import { MultiSelect } from "@/components/MultiSelect.tsx";
-import { SimpleAccordion } from "@/components/SimpleAccordion.tsx";
 import { StyledTableCell } from "@/components/StyledTableCell.tsx";
 import { StyledTableRow } from "@/components/StyledTableRow.tsx";
 import {
   Exercise,
-  ExerciseAgeGroup,
   ExerciseListElemFragment,
-  useFlatExerciseTagsQuery,
   useSearchExercisesLazyQuery,
 } from "@/generated/graphql.tsx";
-import { DifficultySelectorList } from "@/pages/ExerciseListPage/DifficultySelectorList.tsx";
-import { searchDefaultValues } from "@/pages/ExerciseListPage/SearchDefaultValues.tsx";
-import { TagSelector } from "@/pages/ExerciseListPage/TagSelector.tsx";
+import { useExerciseFilters } from "@/util/useExerciseFilters";
 import {
   Box,
   Card,
   CardContent,
   CardHeader,
-  Checkbox,
-  InputAdornment,
-  Stack,
   Table,
   TableBody,
   TableHead,
   TableSortLabel,
-  TextField,
-  Typography,
 } from "@mui/material";
-import { entries, uniqBy } from "lodash";
-import { useCallback, useEffect, useMemo, useState } from "react";
-import { IoSearch } from "react-icons/io5";
-import { useEffectOnce, useSearchParam, useToggle } from "react-use";
+import { uniqBy } from "lodash";
+import { useCallback, useEffect, useState } from "react";
+import { useEffectOnce, useToggle } from "react-use";
 import { useImmer } from "use-immer";
-
-export type DifficultySelect = {
-  [key in ExerciseAgeGroup]: {
-    difficulty: [number, number]; // [min, max]
-    isEnabled: boolean;
-  };
-};
-
-export type ExerciseQuery = {
-  difficulty: DifficultySelect;
-  searchQuery: string;
-  isFinal: boolean;
-  includeTags: string[];
-  excludeTags: string[];
-};
 
 const LIMIT = 20;
 
 export const ExerciseListPage = () => {
-  const paramTag = useSearchParam("tag");
-  const [exerciseQuery, setExerciseQuery] = useImmer<ExerciseQuery>({
-    ...searchDefaultValues,
-    ...(paramTag ? { includeTags: [paramTag] } : {}),
-  });
-
-  const difficulty = useMemo(() => {
-    return entries(exerciseQuery.difficulty)
-      .filter(([, diff]) => diff.isEnabled)
-      .map(([ageGroup, difficulty]) => {
-        return {
-          ageGroup: ageGroup as ExerciseAgeGroup,
-          min: difficulty.difficulty[0],
-          max: difficulty.difficulty[1],
-        };
-      });
-  }, [exerciseQuery.difficulty]);
+  const { exerciseQuery, difficulty, filterComponents } = useExerciseFilters();
 
   const [hasMore, setHasMore] = useToggle(true);
   const [loadingSkip, setLoadingSkip] = useState(-1);
@@ -79,8 +36,6 @@ export const ExerciseListPage = () => {
   });
   const [orderBy, setOrderBy] = useState<keyof Exercise | null>(null);
   const [order, setOrder] = useState<"asc" | "desc">("asc");
-
-  const { data: tags } = useFlatExerciseTagsQuery();
 
   const fetchMore = useCallback(async () => {
     const skip = data.length || 0;
@@ -177,65 +132,7 @@ export const ExerciseListPage = () => {
     <Card>
       <CardHeader title="Feladatok keresése" />
       <CardContent>
-        <Stack gap={1}>
-          <TextField
-            onChange={(event) => {
-              setExerciseQuery((draft) => {
-                draft.searchQuery = event.target.value;
-              });
-            }}
-            label="Keresés"
-            value={exerciseQuery.searchQuery}
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <IoSearch />
-                </InputAdornment>
-              ),
-            }}
-            size="small"
-          />
-          {exerciseQuery.searchQuery}
-          <SimpleAccordion summary="Nehézség szűrő">
-            <DifficultySelectorList
-              difficulties={exerciseQuery.difficulty}
-              setExerciseQuery={setExerciseQuery}
-            />
-          </SimpleAccordion>
-          <SimpleAccordion
-            summary="Címke szűrő"
-            defaultExpanded={paramTag !== null}
-          >
-            {tags && (
-              <TagSelector
-                tags={tags?.flatExerciseTags}
-                selectedTags={exerciseQuery.includeTags}
-                excludeTags={exerciseQuery.excludeTags}
-                setFieldValue={setExerciseQuery}
-              />
-            )}
-          </SimpleAccordion>
-
-          <Stack direction="row" alignItems="center" gap={2}>
-            <Typography>Döntő</Typography>
-            <Checkbox
-              checked={exerciseQuery.isFinal}
-              onChange={(_, checked) => {
-                setExerciseQuery((draft) => {
-                  if (checked === draft.isFinal) return;
-                  draft.isFinal = checked;
-                });
-              }}
-            />
-          </Stack>
-          <Stack direction="row" alignItems="center" gap={2}>
-            <MultiSelect
-              label={"Talon"}
-              sx={{ flexGrow: 1 }}
-              items={["Gellért hegy", "Városliget"]}
-            />
-          </Stack>
-        </Stack>
+        {filterComponents}
         <Box sx={{ overflowX: "auto", mx: -2 }}>
           <Table
             sx={{

@@ -1,8 +1,8 @@
 import { KaTeX } from "@/components/Katex.tsx";
 import { useCreateExerciseMutation } from "@/generated/graphql.tsx";
-import { ExerciseFieldsType } from "@/types/ExerciseFieldsType.ts";
 import { createExerciseAtom } from "@/util/atoms.ts";
-import { ExerciseStatusEnum } from "@/util/types.ts";
+import { createExerciseInitialValue } from "@/util/const.ts";
+import { ExerciseFieldsType, ExerciseStatusEnum } from "@/util/types.ts";
 import { LoadingButton } from "@mui/lab";
 import {
   Box,
@@ -23,7 +23,6 @@ import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDebounce, useToggle } from "react-use";
 import ExerciseFields from "./ExerciseFields.tsx";
-import { createExerciseInitialValue } from "./createExerciseInitialValue.ts";
 
 export const CreateExercise = () => {
   const { enqueueSnackbar } = useSnackbar();

@@ -1,5 +1,5 @@
 import { ExerciseAgeGroup } from "@/generated/graphql.tsx";
-import { ageGroupHumanize } from "@/util/ageGroupHumanize";
+import { ageGroupTexts } from "@/util/const";
 import { Grid, Slider, Stack, Switch } from "@mui/material";
 
 export const DifficultySelector = (props: {
@@ -21,7 +21,7 @@ export const DifficultySelector = (props: {
       </Grid>
       <Grid item xs={2}>
         <Stack justifyContent={"center"} height={"100%"}>
-          {ageGroupHumanize[props.ageGroup].title}
+          {ageGroupTexts[props.ageGroup]}
         </Stack>
       </Grid>
       <Grid item xs={8} px={8} pt={1}>

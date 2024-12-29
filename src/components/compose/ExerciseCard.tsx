@@ -1,7 +1,7 @@
 import { SelectExerciseQuery } from "@/generated/graphql";
 import { useComposeAtom } from "@/util/atoms";
 import { composeStore, ExerciseView } from "@/util/composeStore";
-import { ageGroups } from "@/util/types";
+import { ageGroupTexts } from "@/util/const";
 import { UniqueIdentifier } from "@dnd-kit/core";
 import {
   Box,
@@ -51,7 +51,7 @@ const ExerciseCard: FC<{
         justifyContent={"space-evenly"}
         divider={<Divider orientation="vertical" flexItem />}
       >
-        {entries(ageGroups).map(([group]) => {
+        {entries(ageGroupTexts).map(([group]) => {
           const value = exercise.difficulty.find(
             (d) => d.ageGroup === group,
           )?.difficulty;

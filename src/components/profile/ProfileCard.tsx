@@ -1,6 +1,14 @@
 // IMPORTS
-import { ExerciseTable } from "@/components/ExerciseTable";
+import { ExerciseTable } from "@/components/exercise/ExerciseTable";
+import { ProfileModify } from "@/components/profile/ProfileModify.tsx";
 import { ProfileStatCard } from "@/components/profile/ProfileStatCard.tsx";
+import {
+  UserDocument,
+  useUpdateUserMutation,
+  useUserQuery,
+} from "@/generated/graphql.tsx";
+import { useUploadImage } from "@/util/useUploadImage.ts";
+import ModeIcon from "@mui/icons-material/Mode";
 import { Divider, Grid, IconButton } from "@mui/material";
 import Avatar from "@mui/material/Avatar";
 import Badge from "@mui/material/Badge";
@@ -8,18 +16,10 @@ import Card from "@mui/material/Card";
 import Typography from "@mui/material/Typography";
 import { Box, Stack } from "@mui/system";
 import { motion } from "framer-motion";
+import { useCallback, useEffect, useState } from "react";
+import { useDropzone } from "react-dropzone";
 import { IoCameraOutline } from "react-icons/io5";
 import { MdArrowDownward } from "react-icons/md";
-import ModeIcon from "@mui/icons-material/Mode";
-import { useCallback, useEffect, useState } from "react";
-import { ProfileModify } from "@/components/profile/ProfileModify.tsx";
-import {
-  UserDocument,
-  useUpdateUserMutation,
-  useUserQuery,
-} from "@/generated/graphql.tsx";
-import { useDropzone } from "react-dropzone";
-import { useUploadImage } from "@/util/useUploadImage.ts";
 
 // STYLES
 const styles = {

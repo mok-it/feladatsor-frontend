@@ -5,7 +5,7 @@ import Section from "@/components/Section.tsx";
 import { SimpleAccordion } from "@/components/SimpleAccordion.tsx";
 import { UploadWithPreview } from "@/components/UploadWithPreview.tsx";
 import { useFlatExerciseTagsQuery } from "@/generated/graphql.tsx";
-import { ExerciseFieldsType } from "@/types/ExerciseFieldsType";
+import { ExerciseFieldsType } from "@/util/types.ts";
 import {
   Alert,
   Box,

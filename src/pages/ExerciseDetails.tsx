@@ -1,13 +1,14 @@
-import { ExerciseOperations } from "@/components/ExerciseOperations";
+import { ExerciseOperations } from "@/components/exercise/ExerciseOperations";
+import { SameGroupExerciseCard } from "@/components/exercise/SameGroupExerciseCard";
 import FakeId from "@/components/FakeId";
-import { SameGroupExerciseCard } from "@/components/SameGroupExerciseCard.tsx";
 import Section from "@/components/Section";
 import {
   SelectExerciseQuery,
   useSelectExerciseQuery,
   useUpdateExerciseMutation,
 } from "@/generated/graphql";
-import { ExerciseFieldsType } from "@/types/ExerciseFieldsType";
+import { createExerciseInitialValue } from "@/util/const";
+import { ExerciseFieldsType } from "@/util/types";
 import { LoadingButton } from "@mui/lab";
 import {
   Avatar,
@@ -27,7 +28,6 @@ import { FC, useCallback, useMemo, useState } from "react";
 import { MdSave } from "react-icons/md";
 import { useParams } from "react-router";
 import { useToggle } from "react-use";
-import { createExerciseInitialValue } from "./createExercise/createExerciseInitialValue";
 import ExerciseFields from "./createExercise/ExerciseFields";
 
 const ExerciseDetails: FC = () => {
