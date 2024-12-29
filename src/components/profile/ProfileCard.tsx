@@ -46,7 +46,7 @@ export default function ProfileCard(props: { id?: string }) {
   const handleProfileModifyOpen = () => {
     setOpen(true);
   };
-  const handleProfileModifyClose = () => {
+  const handleClose = () => {
     setOpen(false);
   };
 
@@ -133,7 +133,7 @@ export default function ProfileCard(props: { id?: string }) {
               sx={{ cursor: "pointer" }}
               onClick={handleProfileModifyOpen}
             />
-            <ProfileModify open={open} handleClose={handleProfileModifyClose} />
+            <ProfileModify open={open} handleClose={handleClose} />
           </Stack>
         </Grid>
       </Grid>

@@ -12,12 +12,12 @@ import { MdAdd, MdOutlineDelete } from "react-icons/md";
 import { useDebounce } from "react-use";
 import { useImmer } from "use-immer";
 
-type HelpingQuestionProps = {
+type SolutionOptionsProps = {
   value: string[];
   onChange: (helpingQuestions: string[]) => void;
 };
 
-export const HelpingQuestions = ({ onChange, value }: HelpingQuestionProps) => {
+export const SolutionOptions = ({ onChange, value }: SolutionOptionsProps) => {
   const [data, setData] = useImmer<string[]>(value);
 
   useDebounce(
@@ -29,7 +29,7 @@ export const HelpingQuestions = ({ onChange, value }: HelpingQuestionProps) => {
   );
 
   return (
-    <SimpleAccordion summary="Segítő kérdések">
+    <SimpleAccordion summary="Válaszopciók">
       <Stack gap={1}>
         {data.map((helpingQuestion, i) => (
           <Stack key={i} direction="row" gap={1}>
@@ -42,7 +42,7 @@ export const HelpingQuestions = ({ onChange, value }: HelpingQuestionProps) => {
               key={i}
               fullWidth
               variant="outlined"
-              placeholder="Írd ide a segítő kérdést"
+              placeholder="Írj ide egy válaszopciót"
               InputProps={{
                 endAdornment: (
                   <InputAdornment position="end">
@@ -71,7 +71,7 @@ export const HelpingQuestions = ({ onChange, value }: HelpingQuestionProps) => {
             setData([...value, ""]);
           }}
         >
-          Új segítő kérdés
+          Új válaszopció
           <MdAdd />
         </Button>
       </Stack>
