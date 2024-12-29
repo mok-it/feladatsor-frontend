@@ -54,8 +54,6 @@ export const ExerciseListPage = () => {
     useInfiniteLoad<ExerciseListElemFragment>({
       fetch,
       limit: LIMIT,
-      order,
-      orderBy,
     });
 
   useEffect(() => {

@@ -5,13 +5,9 @@ import { useImmer } from "use-immer";
 
 export const useInfiniteLoad = <T>({
   fetch,
-  orderBy,
-  order,
   limit,
 }: {
   fetch: (skip: number) => Promise<T[]>;
-  orderBy: keyof T | null;
-  order: "asc" | "desc";
   limit: number;
 }) => {
   const [hasMore, setHasMore] = useToggle(true);
@@ -38,18 +34,17 @@ export const useInfiniteLoad = <T>({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [resetSignal]);
 
-  useEffect(() => {
+  const manualReset = useCallback(() => {
     setData([]);
     setLoadingSkip(-1);
     setHasMore(true);
     reset();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [orderBy, order]);
+  }, [setData, setHasMore, reset]);
 
   return {
     data,
     fetchMore,
     hasMore,
-    reset,
+    reset: manualReset,
   };
 };
