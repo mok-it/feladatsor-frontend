@@ -9,6 +9,7 @@ import { CategoryDifficulties } from "../CategoryDifficulties";
 import { KaTeX } from "../Katex";
 import { StyledTableRow } from "@/components/StyledTableRow.tsx";
 import dayjs from "dayjs";
+import { exerciseStatusToHuman } from "@/util/const.ts";
 
 const ExerciseRow: FC<{ data: ExerciseListElemFragment }> = ({ data }) => {
   const navigate = useNavigate();
@@ -37,7 +38,13 @@ const ExerciseRow: FC<{ data: ExerciseListElemFragment }> = ({ data }) => {
       <TableCell sx={{ minWidth: 210 }}>
         <CategoryDifficulties value={difficulties} />
       </TableCell>
-      <TableCell sx={{ verticalAlign: "middle" }}>{data.status}</TableCell>
+      <TableCell sx={{ verticalAlign: "middle" }}>
+        <Chip
+          variant="outlined"
+          color={exerciseStatusToHuman[data.status].color}
+          label={exerciseStatusToHuman[data.status].text}
+        />
+      </TableCell>
       <TableCell>
         {data.tags.map((tag, index) => (
           <Chip key={index} label={tag.name} sx={{ margin: 0.5 }} />

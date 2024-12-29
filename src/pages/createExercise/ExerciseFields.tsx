@@ -7,7 +7,6 @@ import { UploadWithPreview } from "@/components/UploadWithPreview.tsx";
 import { useFlatExerciseTagsQuery } from "@/generated/graphql.tsx";
 import { ExerciseFieldsType } from "@/util/types.ts";
 import {
-  Alert,
   Box,
   Grid2,
   Skeleton,
@@ -69,11 +68,6 @@ const ExerciseFields: FC = () => {
   return (
     <Box>
       <Grid2 container spacing={2}>
-        <Grid2 size={{ xs: 12 }}>
-          <Alert severity="info">
-            Ez valami nagyon fontos infó a feladatról
-          </Alert>
-        </Grid2>
         <Grid2
           size={{
             xs: 12,

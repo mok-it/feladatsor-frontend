@@ -13,7 +13,7 @@
 - [ ] Bármelyik feladat mező lehet latex, esetleg egy modal-os LaTeX editor?
 - [X] Feladat megnyitása ID alapján
 - [ ] Feladat ellenörzés oldal, a menüben is
-- [ ] Válasz opciók
+- [X] Válaszopciók
 - [ ] Új feladat létrehozása meglévő alapján, alternativeDifficultyExerciseGroups, sameLogicExerciseGroups
 - [ ] Feladatok listázása a csoportokban (alternativeDifficultyExerciseGroups, sameLogicExerciseGroups)
 - [ ] Feladthoz hasonló feladatok megjelenítése (alternativeDifficultyExerciseGroups, sameLogicExerciseGroups)
@@ -34,22 +34,26 @@
    - [X] Tag-re kattintva nyíljon meg a keresőben beszűrve arra a tag-re.
 
 - [X] Feladat oldal tag-kezelés
-
 - [X] Keresőben tag, excludeTag, isFinal alapján keresés
 - [ ] Oldal frissítésekor a dolgok megmaradjanak (feladat, kereső, stb)
+
+### Statisztika oldal
+
+Szükség van egy olyan compose jellegű oldara, ahol lehet látni hogy egy feladatsoron egy feladat hány kategóriában van használva.
+Feladatonként hány segítő kérdés, illetve hány (rósszz) válaszopció van megadva.
 
 ### Backend-re vár
 
 - [X] Feladatsorok listázása oldal
 - [X] Feladat keresőben eremény rendezhetősége
+- [X] Feladat oldalon, a feladathoz jelenjen meg egy (vagy több) Alert, amikbe valami fontos infót lehet a feladathoz megadni
 
 ### Üzletre vár
 
-- [ ] Profil oldal
+- [X] Profil oldal
+   - Kérdés: Mit rakjunk ide, mi az ami fontos, vagy funky infó lehet
+   - Válasz: User statisztikákat, a saját feladataival kapcsolatban
 
-   - Mit rakjunk ide, mi az ami fontos, vagy funky infó lehet
-   - FE oldalon ha van ötlet hogy mit lenne jó ide rakni, akkor az tudja vezetni a fejlesztést
-
-- [ ] Talon-ok kezelése
-
-   - Feladatsoronként, emberenként, globálisan kezeljük?
+- [X] Talon-ok kezelése 
+  Kérdés: Feladatsoronként, emberenként, globálisan kezeljük? 
+  Válasz: A talonok feladatsoronként kezelődnek. 
