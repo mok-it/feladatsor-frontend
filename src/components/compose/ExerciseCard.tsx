@@ -24,7 +24,7 @@ const ExerciseCardComponent: FC<{
   exercise: ExerciseListElemFragment;
 }> = ({ exercise }) => {
   const containerId = useContext(ContainerContext);
-  const isTalon = containerId === "talon";
+  const isTalon = !containerId || containerId === "talon";
   const view = composeStore((state) => state.view);
   const exerciseView = composeStore((state) => state.exerciseView);
   const isSingleView = view !== "all";
@@ -68,7 +68,7 @@ const ExerciseCardComponent: FC<{
           borderStyle: "solid",
         }}
       >
-        <Stack gap={1} p={isSingleView ? 1 : 0}>
+        <Stack p={isSingleView ? 1 : 0}>
           <Stack
             direction={"row"}
             justifyContent={"start"}
@@ -86,8 +86,8 @@ const ExerciseCardComponent: FC<{
               <MdStar color="gold" />
             </Box>
             {isSingleView &&
-              exercise.tags.map((tag) => (
-                <Chip key={tag.id} size="small" label={tag.name} />
+              exercise.tags.map((tag, i) => (
+                <Chip key={i} size="small" label={tag.name} />
               ))}
             {/* <Typography variant="caption">{id}</Typography> */}
             <Box flexGrow={1} />
@@ -108,6 +108,7 @@ const ExerciseCardComponent: FC<{
                   overflow: "hidden",
                   textOverflow: "ellipsis",
                   display: "-webkit-box",
+                  mb: 0.5,
                   WebkitLineClamp:
                     view === "all"
                       ? "1"

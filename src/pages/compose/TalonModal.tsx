@@ -9,6 +9,7 @@ import {
   useUpdateExerciseSheetMutation,
 } from "@/generated/graphql.tsx";
 import { composeAtom } from "@/util/atoms";
+import { composeStore } from "@/util/composeStore";
 import { useExerciseFilters } from "@/util/useExerciseFilters";
 import { useTableOrder } from "@/util/useTableOrder";
 import { LoadingButton } from "@mui/lab";
@@ -17,6 +18,7 @@ import {
   Button,
   Card,
   Grid2,
+  IconButton,
   Modal,
   Stack,
   Typography,
@@ -26,6 +28,7 @@ import { useAtomValue, useSetAtom } from "jotai";
 import { uniqueId } from "lodash";
 import { useSnackbar } from "notistack";
 import { FC, memo, useCallback, useEffect } from "react";
+import { MdArrowRightAlt, MdOutlineDelete } from "react-icons/md";
 
 export const TalonModal: FC<{
   sheetId: string;
@@ -104,6 +107,10 @@ export const TalonModal: FC<{
     onClose();
   }, [mutate, onClose, sheetId, snackbar, talon]);
 
+  const selectedContainer = composeStore((state) => state.selectedContainer);
+  const selectedOrder = composeStore((state) => state.selectedOrder);
+  const clear = composeStore((state) => state.clear);
+
   return (
     <Modal open={open} onClose={onClose}>
       <Stack
@@ -121,14 +128,26 @@ export const TalonModal: FC<{
           >
             <Grid2
               size={1}
-              sx={{ height: "100%", overflowY: "auto", overflowX: "hidden" }}
+              sx={{
+                height: "100%",
+                overflowY: "hidden",
+                overflowX: "hidden",
+                display: "flex",
+                flexDirection: "column",
+              }}
             >
-              <Stack gap={4} p={4}>
+              <Stack gap={2} p={4}>
                 <Typography variant="h2">Kész feladatok</Typography>
                 {filterComponents}
               </Stack>
-              <Stack px={4}>
-                <ContainerContext.Provider value={"talon"}>
+              <Stack
+                px={4}
+                sx={{
+                  overflowY: "auto",
+                  overflowX: "hidden",
+                }}
+              >
+                <ContainerContext.Provider value={null}>
                   <InfiniteLoad<ExerciseListElemFragment>
                     data={data}
                     fetchNextPage={fetchMore}
@@ -141,25 +160,32 @@ export const TalonModal: FC<{
                       const isSelected = talon.some((t) => t.id === item.id);
                       return (
                         !isSelected && (
-                          <Box
+                          <Stack
+                            direction={"row"}
+                            alignItems={"center"}
                             key={item.id}
                             sx={{
                               pb: 2,
                             }}
-                            onClick={() => {
-                              if (isSelected) return;
-                              setItems((draft) => {
-                                draft["talon"].push({
-                                  id: item.id,
-                                  cardId: uniqueId(),
-                                });
-                              });
-                            }}
+                            gap={2}
                           >
-                            <motion.div layout layoutId={item.id}>
+                            <motion.div layout style={{ flexGrow: 1 }}>
                               <ExerciseCard id={item.id} exercise={item} />
                             </motion.div>
-                          </Box>
+                            <IconButton
+                              onClick={() => {
+                                if (isSelected) return;
+                                setItems((draft) => {
+                                  draft["talon"].push({
+                                    id: item.id,
+                                    cardId: uniqueId(),
+                                  });
+                                });
+                              }}
+                            >
+                              <MdArrowRightAlt size={24} />
+                            </IconButton>
+                          </Stack>
                         )
                       );
                     }}
@@ -167,15 +193,50 @@ export const TalonModal: FC<{
                 </ContainerContext.Provider>
               </Stack>
             </Grid2>
-            <Grid2 size={1} p={4} sx={{ height: "100%", overflowY: "auto" }}>
-              <Stack>
-                <Typography variant="h2" mb={4}>
-                  Talon
-                </Typography>
+            <Grid2
+              size={1}
+              px={4}
+              pt={4}
+              sx={{
+                height: "100%",
+                overflowY: "hidden",
+                display: "flex",
+                flexDirection: "column",
+              }}
+            >
+              <Stack
+                direction={"row"}
+                justifyContent={"space-between"}
+                alignItems={"start"}
+                mb={2}
+              >
+                <Typography variant="h2">Talon</Typography>
+                <IconButton
+                  sx={{
+                    height: 32,
+                    width: 32,
+                    "&:disabled": {
+                      opacity: 0.5,
+                    },
+                  }}
+                  onClick={() => {
+                    setItems((draft) => {
+                      draft["talon"] = draft["talon"].filter(
+                        (_, i) => i !== selectedOrder,
+                      );
+                    });
+                    clear();
+                  }}
+                  disabled={selectedContainer !== "talon"}
+                >
+                  <MdOutlineDelete color="red" size={32} />
+                </IconButton>
+              </Stack>
+              <Stack sx={{ flexGrow: 1, overflowY: "auto" }}>
                 <ContainerContext.Provider value={"talon"}>
-                  {talon.map((t) => (
+                  {talon.map((t, i) => (
                     <Box key={t.id} sx={{ pb: 2 }}>
-                      <MemoizedItem key={t.id} id={t.id!.toString()} />
+                      <MemoizedItem key={t.id} i={i} id={t.id!.toString()} />
                     </Box>
                   ))}
                 </ContainerContext.Provider>
@@ -206,8 +267,8 @@ export const TalonModal: FC<{
   );
 };
 
-const TalonItem: FC<{ id: string }> = ({ id }) => {
-  return <Item cardId={id} id={id} order={0} />;
+const TalonItem: FC<{ id: string; i: number }> = ({ id, i }) => {
+  return <Item cardId={id} id={id} order={i} />;
 };
 
 const MemoizedItem = memo(TalonItem);

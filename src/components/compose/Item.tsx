@@ -48,7 +48,12 @@ export const Item: FC<{
       clear();
     } else if (selectedContainer && selectedOrder !== null) {
       // something is selected
-      if (containerId === "talon") return;
+      if (containerId === "talon") {
+        // talon is selected
+        // act like nothing was selected
+        setSelected(containerId, order);
+        return;
+      }
       setItems((draft) => {
         const aId = draft[selectedContainer][selectedOrder].id;
         const aCardId = draft[selectedContainer][selectedOrder].cardId;
