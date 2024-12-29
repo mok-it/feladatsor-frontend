@@ -6,7 +6,7 @@ import { atomWithImmer } from "jotai-immer";
 import { atomWithStorage, createJSONStorage } from "jotai/utils";
 import { keys, times, uniqueId } from "lodash";
 import { mock, mock3 } from "./mocks";
-import { ageGroups, ExerciseCardData, ExercisePlacements } from "./types";
+import { ageGroups, ExerciseCardData } from "./types";
 
 type UserAtomType = { isLoggedIn: boolean; user: User | null } | undefined;
 const storage = createJSONStorage<UserAtomType>(() => sessionStorage);
@@ -61,8 +61,6 @@ export const useComposeAtom = () => {
   };
   return { items, setItems, reset };
 };
-
-export const exercisePlacementsAtom = atomWithImmer<ExercisePlacements>({});
 
 export const createExerciseAtom = atomWithStorage<ExerciseFieldsType | null>(
   "createExercise",

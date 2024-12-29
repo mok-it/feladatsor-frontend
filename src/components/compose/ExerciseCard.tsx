@@ -1,5 +1,5 @@
-import { ExerciseAgeGroup, SelectExerciseQuery } from "@/generated/graphql";
-import { exercisePlacementsAtom } from "@/util/atoms";
+import { SelectExerciseQuery } from "@/generated/graphql";
+import { useComposeAtom } from "@/util/atoms";
 import { composeStore, ExerciseView } from "@/util/composeStore";
 import { ageGroups } from "@/util/types";
 import { UniqueIdentifier } from "@dnd-kit/core";
@@ -14,7 +14,7 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
-import { useAtomValue } from "jotai";
+import { red } from "@mui/material/colors";
 import { entries } from "lodash";
 import { FC, memo, useContext, useMemo } from "react";
 import { MdEdit, MdStar } from "react-icons/md";
@@ -30,19 +30,19 @@ const ExerciseCard: FC<{
   const containerId = useContext(ContainerContext);
   const view = composeStore((state) => state.view);
   const exerciseView = composeStore((state) => state.exerciseView);
-  const placements = useAtomValue(exercisePlacementsAtom);
+  const { items } = useComposeAtom();
   const isSingleView = view !== "all";
   const isDetailedView = exerciseView === ExerciseView.LIST && view !== "all";
   const ageGroup = containerId?.split("-")[0];
-  const countInGroup = placements[exercise.id]?.[ageGroup as ExerciseAgeGroup];
-  const isAgeGroupBad = useMemo(
-    () =>
-      (!isTalon &&
-        exercise.difficulty.find((d) => d.ageGroup === ageGroup)?.difficulty ===
-          0) ||
-      countInGroup > 1,
-    [ageGroup, exercise.difficulty, isTalon, countInGroup],
-  );
+  const isAgeGroupBad = useMemo(() => {
+    let countInCategory = 0;
+    for (let i = 0; i < 4; i++) {
+      countInCategory += items[`${ageGroup}-${i}`].filter(
+        (e) => e.id === exercise.id,
+      ).length;
+    }
+    return countInCategory > 1;
+  }, [ageGroup, exercise.id, items]);
 
   const difficultiesElem = useMemo(
     () => (
@@ -55,10 +55,14 @@ const ExerciseCard: FC<{
           const value = exercise.difficulty.find(
             (d) => d.ageGroup === group,
           )?.difficulty;
-          const isMissing =
-            !isTalon &&
-            placements[exercise.id]?.[group as ExerciseAgeGroup] === 0 &&
-            value;
+
+          let count = 0;
+          for (let i = 0; i < 4; i++) {
+            count += items[`${group}-${i}`].filter(
+              (e) => e.id === exercise.id,
+            ).length;
+          }
+          const isMissing = !isTalon && value && count === 0;
 
           return (
             <Stack
@@ -68,12 +72,17 @@ const ExerciseCard: FC<{
               alignItems={"center"}
               justifyContent={"center"}
               borderRadius={50}
+              sx={{
+                backgroundColor: isMissing ? red[500] : "transparent",
+                borderRadius: 50,
+                transition: ".5s",
+              }}
             >
               <Typography
                 variant="caption"
                 sx={{
-                  fontWeight: isMissing ? "600" : "400",
                   opacity: value ? 1 : 0.2,
+                  ...(isMissing && { color: "white" }),
                 }}
               >
                 {value}
@@ -83,7 +92,7 @@ const ExerciseCard: FC<{
         })}
       </Stack>
     ),
-    [exercise.difficulty, isTalon, placements, exercise.id],
+    [exercise.difficulty, exercise.id, isTalon, items],
   );
 
   const height =
