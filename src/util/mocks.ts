@@ -31,7 +31,6 @@ export const mock: ExerciseCardData = {
     description:
       "Bomátakertben járt Matusz a cigányokkal. Matusz a cigányoknak adott egy kis pénzt, hogy ne bántsák. A cigányok megkérdezték, hogy mennyi pénzt adott nekik. Matusz azt mondta, hogy 10 forintot. A cigányok azt mondták, hogy 10 forintot adtál nekünk, de 10 forintot adtál a cigányoknak is. Matusz azt mondta, hogy 10 forintot adott nekik. Mennyi pénzt adott nekik Matusz?",
     solution: "solution",
-    sameLogicExercises: [],
     comments: [],
     solutionOptions: ["10", "69", "matusz sosem ad pénzt", "0 "],
     status: "CREATED",

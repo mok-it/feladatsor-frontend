@@ -1,5 +1,6 @@
 import { ExerciseOperations } from "@/components/ExerciseOperations";
 import FakeId from "@/components/FakeId";
+import { SameGroupExerciseCard } from "@/components/SameGroupExerciseCard.tsx";
 import Section from "@/components/Section";
 import {
   SelectExerciseQuery,
@@ -28,7 +29,6 @@ import { useParams } from "react-router";
 import { useToggle } from "react-use";
 import { createExerciseInitialValue } from "./createExercise/createExerciseInitialValue";
 import ExerciseFields from "./createExercise/ExerciseFields";
-import { SameGroupExerciseCard } from "@/components/SameGroupExerciseCard.tsx";
 
 const ExerciseDetails: FC = () => {
   const { enqueueSnackbar } = useSnackbar();

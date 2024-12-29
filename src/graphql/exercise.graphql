@@ -40,7 +40,6 @@ query selectExercise($exerciseId: ID!) {
     description
     solutionOptions
     sameLogicExerciseGroup {
-      description
       exercises {
         ...SameLogicExercise
       }

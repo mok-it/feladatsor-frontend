@@ -1,4 +1,11 @@
-import { FC, useState } from "react";
+import { AlertDialog } from "@/components/Dialog.tsx";
+import {
+  ExerciseSheetsDocument,
+  useCreateExerciseSheetMutation,
+  useDeleteExerciseSheetMutation,
+  useExerciseSheetsQuery,
+} from "@/generated/graphql.tsx";
+import { LoadingButton } from "@mui/lab";
 import {
   Box,
   Card,
@@ -10,17 +17,10 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import {
-  ExerciseSheetsDocument,
-  useCreateExerciseSheetMutation,
-  useDeleteExerciseSheetMutation,
-  useExerciseSheetsQuery,
-} from "@/generated/graphql.tsx";
-import dayjs from "dayjs";
 import { Stack } from "@mui/system";
-import { LoadingButton } from "@mui/lab";
-import { AlertDialog } from "@/components/Dialog.tsx";
+import dayjs from "dayjs";
 import { enqueueSnackbar } from "notistack";
+import { FC, useState } from "react";
 import { MdOutlineDelete } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 
@@ -116,6 +116,7 @@ export const ExerciseSheets: FC = () => {
                     <Stack
                       direction={"row"}
                       justifyContent={"space-between"}
+                      alignItems={"start"}
                       gap={1}
                     >
                       <Typography gutterBottom variant="h5" component="div">
@@ -127,7 +128,7 @@ export const ExerciseSheets: FC = () => {
                           setSheetToDelete(sheet.id);
                         }}
                       >
-                        <MdOutlineDelete />
+                        <MdOutlineDelete color="red" />
                       </IconButton>
                     </Stack>
                     <Typography

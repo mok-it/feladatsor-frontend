@@ -2,6 +2,8 @@ import { ExerciseRow } from "@/components/InfiniteLoad/ExerciseRow";
 import { InfiniteLoad } from "@/components/InfiniteLoad/InfiniteLoad";
 import { MultiSelect } from "@/components/MultiSelect.tsx";
 import { SimpleAccordion } from "@/components/SimpleAccordion.tsx";
+import { StyledTableCell } from "@/components/StyledTableCell.tsx";
+import { StyledTableRow } from "@/components/StyledTableRow.tsx";
 import {
   Exercise,
   ExerciseAgeGroup,
@@ -11,6 +13,7 @@ import {
 } from "@/generated/graphql.tsx";
 import { DifficultySelectorList } from "@/pages/ExerciseListPage/DifficultySelectorList.tsx";
 import { searchDefaultValues } from "@/pages/ExerciseListPage/SearchDefaultValues.tsx";
+import { TagSelector } from "@/pages/ExerciseListPage/TagSelector.tsx";
 import {
   Box,
   Card,
@@ -29,11 +32,8 @@ import {
 import { entries, uniqBy } from "lodash";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { IoSearch } from "react-icons/io5";
-import { useEffectOnce, useToggle } from "react-use";
+import { useEffectOnce, useSearchParam, useToggle } from "react-use";
 import { useImmer } from "use-immer";
-import { StyledTableRow } from "@/components/StyledTableRow.tsx";
-import { StyledTableCell } from "@/components/StyledTableCell.tsx";
-import { TagSelector } from "@/pages/ExerciseListPage/TagSelector.tsx";
 
 export type DifficultySelect = {
   [key in ExerciseAgeGroup]: {
@@ -53,8 +53,11 @@ export type ExerciseQuery = {
 const LIMIT = 20;
 
 export const ExerciseListPage = () => {
-  const [exerciseQuery, setExerciseQuery] =
-    useImmer<ExerciseQuery>(searchDefaultValues);
+  const paramTag = useSearchParam("tag");
+  const [exerciseQuery, setExerciseQuery] = useImmer<ExerciseQuery>({
+    ...searchDefaultValues,
+    ...(paramTag ? { includeTags: [paramTag] } : {}),
+  });
 
   const difficulty = useMemo(() => {
     return entries(exerciseQuery.difficulty)
@@ -199,7 +202,10 @@ export const ExerciseListPage = () => {
               setExerciseQuery={setExerciseQuery}
             />
           </SimpleAccordion>
-          <SimpleAccordion summary="Címke szűrő">
+          <SimpleAccordion
+            summary="Címke szűrő"
+            defaultExpanded={paramTag !== null}
+          >
             {tags && (
               <TagSelector
                 tags={tags?.flatExerciseTags}

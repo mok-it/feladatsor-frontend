@@ -29,4 +29,5 @@ export const createExerciseInitialValue: ExerciseFieldsType = {
   solutionOptions: [],
   status: "DRAFT",
   tags: [],
+  sameLogicGroup: "",
 };

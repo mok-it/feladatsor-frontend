@@ -22,6 +22,7 @@ import { useSnackbar } from "notistack";
 import { FC, useMemo, useState } from "react";
 import { IoSearch } from "react-icons/io5";
 import { MdDone, MdEdit, MdOutlineDelete } from "react-icons/md";
+import { Link } from "react-router-dom";
 import { useDebounce } from "react-use";
 
 export const TagsPage = () => {
@@ -242,9 +243,12 @@ const TagLabel: FC<{
         </form>
       ) : (
         <Stack direction={"row"} alignItems={"center"} gap={1}>
-          <Chip
-            label={`${tag.name} ${tag.exerciseCount ? `(${tag.exerciseCount})` : ""}`}
-          />
+          <Link to={`/list-exercises?tag=${tag.id}`}>
+            <Chip
+              sx={{ cursor: "pointer" }}
+              label={`${tag.name} ${tag.exerciseCount ? `(${tag.exerciseCount})` : ""}`}
+            />
+          </Link>
           <IconButton onClick={() => onSelect(tag)}>
             <MdEdit size={14} />
           </IconButton>
