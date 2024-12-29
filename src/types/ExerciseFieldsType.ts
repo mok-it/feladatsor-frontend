@@ -9,6 +9,7 @@ export type ExerciseFieldsType = {
   description: Scalars["String"]["input"];
   difficulty: Array<ExerciseDifficultyInput>;
   exerciseImage?: InputMaybe<Scalars["String"]["input"]>;
+  solutioníOptions?: InputMaybe<Array<Scalars["String"]["input"]>>;
   helpingQuestions: Array<Scalars["String"]["input"]>;
   isCompetitionFinal?: InputMaybe<Scalars["Boolean"]["input"]>;
   sameLogicGroup: InputMaybe<Scalars["ID"]["input"]>;

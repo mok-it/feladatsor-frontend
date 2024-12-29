@@ -21,6 +21,7 @@ import { FC, useMemo, useState } from "react";
 import { useDebounce } from "react-use";
 import { KaTeX } from "../../components/Katex.tsx";
 import { MultiSelect } from "../../components/MultiSelect.tsx";
+import { SolutionOptions } from "@/components/SolutionOptions/SolutionOptions.tsx";
 
 const ExerciseFields: FC = () => {
   const { values, handleChange, handleBlur, setFieldValue } =
@@ -127,6 +128,18 @@ const ExerciseFields: FC = () => {
               title="Feladat képe"
             />
           </Section>
+        </Grid2>
+        <Grid2
+          size={{
+            xs: 12,
+          }}
+        >
+          <SolutionOptions
+            value={values.solutionOptions}
+            onChange={(value) => {
+              setFieldValue("solutionOptions", value);
+            }}
+          />
         </Grid2>
         <Grid2
           size={{
