@@ -4,6 +4,7 @@ import FakeId from "@/components/FakeId";
 import Section from "@/components/Section";
 import {
   SelectExerciseQuery,
+  useCloneExerciseToNewMutation,
   useSelectExerciseQuery,
   useUpdateExerciseMutation,
 } from "@/generated/graphql";
@@ -29,6 +30,8 @@ import { MdSave } from "react-icons/md";
 import { useParams } from "react-router";
 import { useToggle } from "react-use";
 import ExerciseFields from "./createExercise/ExerciseFields";
+import ContentCopyIcon from "@mui/icons-material/ContentCopy";
+import { useNavigate } from "react-router-dom";
 
 const ExerciseDetails: FC = () => {
   const { enqueueSnackbar } = useSnackbar();
@@ -159,6 +162,22 @@ const ExerciseDetailsForm: FC<{ updateSignal: boolean }> = ({
     SelectExerciseQuery["exercise"] | null
   >(null);
 
+  const navigate = useNavigate();
+
+  const { enqueueSnackbar } = useSnackbar();
+
+  const [duplicateExercise] = useCloneExerciseToNewMutation({
+    onCompleted: (data) => {
+      if (data.cloneExerciseToNew) {
+        navigate(`/exercise/${data.cloneExerciseToNew.id}`);
+        enqueueSnackbar({
+          variant: "success",
+          message: "Feladat sikeresen duplikálva",
+        });
+      }
+    },
+  });
+
   const { loading, data: fetchedExercise } = useSelectExerciseQuery({
     variables: { exerciseId: id! },
     fetchPolicy: "no-cache",
@@ -207,6 +226,19 @@ const ExerciseDetailsForm: FC<{ updateSignal: boolean }> = ({
         <Typography variant="h4">Feladat</Typography>
         <FakeId>{id}</FakeId>
         <Box flexGrow={1} />
+        <Button
+          onClick={() =>
+            duplicateExercise({
+              variables: {
+                cloneExerciseToNewId: id ?? "",
+              },
+            })
+          }
+          variant="contained"
+          endIcon={<ContentCopyIcon />}
+        >
+          Duplikálás
+        </Button>
         <Button onClick={submitForm} variant="contained" endIcon={<MdSave />}>
           Mentés
         </Button>

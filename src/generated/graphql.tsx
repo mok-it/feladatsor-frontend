@@ -177,7 +177,7 @@ export type ExerciseSheet = {
   id: Scalars['ID']['output'];
   name: Scalars['String']['output'];
   sheetItems: Array<ExerciseSheetItem>;
-  talonItems: Array<ExerciseSheetTalonItem>;
+  talonItems: Array<OrderedExercise>;
   updatedAt: Scalars['String']['output'];
 };
 
@@ -198,12 +198,6 @@ export type ExerciseSheetItemInput = {
   ageGroup: ExerciseAgeGroup;
   exercises: Array<OrderedExerciseInput>;
   level: Scalars['Int']['input'];
-};
-
-export type ExerciseSheetTalonItem = {
-  __typename: 'ExerciseSheetTalonItem';
-  exercises: Array<OrderedExercise>;
-  id: Scalars['ID']['output'];
 };
 
 export type ExerciseStatus =
@@ -275,6 +269,7 @@ export type LoginResponse = {
 export type Mutation = {
   __typename: 'Mutation';
   changePermissions: User;
+  cloneExerciseToNew: Exercise;
   createExercise: Exercise;
   createExerciseCheck: ExerciseCheck;
   createExerciseComment: ExerciseComment;
@@ -300,6 +295,11 @@ export type Mutation = {
 export type MutationChangePermissionsArgs = {
   permissions: Array<Role>;
   userId: Scalars['ID']['input'];
+};
+
+
+export type MutationCloneExerciseToNewArgs = {
+  id: Scalars['ID']['input'];
 };
 
 
@@ -506,6 +506,7 @@ export type Tag = {
 export type UpdateExerciseSheetInput = {
   name?: InputMaybe<Scalars['String']['input']>;
   sheetItems?: InputMaybe<Array<ExerciseSheetItemInput>>;
+  talonItems?: InputMaybe<Array<OrderedExerciseInput>>;
 };
 
 export type User = {
@@ -543,6 +544,13 @@ export type ChangePermissionsMutationVariables = Exact<{
 
 
 export type ChangePermissionsMutation = { __typename: 'Mutation', changePermissions: { __typename: 'User', id: string, name: string } };
+
+export type CloneExerciseToNewMutationVariables = Exact<{
+  cloneExerciseToNewId: Scalars['ID']['input'];
+}>;
+
+
+export type CloneExerciseToNewMutation = { __typename: 'Mutation', cloneExerciseToNew: { __typename: 'Exercise', id: string } };
 
 export type CommentsByExerciseQueryVariables = Exact<{
   exerciseId: Scalars['ID']['input'];
@@ -849,6 +857,39 @@ export function useChangePermissionsMutation(baseOptions?: Apollo.MutationHookOp
 export type ChangePermissionsMutationHookResult = ReturnType<typeof useChangePermissionsMutation>;
 export type ChangePermissionsMutationResult = Apollo.MutationResult<ChangePermissionsMutation>;
 export type ChangePermissionsMutationOptions = Apollo.BaseMutationOptions<ChangePermissionsMutation, ChangePermissionsMutationVariables>;
+export const CloneExerciseToNewDocument = gql`
+    mutation CloneExerciseToNew($cloneExerciseToNewId: ID!) {
+  cloneExerciseToNew(id: $cloneExerciseToNewId) {
+    id
+  }
+}
+    `;
+export type CloneExerciseToNewMutationFn = Apollo.MutationFunction<CloneExerciseToNewMutation, CloneExerciseToNewMutationVariables>;
+
+/**
+ * __useCloneExerciseToNewMutation__
+ *
+ * To run a mutation, you first call `useCloneExerciseToNewMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCloneExerciseToNewMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [cloneExerciseToNewMutation, { data, loading, error }] = useCloneExerciseToNewMutation({
+ *   variables: {
+ *      cloneExerciseToNewId: // value for 'cloneExerciseToNewId'
+ *   },
+ * });
+ */
+export function useCloneExerciseToNewMutation(baseOptions?: Apollo.MutationHookOptions<CloneExerciseToNewMutation, CloneExerciseToNewMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CloneExerciseToNewMutation, CloneExerciseToNewMutationVariables>(CloneExerciseToNewDocument, options);
+      }
+export type CloneExerciseToNewMutationHookResult = ReturnType<typeof useCloneExerciseToNewMutation>;
+export type CloneExerciseToNewMutationResult = Apollo.MutationResult<CloneExerciseToNewMutation>;
+export type CloneExerciseToNewMutationOptions = Apollo.BaseMutationOptions<CloneExerciseToNewMutation, CloneExerciseToNewMutationVariables>;
 export const CommentsByExerciseDocument = gql`
     query commentsByExercise($exerciseId: ID!) {
   commentsByExercise(id: $exerciseId) {

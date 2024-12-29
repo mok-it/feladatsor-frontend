@@ -1,0 +1,5 @@
+mutation CloneExerciseToNew($cloneExerciseToNewId: ID!) {
+    cloneExerciseToNew(id: $cloneExerciseToNewId) {
+        id
+    }
+}

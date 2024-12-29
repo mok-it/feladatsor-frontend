@@ -13,7 +13,7 @@
 - [ ] Bármelyik feladat mező lehet latex, esetleg egy modal-os LaTeX editor?
 - [X] Feladat megnyitása ID alapján
 - [ ] Feladat ellenörzés oldal, a menüben is
-- [ ] Válasz opciók
+- [X] Válaszopciók
 - [ ] Új feladat létrehozása meglévő alapján, alternativeDifficultyExerciseGroups, sameLogicExerciseGroups
 - [ ] Feladatok listázása a csoportokban (alternativeDifficultyExerciseGroups, sameLogicExerciseGroups)
 - [ ] Feladthoz hasonló feladatok megjelenítése (alternativeDifficultyExerciseGroups, sameLogicExerciseGroups)

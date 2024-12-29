@@ -3422,6 +3422,11 @@ commander@^2.19.0:
   resolved "https://registry.npmjs.org/commander/-/commander-2.20.3.tgz"
   integrity sha512-GpVkmM8vF2vQUkj2LvZmD35JxeJOLCwJ9cUkugyk2nuhbv3+mJvpLYYt+0+USMxE+oj+ey/lJEnhZw75x/OMcQ==
 
+commander@^8.3.0:
+  version "8.3.0"
+  resolved "https://registry.yarnpkg.com/commander/-/commander-8.3.0.tgz#4837ea1b2da67b9c616a67afbb0fafee567bca66"
+  integrity sha512-OkTL9umf+He2DZkUq8f8J9of7yL6RJKI24dVITBmNfZBmri9zYZQrKkuXiKhyfPSu8tUhnVBB1iKXevvnlR4Ww==
+
 common-tags@1.8.2:
   version "1.8.2"
   resolved "https://registry.npmjs.org/common-tags/-/common-tags-1.8.2.tgz"
@@ -4635,6 +4640,13 @@ katex@^0.10.2:
   dependencies:
     commander "^2.19.0"
 
+katex@^0.16.0:
+  version "0.16.18"
+  resolved "https://registry.yarnpkg.com/katex/-/katex-0.16.18.tgz#20781284288bc52805c519e48ac756163ad4b1f3"
+  integrity sha512-LRuk0rPdXrecAFwQucYjMiIs0JFefk6N1q/04mlw14aVIVgxq1FO0MA9RiIIGVaKOB5GIP5GH4aBBNraZERmaQ==
+  dependencies:
+    commander "^8.3.0"
+
 keyv@^4.5.3:
   version "4.5.4"
   resolved "https://registry.npmjs.org/keyv/-/keyv-4.5.4.tgz"
@@ -5395,6 +5407,13 @@ react-is@^19.0.0:
   version "19.0.0"
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-19.0.0.tgz#d6669fd389ff022a9684f708cf6fa4962d1fea7a"
   integrity sha512-H91OHcwjZsbq3ClIDHMzBShc1rotbfACdWENsmEf0IFvZ3FgGPtdHMcsv45bQ1hAbgdfiA8SnxTKfDS+x/8m2g==
+
+react-latex-next@^3.0.0:
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/react-latex-next/-/react-latex-next-3.0.0.tgz#3e347a13b1e701439b5fa52f75201bc86166854e"
+  integrity sha512-x70f1b1G7TronVigsRgKHKYYVUNfZk/3bciFyYX1lYLQH2y3/TXku3+5Vap8MDbJhtopePSYBsYWS6jhzIdz+g==
+  dependencies:
+    katex "^0.16.0"
 
 react-latex@^2.0.0:
   version "2.0.0"
