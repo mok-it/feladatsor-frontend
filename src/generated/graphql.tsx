@@ -1233,8 +1233,10 @@ export const SelectExerciseDocument = gql`
     status
     description
     solutionOptions
-    sameLogicExercises {
-      description
+    sameLogicExerciseGroup {
+      exercises {
+        ...SameLogicExercise
+      }
     }
     exerciseImage {
       id
