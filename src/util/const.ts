@@ -2,6 +2,7 @@ import {
   Exercise,
   ExerciseAgeGroup,
   ExerciseCheckType,
+  ExerciseStatus,
 } from "@/generated/graphql";
 import { ExerciseFieldsType, ExerciseQuery } from "./types";
 
@@ -118,4 +119,36 @@ export const createExerciseInitialValue: ExerciseFieldsType = {
 export const COMPOSE_HEIGHT = {
   SHORT: 100,
   TALL: 200,
+};
+
+export const exerciseStatus: Record<
+  ExerciseStatus,
+  {
+    color:
+      | "primary"
+      | "default"
+      | "secondary"
+      | "error"
+      | "info"
+      | "success"
+      | "warning";
+    text: string;
+  }
+> = {
+  APPROVED: {
+    color: "success",
+    text: "Kész",
+  },
+  CREATED: {
+    color: "default",
+    text: "Beküldve",
+  },
+  DELETED: {
+    color: "error",
+    text: "Törölve",
+  },
+  DRAFT: {
+    color: "warning",
+    text: "Vázlat",
+  },
 };

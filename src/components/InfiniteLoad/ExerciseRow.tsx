@@ -1,15 +1,15 @@
+import { StyledTableRow } from "@/components/StyledTableRow.tsx";
 import {
   ExerciseAgeGroup,
   ExerciseListElemFragment,
 } from "@/generated/graphql";
+import { exerciseStatus } from "@/util/const";
 import { Box, Chip, TableCell, Tooltip } from "@mui/material";
+import dayjs from "dayjs";
 import { FC, memo } from "react";
 import { useNavigate } from "react-router-dom";
 import { CategoryDifficulties } from "../CategoryDifficulties";
 import { KaTeX } from "../Katex";
-import { StyledTableRow } from "@/components/StyledTableRow.tsx";
-import dayjs from "dayjs";
-import { exerciseStatusToHuman } from "@/util/const.ts";
 
 const ExerciseRow: FC<{ data: ExerciseListElemFragment }> = ({ data }) => {
   const navigate = useNavigate();
@@ -41,8 +41,8 @@ const ExerciseRow: FC<{ data: ExerciseListElemFragment }> = ({ data }) => {
       <TableCell sx={{ verticalAlign: "middle" }}>
         <Chip
           variant="outlined"
-          color={exerciseStatusToHuman[data.status].color}
-          label={exerciseStatusToHuman[data.status].text}
+          color={exerciseStatus[data.status].color}
+          label={exerciseStatus[data.status].text}
         />
       </TableCell>
       <TableCell>
