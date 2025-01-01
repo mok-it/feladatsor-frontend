@@ -2,7 +2,6 @@ import { ProfilePage } from "@/pages/ProfilePage.tsx";
 import { FC } from "react";
 import { IconType } from "react-icons";
 import { FaRegUser, FaUsers } from "react-icons/fa";
-import { FaPencil } from "react-icons/fa6";
 import { HiOutlineHome } from "react-icons/hi";
 import { IoNewspaperOutline, IoSearch } from "react-icons/io5";
 import { MdDashboard, MdOutlineNewLabel } from "react-icons/md";
@@ -12,6 +11,7 @@ import { CreateExercise } from "./pages/createExercise/CreateExercise.tsx";
 import { AdminPage } from "./pages/Admin.tsx";
 import { TagsPage } from "./pages/TagsPage.tsx";
 import { ExerciseSheets } from "@/pages/exerciseSheets/ExerciseSheets.tsx";
+import { FaPencil } from "react-icons/fa6";
 
 interface Page {
   name: string;
@@ -28,7 +28,7 @@ export const pages: Page[] = [
     icon: HiOutlineHome,
   },
   {
-    name: "Feladat beküldés",
+    name: "Feladat beküldése",
     path: "/exercise",
     component: CreateExercise,
     icon: IoNewspaperOutline,
@@ -46,7 +46,7 @@ export const pages: Page[] = [
     icon: FaRegUser,
   },
   {
-    name: "Feladat ellenőzés",
+    name: "Feladat ellenőzése",
     path: "/check-exercise",
     component: HomePage,
     icon: FaPencil,

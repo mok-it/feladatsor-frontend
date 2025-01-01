@@ -8,6 +8,7 @@
 - [ ] Feladat sor összeállító oldalon képek layout-ja
 - [ ] Feladat sor összeállító oldalon képek több soros sor levágásnál valami bug volt xD (szöveg félbe van vágva)
 - [ ] Mi a faszra jó a csillag?
+- [ ] Feladat beküldés nehézség checkboxoknál legyen szám érték a nehézségre. (Korcsoport szerinti nehézség *)
 
 
 
