@@ -25,11 +25,11 @@ export const LeaderBoardCard: FC<{
     },
     {
       rank: 2,
-      color: "orange",
+      color: "gray",
     },
     {
       rank: 3,
-      color: "gray",
+      color: "orange",
     },
   ];
   return (
