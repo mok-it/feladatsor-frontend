@@ -1,148 +1,158 @@
 import {
-  Box,
   Button,
-  Card,
-  Divider,
-  Stack,
+  IconButton,
+  InputAdornment,
   TextField,
   Typography,
 } from "@mui/material";
 
 import { FC, useCallback, useState } from "react";
 import { useRegisterMutation } from "@/generated/graphql.tsx";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { LoginLayout } from "@/layout/LoginLayout.tsx";
+import { Formik, useFormikContext } from "formik";
+import { useSnackbar } from "notistack";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
 
-type RegisterForm = {
+type RegisterFormFieldTypes = {
   name: string;
   userName: string;
   email: string;
   password: string;
+  confirmPassword: string;
 };
 
 const RegisterPage: FC = () => {
   const [register] = useRegisterMutation();
   const navigate = useNavigate();
+  const { enqueueSnackbar } = useSnackbar();
 
-  const [registerValues, setRegisterValues] = useState<RegisterForm>({
-    name: "",
-    userName: "",
-    email: "",
-    password: "",
-  });
-
-  const [confirmPassword, setConfirmPassword] = useState("");
-
-  const handleConfirmPasswordChange = (
-    e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>,
-  ) => {
-    console.log(e.target.value);
-    setConfirmPassword(e.target.value); // Handle confirmPassword changes
-  };
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    console.log(name, value);
-    setRegisterValues((prevValues) => ({
-      ...prevValues,
-      [name]: value,
-    }));
-  };
-
-  const [passwordError, setPasswordError] = useState<string | null>(null);
-
-  const onRegister = useCallback(async () => {
-    setPasswordError(null);
-    //Successful registration
-    await register({
-      variables: {
-        data: {
-          email: registerValues.email,
-          name: registerValues.name,
-          password: registerValues.password,
-          userName: registerValues.userName,
+  const onRegister = useCallback(
+    async (values: RegisterFormFieldTypes) => {
+      await register({
+        variables: {
+          data: {
+            email: values.email,
+            name: values.name,
+            password: values.password,
+            userName: values.userName,
+          },
         },
-      },
-    });
+      });
+      enqueueSnackbar("Sikeres regisztráció", { variant: "success" });
 
-    setConfirmPassword(" ");
-    setRegisterValues({
-      name: "",
-      userName: "",
-      email: "",
-      password: "",
-    });
-    navigate("/login");
-  }, [registerValues]);
+      navigate("/login");
+    },
+    [register],
+  );
 
   return (
-    <Box
-      sx={{
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        height: "100vh",
-      }}
-    >
-      <Card sx={{ p: 2, width: 400 }}>
-        <Typography variant="h4" align="center">
-          Register
+    <LoginLayout headerText={"Regisztráció"}>
+      <Formik<RegisterFormFieldTypes>
+        onSubmit={onRegister}
+        initialValues={{
+          email: "",
+          name: "",
+          password: "",
+          confirmPassword: "",
+          userName: "",
+        }}
+      >
+        <RegisterFormFields />
+      </Formik>
+      <Link to="/login">
+        <Typography textAlign="right" mt="auto" sx={{ cursor: "pointer" }}>
+          Bejelentkezés
         </Typography>
-        <Divider sx={{ my: 2 }} />
-        <Stack spacing={2}>
-          <TextField
-            label="Name"
-            variant="outlined"
-            onChange={handleChange}
-            name={"name"}
-            value={registerValues.name}
-          />
-          <TextField
-            label="Username"
-            variant="outlined"
-            onChange={handleChange}
-            name={"userName"}
-            value={registerValues.userName}
-          />
-          <TextField
-            label="Email"
-            variant="outlined"
-            name={"email"}
-            value={registerValues.email}
-            onChange={handleChange}
-          />
-          <TextField
-            label="Password"
-            variant="outlined"
-            onChange={handleChange}
-            name={"password"}
-            value={registerValues.password}
-          />
-          <TextField
-            label="Confirm password"
-            variant="outlined"
-            name={"confirmPassword"}
-            onChange={(e) => {
-              handleConfirmPasswordChange(e); // Call the function to update the state
-              if (registerValues.password !== e.target.value) {
-                setPasswordError("Passwords do not match");
-              } else {
-                setPasswordError(""); // Clear the error if passwords match
-              }
-            }}
-            value={confirmPassword}
-          />
-          {passwordError && (
-            <Typography color="error" variant="body2">
-              {passwordError}
-            </Typography>
-          )}
+      </Link>
+    </LoginLayout>
+  );
+};
 
-          <Button variant="contained" onClick={onRegister}>
-            Register
-          </Button>
-        </Stack>
-      </Card>
-    </Box>
+const RegisterFormFields: FC<object> = () => {
+  const { values, setFieldValue, submitForm } =
+    useFormikContext<RegisterFormFieldTypes>();
+  // Add these variables to your component to track the state
+  const [showPassword, setShowPassword] = useState(false);
+  const handleClickShowPassword = () => setShowPassword(!showPassword);
+  const handleMouseDownPassword = () => setShowPassword(!showPassword);
+
+  const typedSetFieldValue = setFieldValue as (
+    field: keyof RegisterFormFieldTypes,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    value: any,
+  ) => void;
+
+  return (
+    <>
+      <TextField
+        label="Név"
+        variant="outlined"
+        onChange={(event) => typedSetFieldValue("name", event.target.value)}
+        name="name"
+        value={values.name}
+        size="small"
+      />
+      <TextField
+        label="Felhasználónév"
+        variant="outlined"
+        onChange={(event) => typedSetFieldValue("userName", event.target.value)}
+        name={"userName"}
+        value={values.userName}
+        size="small"
+      />
+      <TextField
+        label="Email"
+        variant="outlined"
+        name={"email"}
+        value={values.email}
+        size="small"
+        onChange={(event) => typedSetFieldValue("email", event.target.value)}
+      />
+      <TextField
+        label="Jelszó"
+        variant="outlined"
+        onChange={(event) => typedSetFieldValue("password", event.target.value)}
+        name={"password"}
+        value={values.password}
+        type={showPassword ? "text" : "password"} // <-- This is where the magic happens
+        size="small"
+        InputProps={{
+          // <-- This is where the toggle button is added.
+          endAdornment: (
+            <InputAdornment position="end">
+              <IconButton
+                aria-label="toggle password visibility"
+                onClick={handleClickShowPassword}
+                onMouseDown={handleMouseDownPassword}
+              >
+                {showPassword ? <Visibility /> : <VisibilityOff />}
+              </IconButton>
+            </InputAdornment>
+          ),
+        }}
+      />
+      <TextField
+        label="Jelszó megerősítése"
+        variant="outlined"
+        name="confirmPassword"
+        onChange={(event) =>
+          typedSetFieldValue("confirmPassword", event.target.value)
+        }
+        type="password"
+        value={values.confirmPassword}
+        size="small"
+      />
+      {values.password !== values.confirmPassword && (
+        <Typography color="error" variant="body2">
+          Passwords do not match
+        </Typography>
+      )}
+
+      <Button variant="contained" onClick={submitForm}>
+        Regisztráció
+      </Button>
+    </>
   );
 };
 
