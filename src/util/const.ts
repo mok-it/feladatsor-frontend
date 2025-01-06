@@ -108,6 +108,7 @@ export const createExerciseInitialValue: ExerciseFieldsType = {
       ageGroup: "JEGESMEDVE",
     },
   ],
+  contributors: [],
   helpingQuestions: [],
   solution: "",
   solutionOptions: [],

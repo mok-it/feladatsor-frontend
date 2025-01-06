@@ -21,6 +21,7 @@ import { useDebounce } from "react-use";
 import { KaTeX } from "../../components/Katex.tsx";
 import { MultiSelect } from "../../components/MultiSelect.tsx";
 import { SolutionOptions } from "@/components/SolutionOptions/SolutionOptions.tsx";
+import { ContributorsSelector } from "@/components/ContributorsSelector.tsx";
 
 const ExerciseFields: FC = () => {
   const { values, handleChange, handleBlur, setFieldValue } =
@@ -303,12 +304,25 @@ const ExerciseFields: FC = () => {
           {categoryDifficultySelect}
         </Grid2>
       </Grid2>
-      <HelpingQuestions
-        value={values.helpingQuestions}
-        onChange={(value) => {
-          setFieldValue("helpingQuestions", value);
-        }}
-      />
+      <Stack gap={2}>
+        <HelpingQuestions
+          value={values.helpingQuestions}
+          onChange={(value) => {
+            setFieldValue("helpingQuestions", value);
+          }}
+        />
+        <SimpleAccordion summary="Közreműködő felhasználók">
+          <ContributorsSelector
+            onChange={(user) => {
+              setFieldValue(
+                "contributors",
+                user.map((u) => u.id),
+              );
+            }}
+            selectedUsers={values.contributors}
+          />
+        </SimpleAccordion>
+      </Stack>
     </Box>
   );
 };

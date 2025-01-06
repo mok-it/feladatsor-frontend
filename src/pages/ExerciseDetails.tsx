@@ -13,7 +13,6 @@ import { ExerciseFieldsType } from "@/util/types";
 import { LoadingButton } from "@mui/lab";
 import {
   Alert,
-  Avatar,
   Button,
   Card,
   Divider,
@@ -34,6 +33,7 @@ import ExerciseFields from "./createExercise/ExerciseFields";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import { useNavigate } from "react-router-dom";
 import { AlertColor } from "@mui/material/Alert/Alert";
+import { CreatedByItem } from "@/components/CreatedByItem.tsx";
 
 const ExerciseDetails: FC = () => {
   const { enqueueSnackbar } = useSnackbar();
@@ -73,6 +73,8 @@ const ExerciseDetails: FC = () => {
               exerciseImage: formDataToSend.exerciseImage,
               solutionImage: formDataToSend.solutionImage,
               solveIdeaImage: formDataToSend.solveIdeaImage,
+
+              contributors: formDataToSend.contributors,
             },
           },
         });
@@ -197,6 +199,7 @@ const ExerciseDetailsForm: FC<{ updateSignal: boolean }> = ({
         exerciseImage: data.exercise.exerciseImage?.id,
         solutionImage: data.exercise.solutionImage?.id,
         solveIdeaImage: data.exercise.solveIdeaImage?.id,
+        contributors: data.exercise.contributors.map((c) => c.id),
         source: data.exercise.source,
         tags: data.exercise.tags.map((tag) => tag.id),
       });
@@ -287,18 +290,14 @@ const ExerciseDetailsForm: FC<{ updateSignal: boolean }> = ({
                       component="span"
                       sx={{ color: "text.primary" }}
                     >
-                      Beküldő:{" "}
+                      {exercise.contributors.length > 0
+                        ? "Beküldők: "
+                        : "Beküldő:"}
                     </Typography>
-                    <Avatar
-                      src={exercise.createdBy.avatarUrl ?? undefined}
-                      sx={{ height: 24, width: 24 }}
-                    />
-                    <Typography
-                      variant="body2"
-                      sx={{ color: "text.secondary" }}
-                    >
-                      {exercise.createdBy.name}
-                    </Typography>
+                    <CreatedByItem user={exercise.createdBy} />
+                    {exercise.contributors.map((user) => (
+                      <CreatedByItem user={user} />
+                    ))}
                   </Stack>
                   <Typography
                     variant="body2"

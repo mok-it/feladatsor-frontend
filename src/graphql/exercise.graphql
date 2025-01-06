@@ -65,6 +65,11 @@ query selectExercise($exerciseId: ID!) {
       name
       avatarUrl
     }
+    contributors {
+      id
+      name
+      avatarUrl
+    }
     solveIdeaImage {
       id
       url

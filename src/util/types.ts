@@ -68,6 +68,7 @@ export type ExerciseFieldsType = {
   source?: InputMaybe<Scalars["String"]["input"]>;
   status?: ExerciseStatus;
   tags: Array<InputMaybe<Scalars["ID"]["input"]>>;
+  contributors: Array<Scalars["String"]["input"]>;
 
   exerciseImageUrl?: string | null | undefined;
   solutionImageUrl?: string | null | undefined;

@@ -57,6 +57,8 @@ export const CreateExercise = () => {
             exerciseImage: formDataToSend.exerciseImage,
             solutionImage: formDataToSend.solutionImage,
             solveIdeaImage: formDataToSend.solveIdeaImage,
+
+            contributors: formDataToSend.contributors,
           },
         },
       });
