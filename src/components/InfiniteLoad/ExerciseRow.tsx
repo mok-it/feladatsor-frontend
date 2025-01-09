@@ -68,7 +68,8 @@ const ExerciseRow: FC<{ data: ExerciseListElemFragment }> = ({ data }) => {
             <Tooltip title={<KaTeX fixNewLines value={data.description} />}>
               <Box
                 sx={{
-                  maxHeight: 100,
+                  fontSize: 14,
+                  maxHeight: 40,
                   overflow: "hidden",
                   textOverflow: "ellipsis",
                   display: "-webkit-box",
