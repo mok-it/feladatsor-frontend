@@ -24,6 +24,7 @@
 - [ ] Home page mobil responsivitás
 - [ ] Oldal frissítésekor a dolgok megmaradjanak (feladat, kereső, stb)
 - [ ] Bármelyik feladat mező lehet latex, esetleg egy modal-os LaTeX editor?
+- [ ] Címkék oldalon legyen valami loading jelző, preferált a skeleton loader
 
 ### Statisztika oldal
 
