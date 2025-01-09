@@ -1,7 +1,7 @@
 import { ExerciseAgeGroup } from "@/generated/graphql.tsx";
 import { DifficultySelector } from "@/pages/ExerciseListPage/DifficultySelector.tsx";
 import { DifficultySelect, ExerciseQuery } from "@/util/types";
-import { Grid, Stack, Typography } from "@mui/material";
+import { Stack } from "@mui/material";
 import { entries } from "lodash";
 import { Updater } from "use-immer";
 
@@ -13,15 +13,6 @@ export const DifficultySelectorList = ({
   setExerciseQuery: Updater<ExerciseQuery>;
 }) => (
   <Stack>
-    <Grid container>
-      <Grid item xs={3}></Grid>
-      <Grid item xs={8} px={5} pt={1}>
-        <Stack direction="row" justifyContent="space-between" height={"100%"}>
-          <Typography>Könnyű</Typography>
-          <Typography>Nehéz</Typography>
-        </Stack>
-      </Grid>
-    </Grid>
     {entries(difficulties).map(([difficultyName, ageGroup]) => {
       return (
         <DifficultySelector

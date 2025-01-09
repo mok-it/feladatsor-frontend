@@ -1,18 +1,18 @@
-import { userAtom } from "@/util/atoms.ts";
-import { Grid2, useColorScheme } from "@mui/material";
-import { useAtomValue } from "jotai";
-import { useToggle } from "react-use";
+import { ProfileStatCard } from "@/components/profile/ProfileStatCard.tsx";
+import { StatCard } from "@/components/StatCard.tsx";
 import { useStatsQuery } from "@/generated/graphql.tsx";
 import { LeaderBoardCard } from "@/pages/home/LeaderBoardCard.tsx";
-import { StatCard } from "@/components/StatCard.tsx";
-import { Bar } from "react-chartjs-2";
-import { CategoryScale, Chart, LinearScale } from "chart.js/auto";
-import { useEffect } from "react";
-import { ProfileStatCard } from "@/components/profile/ProfileStatCard.tsx";
-import { FaDiceD6 } from "react-icons/fa6";
-import { FaCheck } from "react-icons/fa";
+import { userAtom } from "@/util/atoms.ts";
+import { Box, Grid2, useColorScheme } from "@mui/material";
 import { lightBlue, lightGreen } from "@mui/material/colors";
+import { CategoryScale, Chart, LinearScale } from "chart.js/auto";
+import { useAtomValue } from "jotai";
+import { useEffect } from "react";
+import { Bar } from "react-chartjs-2";
 import { ContributionCalendar } from "react-contribution-calendar";
+import { FaCheck } from "react-icons/fa";
+import { FaDiceD6 } from "react-icons/fa6";
+import { useToggle } from "react-use";
 
 export const HomePage = () => {
   const user = useAtomValue(userAtom);
@@ -27,7 +27,7 @@ export const HomePage = () => {
   }, []);
 
   return (
-    <div>
+    <Box px={2}>
       <h1>Szia, {user && user.user ? user.user.name : " - "}</h1>
       {user?.user?.email === "emerichkeen@gmail.com" && (
         <div style={{ visibility: show ? "visible" : "hidden" }}>
@@ -142,6 +142,6 @@ export const HomePage = () => {
           />
         </StatCard>
       </Grid2>
-    </div>
+    </Box>
   );
 };

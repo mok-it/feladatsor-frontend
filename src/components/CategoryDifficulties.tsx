@@ -1,8 +1,8 @@
 import { ExerciseAgeGroup } from "@/generated/graphql.tsx";
 import { categoryColors } from "@/theme/palette.ts";
+import { Tooltip } from "@mui/material";
 import Chip from "@mui/material/Chip";
 import tinycolor from "tinycolor2";
-import { Tooltip } from "@mui/material";
 
 type ValueProps = {
   value: { [key in ExerciseAgeGroup]: number };
@@ -14,6 +14,7 @@ export const CategoryDifficulties = (props: ValueProps) => {
         <Tooltip key={key} title={key} placement="top">
           <Chip
             label={props.value[key]}
+            size="small"
             sx={{
               backgroundColor: categoryColors[key],
               color: tinycolor(categoryColors[key]).isDark()
@@ -21,7 +22,8 @@ export const CategoryDifficulties = (props: ValueProps) => {
                 : "black",
               fontWeight: 700,
               mr: 0.5,
-              visibility: props.value[key] === 0 ? "hidden" : "visible",
+              mb: 0.5,
+              opacity: props.value[key] === 0 ? 0.2 : 1,
             }}
           />
         </Tooltip>

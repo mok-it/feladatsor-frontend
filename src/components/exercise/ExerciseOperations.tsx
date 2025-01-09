@@ -143,7 +143,7 @@ export const ExerciseOperations: FC<{
           refetchComments();
         }}
       />
-      <Card>
+      <Card sx={{ borderRadius: { xs: 0, md: 1 } }}>
         <Stack p={2} gap={2}>
           <Stack
             direction={"row"}

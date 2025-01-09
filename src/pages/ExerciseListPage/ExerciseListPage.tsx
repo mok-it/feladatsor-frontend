@@ -61,7 +61,7 @@ export const ExerciseListPage = () => {
   }, [exerciseQuery, difficulty, orderBy, order, reset]);
 
   return (
-    <Card>
+    <Card sx={{ borderRadius: { xs: 0, md: 1 } }}>
       <CardHeader title="Feladatok keresése" />
       <CardContent>
         {filterComponents}

@@ -6,10 +6,12 @@ import { ExerciseListElemFragment } from "@/generated/graphql.tsx";
 import { TableOrder } from "@/util/useTableOrder";
 import {
   Box,
+  Select,
   Table,
   TableBody,
   TableHead,
   TableSortLabel,
+  useMediaQuery,
 } from "@mui/material";
 import { FC } from "react";
 
@@ -67,40 +69,83 @@ export const ExerciseTable: FC<
   setOrder,
   setOrderBy,
 }) => {
+  const isMobile = useMediaQuery("(max-width: 900px)");
+
   return (
-    <Box sx={{ overflowX: "auto", mx: -2 }}>
+    <Box sx={{ overflowX: isMobile ? "hidden" : "auto", mx: -2 }}>
       <Table
         sx={{
-          minWidth: 650,
+          width: "100%",
           mt: 4,
           overflow: "hidden",
+          tableLayout: "fixed",
         }}
         aria-label="simple table"
       >
         <TableHead>
           <StyledTableRow>
-            {headCells.map((headCell) => (
-              <StyledTableCell
-                key={headCell.id}
-                sortDirection={orderBy === headCell.id ? order : false}
-                sx={headCell.id === "tags" ? { pl: 2.5 } : {}}
-              >
-                {headCell.sortable ? (
-                  <TableSortLabel
-                    active={orderBy === headCell.id}
-                    direction={orderBy === headCell.id ? order : "asc"}
-                    onClick={() => {
-                      setOrderBy(headCell.id);
-                      setOrder(order === "asc" ? "desc" : "asc");
-                    }}
-                  >
-                    {headCell.label}
-                  </TableSortLabel>
-                ) : (
-                  headCell.label
-                )}
+            {isMobile && (
+              <StyledTableCell sx={{ width: "100%" }}>
+                <Select
+                  native
+                  size="small"
+                  value={orderBy}
+                  sx={{ mr: 1, bgcolor: "background.paper" }}
+                  onChange={(e) => {
+                    setOrderBy(
+                      e.target.value as keyof ExerciseListElemFragment,
+                    );
+                    setOrder("asc");
+                  }}
+                >
+                  {headCells
+                    .filter((cell) => cell.sortable)
+                    .map((headCell) => (
+                      <option key={headCell.id} value={headCell.id}>
+                        {headCell.label}
+                      </option>
+                    ))}
+                </Select>
+                <Select
+                  native
+                  size="small"
+                  value={order}
+                  sx={{ mr: 1, bgcolor: "background.paper" }}
+                  onChange={() => {
+                    setOrder(order === "asc" ? "desc" : "asc");
+                  }}
+                >
+                  <option value="asc">Növekvő</option>
+                  <option value="desc">Csökkenő</option>
+                </Select>
               </StyledTableCell>
-            ))}
+            )}
+            {!isMobile &&
+              headCells.map((headCell) => (
+                <StyledTableCell
+                  key={headCell.id}
+                  sortDirection={orderBy === headCell.id ? order : false}
+                  sx={{
+                    pl: headCell.id === "tags" ? 2.5 : 2,
+                    width: headCell.id === "difficulty" ? 170 : "auto",
+                  }}
+                >
+                  {headCell.sortable ? (
+                    <TableSortLabel
+                      active={orderBy === headCell.id}
+                      direction={orderBy === headCell.id ? order : "asc"}
+                      onClick={() => {
+                        setOrderBy(headCell.id);
+                        setOrder(order === "asc" ? "desc" : "asc");
+                      }}
+                    >
+                      {headCell.label}
+                    </TableSortLabel>
+                  ) : (
+                    headCell.label
+                  )}
+                </StyledTableCell>
+              ))}
           </StyledTableRow>
         </TableHead>
         <TableBody>

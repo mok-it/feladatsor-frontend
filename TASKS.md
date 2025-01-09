@@ -13,13 +13,13 @@
 
 ## Fejleszthető
 
-- [ ] Feladat esetén lehetnek collaborator (User)-ek akik ugyan úgy jelenjelenk meg mint a feladat létrehozói
+- [X] Feladat esetén lehetnek collaborator (User)-ek akik ugyan úgy jelenjelenk meg mint a feladat létrehozói
 - [ ] Feladat esetén lehessen módosítani, valamint létrehozásánál megadni, hogy kik a collaborator-ok
 - [ ] Csak a megfelelő jogosultság esetén lehessen adott oldalakra navigálni
    - Pl.: Ha valakinek nincs USER joga akkor csak beküldeni lehessen
 
 - [ ] Esetleg bejelentkezéskor egy jegyezzen meg 30 napra gomb? és akkor hosszú lejáratú tokent generálna a backend
-- [ ] Feladat listázás oldal mobil responsivitás
+- [X] Feladat listázás oldal mobil responsivitás
 - [ ] Home page mobil responsivitás
 - [ ] Oldal frissítésekor a dolgok megmaradjanak (feladat, kereső, stb)
 - [ ] Bármelyik feladat mező lehet latex, esetleg egy modal-os LaTeX editor?

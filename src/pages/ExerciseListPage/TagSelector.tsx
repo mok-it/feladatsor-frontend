@@ -16,6 +16,7 @@ export const TagSelector: FC<{
     <Stack>
       <Typography>Tartalmazza a következők egyikét</Typography>
       <MultiSelect<{ id: string; name: string }>
+        sx={{ backgroundColor: "background.paper" }}
         items={props.tags}
         value={props.tags.filter((tag) => props.selectedTags.includes(tag.id))}
         getItemLabel={(item) => item.name}
@@ -28,6 +29,7 @@ export const TagSelector: FC<{
       />
       <Typography>Ne tartalmazza a következőket</Typography>
       <MultiSelect<{ id: string; name: string }>
+        sx={{ backgroundColor: "background.paper" }}
         items={props.tags}
         value={props.tags.filter((tag) => props.excludeTags.includes(tag.id))}
         getItemLabel={(item) => item.name}

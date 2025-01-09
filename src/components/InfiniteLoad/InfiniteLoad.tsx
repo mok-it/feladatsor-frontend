@@ -1,4 +1,4 @@
-import { Box, TableCell, TableRow } from "@mui/material";
+import { Box } from "@mui/material";
 import { ReactNode, useCallback, useEffect, useRef } from "react";
 import { useEffectOnce, useIntersection } from "react-use";
 
@@ -50,53 +50,30 @@ export function InfiniteLoad<T>({
   return (
     <>
       {isInitialLoading ? (
-        <TableRow>
-          <TableCell>Loading...</TableCell>
-        </TableRow>
+        <Box p={2}>Loading...</Box>
       ) : (
         <>
           {data.map((row, index) => {
             const isLoaderRow = index > data.length - 1;
             return !isLoaderRow && children(row as T);
           })}
-          {hasMore &&
-            (loadingElement || (
-              <TableRow>
-                <TableCell />
-                <TableCell>Loading...</TableCell>
-                <TableCell />
-                <TableCell />
-                <TableCell />
-              </TableRow>
-            ))}
+          {hasMore && (loadingElement || <Box p={2}>Loading...</Box>)}
         </>
       )}
       {!hasMore && !isFetchingNextPage && (
-        <TableRow>
-          <TableCell />
-          <TableCell>
-            {data.length > 0 ? "A végére értél" : "Nincs találat"}
-          </TableCell>
-          <TableCell />
-          <TableCell />
-          <TableCell />
-        </TableRow>
+        <Box p={2}>{data.length > 0 ? "A végére értél" : "Nincs találat"}</Box>
       )}
-      <TableRow>
-        <TableCell>
-          <Box
-            ref={intersectionRef}
-            style={{
-              position: "relative",
-              bottom: 400,
-              left: 0,
-              height: 10,
-              width: 10,
-              pointerEvents: "none",
-            }}
-          ></Box>
-        </TableCell>
-      </TableRow>
+      <Box
+        ref={intersectionRef}
+        style={{
+          position: "relative",
+          bottom: 400,
+          left: 0,
+          height: 10,
+          width: 10,
+          pointerEvents: "none",
+        }}
+      ></Box>
     </>
   );
 }

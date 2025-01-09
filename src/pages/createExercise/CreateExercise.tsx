@@ -151,7 +151,12 @@ const CreateExerciseForm = () => {
         <Typography variant="h2" m={2} sx={{ flexGrow: 1 }}>
           Feladat létrehozása
         </Typography>
-        <Box>
+        <Stack
+          direction={"row"}
+          alignItems={"center"}
+          gap={0.5}
+          flexWrap={"nowrap"}
+        >
           <Checkbox
             id="draft"
             checked={values.status === ExerciseStatusEnum.DRAFT}
@@ -167,7 +172,7 @@ const CreateExerciseForm = () => {
           <label htmlFor="draft" style={{ cursor: "pointer" }}>
             Piszkozat
           </label>
-        </Box>
+        </Stack>
         <Button
           onClick={() => {
             submitForm();
@@ -178,7 +183,7 @@ const CreateExerciseForm = () => {
           Beküldés
         </Button>
       </Stack>
-      <Card>
+      <Card sx={{ borderRadius: { xs: 0, md: 1 } }}>
         <Box p={2}>
           <ExerciseFields />
         </Box>

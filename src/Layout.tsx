@@ -16,9 +16,9 @@ const Layout: FC = () => {
       <Box
         component={"div"}
         sx={{
-          width: { md: `calc(100% - ${drawerWidth}px)` },
+          width: { lg: `calc(100% - ${drawerWidth}px)` },
           py: { xs: 2 },
-          px: { xs: 2, md: 4 },
+          px: { xs: 0, md: 2 },
         }}
       >
         <IconButton
@@ -26,6 +26,7 @@ const Layout: FC = () => {
           sx={{
             display: { md: "none" },
             mb: 2,
+            ml: 2,
           }}
         >
           <MdMenu />

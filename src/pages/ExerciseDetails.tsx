@@ -1,3 +1,4 @@
+import { CreatedByItem } from "@/components/CreatedByItem.tsx";
 import { ExerciseOperations } from "@/components/exercise/ExerciseOperations";
 import { SameGroupExerciseCard } from "@/components/exercise/SameGroupExerciseCard";
 import FakeId from "@/components/FakeId";
@@ -10,6 +11,7 @@ import {
 } from "@/generated/graphql";
 import { createExerciseInitialValue } from "@/util/const";
 import { ExerciseFieldsType } from "@/util/types";
+import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import { LoadingButton } from "@mui/lab";
 import {
   Alert,
@@ -21,6 +23,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
+import { AlertColor } from "@mui/material/Alert/Alert";
 import { Box, Stack } from "@mui/system";
 import dayjs from "dayjs";
 import { Formik, useFormikContext } from "formik";
@@ -28,12 +31,9 @@ import { useSnackbar } from "notistack";
 import { FC, useCallback, useMemo, useState } from "react";
 import { MdSave } from "react-icons/md";
 import { useParams } from "react-router";
+import { useNavigate } from "react-router-dom";
 import { useToggle } from "react-use";
 import ExerciseFields from "./createExercise/ExerciseFields";
-import ContentCopyIcon from "@mui/icons-material/ContentCopy";
-import { useNavigate } from "react-router-dom";
-import { AlertColor } from "@mui/material/Alert/Alert";
-import { CreatedByItem } from "@/components/CreatedByItem.tsx";
 
 const ExerciseDetails: FC = () => {
   const { enqueueSnackbar } = useSnackbar();
@@ -227,7 +227,13 @@ const ExerciseDetailsForm: FC<{ updateSignal: boolean }> = ({
 
   return (
     <>
-      <Stack mb={2} direction={"row"} gap={1} alignItems={"center"}>
+      <Stack
+        mb={2}
+        px={{ xs: 2, md: 2 }}
+        direction={"row"}
+        gap={1}
+        alignItems={"center"}
+      >
         <Typography variant="h4">Feladat</Typography>
         <FakeId>{id}</FakeId>
         <Box flexGrow={1} />
@@ -250,7 +256,7 @@ const ExerciseDetailsForm: FC<{ updateSignal: boolean }> = ({
       </Stack>
       <Grid2 container spacing={2} pb={10}>
         <Grid2 size={{ xs: 12, lg: 7 }}>
-          <Card>
+          <Card sx={{ borderRadius: { xs: 0, md: 1 } }}>
             <Stack gap={2} p={2}>
               {exercise.alert && (
                 <Alert
