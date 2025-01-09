@@ -87,14 +87,18 @@ export const Item: FC<{
   ]);
 
   const memoizedCard = useMemo(
-    () =>
-      id && data?.exercise ? (
-        <motion.div layout layoutId={cardId}>
-          <ExerciseCard id={id} exercise={data.exercise} />
-        </motion.div>
-      ) : (
-        <Placeholder order={order} height={height} />
-      ),
+    () => (
+      <Box position={"relative"}>
+        {id && data?.exercise && (
+          <motion.div layout layoutId={cardId} style={{ zIndex: 100 }}>
+            <ExerciseCard id={id} exercise={data.exercise} />
+          </motion.div>
+        )}
+        <Box position={"absolute"} sx={{ inset: 0, zIndex: -1 }}>
+          <Placeholder order={order} height={height} />
+        </Box>
+      </Box>
+    ),
     [cardId, data?.exercise, height, id, order],
   );
 
