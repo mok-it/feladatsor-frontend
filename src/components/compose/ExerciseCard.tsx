@@ -13,9 +13,11 @@ import {
   Typography,
 } from "@mui/material";
 import { FC, memo, useContext, useMemo } from "react";
-import { MdEdit, MdStar } from "react-icons/md";
+import { MdEdit, MdOutlineImage } from "react-icons/md";
 import { Link } from "react-router-dom";
 import FakeId from "../FakeId";
+import { ImageViewer } from "../ImageViewer";
+import { KaTeX } from "../Katex";
 import { ContainerContext } from "./Container";
 import { Difficulties, DifficultiesWithWarnings } from "./Difficulties";
 
@@ -51,7 +53,7 @@ const ExerciseCardComponent: FC<{
     <Tooltip
       enterDelay={1000}
       enterNextDelay={1000}
-      title={!isDetailedView && exercise.description}
+      title={!isDetailedView && <KaTeX value={exercise.description} />}
     >
       <Card
         sx={{
@@ -82,13 +84,22 @@ const ExerciseCardComponent: FC<{
                 #{exercise.id}
               </Typography>
             )}
-            <Box flexShrink={0}>
-              <MdStar color="gold" />
-            </Box>
-            {isSingleView &&
-              exercise.tags.map((tag, i) => (
-                <Chip key={i} size="small" label={tag.name} />
-              ))}
+            <Stack
+              flexShrink={0}
+              justifyContent={"center"}
+              alignItems={"center"}
+            >
+              {!isDetailedView && exercise.exerciseImage?.url && (
+                <ImageViewer
+                  src={exercise.exerciseImage?.url || ""}
+                  button={
+                    <IconButton size="small" sx={{ height: 24, width: 24 }}>
+                      <MdOutlineImage />
+                    </IconButton>
+                  }
+                />
+              )}
+            </Stack>
             {/* <Typography variant="caption">{id}</Typography> */}
             <Box flexGrow={1} />
             {isSingleView && difficultiesElem}
@@ -100,27 +111,43 @@ const ExerciseCardComponent: FC<{
               </Link>
             )}
           </Stack>
+          {isSingleView && (
+            <Tooltip title={exercise.tags.map((tag) => tag.name).join(", ")}>
+              <Stack direction={"row"} gap={1} my={0.5}>
+                {exercise.tags.map((tag, i) => (
+                  <Chip key={i} size="small" label={tag.name} />
+                ))}
+              </Stack>
+            </Tooltip>
+          )}
           <>
             <Stack direction={"row"} gap={2}>
               <Typography
                 variant="body2"
                 sx={{
+                  flexGrow: 1,
                   overflow: "hidden",
                   textOverflow: "ellipsis",
                   display: "-webkit-box",
-                  mb: 0.5,
+                  my: 0.5,
                   WebkitLineClamp:
                     view === "all"
                       ? "1"
-                      : exerciseView === ExerciseView.LIST
+                      : exerciseView === ExerciseView.CARD
                         ? "3"
+                        : "unset",
+                  maxHeight:
+                    view === "all"
+                      ? 1 * 1.3 + "rem"
+                      : exerciseView === ExerciseView.CARD
+                        ? 3 * 1.3 + "rem"
                         : "unset",
                   WebkitBoxOrient: "vertical",
                 }}
               >
-                {exercise.description}
+                <KaTeX fixNewLines value={exercise.description} />
               </Typography>
-              {exercise.exerciseImage?.url && (
+              {isDetailedView && exercise.exerciseImage?.url && (
                 <Box
                   overflow={"hidden"}
                   sx={{
@@ -130,7 +157,7 @@ const ExerciseCardComponent: FC<{
                     width: "3cm",
                   }}
                 >
-                  <img src={exercise.exerciseImage?.url || ""}></img>
+                  <ImageViewer src={exercise.exerciseImage?.url || ""} />
                 </Box>
               )}
             </Stack>
@@ -167,7 +194,7 @@ const ExerciseCardComponent: FC<{
                   )}
                 </Grid2>
                 <Typography variant="body2">
-                  Megoldás: <b>{exercise.solution}</b>
+                  Megoldás: <KaTeX value={exercise.solution} />
                 </Typography>
               </>
             )}

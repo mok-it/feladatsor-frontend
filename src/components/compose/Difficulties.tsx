@@ -21,6 +21,7 @@ export const Difficulties: FC<{
   return (
     <Stack
       direction="row"
+      gap={0.5}
       justifyContent={"space-evenly"}
       divider={<Divider orientation="vertical" flexItem />}
     >

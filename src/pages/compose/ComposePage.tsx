@@ -77,6 +77,7 @@ const ComposePage: FC = () => {
   const setName = composeStore((state) => state.setName);
   const setValue = composeStore((state) => state.setValue);
   const setView = composeStore((state) => state.setView);
+  const clear = composeStore((state) => state.clear);
   const [isNameEditing, toggleNameEditing] = useToggle(false);
   const snack = useSnackbar();
 
@@ -118,7 +119,7 @@ const ComposePage: FC = () => {
     <>
       {isNameEditing ? (
         <form onSubmit={toggleNameEditing}>
-          <Stack direction={"row"} alignItems={"center"} gap={2}>
+          <Stack direction={"row"} alignItems={"center"} gap={2} px={2} pt={2}>
             <Input
               sx={{ flexGrow: 1 }}
               value={name}
@@ -130,7 +131,7 @@ const ComposePage: FC = () => {
           </Stack>
         </form>
       ) : (
-        <Stack direction={"row"} alignItems={"center"} gap={2}>
+        <Stack direction={"row"} alignItems={"center"} gap={2} px={2} pt={2}>
           <Typography variant="h2">{name}</Typography>
           <IconButton onClick={toggleNameEditing}>
             <MdEdit />
@@ -141,7 +142,9 @@ const ComposePage: FC = () => {
         <Tabs
           sx={{ mb: 2 }}
           value={view}
-          onChange={(_, newValue) => setView(newValue)}
+          onChange={(_, newValue) => {
+            setView(newValue);
+          }}
         >
           <Tab sx={styles} label={"Mind"} value={"all"} />
           <Tab sx={styles} label={"Koala"} value={"KOALA"} />
@@ -155,7 +158,10 @@ const ComposePage: FC = () => {
           <ToggleButtonGroup
             value={exerciseView}
             exclusive
-            onChange={(_, value) => setValue({ exerciseView: value })}
+            onChange={(_, value) => {
+              setValue({ exerciseView: value });
+              clear();
+            }}
           >
             <ToggleButton
               size="small"

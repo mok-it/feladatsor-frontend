@@ -119,7 +119,7 @@ export const createExerciseInitialValue: ExerciseFieldsType = {
 
 export const COMPOSE_HEIGHT = {
   SHORT: 92,
-  TALL: 200,
+  TALL: 160,
 };
 
 export const exerciseStatus: Record<

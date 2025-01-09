@@ -4,10 +4,11 @@
 
 - [ ] Képfeltöltés beragad ha szerver error van
 - [ ] Sima login esetén hibakezelés -> error mezők meg egy szöveg hogy nem sikerült belépni
-- [ ] Feladat sor összeállító oldalon Latex megjelenítés
-- [ ] Feladat sor összeállító oldalon képek layout-ja
-- [ ] Feladat sor összeállító oldalon képek több soros sor levágásnál valami bug volt xD (szöveg félbe van vágva)
-- [ ] Mi a faszra jó a csillag?
+- [X] Feladat sor összeállító oldalon Latex megjelenítés
+- [X] Feladat sor összeállító oldalon képek layout-ja
+- [X] Feladat sor összeállító oldalon képek több soros sor levágásnál valami bug volt xD (szöveg félbe van vágva)
+- [X] Mi a faszra jó a csillag?
+  - [X] Kivettem a csillagot, majd mondja Balázs ha kell
 - [ ] Feladat beküldés nehézség checkboxoknál legyen szám érték a nehézségre. (Korcsoport szerinti nehézség *)
 
 

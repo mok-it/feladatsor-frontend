@@ -2,19 +2,12 @@ import { AlertDialog } from "@/components/Dialog.tsx";
 import { UploadDialog } from "@/components/UploadDialog.tsx";
 import { toBase64 } from "@/util/toBase64";
 import { useUploadImage } from "@/util/useUploadImage";
-import {
-  Box,
-  Dialog,
-  DialogContent,
-  DialogTitle,
-  IconButton,
-  Stack,
-} from "@mui/material";
+import { Box, IconButton, Stack } from "@mui/material";
+import { grey } from "@mui/material/colors";
 import { useState } from "react";
 import { MdDeleteOutline } from "react-icons/md";
 import { useToggle } from "react-use";
-import { grey } from "@mui/material/colors";
-import { IoClose } from "react-icons/io5";
+import { ImageViewer } from "./ImageViewer";
 
 type UploadWithPreviewProps = {
   defaultUrl?: string | null | undefined;
@@ -32,8 +25,6 @@ export const UploadWithPreview = ({
   const [url, setUrl] = useState<string | null>(defaultUrl || null);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [loading, toggleLoading] = useToggle(false);
-
-  const [imagePreviewDialogOpen, setImagePreviewDialogOpen] = useState(false);
 
   const uploadImage = useUploadImage();
   const onChange = async (file: File | null) => {
@@ -76,9 +67,8 @@ export const UploadWithPreview = ({
               cursor: "pointer",
             }}
             borderRadius={1}
-            onClick={() => setImagePreviewDialogOpen(true)}
           >
-            <img src={url} alt="preview" />
+            <ImageViewer src={url} />
             <IconButton
               aria-label="delete"
               size="medium"
@@ -120,7 +110,7 @@ export const UploadWithPreview = ({
           setDeleteDialogOpen(false);
         }}
       />
-      <Dialog
+      {/* <Dialog
         open={imagePreviewDialogOpen}
         maxWidth="lg"
         onClose={() => setImagePreviewDialogOpen(false)}
@@ -145,7 +135,7 @@ export const UploadWithPreview = ({
           {!url && "Image not selected"}
           <img src={url ?? undefined} alt="preview" />
         </DialogContent>
-      </Dialog>
+      </Dialog> */}
     </>
   );
 };

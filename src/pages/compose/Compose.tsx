@@ -29,7 +29,7 @@ const ComposeComponent: FC = () => {
 
   return (
     <LayoutGroup>
-      <Stack direction={"row"} gap={4} p={2} alignItems={"start"}>
+      <Stack direction={"row"} p={2} gap={4} alignItems={"start"}>
         <Grid2 container columns={6} size={"grow"} spacing={2}>
           {view === "all" && (
             <>
