@@ -1,4 +1,3 @@
-import { CreatedByItem } from "@/components/CreatedByItem.tsx";
 import { ExerciseOperations } from "@/components/exercise/ExerciseOperations";
 import { SameGroupExerciseCard } from "@/components/exercise/SameGroupExerciseCard";
 import FakeId from "@/components/FakeId";
@@ -25,7 +24,6 @@ import {
 } from "@mui/material";
 import { AlertColor } from "@mui/material/Alert/Alert";
 import { Box, Stack } from "@mui/system";
-import dayjs from "dayjs";
 import { Formik, useFormikContext } from "formik";
 import { useSnackbar } from "notistack";
 import { FC, useCallback, useMemo, useState } from "react";
@@ -282,44 +280,6 @@ const ExerciseDetailsForm: FC<{ updateSignal: boolean }> = ({
                   ))}
                 </>
               )}
-              <Divider />
-              <Box>
-                <Stack
-                  direction="row"
-                  width="100%"
-                  justifyContent="space-between"
-                  alignItems="center"
-                >
-                  <Stack direction="row" gap={1} alignItems="center">
-                    <Typography
-                      variant="body2"
-                      component="span"
-                      sx={{ color: "text.primary" }}
-                    >
-                      {exercise.contributors.length > 0
-                        ? "Beküldők: "
-                        : "Beküldő:"}
-                    </Typography>
-                    <CreatedByItem user={exercise.createdBy} />
-                    {exercise.contributors.map((user) => (
-                      <CreatedByItem user={user} />
-                    ))}
-                  </Stack>
-                  <Typography
-                    variant="body2"
-                    sx={{ color: "text.secondary", textAlign: "right" }}
-                  >
-                    <Typography
-                      variant="body2"
-                      component="span"
-                      sx={{ color: "text.primary" }}
-                    >
-                      Készült:{" "}
-                    </Typography>
-                    {dayjs(+exercise?.createdAt).format("YYYY. MM. DD. HH.mm")}
-                  </Typography>
-                </Stack>
-              </Box>
             </Stack>
           </Card>
         </Grid2>

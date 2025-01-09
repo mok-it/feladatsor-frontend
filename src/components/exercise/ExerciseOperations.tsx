@@ -19,6 +19,7 @@ import { ExerciseStatusEnum } from "@/util/types";
 import {
   Button,
   Card,
+  Divider,
   IconButton,
   MenuItem,
   Select,
@@ -26,6 +27,7 @@ import {
   Typography,
 } from "@mui/material";
 import { Box, Stack } from "@mui/system";
+import dayjs from "dayjs";
 import { motion } from "framer-motion";
 import { useAtomValue } from "jotai";
 import { orderBy, times, union, uniqBy } from "lodash";
@@ -41,6 +43,7 @@ import {
 } from "react-icons/md";
 import { AlertDialog } from "../Dialog";
 import { DiffModal } from "../DiffModal";
+import { UserItem } from "../UserItem";
 import { ExerciseChecks } from "./ExerciseChecks";
 
 export const ExerciseOperations: FC<{
@@ -195,6 +198,7 @@ export const ExerciseOperations: FC<{
               </MenuItem>
             </Select>
           </Stack>
+          <Divider sx={{ mx: -2 }} />
           <Stack direction={"row"} alignItems={"center"} gap={0.5}>
             <Typography variant="body1" mr={1}>
               Ellenőrzések
@@ -224,6 +228,36 @@ export const ExerciseOperations: FC<{
               Lektorálások
             </Typography>
           </Stack>
+
+          <Box>
+            <Typography component="div" sx={{ color: "text.primary", mb: 1 }}>
+              {exercise.contributors.length > 0 ? "Beküldők " : "Beküldő"}
+            </Typography>
+            <Stack
+              direction="row"
+              gap={1}
+              alignItems="center"
+              flexWrap={"wrap"}
+            >
+              <UserItem user={exercise.createdBy} />
+              {exercise.contributors.map((user) => (
+                <UserItem user={user} />
+              ))}
+            </Stack>
+          </Box>
+          <Stack
+            direction="row"
+            justifyContent="space-between"
+            alignItems="center"
+          >
+            <Typography sx={{ color: "text.secondary", textAlign: "right" }}>
+              <Typography component="span" sx={{ color: "text.primary" }}>
+                Készült:{" "}
+              </Typography>
+              {dayjs(+exercise?.createdAt).format("YYYY. MM. DD. HH.mm")}
+            </Typography>
+          </Stack>
+          <Divider sx={{ mx: -2 }} />
           <Section text="Komment">
             <form
               onSubmit={(e) => {
