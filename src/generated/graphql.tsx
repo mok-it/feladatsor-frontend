@@ -715,7 +715,7 @@ export type ExerciseCommentFragment = { __typename: 'ExerciseComment', id: strin
 
 export type ExerciseHistoryFragment = { __typename: 'ExerciseHistory', id: string, field: string, oldValue: string, newValue: string, createdAt: string, createdBy: { __typename: 'User', id: string, name: string } };
 
-export type ExerciseListElemFragment = { __typename: 'Exercise', id: string, description: string, status: ExerciseStatus, helpingQuestions: Array<string>, solutionOptions: Array<string>, solution: string, createdAt: string, exerciseImage?: { __typename: 'Image', url: string } | null, difficulty: Array<{ __typename: 'ExerciseDifficulty', ageGroup: ExerciseAgeGroup, difficulty: number }>, tags: Array<{ __typename: 'Tag', id: string, name: string }> };
+export type ExerciseListElemFragment = { __typename: 'Exercise', id: string, description: string, status: ExerciseStatus, helpingQuestions: Array<string>, solutionOptions: Array<string>, solution: string, createdAt: string, exerciseImage?: { __typename: 'Image', url: string } | null, difficulty: Array<{ __typename: 'ExerciseDifficulty', ageGroup: ExerciseAgeGroup, difficulty: number }>, tags: Array<{ __typename: 'Tag', id: string, name: string }>, checks: Array<{ __typename: 'ExerciseCheck', id: string, type: ExerciseCheckType, createdAt: string, user: { __typename: 'User', id: string, name: string } }> };
 
 export type SameLogicExerciseFragment = { __typename: 'Exercise', id: string, description: string, createdAt: string, difficulty: Array<{ __typename: 'ExerciseDifficulty', difficulty: number, ageGroup: ExerciseAgeGroup }>, exerciseImage?: { __typename: 'Image', url: string } | null, tags: Array<{ __typename: 'Tag', id: string, name: string }>, createdBy: { __typename: 'User', id: string, userName: string, avatarUrl?: string | null } };
 
@@ -751,7 +751,7 @@ export type SearchExercisesQueryVariables = Exact<{
 }>;
 
 
-export type SearchExercisesQuery = { __typename: 'Query', searchExercises: { __typename: 'ExerciseSearchResult', totalCount: number, exercises: Array<{ __typename: 'Exercise', id: string, description: string, status: ExerciseStatus, helpingQuestions: Array<string>, solutionOptions: Array<string>, solution: string, createdAt: string, exerciseImage?: { __typename: 'Image', url: string } | null, difficulty: Array<{ __typename: 'ExerciseDifficulty', ageGroup: ExerciseAgeGroup, difficulty: number }>, tags: Array<{ __typename: 'Tag', id: string, name: string }> }> } };
+export type SearchExercisesQuery = { __typename: 'Query', searchExercises: { __typename: 'ExerciseSearchResult', totalCount: number, exercises: Array<{ __typename: 'Exercise', id: string, description: string, status: ExerciseStatus, helpingQuestions: Array<string>, solutionOptions: Array<string>, solution: string, createdAt: string, exerciseImage?: { __typename: 'Image', url: string } | null, difficulty: Array<{ __typename: 'ExerciseDifficulty', ageGroup: ExerciseAgeGroup, difficulty: number }>, tags: Array<{ __typename: 'Tag', id: string, name: string }>, checks: Array<{ __typename: 'ExerciseCheck', id: string, type: ExerciseCheckType, createdAt: string, user: { __typename: 'User', id: string, name: string } }> }> } };
 
 export type StatsQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -808,17 +808,6 @@ export type VoteOnDeveloperMutationVariables = Exact<{
 
 export type VoteOnDeveloperMutation = { __typename: 'Mutation', voteOnDeveloper?: { __typename: 'Developer', id: string } | null };
 
-export const ExerciseCheckFragmentDoc = gql`
-    fragment ExerciseCheck on ExerciseCheck {
-  id
-  type
-  createdAt
-  user {
-    id
-    name
-  }
-}
-    `;
 export const ExerciseCommentFragmentDoc = gql`
     fragment ExerciseComment on ExerciseComment {
   id
@@ -838,6 +827,17 @@ export const ExerciseHistoryFragmentDoc = gql`
   newValue
   createdAt
   createdBy {
+    id
+    name
+  }
+}
+    `;
+export const ExerciseCheckFragmentDoc = gql`
+    fragment ExerciseCheck on ExerciseCheck {
+  id
+  type
+  createdAt
+  user {
     id
     name
   }
@@ -863,8 +863,11 @@ export const ExerciseListElemFragmentDoc = gql`
   solutionOptions
   solution
   createdAt
+  checks {
+    ...ExerciseCheck
+  }
 }
-    `;
+    ${ExerciseCheckFragmentDoc}`;
 export const SameLogicExerciseFragmentDoc = gql`
     fragment SameLogicExercise on Exercise {
   id

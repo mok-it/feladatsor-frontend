@@ -36,6 +36,10 @@ const headCells: {
     sortable: true,
   },
   {
+    id: "checks",
+    label: "Ellenőrzések",
+  },
+  {
     id: "tags",
     label: "Címkék",
     sortable: false,
@@ -69,7 +73,7 @@ export const ExerciseTable: FC<
   setOrder,
   setOrderBy,
 }) => {
-  const isMobile = useMediaQuery("(max-width: 900px)");
+  const isMobile = useMediaQuery("(max-width: 1200px)");
 
   return (
     <Box sx={{ overflowX: isMobile ? "hidden" : "auto", mx: -2 }}>

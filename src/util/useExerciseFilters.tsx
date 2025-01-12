@@ -5,16 +5,23 @@ import {
 } from "@/generated/graphql";
 import { DifficultySelectorList } from "@/pages/ExerciseListPage/DifficultySelectorList.tsx";
 import { TagSelector } from "@/pages/ExerciseListPage/TagSelector.tsx";
-import { InputAdornment, Stack, TextField } from "@mui/material";
+import {
+  InputAdornment,
+  Stack,
+  TextField,
+  ToggleButton,
+  ToggleButtonGroup,
+  Tooltip,
+} from "@mui/material";
 import { entries } from "lodash";
 import { useMemo } from "react";
 import { IoSearch } from "react-icons/io5";
 import { useSearchParam } from "react-use";
 import { useImmer } from "use-immer";
-import { searchDefaultValues } from "./const";
+import { searchDefaultValues, translateCheck } from "./const";
 import { ExerciseQuery } from "./types";
 
-export const useExerciseFilters = () => {
+export const useExerciseFilters = (props?: { checkStatus: boolean }) => {
   const paramTag = useSearchParam("tag");
   const [exerciseQuery, setExerciseQuery] = useImmer<ExerciseQuery>({
     ...searchDefaultValues,
@@ -54,6 +61,50 @@ export const useExerciseFilters = () => {
           }}
           size="small"
         />
+        {props?.checkStatus && (
+          <ToggleButtonGroup
+            color="primary"
+            exclusive
+            aria-label="check status"
+            value={exerciseQuery.checkStatus}
+            onChange={(_, value) => {
+              setExerciseQuery((draft) => {
+                draft.checkStatus = value;
+              });
+            }}
+          >
+            <Tooltip
+              title={"Nincs még elfogadva, és negatív visszajelzést sem kapott"}
+            >
+              <ToggleButton value={""} color="primary">
+                Ellenőrizendő
+              </ToggleButton>
+            </Tooltip>
+            <Tooltip title={"Legalább hárman elfogadták a feladatot"}>
+              <ToggleButton value={"GOOD"} color="success">
+                {translateCheck("GOOD")}
+              </ToggleButton>
+            </Tooltip>
+            <Tooltip
+              title={
+                'Nincs elfogadva, és legalább egy "javítandó" visszajelzést kapott'
+              }
+            >
+              <ToggleButton value={"CHANGE_REQUIRED"} color="warning">
+                {translateCheck("CHANGE_REQUIRED")}
+              </ToggleButton>
+            </Tooltip>
+            <Tooltip
+              title={
+                'Nincs elfogadva, és legalább egy "törlendő" visszajelzést kapott'
+              }
+            >
+              <ToggleButton value={"TO_DELETE"} color="error">
+                {translateCheck("TO_DELETE")}
+              </ToggleButton>
+            </Tooltip>
+          </ToggleButtonGroup>
+        )}
         {exerciseQuery.searchQuery}
         <SimpleAccordion summary="Nehézség szűrő">
           <DifficultySelectorList
@@ -77,11 +128,13 @@ export const useExerciseFilters = () => {
       </Stack>
     );
   }, [
+    exerciseQuery.checkStatus,
     exerciseQuery.difficulty,
     exerciseQuery.excludeTags,
     exerciseQuery.includeTags,
     exerciseQuery.searchQuery,
     paramTag,
+    props?.checkStatus,
     setExerciseQuery,
     tags,
   ]);

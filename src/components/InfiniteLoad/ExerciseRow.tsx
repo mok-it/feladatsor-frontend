@@ -17,10 +17,11 @@ import dayjs from "dayjs";
 import { FC, memo } from "react";
 import { useNavigate } from "react-router-dom";
 import { CategoryDifficulties } from "../CategoryDifficulties";
+import { Checks } from "../Checks";
 import { KaTeX } from "../Katex";
 
 const ExerciseRow: FC<{ data: ExerciseListElemFragment }> = ({ data }) => {
-  const isMobile = useMediaQuery("(max-width: 900px)");
+  const isMobile = useMediaQuery("(max-width: 1200px)");
   const navigate = useNavigate();
   const difficulties: Record<ExerciseAgeGroup, number> = {
     KOALA: 0,
@@ -52,6 +53,7 @@ const ExerciseRow: FC<{ data: ExerciseListElemFragment }> = ({ data }) => {
                 color={exerciseStatus[data.status].color}
                 label={exerciseStatus[data.status].text}
               />
+              <Checks data={data.checks} />
               <Box flexGrow={1} />
               <CategoryDifficulties value={difficulties} />
             </Stack>
@@ -98,6 +100,11 @@ const ExerciseRow: FC<{ data: ExerciseListElemFragment }> = ({ data }) => {
               color={exerciseStatus[data.status].color}
               label={exerciseStatus[data.status].text}
             />
+          </TableCell>
+          <TableCell>
+            <Stack direction="row" alignItems={"center"} spacing={1}>
+              <Checks data={data.checks} />
+            </Stack>
           </TableCell>
           <TableCell>
             {data.tags.map((tag, index) => (

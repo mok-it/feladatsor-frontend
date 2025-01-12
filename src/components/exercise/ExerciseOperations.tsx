@@ -30,7 +30,7 @@ import { Box, Stack } from "@mui/system";
 import dayjs from "dayjs";
 import { motion } from "framer-motion";
 import { useAtomValue } from "jotai";
-import { orderBy, times, union, uniqBy } from "lodash";
+import { orderBy, union, uniqBy } from "lodash";
 import { useSnackbar } from "notistack";
 import { FC, useCallback, useEffect, useMemo, useState } from "react";
 import { FaArrowRight } from "react-icons/fa6";
@@ -41,6 +41,7 @@ import {
   MdOutlineDelete,
   MdSend,
 } from "react-icons/md";
+import { Checks } from "../Checks";
 import { AlertDialog } from "../Dialog";
 import { DiffModal } from "../DiffModal";
 import { UserItem } from "../UserItem";
@@ -203,18 +204,7 @@ export const ExerciseOperations: FC<{
             <Typography variant="body1" mr={1}>
               Ellenőrzések
             </Typography>
-            {checks.map((check) => (
-              <Check
-                key={check.id}
-                response={check.type}
-                userName={check.user.name}
-                timestamp={check.createdAt}
-              />
-            ))}
-            {checks.length <= 3 &&
-              times(3 - checks.length, (i) => (
-                <Check key={i} response={null} userName={""} timestamp={""} />
-              ))}
+            <Checks data={checks} />
             <Box flexGrow={1} />
             <ExerciseChecks
               exerciseId={exercise.id}

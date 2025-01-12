@@ -1,17 +1,22 @@
 import { ProfilePage } from "@/pages/ProfilePage.tsx";
+import { ExerciseSheets } from "@/pages/exerciseSheets/ExerciseSheets.tsx";
 import { FC } from "react";
 import { IconType } from "react-icons";
 import { FaRegUser, FaUsers } from "react-icons/fa";
 import { HiOutlineHome } from "react-icons/hi";
-import { IoNewspaperOutline, IoSearch } from "react-icons/io5";
-import { MdDashboard, MdOutlineNewLabel } from "react-icons/md";
+import { IoSearch } from "react-icons/io5";
+import {
+  MdDashboard,
+  MdOutlineCheckCircle,
+  MdOutlineEdit,
+  MdOutlineNewLabel,
+} from "react-icons/md";
+import { AdminPage } from "./pages/Admin.tsx";
+import { ExerciseCheckPage } from "./pages/ExerciseCheck/ExerciseCheckPage.tsx";
 import { ExerciseListPage } from "./pages/ExerciseListPage/ExerciseListPage.tsx";
 import { HomePage } from "./pages/HomePage";
-import { CreateExercise } from "./pages/createExercise/CreateExercise.tsx";
-import { AdminPage } from "./pages/Admin.tsx";
 import { TagsPage } from "./pages/TagsPage.tsx";
-import { ExerciseSheets } from "@/pages/exerciseSheets/ExerciseSheets.tsx";
-import { FaPencil } from "react-icons/fa6";
+import { CreateExercise } from "./pages/createExercise/CreateExercise.tsx";
 
 interface Page {
   name: string;
@@ -22,34 +27,34 @@ interface Page {
 
 export const pages: Page[] = [
   {
-    name: "Home",
+    name: "Kezdőlap",
     path: "/",
     component: HomePage,
     icon: HiOutlineHome,
   },
   {
-    name: "Feladat beküldése",
+    name: "Beküldés",
     path: "/exercise",
     component: CreateExercise,
-    icon: IoNewspaperOutline,
+    icon: MdOutlineEdit,
   },
   {
-    name: "Feladatok",
+    name: "Keresés",
     path: "/list-exercises",
     component: ExerciseListPage,
     icon: IoSearch,
+  },
+  {
+    name: "Ellenőrzés",
+    path: "/check-exercise",
+    component: ExerciseCheckPage,
+    icon: MdOutlineCheckCircle,
   },
   {
     name: "Profil",
     path: "/profile",
     component: ProfilePage,
     icon: FaRegUser,
-  },
-  {
-    name: "Feladat ellenőzése",
-    path: "/check-exercise",
-    component: HomePage,
-    icon: FaPencil,
   },
   {
     name: "Feladatsor",

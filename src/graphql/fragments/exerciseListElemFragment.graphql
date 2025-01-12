@@ -17,4 +17,7 @@ fragment ExerciseListElem on Exercise {
   solutionOptions
   solution
   createdAt
+  checks {
+    ...ExerciseCheck
+  }
 }

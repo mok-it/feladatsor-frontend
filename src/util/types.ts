@@ -1,4 +1,8 @@
-import { Exercise, ExerciseAgeGroup } from "@/generated/graphql";
+import {
+  Exercise,
+  ExerciseAgeGroup,
+  ExerciseCheckType,
+} from "@/generated/graphql";
 
 declare global {
   interface Window {
@@ -44,6 +48,8 @@ export type ExerciseQuery = {
   isFinal: boolean;
   includeTags: string[];
   excludeTags: string[];
+  checkStatus?: ExerciseCheckType;
+  approveCount?: number;
 };
 
 import {
