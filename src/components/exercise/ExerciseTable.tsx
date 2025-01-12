@@ -38,6 +38,7 @@ const headCells: {
   {
     id: "checks",
     label: "Ellenőrzések",
+    sortable: false,
   },
   {
     id: "tags",
