@@ -10,6 +10,7 @@
 - [X] Mi a faszra jó a csillag?
   - [X] Kivettem a csillagot, majd mondja Balázs ha kell
 - [ ] Feladat beküldés nehézség checkboxoknál legyen szám érték a nehézségre. (Korcsoport szerinti nehézség *)
+- [ ] 404 oldal dínó játék minden oldalon ott marad a háttérben, és fut tovább, ne legyen ott (hallani a hangját ha gépelek, és space-t nyomok)
 
 
 ## Fejleszthető
