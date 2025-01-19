@@ -48,7 +48,7 @@ export type ExerciseQuery = {
   isFinal: boolean;
   includeTags: string[];
   excludeTags: string[];
-  checkStatus?: ExerciseCheckType;
+  checkStatus?: ExerciseCheckType | "";
   approveCount?: number;
 };
 

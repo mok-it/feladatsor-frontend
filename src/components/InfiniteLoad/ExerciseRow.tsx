@@ -45,7 +45,13 @@ const ExerciseRow: FC<{ data: ExerciseListElemFragment }> = ({ data }) => {
       {isMobile ? (
         <TableCell>
           <Stack spacing={1}>
-            <Stack direction="row" alignItems={"center"} spacing={1}>
+            <Stack
+              direction="row"
+              alignItems={"center"}
+              flexWrap={"wrap"}
+              rowGap={1}
+              spacing={1}
+            >
               <Box sx={{ whiteSpace: "nowrap" }}>{"#" + data.id}</Box>
               <Chip
                 size="small"
@@ -55,7 +61,9 @@ const ExerciseRow: FC<{ data: ExerciseListElemFragment }> = ({ data }) => {
               />
               <Checks data={data.checks} />
               <Box flexGrow={1} />
-              <CategoryDifficulties value={difficulties} />
+              <div style={{ margin: 0 }}>
+                <CategoryDifficulties value={difficulties} />
+              </div>
             </Stack>
             <Stack
               direction="row"

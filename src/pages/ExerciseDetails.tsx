@@ -231,6 +231,7 @@ const ExerciseDetailsForm: FC<{ updateSignal: boolean }> = ({
         direction={"row"}
         gap={1}
         alignItems={"center"}
+        flexWrap={"wrap"}
       >
         <Typography variant="h4">Feladat</Typography>
         <FakeId>{id}</FakeId>

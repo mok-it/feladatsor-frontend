@@ -43,105 +43,111 @@ export const HomePage = () => {
           ></iframe>
         </div>
       )}
-      <Grid2 container spacing={2} pb={2}>
-        <Grid2 container size={12}>
-          <Grid2
-            size={{
-              xs: 6,
-              md: 3,
-            }}
-          >
-            <ProfileStatCard
-              value={data?.globalStats?.totalExerciseCount + " db"}
-              title="Összes feladat"
-              icon={FaDiceD6}
-              iconColor={lightBlue["600"]}
-            />
-          </Grid2>
-          <Grid2
-            size={{
-              xs: 6,
-              md: 3,
-            }}
-          >
-            <ProfileStatCard
-              value={data?.globalStats?.checkedExerciseCount + " db"}
-              title="Ellenőrzött feladat"
-              icon={FaCheck}
-              iconColor={lightGreen["600"]}
-            />
-          </Grid2>
-        </Grid2>
-        <Grid2
-          size={{
-            xs: 12,
-            md: 6,
-          }}
-        >
-          <LeaderBoardCard loading={loading} stats={data?.globalStats} />
-        </Grid2>
-        <Grid2
-          size={{
-            xs: 12,
-            md: 6,
-          }}
-        >
-          <StatCard title="Feladatbeküldések napos gyakorisága">
-            {data?.globalStats?.exerciseHourlyCount && (
-              <Bar
-                data={{
-                  labels: data.globalStats.exerciseHourlyCount.map(
-                    (e) => e.hour + " óra",
-                  ),
-                  datasets: [
-                    {
-                      data: data.globalStats.exerciseHourlyCount.map(
-                        (e) => e.count,
-                      ),
-                      label: "Feladat db",
-                      backgroundColor: "rgba(54, 162, 235, 0.2)",
-                      borderColor: "rgba(54, 162, 235, 1)",
-                      borderRadius: 5,
-                      borderWidth: 1,
-                    },
-                  ],
-                }}
+      {loading ? (
+        "Loading..."
+      ) : (
+        <Grid2 container spacing={2} pb={2}>
+          <Grid2 container size={12}>
+            <Grid2
+              size={{
+                xs: 12,
+                sm: 6,
+                md: 3,
+              }}
+            >
+              <ProfileStatCard
+                value={data?.globalStats?.totalExerciseCount + " db"}
+                title="Összes feladat"
+                icon={FaDiceD6}
+                iconColor={lightBlue["600"]}
               />
-            )}
+            </Grid2>
+            <Grid2
+              size={{
+                xs: 12,
+                sm: 6,
+                md: 3,
+              }}
+            >
+              <ProfileStatCard
+                value={data?.globalStats?.checkedExerciseCount + " db"}
+                title="Ellenőrzött feladat"
+                icon={FaCheck}
+                iconColor={lightGreen["600"]}
+              />
+            </Grid2>
+          </Grid2>
+          <Grid2
+            size={{
+              xs: 12,
+              md: 6,
+            }}
+          >
+            <LeaderBoardCard loading={loading} stats={data?.globalStats} />
+          </Grid2>
+          <Grid2
+            size={{
+              xs: 12,
+              md: 6,
+            }}
+          >
+            <StatCard title="Feladatbeküldések napos gyakorisága">
+              {data?.globalStats?.exerciseHourlyCount && (
+                <Bar
+                  data={{
+                    labels: data.globalStats.exerciseHourlyCount.map(
+                      (e) => e.hour + " óra",
+                    ),
+                    datasets: [
+                      {
+                        data: data.globalStats.exerciseHourlyCount.map(
+                          (e) => e.count,
+                        ),
+                        label: "Feladat db",
+                        backgroundColor: "rgba(54, 162, 235, 0.2)",
+                        borderColor: "rgba(54, 162, 235, 1)",
+                        borderRadius: 5,
+                        borderWidth: 1,
+                      },
+                    ],
+                  }}
+                />
+              )}
+            </StatCard>
+          </Grid2>
+          <StatCard title="Feladatbeküldések éves eloszlása">
+            <ContributionCalendar
+              data={
+                data?.globalStats?.contributionCalendar.data.map((d) => ({
+                  [d.date]: {
+                    level: d.count,
+                  },
+                })) || []
+              }
+              startsOnSunday={false}
+              start={data?.globalStats?.contributionCalendar.fromDate}
+              end={data?.globalStats?.contributionCalendar.toDate}
+              daysOfTheWeek={[
+                "Vasárnap",
+                "Hétfő",
+                "Kedd",
+                "Szerda",
+                "Csütörtök",
+                "Péntek",
+                "Szombat",
+              ]}
+              textColor={mode === "light" ? "black" : "white"}
+              includeBoundary={false}
+              theme={mode === "light" ? "grass" : "dark_grass"}
+              onCellClick={(_, data) => console.log(data)}
+              scroll={false}
+              hideDescription={false}
+              hideMonthLabels={false}
+              hideDayLabels={false}
+            />
           </StatCard>
         </Grid2>
-        <StatCard title="Feladatbeküldések éves eloszlása">
-          <ContributionCalendar
-            data={
-              data?.globalStats?.contributionCalendar.data.map((d) => ({
-                [d.date]: {
-                  level: d.count,
-                },
-              })) || []
-            }
-            startsOnSunday={false}
-            start={data?.globalStats?.contributionCalendar.fromDate}
-            end={data?.globalStats?.contributionCalendar.toDate}
-            daysOfTheWeek={[
-              "Vasárnap",
-              "Hétfő",
-              "Kedd",
-              "Szerda",
-              "Csütörtök",
-              "Péntek",
-              "Szombat",
-            ]}
-            textColor={mode === "light" ? "black" : "white"}
-            includeBoundary={false}
-            theme={mode === "light" ? "grass" : "dark_grass"}
-            onCellClick={(_, data) => console.log(data)}
-            scroll={false}
-            hideDescription={false}
-            hideMonthLabels={false}
-            hideDayLabels={false}
-          />
-        </StatCard>
-      </Grid2>
+      )}
     </Box>
   );
 };

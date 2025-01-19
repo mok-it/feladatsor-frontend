@@ -90,12 +90,12 @@ export const ExerciseTable: FC<
         <TableHead>
           <StyledTableRow>
             {isMobile && (
-              <StyledTableCell sx={{ width: "100%" }}>
+              <StyledTableCell sx={{ width: "100%", pb: 1 }}>
                 <Select
                   native
                   size="small"
                   value={orderBy}
-                  sx={{ mr: 1, bgcolor: "background.paper" }}
+                  sx={{ mr: 1, mb: 1, bgcolor: "background.paper" }}
                   onChange={(e) => {
                     setOrderBy(
                       e.target.value as keyof ExerciseListElemFragment,
@@ -115,7 +115,7 @@ export const ExerciseTable: FC<
                   native
                   size="small"
                   value={order}
-                  sx={{ mr: 1, bgcolor: "background.paper" }}
+                  sx={{ mr: 1, mb: 1, bgcolor: "background.paper" }}
                   onChange={() => {
                     setOrder(order === "asc" ? "desc" : "asc");
                   }}

@@ -12,6 +12,7 @@ import {
   ToggleButton,
   ToggleButtonGroup,
   Tooltip,
+  useMediaQuery,
 } from "@mui/material";
 import { entries } from "lodash";
 import { useMemo } from "react";
@@ -22,10 +23,12 @@ import { searchDefaultValues, translateCheck } from "./const";
 import { ExerciseQuery } from "./types";
 
 export const useExerciseFilters = (props?: { checkStatus: boolean }) => {
+  const isMobile = useMediaQuery("(max-width: 900px)");
   const paramTag = useSearchParam("tag");
   const [exerciseQuery, setExerciseQuery] = useImmer<ExerciseQuery>({
     ...searchDefaultValues,
     ...(paramTag ? { includeTags: [paramTag] } : {}),
+    ...(props?.checkStatus ? { checkStatus: "" } : {}),
   });
   const { data: tags } = useFlatExerciseTagsQuery();
 
@@ -67,6 +70,7 @@ export const useExerciseFilters = (props?: { checkStatus: boolean }) => {
             exclusive
             aria-label="check status"
             value={exerciseQuery.checkStatus}
+            orientation={isMobile ? "vertical" : "horizontal"}
             onChange={(_, value) => {
               setExerciseQuery((draft) => {
                 draft.checkStatus = value;

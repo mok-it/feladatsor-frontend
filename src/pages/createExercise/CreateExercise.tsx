@@ -144,11 +144,11 @@ const CreateExerciseForm = () => {
         width="100%"
         direction="row"
         alignItems="center"
-        pr={2}
-        pt={2}
+        flexWrap={"wrap"}
+        p={2}
         gap={2}
       >
-        <Typography variant="h2" m={2} sx={{ flexGrow: 1 }}>
+        <Typography variant="h2" sx={{ flexGrow: 1 }}>
           Feladat létrehozása
         </Typography>
         <Stack
