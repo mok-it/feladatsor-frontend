@@ -77,10 +77,13 @@ export const useExerciseFilters = (props?: { checkStatus: boolean }) => {
               });
             }}
           >
+            <ToggleButton value={""} color="primary">
+              Mind
+            </ToggleButton>
             <Tooltip
               title={"Nincs még elfogadva, és negatív visszajelzést sem kapott"}
             >
-              <ToggleButton value={""} color="primary">
+              <ToggleButton value={"TO_BE_CHECKED"} color="primary">
                 Ellenőrizendő
               </ToggleButton>
             </Tooltip>
@@ -137,6 +140,7 @@ export const useExerciseFilters = (props?: { checkStatus: boolean }) => {
     exerciseQuery.excludeTags,
     exerciseQuery.includeTags,
     exerciseQuery.searchQuery,
+    isMobile,
     paramTag,
     props?.checkStatus,
     setExerciseQuery,

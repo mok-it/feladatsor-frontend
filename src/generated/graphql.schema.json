@@ -1041,6 +1041,42 @@
       },
       {
         "kind": "ENUM",
+        "name": "ExerciseCheckStatus",
+        "description": null,
+        "isOneOf": null,
+        "fields": null,
+        "inputFields": null,
+        "interfaces": null,
+        "enumValues": [
+          {
+            "name": "CHANGE_REQUIRED",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "GOOD",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "TO_BE_CHECKED",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "TO_DELETE",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "possibleTypes": null
+      },
+      {
+        "kind": "ENUM",
         "name": "ExerciseCheckType",
         "description": null,
         "isOneOf": null,
@@ -1801,6 +1837,18 @@
         "fields": null,
         "inputFields": [
           {
+            "name": "checkStatus",
+            "description": null,
+            "type": {
+              "kind": "ENUM",
+              "name": "ExerciseCheckStatus",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "difficulty",
             "description": null,
             "type": {
@@ -1919,6 +1967,18 @@
                 "name": "Int",
                 "ofType": null
               }
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "status",
+            "description": null,
+            "type": {
+              "kind": "ENUM",
+              "name": "ExerciseStatus",
+              "ofType": null
             },
             "defaultValue": null,
             "isDeprecated": false,

@@ -1,12 +1,17 @@
 import { ExerciseCheckFragment } from "@/generated/graphql";
-import { times } from "lodash";
+import { orderBy, times, uniqBy } from "lodash";
 import { FC } from "react";
 import Check from "./Check";
 
 export const Checks: FC<{ data: ExerciseCheckFragment[] }> = ({ data }) => {
+  const checks = uniqBy(
+    orderBy(data, "createdAt", "desc"),
+    (item) => item.user.id,
+  );
+
   return (
     <>
-      {data.map((check) => (
+      {checks.map((check) => (
         <Check
           key={check.id}
           response={check.type}
@@ -14,8 +19,8 @@ export const Checks: FC<{ data: ExerciseCheckFragment[] }> = ({ data }) => {
           timestamp={check.createdAt}
         />
       ))}
-      {data.length <= 3 &&
-        times(3 - data.length, (i) => (
+      {checks.length <= 3 &&
+        times(3 - checks.length, (i) => (
           <Check key={i} response={null} userName={""} timestamp={""} />
         ))}
     </>

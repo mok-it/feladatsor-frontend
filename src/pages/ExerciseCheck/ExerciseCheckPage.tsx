@@ -4,6 +4,7 @@ import {
   ExerciseListElemFragment,
   useSearchExercisesLazyQuery,
 } from "@/generated/graphql.tsx";
+import { ExerciseStatusEnum } from "@/util/types";
 import { useExerciseFilters } from "@/util/useExerciseFilters";
 import { useTableOrder } from "@/util/useTableOrder";
 import { Card, CardContent, CardHeader } from "@mui/material";
@@ -36,6 +37,8 @@ export const ExerciseCheckPage = () => {
               orderDirection: order === "asc" ? "ASC" : "DESC",
               includeTags: exerciseQuery.includeTags,
               excludeTags: exerciseQuery.excludeTags,
+              status: ExerciseStatusEnum.CREATED,
+              checkStatus: exerciseQuery.checkStatus || undefined,
             },
           },
         });
@@ -44,9 +47,10 @@ export const ExerciseCheckPage = () => {
       [
         getData,
         difficulty,
+        exerciseQuery.searchQuery,
         exerciseQuery.includeTags,
         exerciseQuery.excludeTags,
-        exerciseQuery.searchQuery,
+        exerciseQuery.checkStatus,
         orderBy,
         order,
       ],

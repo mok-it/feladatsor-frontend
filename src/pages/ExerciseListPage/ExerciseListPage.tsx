@@ -42,9 +42,9 @@ export const ExerciseListPage = () => {
       [
         getData,
         difficulty,
+        exerciseQuery.searchQuery,
         exerciseQuery.includeTags,
         exerciseQuery.excludeTags,
-        exerciseQuery.searchQuery,
         orderBy,
         order,
       ],

@@ -30,7 +30,7 @@ import { Box, Stack } from "@mui/system";
 import dayjs from "dayjs";
 import { motion } from "framer-motion";
 import { useAtomValue } from "jotai";
-import { orderBy, union, uniqBy } from "lodash";
+import { orderBy, union } from "lodash";
 import { useSnackbar } from "notistack";
 import { FC, useCallback, useEffect, useMemo, useState } from "react";
 import { FaArrowRight } from "react-icons/fa6";
@@ -119,11 +119,6 @@ export const ExerciseOperations: FC<{
     sort,
   ]);
 
-  const checks = uniqBy(
-    orderBy(union(exercise.checks, newChecks), "createdAt", "desc"),
-    (item) => item.user.id,
-  );
-
   const [updateExercise] = useUpdateExerciseMutation();
 
   const loading = commentsLoading || historyLoading;
@@ -204,7 +199,7 @@ export const ExerciseOperations: FC<{
             <Typography variant="body1" mr={1}>
               Ellenőrzések
             </Typography>
-            <Checks data={checks} />
+            <Checks data={union(exercise.checks, newChecks)} />
             <Box flexGrow={1} />
             <ExerciseChecks
               exerciseId={exercise.id}
