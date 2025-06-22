@@ -6,6 +6,7 @@ import {
   ExerciseCommentFragment,
   ExerciseHistoryFragment,
   ExerciseStatus,
+  HistoryValue,
   SelectExerciseQuery,
   useCommentsByExerciseQuery,
   useCreateExerciseCommentMutation,
@@ -25,6 +26,8 @@ import {
   Select,
   TextField,
   Typography,
+  Chip,
+  Avatar,
 } from "@mui/material";
 import { Box, Stack } from "@mui/system";
 import dayjs from "dayjs";
@@ -378,14 +381,118 @@ export const ExerciseOperations: FC<{
                       >
                         <Box sx={{ wordBreak: "break-all" }}>
                           {translateFieldName(history.field)}:{" "}
-                          {history.field === "description" ? (
+                          {history.field === "description" ||
+                          history.fieldType === "IMAGE" ? (
                             <DiffModal
-                              oldValue={history.oldValue}
-                              newValue={history.newValue}
+                              oldValue={history.oldValue as HistoryValue | null}
+                              newValue={history.newValue as HistoryValue | null}
+                              fieldType={history.fieldType}
                             />
                           ) : (
                             <>
-                              {history.oldValue || <i>üres</i>}{" "}
+                              {history.oldValue &&
+                              history.oldValue.__typename ===
+                                "HistoryStringValue" ? (
+                                history.oldValue.value || <i>üres</i>
+                              ) : history.oldValue &&
+                                history.oldValue.__typename === "Image" ? (
+                                <Box
+                                  component="span"
+                                  sx={{
+                                    display: "inline-flex",
+                                    alignItems: "center",
+                                    gap: 0.5,
+                                  }}
+                                >
+                                  <img
+                                    src={history.oldValue.url}
+                                    alt="Old"
+                                    style={{
+                                      width: "20px",
+                                      height: "20px",
+                                      objectFit: "contain",
+                                    }}
+                                  />
+                                </Box>
+                              ) : history.oldValue &&
+                                history.oldValue.__typename ===
+                                  "HistoryTagArray" ? (
+                                <Box
+                                  component="span"
+                                  sx={{
+                                    display: "inline-flex",
+                                    alignItems: "center",
+                                    gap: 0.5,
+                                    flexWrap: "wrap",
+                                  }}
+                                >
+                                  {history.oldValue.tags.length > 0 ? (
+                                    history.oldValue.tags.map((tag) => (
+                                      <Chip
+                                        key={tag.id}
+                                        label={tag.name}
+                                        variant="outlined"
+                                        sx={{
+                                          height: "18px",
+                                          fontSize: "0.7rem",
+                                        }}
+                                      />
+                                    ))
+                                  ) : (
+                                    <i>nincs címke</i>
+                                  )}
+                                </Box>
+                              ) : history.oldValue &&
+                                history.oldValue.__typename ===
+                                  "HistoryUserArray" ? (
+                                <Box
+                                  component="span"
+                                  sx={{
+                                    display: "inline-flex",
+                                    alignItems: "center",
+                                    gap: 0.5,
+                                    flexWrap: "wrap",
+                                  }}
+                                >
+                                  {history.oldValue.users.length > 0 ? (
+                                    history.oldValue.users.map((user) => (
+                                      <Chip
+                                        key={user.id}
+                                        avatar={
+                                          user.avatarUrl ? (
+                                            <Avatar
+                                              src={user.avatarUrl}
+                                              sx={{ width: 16, height: 16 }}
+                                            />
+                                          ) : (
+                                            <Avatar
+                                              sx={{
+                                                width: 16,
+                                                height: 16,
+                                                fontSize: "0.6rem",
+                                              }}
+                                            >
+                                              {user.name
+                                                .charAt(0)
+                                                .toUpperCase()}
+                                            </Avatar>
+                                          )
+                                        }
+                                        label={user.name}
+                                        size="small"
+                                        variant="outlined"
+                                        sx={{
+                                          fontSize: "0.7rem",
+                                        }}
+                                      />
+                                    ))
+                                  ) : (
+                                    <i>nincs felhasználó</i>
+                                  )}
+                                </Box>
+                              ) : (
+                                <i>üres</i>
+                              )}{" "}
                               <Box
                                 sx={{
                                   display: "inline",
@@ -395,7 +502,109 @@ export const ExerciseOperations: FC<{
                               >
                                 <FaArrowRight />
                               </Box>
-                              {history.newValue || <i>üres</i>}
+                              {history.newValue &&
+                              history.newValue.__typename ===
+                                "HistoryStringValue" ? (
+                                history.newValue.value || <i>üres</i>
+                              ) : history.newValue &&
+                                history.newValue.__typename === "Image" ? (
+                                <Box
+                                  component="span"
+                                  sx={{
+                                    display: "inline-flex",
+                                    alignItems: "center",
+                                    gap: 0.5,
+                                  }}
+                                >
+                                  <img
+                                    src={history.newValue.url}
+                                    alt="New"
+                                    style={{
+                                      width: "20px",
+                                      height: "20px",
+                                      objectFit: "contain",
+                                    }}
+                                  />
+                                </Box>
+                              ) : history.newValue &&
+                                history.newValue.__typename ===
+                                  "HistoryTagArray" ? (
+                                <Box
+                                  component="span"
+                                  sx={{
+                                    display: "inline-flex",
+                                    alignItems: "center",
+                                    gap: 0.5,
+                                    flexWrap: "wrap",
+                                  }}
+                                >
+                                  {history.newValue.tags.length > 0 ? (
+                                    history.newValue.tags.map((tag) => (
+                                      <Chip
+                                        key={tag.id}
+                                        label={tag.name}
+                                        variant="outlined"
+                                        sx={{
+                                          height: "18px",
+                                          fontSize: "0.7rem",
+                                        }}
+                                      />
+                                    ))
+                                  ) : (
+                                    <i>nincs címke</i>
+                                  )}
+                                </Box>
+                              ) : history.newValue &&
+                                history.newValue.__typename ===
+                                  "HistoryUserArray" ? (
+                                <Box
+                                  component="span"
+                                  sx={{
+                                    display: "inline-flex",
+                                    alignItems: "center",
+                                    gap: 0.5,
+                                    flexWrap: "wrap",
+                                  }}
+                                >
+                                  {history.newValue.users.length > 0 ? (
+                                    history.newValue.users.map((user) => (
+                                      <Chip
+                                        key={user.id}
+                                        avatar={
+                                          user.avatarUrl ? (
+                                            <Avatar
+                                              src={user.avatarUrl}
+                                              sx={{ width: 16, height: 16 }}
+                                            />
+                                          ) : (
+                                            <Avatar
+                                              sx={{
+                                                width: 16,
+                                                height: 16,
+                                                fontSize: "0.6rem",
+                                              }}
+                                            >
+                                              {user.name
+                                                .charAt(0)
+                                                .toUpperCase()}
+                                            </Avatar>
+                                          )
+                                        }
+                                        label={user.name}
+                                        size="small"
+                                        variant="outlined"
+                                        sx={{
+                                          fontSize: "0.7rem",
+                                        }}
+                                      />
+                                    ))
+                                  ) : (
+                                    <i>nincs felhasználó</i>
+                                  )}
+                                </Box>
+                              ) : (
+                                <i>üres</i>
+                              )}
                             </>
                           )}
                         </Box>
