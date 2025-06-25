@@ -101,6 +101,12 @@ export type ExerciseCheck = {
   user: User;
 };
 
+export type ExerciseCheckFilter =
+  | 'CHANGE_REQUIRED'
+  | 'GOOD'
+  | 'NEEDS_TO_BE_CHECKED'
+  | 'TO_DELETE';
+
 export type ExerciseCheckInput = {
   comment?: InputMaybe<Scalars['String']['input']>;
   contributors?: InputMaybe<Array<Scalars['ID']['input']>>;
@@ -152,11 +158,20 @@ export type ExerciseHistory = {
   createdBy: User;
   exercise: Exercise;
   field: Scalars['String']['output'];
+  fieldType: ExerciseHistoryFieldType;
   id: Scalars['ID']['output'];
-  newValue: Scalars['String']['output'];
-  oldValue: Scalars['String']['output'];
+  newValue?: Maybe<HistoryValue>;
+  oldValue?: Maybe<HistoryValue>;
   updatedAt: Scalars['String']['output'];
 };
+
+export type ExerciseHistoryFieldType =
+  | 'ARRAY'
+  | 'BOOLEAN'
+  | 'ENUM'
+  | 'IMAGE'
+  | 'JSON'
+  | 'TEXT';
 
 export type ExerciseHourlyGroup = {
   __typename: 'ExerciseHourlyGroup';
@@ -186,6 +201,7 @@ export type ExerciseInput = {
 export type ExerciseSearchQuery = {
   difficulty?: InputMaybe<Array<ExerciseDifficultyRange>>;
   excludeTags?: InputMaybe<Array<Scalars['ID']['input']>>;
+  exerciseCheck?: InputMaybe<ExerciseCheckFilter>;
   includeTags?: InputMaybe<Array<Scalars['ID']['input']>>;
   isCompetitionFinal?: InputMaybe<Scalars['Boolean']['input']>;
   orderBy?: InputMaybe<Scalars['String']['input']>;
@@ -279,6 +295,23 @@ export type GlobalStats = {
   totalExerciseCount: Scalars['Int']['output'];
   userLeaderboard: Array<LeaderBoardUser>;
 };
+
+export type HistoryStringValue = {
+  __typename: 'HistoryStringValue';
+  value: Scalars['String']['output'];
+};
+
+export type HistoryTagArray = {
+  __typename: 'HistoryTagArray';
+  tags: Array<ExerciseTag>;
+};
+
+export type HistoryUserArray = {
+  __typename: 'HistoryUserArray';
+  users: Array<User>;
+};
+
+export type HistoryValue = HistoryStringValue | HistoryTagArray | HistoryUserArray | Image;
 
 export type Image = {
   __typename: 'Image';
@@ -457,6 +490,7 @@ export type Query = {
   exercise?: Maybe<Exercise>;
   exerciseComment?: Maybe<ExerciseComment>;
   exerciseHistoryByExercise: Array<ExerciseHistory>;
+  exerciseHistoryByField: Array<ExerciseHistory>;
   exerciseSheet?: Maybe<ExerciseSheet>;
   exerciseSheets: Array<ExerciseSheet>;
   exerciseTag?: Maybe<ExerciseTag>;
@@ -490,6 +524,12 @@ export type QueryExerciseCommentArgs = {
 
 export type QueryExerciseHistoryByExerciseArgs = {
   id: Scalars['ID']['input'];
+};
+
+
+export type QueryExerciseHistoryByFieldArgs = {
+  exerciseId: Scalars['ID']['input'];
+  field: Scalars['String']['input'];
 };
 
 
@@ -685,7 +725,7 @@ export type ExerciseHistoryByExerciseQueryVariables = Exact<{
 }>;
 
 
-export type ExerciseHistoryByExerciseQuery = { __typename: 'Query', exerciseHistoryByExercise: Array<{ __typename: 'ExerciseHistory', id: string, field: string, oldValue: string, newValue: string, createdAt: string, createdBy: { __typename: 'User', id: string, name: string } }> };
+export type ExerciseHistoryByExerciseQuery = { __typename: 'Query', exerciseHistoryByExercise: Array<{ __typename: 'ExerciseHistory', id: string, field: string, fieldType: ExerciseHistoryFieldType, createdAt: string, oldValue?: { __typename: 'HistoryStringValue', value: string } | { __typename: 'HistoryTagArray', tags: Array<{ __typename: 'ExerciseTag', id: string, name: string }> } | { __typename: 'HistoryUserArray', users: Array<{ __typename: 'User', id: string, name: string, avatarUrl?: string | null }> } | { __typename: 'Image', id: string, url: string } | null, newValue?: { __typename: 'HistoryStringValue', value: string } | { __typename: 'HistoryTagArray', tags: Array<{ __typename: 'ExerciseTag', id: string, name: string }> } | { __typename: 'HistoryUserArray', users: Array<{ __typename: 'User', id: string, name: string, avatarUrl?: string | null }> } | { __typename: 'Image', id: string, url: string } | null, createdBy: { __typename: 'User', id: string, name: string } }> };
 
 export type ExerciseSheetQueryVariables = Exact<{
   exerciseSheetId: Scalars['ID']['input'];
@@ -713,7 +753,7 @@ export type ExerciseCheckFragment = { __typename: 'ExerciseCheck', id: string, t
 
 export type ExerciseCommentFragment = { __typename: 'ExerciseComment', id: string, comment: string, createdAt: string, createdBy: { __typename: 'User', id: string, name: string } };
 
-export type ExerciseHistoryFragment = { __typename: 'ExerciseHistory', id: string, field: string, oldValue: string, newValue: string, createdAt: string, createdBy: { __typename: 'User', id: string, name: string } };
+export type ExerciseHistoryFragment = { __typename: 'ExerciseHistory', id: string, field: string, fieldType: ExerciseHistoryFieldType, createdAt: string, oldValue?: { __typename: 'HistoryStringValue', value: string } | { __typename: 'HistoryTagArray', tags: Array<{ __typename: 'ExerciseTag', id: string, name: string }> } | { __typename: 'HistoryUserArray', users: Array<{ __typename: 'User', id: string, name: string, avatarUrl?: string | null }> } | { __typename: 'Image', id: string, url: string } | null, newValue?: { __typename: 'HistoryStringValue', value: string } | { __typename: 'HistoryTagArray', tags: Array<{ __typename: 'ExerciseTag', id: string, name: string }> } | { __typename: 'HistoryUserArray', users: Array<{ __typename: 'User', id: string, name: string, avatarUrl?: string | null }> } | { __typename: 'Image', id: string, url: string } | null, createdBy: { __typename: 'User', id: string, name: string } };
 
 export type ExerciseListElemFragment = { __typename: 'Exercise', id: string, description: string, status: ExerciseStatus, helpingQuestions: Array<string>, solutionOptions: Array<string>, solution: string, createdAt: string, exerciseImage?: { __typename: 'Image', url: string } | null, difficulty: Array<{ __typename: 'ExerciseDifficulty', ageGroup: ExerciseAgeGroup, difficulty: number }>, tags: Array<{ __typename: 'Tag', id: string, name: string }>, checks: Array<{ __typename: 'ExerciseCheck', id: string, type: ExerciseCheckType, createdAt: string, user: { __typename: 'User', id: string, name: string } }> };
 
@@ -823,8 +863,51 @@ export const ExerciseHistoryFragmentDoc = gql`
     fragment ExerciseHistory on ExerciseHistory {
   id
   field
-  oldValue
-  newValue
+  oldValue {
+    ... on Image {
+      id
+      url
+    }
+    ... on HistoryStringValue {
+      value
+    }
+    ... on HistoryTagArray {
+      tags {
+        id
+        name
+      }
+    }
+    ... on HistoryUserArray {
+      users {
+        id
+        name
+        avatarUrl
+      }
+    }
+  }
+  newValue {
+    ... on Image {
+      id
+      url
+    }
+    ... on HistoryStringValue {
+      value
+    }
+    ... on HistoryTagArray {
+      tags {
+        id
+        name
+      }
+    }
+    ... on HistoryUserArray {
+      users {
+        id
+        name
+        avatarUrl
+      }
+    }
+  }
+  fieldType
   createdAt
   createdBy {
     id
