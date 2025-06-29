@@ -1,8 +1,47 @@
+fragment UserExercise on Exercise {
+  id
+  description
+  createdAt
+  status
+}
+
+fragment UserComment on ExerciseComment {
+  id
+  comment
+  createdAt
+  exercise {
+    id
+    description
+  }
+}
+
 query user($userId: ID!) {
-    user(id: $userId) {
-        id
-        name
-        avatarUrl
-        email
+  user(id: $userId) {
+    id
+    name
+    avatarUrl
+    email
+    stats {
+      checkedExerciseCount
+      totalExerciseCount
     }
+  }
+}
+
+query selectUserExercises($userId: ID!, $skip: Int = 0, $take: Int = 10) {
+  user(id: $userId) {
+    id
+    exercises(skip: $skip, take: $take) {
+      ...UserExercise
+    }
+  }
+}
+
+query selectUserComments($userId: ID!, $skip: Int = 0, $take: Int = 10) {
+  user(id: $userId) {
+    id
+    comments(skip: $skip, take: $take) {
+      ...UserComment
+    }
+  }
 }

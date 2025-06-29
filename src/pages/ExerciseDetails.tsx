@@ -1,6 +1,6 @@
 import { ExerciseOperations } from "@/components/exercise/ExerciseOperations";
 import { SameGroupExerciseCard } from "@/components/exercise/SameGroupExerciseCard";
-import FakeId from "@/components/FakeId";
+import ExerciseId from "@/components/ExerciseId.tsx";
 import Section from "@/components/Section";
 import {
   SelectExerciseQuery,
@@ -234,7 +234,7 @@ const ExerciseDetailsForm: FC<{ updateSignal: boolean }> = ({
         flexWrap={"wrap"}
       >
         <Typography variant="h4">Feladat</Typography>
-        <FakeId>{id}</FakeId>
+        <ExerciseId>{id}</ExerciseId>
         <Box flexGrow={1} />
         <Button
           onClick={() =>

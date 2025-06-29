@@ -1,4 +1,4 @@
-import FakeId from "@/components/FakeId.tsx";
+import ExerciseId from "@/components/ExerciseId.tsx";
 import { SameLogicExerciseFragment } from "@/generated/graphql.tsx";
 import { ageGroupTexts } from "@/util/const";
 import { Card, Divider, Tooltip, Typography } from "@mui/material";
@@ -75,7 +75,7 @@ export const SameGroupExerciseCard: FC<{
               gap={1}
               sx={{ overflow: "scroll" }}
             >
-              <FakeId>{props.exercise.id}</FakeId>
+              <ExerciseId>{props.exercise.id}</ExerciseId>
               {props.exercise.tags.map((tag) => (
                 <Chip key={tag.id} size="small" label={tag.name} />
               ))}

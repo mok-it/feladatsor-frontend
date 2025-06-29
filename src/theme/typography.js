@@ -3,6 +3,7 @@ import "@fontsource/roboto/300.css";
 import "@fontsource/roboto/400.css";
 import "@fontsource/roboto/500.css";
 import "@fontsource/roboto/700.css";
+import { grey } from "./palette";
 
 export function remToPx(value) {
   return Math.round(parseFloat(value) * 16);
@@ -34,6 +35,7 @@ export const secondaryFont = "Barlow, sans-serif";
 export const typography = {
   fontFamily: primaryFont,
   fontSecondaryFamily: secondaryFont,
+  color: grey[500],
   fontWeightRegular: 400,
   fontWeightMedium: 500,
   fontWeightSemiBold: 600,
