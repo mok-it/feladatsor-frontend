@@ -15,21 +15,33 @@ fragment UserComment on ExerciseComment {
   }
 }
 
-query user($userId: ID!, $exerciseSkip: Int = 0, $exerciseTake: Int = 10) {
+query user($userId: ID!) {
   user(id: $userId) {
     id
     name
     avatarUrl
     email
-    comments {
-      ...UserComment
-    }
-    exercises(skip: $exerciseSkip, take: $exerciseTake) {
-      ...UserExercise
-    }
     stats {
       checkedExerciseCount
       totalExerciseCount
+    }
+  }
+}
+
+query selectUserExercises($userId: ID!, $skip: Int = 0, $take: Int = 10) {
+  user(id: $userId) {
+    id
+    exercises(skip: $skip, take: $take) {
+      ...UserExercise
+    }
+  }
+}
+
+query selectUserComments($userId: ID!, $skip: Int = 0, $take: Int = 10) {
+  user(id: $userId) {
+    id
+    comments(skip: $skip, take: $take) {
+      ...UserComment
     }
   }
 }

@@ -623,6 +623,12 @@ export type User = {
 };
 
 
+export type UserCommentsArgs = {
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  take?: InputMaybe<Scalars['Int']['input']>;
+};
+
+
 export type UserExercisesArgs = {
   skip?: InputMaybe<Scalars['Int']['input']>;
   take?: InputMaybe<Scalars['Int']['input']>;
@@ -857,12 +863,28 @@ export type UserCommentFragment = { __typename: 'ExerciseComment', id: string, c
 
 export type UserQueryVariables = Exact<{
   userId: Scalars['ID']['input'];
-  exerciseSkip?: InputMaybe<Scalars['Int']['input']>;
-  exerciseTake?: InputMaybe<Scalars['Int']['input']>;
 }>;
 
 
-export type UserQuery = { __typename: 'Query', user?: { __typename: 'User', id: string, name: string, avatarUrl?: string | null, email: string, comments: Array<{ __typename: 'ExerciseComment', id: string, comment: string, createdAt: string, exercise: { __typename: 'Exercise', id: string, description: string } }>, exercises: Array<{ __typename: 'Exercise', id: string, description: string, createdAt: string, status: ExerciseStatus }>, stats: { __typename: 'UserStats', checkedExerciseCount: number, totalExerciseCount: number } } | null };
+export type UserQuery = { __typename: 'Query', user?: { __typename: 'User', id: string, name: string, avatarUrl?: string | null, email: string, stats: { __typename: 'UserStats', checkedExerciseCount: number, totalExerciseCount: number } } | null };
+
+export type SelectUserExercisesQueryVariables = Exact<{
+  userId: Scalars['ID']['input'];
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  take?: InputMaybe<Scalars['Int']['input']>;
+}>;
+
+
+export type SelectUserExercisesQuery = { __typename: 'Query', user?: { __typename: 'User', id: string, exercises: Array<{ __typename: 'Exercise', id: string, description: string, createdAt: string, status: ExerciseStatus }> } | null };
+
+export type SelectUserCommentsQueryVariables = Exact<{
+  userId: Scalars['ID']['input'];
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  take?: InputMaybe<Scalars['Int']['input']>;
+}>;
+
+
+export type SelectUserCommentsQuery = { __typename: 'Query', user?: { __typename: 'User', id: string, comments: Array<{ __typename: 'ExerciseComment', id: string, comment: string, createdAt: string, exercise: { __typename: 'Exercise', id: string, description: string } }> } | null };
 
 export type UsersQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -2209,26 +2231,19 @@ export type UpdateUserMutationHookResult = ReturnType<typeof useUpdateUserMutati
 export type UpdateUserMutationResult = Apollo.MutationResult<UpdateUserMutation>;
 export type UpdateUserMutationOptions = Apollo.BaseMutationOptions<UpdateUserMutation, UpdateUserMutationVariables>;
 export const UserDocument = gql`
-    query user($userId: ID!, $exerciseSkip: Int = 0, $exerciseTake: Int = 10) {
+    query user($userId: ID!) {
   user(id: $userId) {
     id
     name
     avatarUrl
     email
-    comments {
-      ...UserComment
-    }
-    exercises(skip: $exerciseSkip, take: $exerciseTake) {
-      ...UserExercise
-    }
     stats {
       checkedExerciseCount
       totalExerciseCount
     }
   }
 }
-    ${UserCommentFragmentDoc}
-${UserExerciseFragmentDoc}`;
+    `;
 
 /**
  * __useUserQuery__
@@ -2243,8 +2258,6 @@ ${UserExerciseFragmentDoc}`;
  * const { data, loading, error } = useUserQuery({
  *   variables: {
  *      userId: // value for 'userId'
- *      exerciseSkip: // value for 'exerciseSkip'
- *      exerciseTake: // value for 'exerciseTake'
  *   },
  * });
  */
@@ -2264,6 +2277,96 @@ export type UserQueryHookResult = ReturnType<typeof useUserQuery>;
 export type UserLazyQueryHookResult = ReturnType<typeof useUserLazyQuery>;
 export type UserSuspenseQueryHookResult = ReturnType<typeof useUserSuspenseQuery>;
 export type UserQueryResult = Apollo.QueryResult<UserQuery, UserQueryVariables>;
+export const SelectUserExercisesDocument = gql`
+    query selectUserExercises($userId: ID!, $skip: Int = 0, $take: Int = 10) {
+  user(id: $userId) {
+    id
+    exercises(skip: $skip, take: $take) {
+      ...UserExercise
+    }
+  }
+}
+    ${UserExerciseFragmentDoc}`;
+
+/**
+ * __useSelectUserExercisesQuery__
+ *
+ * To run a query within a React component, call `useSelectUserExercisesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSelectUserExercisesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useSelectUserExercisesQuery({
+ *   variables: {
+ *      userId: // value for 'userId'
+ *      skip: // value for 'skip'
+ *      take: // value for 'take'
+ *   },
+ * });
+ */
+export function useSelectUserExercisesQuery(baseOptions: Apollo.QueryHookOptions<SelectUserExercisesQuery, SelectUserExercisesQueryVariables> & ({ variables: SelectUserExercisesQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<SelectUserExercisesQuery, SelectUserExercisesQueryVariables>(SelectUserExercisesDocument, options);
+      }
+export function useSelectUserExercisesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SelectUserExercisesQuery, SelectUserExercisesQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<SelectUserExercisesQuery, SelectUserExercisesQueryVariables>(SelectUserExercisesDocument, options);
+        }
+export function useSelectUserExercisesSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<SelectUserExercisesQuery, SelectUserExercisesQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<SelectUserExercisesQuery, SelectUserExercisesQueryVariables>(SelectUserExercisesDocument, options);
+        }
+export type SelectUserExercisesQueryHookResult = ReturnType<typeof useSelectUserExercisesQuery>;
+export type SelectUserExercisesLazyQueryHookResult = ReturnType<typeof useSelectUserExercisesLazyQuery>;
+export type SelectUserExercisesSuspenseQueryHookResult = ReturnType<typeof useSelectUserExercisesSuspenseQuery>;
+export type SelectUserExercisesQueryResult = Apollo.QueryResult<SelectUserExercisesQuery, SelectUserExercisesQueryVariables>;
+export const SelectUserCommentsDocument = gql`
+    query selectUserComments($userId: ID!, $skip: Int = 0, $take: Int = 10) {
+  user(id: $userId) {
+    id
+    comments(skip: $skip, take: $take) {
+      ...UserComment
+    }
+  }
+}
+    ${UserCommentFragmentDoc}`;
+
+/**
+ * __useSelectUserCommentsQuery__
+ *
+ * To run a query within a React component, call `useSelectUserCommentsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSelectUserCommentsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useSelectUserCommentsQuery({
+ *   variables: {
+ *      userId: // value for 'userId'
+ *      skip: // value for 'skip'
+ *      take: // value for 'take'
+ *   },
+ * });
+ */
+export function useSelectUserCommentsQuery(baseOptions: Apollo.QueryHookOptions<SelectUserCommentsQuery, SelectUserCommentsQueryVariables> & ({ variables: SelectUserCommentsQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<SelectUserCommentsQuery, SelectUserCommentsQueryVariables>(SelectUserCommentsDocument, options);
+      }
+export function useSelectUserCommentsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SelectUserCommentsQuery, SelectUserCommentsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<SelectUserCommentsQuery, SelectUserCommentsQueryVariables>(SelectUserCommentsDocument, options);
+        }
+export function useSelectUserCommentsSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<SelectUserCommentsQuery, SelectUserCommentsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<SelectUserCommentsQuery, SelectUserCommentsQueryVariables>(SelectUserCommentsDocument, options);
+        }
+export type SelectUserCommentsQueryHookResult = ReturnType<typeof useSelectUserCommentsQuery>;
+export type SelectUserCommentsLazyQueryHookResult = ReturnType<typeof useSelectUserCommentsLazyQuery>;
+export type SelectUserCommentsSuspenseQueryHookResult = ReturnType<typeof useSelectUserCommentsSuspenseQuery>;
+export type SelectUserCommentsQueryResult = Apollo.QueryResult<SelectUserCommentsQuery, SelectUserCommentsQueryVariables>;
 export const UsersDocument = gql`
     query users {
   users {

@@ -73,7 +73,9 @@ const ProfileChangeForm: FC<{ handleClose: () => void }> = (props) => {
       </DialogContent>
       <DialogActions>
         <Button onClick={props.handleClose}>Mégse</Button>
-        <Button onClick={submitForm}>Mentés</Button>
+        <Button variant="contained" onClick={submitForm}>
+          Mentés
+        </Button>
       </DialogActions>
     </>
   );
@@ -95,7 +97,12 @@ export const ProfileModify = (props: {
   const [updateUser] = useUpdateUserMutation();
 
   return (
-    <Dialog open={props.open} onClose={props.handleClose}>
+    <Dialog
+      open={props.open}
+      onClose={props.handleClose}
+      fullWidth
+      maxWidth="sm"
+    >
       <Formik<ProfileModifyData>
         initialValues={{
           name: user?.user?.name,
