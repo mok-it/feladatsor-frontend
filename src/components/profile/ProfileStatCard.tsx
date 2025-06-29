@@ -9,6 +9,7 @@ import { IconType } from "react-icons";
 
 export interface ProfileStatProps {
   value?: number | string;
+  unit?: string;
   title: string;
   icon?: IconType;
   iconColor?: string;
@@ -16,6 +17,7 @@ export interface ProfileStatProps {
 
 export function ProfileStatCard({
   value,
+  unit,
   title,
   icon: Icon,
   iconColor,
@@ -45,7 +47,12 @@ export function ProfileStatCard({
             alignItems="baseline"
             width="100%"
           >
-            <Typography variant="h4">{value}</Typography>
+            <Typography variant="h4">
+              {value}{" "}
+              <Typography variant="body2" component="span">
+                {unit}
+              </Typography>
+            </Typography>
             <Avatar
               sx={{
                 backgroundColor: "var(--mui-palette-primary-main)",

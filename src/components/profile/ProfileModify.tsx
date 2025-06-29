@@ -3,7 +3,6 @@ import {
   Dialog,
   DialogActions,
   DialogContent,
-  DialogContentText,
   DialogTitle,
   TextField,
 } from "@mui/material";
@@ -22,8 +21,6 @@ const ProfileChangeForm: FC<{ handleClose: () => void }> = (props) => {
     <>
       <DialogTitle>Profil módosítása</DialogTitle>
       <DialogContent>
-        <DialogContentText></DialogContentText>
-
         <Stack direction={"column"} spacing={2}>
           <TextField
             autoFocus

@@ -15,7 +15,7 @@ import {
 import { FC, memo, useContext, useMemo } from "react";
 import { MdEdit, MdOutlineImage } from "react-icons/md";
 import { Link } from "react-router-dom";
-import FakeId from "../FakeId";
+import ExerciseId from "../ExerciseId.tsx";
 import { ImageViewer } from "../ImageViewer";
 import { KaTeX } from "../Katex";
 import { ContainerContext } from "./Container";
@@ -78,7 +78,7 @@ const ExerciseCardComponent: FC<{
             gap={1}
           >
             {exerciseView === ExerciseView.LIST ? (
-              <FakeId>{exercise.id}</FakeId>
+              <ExerciseId>{exercise.id}</ExerciseId>
             ) : (
               <Typography variant="caption" whiteSpace={"nowrap"}>
                 #{exercise.id}

@@ -130,9 +130,9 @@ export type ExerciseComment = {
   contributors: Array<User>;
   createdAt: Scalars['String']['output'];
   createdBy: User;
+  exercise: Exercise;
   id: Scalars['ID']['output'];
   updatedAt: Scalars['String']['output'];
-  user: User;
 };
 
 export type ExerciseDifficulty = {
@@ -366,6 +366,7 @@ export type MutationChangePermissionsArgs = {
 
 
 export type MutationCloneExerciseToNewArgs = {
+  contributors?: InputMaybe<Array<Scalars['ID']['input']>>;
   id: Scalars['ID']['input'];
 };
 
@@ -500,6 +501,7 @@ export type Query = {
   flatExerciseTags: Array<ExerciseTag>;
   funkyPool: Array<Developer>;
   globalStats?: Maybe<GlobalStats>;
+  me?: Maybe<User>;
   sameLogicExerciseGroups: Array<SameLogicExerciseGroup>;
   searchExercises: ExerciseSearchResult;
   user?: Maybe<User>;
@@ -559,7 +561,21 @@ export type QueryUserArgs = {
 };
 
 export type Role =
+  /** Should bypass any other role check, can do anything */
   | 'ADMIN'
+  /** Able to check an exercise */
+  | 'CHECK_EXERCISE'
+  /** Able to clone an exercise */
+  | 'CLONE_EXERCISE'
+  /** Ability to view and manipulate exercise sheets */
+  | 'EXERCISE_SHEET'
+  /** Able to change the exercise's state to Deleted or Done */
+  | 'FINALIZE_EXERCISE'
+  /** Able to list all exercises */
+  | 'LIST_EXERCISES'
+  /** Can add comments to exercise sheets */
+  | 'PROOFREAD_EXERCISE_SHEET'
+  /** Is able to submit new Exercises, and list his own */
   | 'USER';
 
 export type SameLogicExerciseGroup = {
@@ -604,6 +620,12 @@ export type User = {
   stats: UserStats;
   updatedAt: Scalars['String']['output'];
   userName: Scalars['String']['output'];
+};
+
+
+export type UserExercisesArgs = {
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  take?: InputMaybe<Scalars['Int']['input']>;
 };
 
 export type UserRegisterInput = {
@@ -829,12 +851,18 @@ export type UpdateUserMutationVariables = Exact<{
 
 export type UpdateUserMutation = { __typename: 'Mutation', updateUser: { __typename: 'User', createdAt: string, name: string, userName: string, email: string } };
 
+export type UserExerciseFragment = { __typename: 'Exercise', id: string, description: string, createdAt: string, status: ExerciseStatus };
+
+export type UserCommentFragment = { __typename: 'ExerciseComment', id: string, comment: string, createdAt: string, exercise: { __typename: 'Exercise', id: string, description: string } };
+
 export type UserQueryVariables = Exact<{
   userId: Scalars['ID']['input'];
+  exerciseSkip?: InputMaybe<Scalars['Int']['input']>;
+  exerciseTake?: InputMaybe<Scalars['Int']['input']>;
 }>;
 
 
-export type UserQuery = { __typename: 'Query', user?: { __typename: 'User', id: string, name: string, avatarUrl?: string | null, email: string } | null };
+export type UserQuery = { __typename: 'Query', user?: { __typename: 'User', id: string, name: string, avatarUrl?: string | null, email: string, comments: Array<{ __typename: 'ExerciseComment', id: string, comment: string, createdAt: string, exercise: { __typename: 'Exercise', id: string, description: string } }>, exercises: Array<{ __typename: 'Exercise', id: string, description: string, createdAt: string, status: ExerciseStatus }>, stats: { __typename: 'UserStats', checkedExerciseCount: number, totalExerciseCount: number } } | null };
 
 export type UsersQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -971,6 +999,25 @@ export const SameLogicExerciseFragmentDoc = gql`
     id
     userName
     avatarUrl
+  }
+}
+    `;
+export const UserExerciseFragmentDoc = gql`
+    fragment UserExercise on Exercise {
+  id
+  description
+  createdAt
+  status
+}
+    `;
+export const UserCommentFragmentDoc = gql`
+    fragment UserComment on ExerciseComment {
+  id
+  comment
+  createdAt
+  exercise {
+    id
+    description
   }
 }
     `;
@@ -2162,15 +2209,26 @@ export type UpdateUserMutationHookResult = ReturnType<typeof useUpdateUserMutati
 export type UpdateUserMutationResult = Apollo.MutationResult<UpdateUserMutation>;
 export type UpdateUserMutationOptions = Apollo.BaseMutationOptions<UpdateUserMutation, UpdateUserMutationVariables>;
 export const UserDocument = gql`
-    query user($userId: ID!) {
+    query user($userId: ID!, $exerciseSkip: Int = 0, $exerciseTake: Int = 10) {
   user(id: $userId) {
     id
     name
     avatarUrl
     email
+    comments {
+      ...UserComment
+    }
+    exercises(skip: $exerciseSkip, take: $exerciseTake) {
+      ...UserExercise
+    }
+    stats {
+      checkedExerciseCount
+      totalExerciseCount
+    }
   }
 }
-    `;
+    ${UserCommentFragmentDoc}
+${UserExerciseFragmentDoc}`;
 
 /**
  * __useUserQuery__
@@ -2185,6 +2243,8 @@ export const UserDocument = gql`
  * const { data, loading, error } = useUserQuery({
  *   variables: {
  *      userId: // value for 'userId'
+ *      exerciseSkip: // value for 'exerciseSkip'
+ *      exerciseTake: // value for 'exerciseTake'
  *   },
  * });
  */

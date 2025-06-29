@@ -3,7 +3,7 @@ import { useSnackbar } from "notistack";
 import { FC, PropsWithChildren } from "react";
 import { useCopyToClipboard } from "react-use";
 
-const FakeId: FC<PropsWithChildren> = ({ children }) => {
+const ExerciseId: FC<PropsWithChildren> = ({ children }) => {
   const [, copyToClipboard] = useCopyToClipboard();
   const { enqueueSnackbar } = useSnackbar();
 
@@ -31,4 +31,4 @@ const FakeId: FC<PropsWithChildren> = ({ children }) => {
   );
 };
 
-export default FakeId;
+export default ExerciseId;

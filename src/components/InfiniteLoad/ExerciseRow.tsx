@@ -3,7 +3,6 @@ import {
   ExerciseAgeGroup,
   ExerciseListElemFragment,
 } from "@/generated/graphql";
-import { exerciseStatus } from "@/util/const";
 import {
   Box,
   Chip,
@@ -19,6 +18,7 @@ import { useNavigate } from "react-router-dom";
 import { CategoryDifficulties } from "../CategoryDifficulties";
 import { Checks } from "../Checks";
 import { KaTeX } from "../Katex";
+import { ExerciseStatusBadge } from "@/components/exercise/ExerciseStatusBadge.tsx";
 
 const ExerciseRow: FC<{ data: ExerciseListElemFragment }> = ({ data }) => {
   const isMobile = useMediaQuery("(max-width: 1200px)");
@@ -53,12 +53,7 @@ const ExerciseRow: FC<{ data: ExerciseListElemFragment }> = ({ data }) => {
               spacing={1}
             >
               <Box sx={{ whiteSpace: "nowrap" }}>{"#" + data.id}</Box>
-              <Chip
-                size="small"
-                variant="outlined"
-                color={exerciseStatus[data.status].color}
-                label={exerciseStatus[data.status].text}
-              />
+              {ExerciseStatusBadge(data)}
               <Checks data={data.checks} />
               <Box flexGrow={1} />
               <div style={{ margin: 0 }}>
@@ -102,12 +97,7 @@ const ExerciseRow: FC<{ data: ExerciseListElemFragment }> = ({ data }) => {
             <CategoryDifficulties value={difficulties} />
           </TableCell>
           <TableCell sx={{ verticalAlign: "middle" }}>
-            <Chip
-              size="small"
-              variant="outlined"
-              color={exerciseStatus[data.status].color}
-              label={exerciseStatus[data.status].text}
-            />
+            <ExerciseStatusBadge status={data.status} />
           </TableCell>
           <TableCell>
             <Stack direction="row" alignItems={"center"} spacing={1}>
