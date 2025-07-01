@@ -1,6 +1,6 @@
 import { FC } from "react";
 import { UsersQuery, useUsersQuery } from "@/generated/graphql.tsx";
-import { Skeleton } from "@mui/material";
+import { Skeleton, Chip, Avatar, Box, Typography } from "@mui/material";
 import { MultiSelect } from "@/components/MultiSelect.tsx";
 
 type ArrayElement<ArrayType extends readonly unknown[]> =
@@ -25,6 +25,25 @@ export const ContributorsSelector: FC<ContributorsSelectorProp> = (props) => {
       getItemLabel={(item) => item.name}
       getItemKey={(item) => item.id}
       onChange={props.onChange}
+      renderChip={(user, getTagProps, index) => (
+        <Chip
+          {...getTagProps({ index })}
+          size="small"
+          variant="outlined"
+          avatar={<Avatar src={user.avatarUrl || undefined} alt={user.name} />}
+          label={user.name}
+        />
+      )}
+      renderOption={(user) => (
+        <Box display="flex" alignItems="center" gap={1}>
+          <Avatar
+            src={user.avatarUrl || undefined}
+            alt={user.name}
+            sx={{ width: 32, height: 32 }}
+          />
+          <Typography variant="body2">{user.name}</Typography>
+        </Box>
+      )}
     />
   );
 };

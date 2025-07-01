@@ -2,6 +2,7 @@ import Chip from "@mui/material/Chip";
 import Autocomplete from "@mui/material/Autocomplete";
 import TextField from "@mui/material/TextField";
 import { SxProps } from "@mui/material";
+import { ReactNode } from "react";
 
 type MultiSelectProps<T extends object | string> = {
   items: T[];
@@ -11,6 +12,8 @@ type MultiSelectProps<T extends object | string> = {
   label?: string;
   onChange?: (value: T[]) => void;
   sx?: SxProps;
+  renderChip?: (item: T, getTagProps: (props: { index: number }) => object, index: number) => ReactNode;
+  renderOption?: (item: T) => ReactNode;
 };
 
 export const MultiSelect = <T extends object | string>(
@@ -25,16 +28,25 @@ export const MultiSelect = <T extends object | string>(
     getOptionLabel={(option) =>
       props.getItemLabel ? props.getItemLabel(option) : String(option)
     }
+    renderOption={props.renderOption ? (liProps, option) => (
+      <li {...liProps}>
+        {props.renderOption!(option)}
+      </li>
+    ) : undefined}
     renderTags={(value: readonly T[], getTagProps) =>
-      value.map((option: T, index: number) => (
-        <Chip
-          variant="outlined"
-          label={
-            props.getItemLabel ? props.getItemLabel(option) : String(option)
-          }
-          {...getTagProps({ index })}
-        />
-      ))
+      value.map((option: T, index: number) =>
+        props.renderChip ? (
+          props.renderChip(option, getTagProps, index)
+        ) : (
+          <Chip
+            variant="outlined"
+            label={
+              props.getItemLabel ? props.getItemLabel(option) : String(option)
+            }
+            {...getTagProps({ index })}
+          />
+        )
+      )
     }
     value={props.value}
     slotProps={{
