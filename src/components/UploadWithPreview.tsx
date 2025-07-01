@@ -2,10 +2,11 @@ import { AlertDialog } from "@/components/Dialog.tsx";
 import { UploadDialog } from "@/components/UploadDialog.tsx";
 import { toBase64 } from "@/util/toBase64";
 import { useUploadImage } from "@/util/useUploadImage";
-import { Box, IconButton, Stack } from "@mui/material";
+import { Box, Button, IconButton, Stack } from "@mui/material";
 import { grey } from "@mui/material/colors";
+import { useSnackbar } from "notistack";
 import { useState } from "react";
-import { MdDeleteOutline } from "react-icons/md";
+import { MdDeleteOutline, MdRefresh } from "react-icons/md";
 import { useToggle } from "react-use";
 import { ImageViewer } from "./ImageViewer";
 
@@ -25,23 +26,73 @@ export const UploadWithPreview = ({
   const [url, setUrl] = useState<string | null>(defaultUrl || null);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [loading, toggleLoading] = useToggle(false);
+  const [uploadError, setUploadError] = useState<string | null>(null);
+  const [pendingFile, setPendingFile] = useState<File | null>(null);
+  const { enqueueSnackbar } = useSnackbar();
 
   const uploadImage = useUploadImage();
   const onChange = async (file: File | null) => {
     if (!file) {
       setUrl(null);
       onPropChange({ id: null, url: null });
+      setUploadError(null);
+      setPendingFile(null);
       return;
     }
+    setPendingFile(file);
+    setUploadError(null);
     toggleLoading(true);
-    const { id, url } = await uploadImage(await toBase64(file));
-    setUrl(url);
-    onPropChange({ id, url });
-    toggleLoading(false);
+    try {
+      const { id, url } = await uploadImage(await toBase64(file));
+      setUrl(url);
+      onPropChange({ id, url });
+      setPendingFile(null);
+    } catch (error) {
+      console.error('Upload failed:', error);
+      const errorMessage = 'Feltöltés sikertelen. Próbáld újra!';
+      setUploadError(errorMessage);
+      enqueueSnackbar({ variant: "error", message: errorMessage });
+    } finally {
+      toggleLoading(false);
+    }
+  };
+
+  const retryUpload = () => {
+    if (pendingFile) {
+      void onChange(pendingFile);
+    }
   };
 
   if (loading) {
     return <p>Feltöltés...</p>;
+  }
+
+  if (uploadError) {
+    return (
+      <Stack spacing={2} alignItems="center">
+        <p style={{ color: 'red' }}>{uploadError}</p>
+        <Stack direction="row" spacing={1}>
+          <Button 
+            onClick={retryUpload} 
+            variant="contained" 
+            size="small"
+            startIcon={<MdRefresh />}
+          >
+            Újrapróbálás
+          </Button>
+          <Button 
+            onClick={() => {
+              setUploadError(null);
+              setPendingFile(null);
+            }} 
+            variant="outlined" 
+            size="small"
+          >
+            Mégse
+          </Button>
+        </Stack>
+      </Stack>
+    );
   }
 
   return (
@@ -49,7 +100,7 @@ export const UploadWithPreview = ({
       {!url && (
         <UploadDialog
           setFile={(file) => {
-            onChange(file ?? null);
+            void onChange(file ?? null);
           }}
         />
       )}
@@ -106,7 +157,7 @@ export const UploadWithPreview = ({
         }}
         primaryClick={() => {
           setUrl(null);
-          onChange(null);
+          void onChange(null);
           setDeleteDialogOpen(false);
         }}
       />
