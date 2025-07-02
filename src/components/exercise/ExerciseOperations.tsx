@@ -6,6 +6,7 @@ import dayjs from "dayjs";
 
 import {
   ExerciseCheckFragment,
+  ExerciseCommentFragment,
   SelectExerciseQuery,
   useCommentsByExerciseQuery,
   useDeleteExerciseCommentMutation,
@@ -29,6 +30,7 @@ export const ExerciseOperations: FC<{
   const { enqueueSnackbar } = useSnackbar();
   const [sort, setSort] = useState<"asc" | "desc">("desc");
   const [commentToDelete, setCommentToDelete] = useState<string | null>(null);
+  const [commentToEdit, setCommentToEdit] = useState<ExerciseCommentFragment | null>(null);
   const [newChecks, setNewChecks] = useState<ExerciseCheckFragment[]>([]);
 
   const {
@@ -176,6 +178,8 @@ export const ExerciseOperations: FC<{
           <ExerciseCommentSection
             exerciseId={exerciseId}
             onCommentCreated={refetchComments}
+            editComment={commentToEdit}
+            onEditComment={setCommentToEdit}
           />
           
           <HistoryList
@@ -183,6 +187,7 @@ export const ExerciseOperations: FC<{
             sort={sort}
             onSortChange={setSort}
             onCommentDelete={setCommentToDelete}
+            onCommentEdit={setCommentToEdit}
             loading={loading}
           />
         </Stack>

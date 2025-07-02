@@ -1,0 +1,13 @@
+mutation UpdateExerciseComment(
+  $id: ID!
+  $comment: String!
+  $contributors: [ID!]!
+) {
+  updateExerciseComment(
+    id: $id
+    comment: $comment
+    contributors: $contributors
+  ) {
+    ...ExerciseComment
+  }
+}

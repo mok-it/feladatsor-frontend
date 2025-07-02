@@ -1,4 +1,4 @@
-import { FC, useState, useCallback } from "react";
+import { FC, useState, useCallback, useEffect } from "react";
 import {
   Dialog,
   DialogTitle,
@@ -8,8 +8,13 @@ import {
   TextField,
   Stack,
 } from "@mui/material";
-import { MdSend } from "react-icons/md";
-import { useCreateExerciseCommentMutation, UsersQuery } from "@/generated/graphql";
+import { MdSend, MdEdit } from "react-icons/md";
+import { 
+  useCreateExerciseCommentMutation, 
+  useUpdateExerciseCommentMutation,
+  UsersQuery,
+  ExerciseCommentFragment
+} from "@/generated/graphql";
 import { useSnackbar } from "notistack";
 import { ContributorsSelector } from "@/components/ContributorsSelector";
 
@@ -18,6 +23,7 @@ interface CommentModalProps {
   onClose: () => void;
   exerciseId: string;
   onCommentCreated: () => void;
+  editComment?: ExerciseCommentFragment | null;
 }
 
 export const CommentModal: FC<CommentModalProps> = ({
@@ -25,11 +31,16 @@ export const CommentModal: FC<CommentModalProps> = ({
   onClose,
   exerciseId,
   onCommentCreated,
+  editComment,
 }) => {
   const [comment, setComment] = useState<string>("");
   const [contributors, setContributors] = useState<UsersQuery["users"]>([]);
   const { enqueueSnackbar } = useSnackbar();
-  const [createComment, { loading }] = useCreateExerciseCommentMutation();
+  const [createComment, { loading: createLoading }] = useCreateExerciseCommentMutation();
+  const [updateComment, { loading: updateLoading }] = useUpdateExerciseCommentMutation();
+  
+  const isEditMode = !!editComment;
+  const loading = createLoading || updateLoading;
 
   const handleClose = useCallback(() => {
     setComment("");
@@ -37,24 +48,52 @@ export const CommentModal: FC<CommentModalProps> = ({
     onClose();
   }, [onClose]);
 
+  // Populate form when editing
+  useEffect(() => {
+    if (editComment && open) {
+      setComment(editComment.comment);
+      // Convert UserAvatarFragment to UsersQuery["users"] type
+      // We only need the id, name, and avatarUrl fields which are present in both
+      setContributors((editComment.contributors || []) as UsersQuery["users"]);
+    } else if (!open) {
+      // Reset form when modal closes
+      setComment("");
+      setContributors([]);
+    }
+  }, [editComment, open]);
+
   const onComment = useCallback(async () => {
     if (!comment.trim()) return;
     
     try {
-      await createComment({
-        variables: {
-          comment: comment.trim(),
-          exerciseId,
-          contributors: contributors.map(c => c.id),
-        },
-      });
-      enqueueSnackbar({ variant: "success", message: "Komment elküldve" });
+      if (isEditMode && editComment) {
+        await updateComment({
+          variables: {
+            id: editComment.id,
+            comment: comment.trim(),
+            contributors: contributors.map(c => c.id),
+          },
+        });
+        enqueueSnackbar({ variant: "success", message: "Komment módosítva" });
+      } else {
+        await createComment({
+          variables: {
+            comment: comment.trim(),
+            exerciseId,
+            contributors: contributors.map(c => c.id),
+          },
+        });
+        enqueueSnackbar({ variant: "success", message: "Komment elküldve" });
+      }
       handleClose();
       onCommentCreated();
     } catch (error) {
-      enqueueSnackbar({ variant: "error", message: "Hiba történt a komment küldésekor" });
+      enqueueSnackbar({ 
+        variant: "error", 
+        message: isEditMode ? "Hiba történt a komment módosításakor" : "Hiba történt a komment küldésekor" 
+      });
     }
-  }, [comment, contributors, createComment, exerciseId, onCommentCreated, handleClose, enqueueSnackbar]);
+  }, [comment, contributors, createComment, updateComment, exerciseId, onCommentCreated, handleClose, enqueueSnackbar, isEditMode, editComment]);
 
   const handleSubmit = useCallback((e: React.FormEvent) => {
     e.preventDefault();
@@ -64,7 +103,7 @@ export const CommentModal: FC<CommentModalProps> = ({
   return (
     <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
       <form onSubmit={handleSubmit}>
-        <DialogTitle>Új komment</DialogTitle>
+        <DialogTitle>{isEditMode ? "Komment szerkesztése" : "Új komment"}</DialogTitle>
         <DialogContent>
           <Stack gap={2} sx={{ mt: 1 }}>
             <TextField
@@ -89,10 +128,10 @@ export const CommentModal: FC<CommentModalProps> = ({
           <Button
             type="submit"
             variant="contained"
-            endIcon={<MdSend />}
+            endIcon={isEditMode ? <MdEdit /> : <MdSend />}
             disabled={!comment.trim() || loading}
           >
-            Küld
+            {isEditMode ? "Módosít" : "Küld"}
           </Button>
         </DialogActions>
       </form>

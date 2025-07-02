@@ -1,6 +1,6 @@
-import { FC } from "react";
-import { Typography, Stack, IconButton, Box } from "@mui/material";
-import { MdArrowDownward, MdOutlineDelete } from "react-icons/md";
+import { FC, useState } from "react";
+import { Typography, Stack, IconButton, Box, Menu, MenuItem } from "@mui/material";
+import { MdArrowDownward, MdOutlineDelete, MdEdit, MdMoreVert } from "react-icons/md";
 import { FaArrowRight } from "react-icons/fa6";
 import { motion } from "framer-motion";
 import { useAtomValue } from "jotai";
@@ -27,6 +27,7 @@ interface HistoryListProps {
   sort: "asc" | "desc";
   onSortChange: (sort: "asc" | "desc") => void;
   onCommentDelete: (commentId: string) => void;
+  onCommentEdit: (comment: ExerciseCommentFragment) => void;
   loading?: boolean;
 }
 
@@ -35,9 +36,36 @@ export const HistoryList: FC<HistoryListProps> = ({
   sort,
   onSortChange,
   onCommentDelete,
+  onCommentEdit,
   loading = false,
 }) => {
   const user = useAtomValue(userAtom);
+  const [menuAnchorEl, setMenuAnchorEl] = useState<HTMLElement | null>(null);
+  const [selectedComment, setSelectedComment] = useState<ExerciseCommentFragment | null>(null);
+
+  const handleMenuOpen = (event: React.MouseEvent<HTMLElement>, comment: ExerciseCommentFragment) => {
+    setMenuAnchorEl(event.currentTarget);
+    setSelectedComment(comment);
+  };
+
+  const handleMenuClose = () => {
+    setMenuAnchorEl(null);
+    setSelectedComment(null);
+  };
+
+  const handleEdit = () => {
+    if (selectedComment) {
+      onCommentEdit(selectedComment);
+    }
+    handleMenuClose();
+  };
+
+  const handleDelete = () => {
+    if (selectedComment) {
+      onCommentDelete(selectedComment.id);
+    }
+    handleMenuClose();
+  };
 
   const renderHistoryItem = (
     item: HistoryItem,
@@ -64,8 +92,8 @@ export const HistoryList: FC<HistoryListProps> = ({
               </Typography>
               {comment.createdBy.id === user?.user?.id && (
                 <Box sx={{ position: "absolute", right: 0, top: 0 }}>
-                  <IconButton onClick={() => onCommentDelete(comment.id)}>
-                    <MdOutlineDelete />
+                  <IconButton onClick={(e) => handleMenuOpen(e, comment)}>
+                    <MdMoreVert />
                   </IconButton>
                 </Box>
               )}
@@ -164,6 +192,29 @@ export const HistoryList: FC<HistoryListProps> = ({
       </Stack>
       {loading && <Typography>Töltés...</Typography>}
       {history.map(renderHistoryItem)}
+      
+      <Menu
+        anchorEl={menuAnchorEl}
+        open={Boolean(menuAnchorEl)}
+        onClose={handleMenuClose}
+        anchorOrigin={{
+          vertical: 'bottom',
+          horizontal: 'right',
+        }}
+        transformOrigin={{
+          vertical: 'top',
+          horizontal: 'right',
+        }}
+      >
+        <MenuItem onClick={handleEdit}>
+          <MdEdit style={{ marginRight: 8 }} />
+          Szerkesztés
+        </MenuItem>
+        <MenuItem onClick={handleDelete}>
+          <MdOutlineDelete style={{ marginRight: 8 }} />
+          Törlés
+        </MenuItem>
+      </Menu>
     </Stack>
   );
 };
