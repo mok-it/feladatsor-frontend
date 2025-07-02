@@ -2,6 +2,7 @@ fragment ExerciseComment on ExerciseComment {
   id
   comment
   createdAt
+  updatedAt
   createdBy {
     id
     ...UserAvatar

@@ -10,9 +10,10 @@ const History: FC<
   PropsWithChildren<{
     users: UserAvatarFragment[];
     createdAt: string;
+    updatedAt?: string;
     hideHeader?: boolean;
   }>
-> = ({ users, createdAt, children, hideHeader }) => {
+> = ({ users, createdAt, updatedAt, children, hideHeader }) => {
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
   const showPopover = users.length > 2;
   const visibleUsers = showPopover ? users.slice(0, 2) : users;
@@ -88,9 +89,25 @@ const History: FC<
             )}
           </Stack>
           <Box flexGrow={1} />
-          <Typography color={"gray"}>
-            {dayjs(+createdAt).format("YYYY. MM. DD. HH.mm")}
-          </Typography>
+          <Box>
+            <Typography color="gray">
+              {updatedAt && updatedAt !== createdAt ? (
+                <>{dayjs(+updatedAt).format("YYYY. MM. DD. HH.mm")}</>
+              ) : (
+                dayjs(+createdAt).format("YYYY. MM. DD. HH.mm")
+              )}
+            </Typography>
+            {updatedAt && updatedAt !== createdAt && (
+              <Typography
+                color="gray"
+                textAlign="right"
+                width="100%"
+                sx={{ fontSize: "0.75em", ml: 0.5 }}
+              >
+                (szerkesztve)
+              </Typography>
+            )}
+          </Box>
         </Stack>
       )}
       <Stack sx={{ position: "relative" }}>{children}</Stack>
