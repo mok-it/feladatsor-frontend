@@ -17,7 +17,7 @@ import {
 import { userAtom } from "@/util/atoms";
 import { translateCheck, translateFieldName } from "@/util/const";
 
-type HistoryItem = 
+type HistoryItem =
   | (ExerciseHistoryFragment & { historyType: "history" })
   | (ExerciseCheckFragment & { historyType: "check" })
   | (ExerciseCommentFragment & { historyType: "comment" });
@@ -39,21 +39,27 @@ export const HistoryList: FC<HistoryListProps> = ({
 }) => {
   const user = useAtomValue(userAtom);
 
-  const renderHistoryItem = (item: HistoryItem, i: number, arr: HistoryItem[]) => {
+  const renderHistoryItem = (
+    item: HistoryItem,
+    i: number,
+    arr: HistoryItem[],
+  ) => {
     const hideHeader = i > 0 && arr[i - 1].createdAt === item.createdAt;
 
     switch (item.historyType) {
       case "comment": {
-        const comment = item as ExerciseCommentFragment & { historyType: "comment" };
+        const comment = item as ExerciseCommentFragment & {
+          historyType: "comment";
+        };
         return (
           <History
             key={comment.id}
             hideHeader={hideHeader}
-            userName={comment.createdBy.name}
+            users={[comment.createdBy, ...(comment.contributors || [])]}
             createdAt={comment.createdAt}
           >
             <Box sx={{ ml: 4, mr: 6, mt: 1 }}>
-              <Typography sx={{ wordBreak: "break-all" }}>
+              <Typography sx={{ wordBreak: "break-all", mb: 1 }}>
                 <i>{comment.comment}</i>
               </Typography>
               {comment.createdBy.id === user?.user?.id && (
@@ -74,7 +80,7 @@ export const HistoryList: FC<HistoryListProps> = ({
           <History
             key={check.id}
             hideHeader={hideHeader}
-            userName={check.user.name}
+            users={[check.user]}
             createdAt={check.createdAt}
           >
             <Stack direction="row" gap={1} sx={{ ml: 4, mr: 6, mt: 1 }}>
@@ -93,18 +99,21 @@ export const HistoryList: FC<HistoryListProps> = ({
       }
 
       case "history": {
-        const historyItem = item as ExerciseHistoryFragment & { historyType: "history" };
+        const historyItem = item as ExerciseHistoryFragment & {
+          historyType: "history";
+        };
         return (
           <History
             key={historyItem.id}
             hideHeader={hideHeader}
-            userName={historyItem.createdBy.name}
+            users={[historyItem.createdBy]}
             createdAt={historyItem.createdAt}
           >
             <Stack direction="row" gap={1} sx={{ ml: 4, mr: 6, mt: 1 }}>
               <Box sx={{ wordBreak: "break-all" }}>
                 {translateFieldName(historyItem.field)}:{" "}
-                {historyItem.field === "description" || historyItem.fieldType === "IMAGE" ? (
+                {historyItem.field === "description" ||
+                historyItem.fieldType === "IMAGE" ? (
                   <DiffModal
                     oldValue={historyItem.oldValue as HistoryValue | null}
                     newValue={historyItem.newValue as HistoryValue | null}
@@ -112,8 +121,7 @@ export const HistoryList: FC<HistoryListProps> = ({
                   />
                 ) : (
                   <>
-                    <HistoryValueDisplay value={historyItem.oldValue || null} />
-                    {" "}
+                    <HistoryValueDisplay value={historyItem.oldValue || null} />{" "}
                     <Box
                       sx={{
                         display: "inline",
@@ -122,8 +130,7 @@ export const HistoryList: FC<HistoryListProps> = ({
                       }}
                     >
                       <FaArrowRight />
-                    </Box>
-                    {" "}
+                    </Box>{" "}
                     <HistoryValueDisplay value={historyItem.newValue || null} />
                   </>
                 )}

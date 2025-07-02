@@ -676,7 +676,7 @@ export type CommentsByExerciseQueryVariables = Exact<{
 }>;
 
 
-export type CommentsByExerciseQuery = { __typename: 'Query', commentsByExercise: Array<{ __typename: 'ExerciseComment', id: string, comment: string, createdAt: string, createdBy: { __typename: 'User', id: string, name: string } }> };
+export type CommentsByExerciseQuery = { __typename: 'Query', commentsByExercise: Array<{ __typename: 'ExerciseComment', id: string, comment: string, createdAt: string, createdBy: { __typename: 'User', id: string, name: string, avatarUrl?: string | null }, contributors: Array<{ __typename: 'User', id: string, name: string, avatarUrl?: string | null }> }> };
 
 export type CreateExerciseMutationVariables = Exact<{
   input: ExerciseInput;
@@ -695,10 +695,11 @@ export type CreateExerciseCheckMutation = { __typename: 'Mutation', createExerci
 export type CreateExerciseCommentMutationVariables = Exact<{
   exerciseId: Scalars['ID']['input'];
   comment: Scalars['String']['input'];
+  contributors: Array<Scalars['ID']['input']> | Scalars['ID']['input'];
 }>;
 
 
-export type CreateExerciseCommentMutation = { __typename: 'Mutation', createExerciseComment: { __typename: 'ExerciseComment', id: string } };
+export type CreateExerciseCommentMutation = { __typename: 'Mutation', createExerciseComment: { __typename: 'ExerciseComment', id: string, comment: string, createdAt: string, createdBy: { __typename: 'User', id: string, name: string, avatarUrl?: string | null }, contributors: Array<{ __typename: 'User', id: string, name: string, avatarUrl?: string | null }> } };
 
 export type CreateExerciseSheetMutationVariables = Exact<{
   sheetData: ExerciseSheetInput;
@@ -779,7 +780,7 @@ export type FlatExerciseTagsQuery = { __typename: 'Query', flatExerciseTags: Arr
 
 export type ExerciseCheckFragment = { __typename: 'ExerciseCheck', id: string, type: ExerciseCheckType, createdAt: string, user: { __typename: 'User', id: string, name: string } };
 
-export type ExerciseCommentFragment = { __typename: 'ExerciseComment', id: string, comment: string, createdAt: string, createdBy: { __typename: 'User', id: string, name: string } };
+export type ExerciseCommentFragment = { __typename: 'ExerciseComment', id: string, comment: string, createdAt: string, createdBy: { __typename: 'User', id: string, name: string, avatarUrl?: string | null }, contributors: Array<{ __typename: 'User', id: string, name: string, avatarUrl?: string | null }> };
 
 export type ExerciseHistoryFragment = { __typename: 'ExerciseHistory', id: string, field: string, fieldType: ExerciseHistoryFieldType, createdAt: string, oldValue?: { __typename: 'HistoryStringValue', value: string } | { __typename: 'HistoryTagArray', tags: Array<{ __typename: 'ExerciseTag', id: string, name: string }> } | { __typename: 'HistoryUserArray', users: Array<{ __typename: 'User', id: string, name: string, avatarUrl?: string | null }> } | { __typename: 'Image', id: string, url: string } | null, newValue?: { __typename: 'HistoryStringValue', value: string } | { __typename: 'HistoryTagArray', tags: Array<{ __typename: 'ExerciseTag', id: string, name: string }> } | { __typename: 'HistoryUserArray', users: Array<{ __typename: 'User', id: string, name: string, avatarUrl?: string | null }> } | { __typename: 'Image', id: string, url: string } | null, createdBy: { __typename: 'User', id: string, name: string } };
 
@@ -861,6 +862,8 @@ export type UserExerciseFragment = { __typename: 'Exercise', id: string, descrip
 
 export type UserCommentFragment = { __typename: 'ExerciseComment', id: string, comment: string, createdAt: string, exercise: { __typename: 'Exercise', id: string, description: string } };
 
+export type UserAvatarFragment = { __typename: 'User', id: string, name: string, avatarUrl?: string | null };
+
 export type UserQueryVariables = Exact<{
   userId: Scalars['ID']['input'];
 }>;
@@ -898,6 +901,13 @@ export type VoteOnDeveloperMutationVariables = Exact<{
 
 export type VoteOnDeveloperMutation = { __typename: 'Mutation', voteOnDeveloper?: { __typename: 'Developer', id: string } | null };
 
+export const UserAvatarFragmentDoc = gql`
+    fragment UserAvatar on User {
+  id
+  name
+  avatarUrl
+}
+    `;
 export const ExerciseCommentFragmentDoc = gql`
     fragment ExerciseComment on ExerciseComment {
   id
@@ -905,10 +915,14 @@ export const ExerciseCommentFragmentDoc = gql`
   createdAt
   createdBy {
     id
-    name
+    ...UserAvatar
+  }
+  contributors {
+    id
+    ...UserAvatar
   }
 }
-    `;
+    ${UserAvatarFragmentDoc}`;
 export const ExerciseHistoryFragmentDoc = gql`
     fragment ExerciseHistory on ExerciseHistory {
   id
@@ -1114,16 +1128,10 @@ export type CloneExerciseToNewMutationOptions = Apollo.BaseMutationOptions<Clone
 export const CommentsByExerciseDocument = gql`
     query commentsByExercise($exerciseId: ID!) {
   commentsByExercise(id: $exerciseId) {
-    id
-    comment
-    createdAt
-    createdBy {
-      id
-      name
-    }
+    ...ExerciseComment
   }
 }
-    `;
+    ${ExerciseCommentFragmentDoc}`;
 
 /**
  * __useCommentsByExerciseQuery__
@@ -1224,12 +1232,16 @@ export type CreateExerciseCheckMutationHookResult = ReturnType<typeof useCreateE
 export type CreateExerciseCheckMutationResult = Apollo.MutationResult<CreateExerciseCheckMutation>;
 export type CreateExerciseCheckMutationOptions = Apollo.BaseMutationOptions<CreateExerciseCheckMutation, CreateExerciseCheckMutationVariables>;
 export const CreateExerciseCommentDocument = gql`
-    mutation CreateExerciseComment($exerciseId: ID!, $comment: String!) {
-  createExerciseComment(exerciseId: $exerciseId, comment: $comment) {
-    id
+    mutation CreateExerciseComment($exerciseId: ID!, $comment: String!, $contributors: [ID!]!) {
+  createExerciseComment(
+    exerciseId: $exerciseId
+    comment: $comment
+    contributors: $contributors
+  ) {
+    ...ExerciseComment
   }
 }
-    `;
+    ${ExerciseCommentFragmentDoc}`;
 export type CreateExerciseCommentMutationFn = Apollo.MutationFunction<CreateExerciseCommentMutation, CreateExerciseCommentMutationVariables>;
 
 /**
@@ -1247,6 +1259,7 @@ export type CreateExerciseCommentMutationFn = Apollo.MutationFunction<CreateExer
  *   variables: {
  *      exerciseId: // value for 'exerciseId'
  *      comment: // value for 'comment'
+ *      contributors: // value for 'contributors'
  *   },
  * });
  */
