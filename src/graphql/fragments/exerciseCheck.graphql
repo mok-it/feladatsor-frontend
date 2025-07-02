@@ -6,4 +6,7 @@ fragment ExerciseCheck on ExerciseCheck {
     id
     name
   }
+  contributors {
+    ...UserAvatar
+  }
 }

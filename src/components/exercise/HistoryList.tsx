@@ -108,7 +108,7 @@ export const HistoryList: FC<HistoryListProps> = ({
           <History
             key={check.id}
             hideHeader={hideHeader}
-            users={[check.user]}
+            users={[check.user, ...(check.contributors || [])]}
             createdAt={check.createdAt}
           >
             <Stack direction="row" gap={1} sx={{ ml: 4, mr: 6, mt: 1 }}>

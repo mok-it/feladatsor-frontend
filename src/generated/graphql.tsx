@@ -690,7 +690,7 @@ export type CreateExerciseCheckMutationVariables = Exact<{
 }>;
 
 
-export type CreateExerciseCheckMutation = { __typename: 'Mutation', createExerciseCheck: { __typename: 'ExerciseCheck', id: string, type: ExerciseCheckType, createdAt: string, user: { __typename: 'User', id: string, name: string } } };
+export type CreateExerciseCheckMutation = { __typename: 'Mutation', createExerciseCheck: { __typename: 'ExerciseCheck', id: string, type: ExerciseCheckType, createdAt: string, user: { __typename: 'User', id: string, name: string }, contributors: Array<{ __typename: 'User', id: string, name: string, avatarUrl?: string | null }> } };
 
 export type CreateExerciseCommentMutationVariables = Exact<{
   exerciseId: Scalars['ID']['input'];
@@ -747,7 +747,7 @@ export type SelectExerciseQueryVariables = Exact<{
 }>;
 
 
-export type SelectExerciseQuery = { __typename: 'Query', exercise?: { __typename: 'Exercise', id: string, status: ExerciseStatus, description: string, solutionOptions: Array<string>, solution: string, solveIdea?: string | null, source?: string | null, createdAt: string, helpingQuestions: Array<string>, alert?: { __typename: 'ExerciseAlert', description: string, severity: AlertSeverity } | null, sameLogicExerciseGroup?: { __typename: 'SameLogicExerciseGroup', exercises: Array<{ __typename: 'Exercise', id: string, description: string, createdAt: string, difficulty: Array<{ __typename: 'ExerciseDifficulty', difficulty: number, ageGroup: ExerciseAgeGroup }>, exerciseImage?: { __typename: 'Image', url: string } | null, tags: Array<{ __typename: 'Tag', id: string, name: string }>, createdBy: { __typename: 'User', id: string, userName: string, avatarUrl?: string | null } }> } | null, exerciseImage?: { __typename: 'Image', id: string, url: string } | null, solutionImage?: { __typename: 'Image', id: string, url: string } | null, createdBy: { __typename: 'User', id: string, name: string, avatarUrl?: string | null }, contributors: Array<{ __typename: 'User', id: string, name: string, avatarUrl?: string | null }>, solveIdeaImage?: { __typename: 'Image', id: string, url: string } | null, tags: Array<{ __typename: 'Tag', id: string, name: string }>, difficulty: Array<{ __typename: 'ExerciseDifficulty', ageGroup: ExerciseAgeGroup, difficulty: number }>, checks: Array<{ __typename: 'ExerciseCheck', id: string, type: ExerciseCheckType, createdAt: string, user: { __typename: 'User', id: string, name: string } }> } | null };
+export type SelectExerciseQuery = { __typename: 'Query', exercise?: { __typename: 'Exercise', id: string, status: ExerciseStatus, description: string, solutionOptions: Array<string>, solution: string, solveIdea?: string | null, source?: string | null, createdAt: string, helpingQuestions: Array<string>, alert?: { __typename: 'ExerciseAlert', description: string, severity: AlertSeverity } | null, sameLogicExerciseGroup?: { __typename: 'SameLogicExerciseGroup', exercises: Array<{ __typename: 'Exercise', id: string, description: string, createdAt: string, difficulty: Array<{ __typename: 'ExerciseDifficulty', difficulty: number, ageGroup: ExerciseAgeGroup }>, exerciseImage?: { __typename: 'Image', url: string } | null, tags: Array<{ __typename: 'Tag', id: string, name: string }>, createdBy: { __typename: 'User', id: string, userName: string, avatarUrl?: string | null } }> } | null, exerciseImage?: { __typename: 'Image', id: string, url: string } | null, solutionImage?: { __typename: 'Image', id: string, url: string } | null, createdBy: { __typename: 'User', id: string, name: string, avatarUrl?: string | null }, contributors: Array<{ __typename: 'User', id: string, name: string, avatarUrl?: string | null }>, solveIdeaImage?: { __typename: 'Image', id: string, url: string } | null, tags: Array<{ __typename: 'Tag', id: string, name: string }>, difficulty: Array<{ __typename: 'ExerciseDifficulty', ageGroup: ExerciseAgeGroup, difficulty: number }>, checks: Array<{ __typename: 'ExerciseCheck', id: string, type: ExerciseCheckType, createdAt: string, user: { __typename: 'User', id: string, name: string }, contributors: Array<{ __typename: 'User', id: string, name: string, avatarUrl?: string | null }> }> } | null };
 
 export type ExerciseHistoryByExerciseQueryVariables = Exact<{
   exerciseId: Scalars['ID']['input'];
@@ -778,13 +778,13 @@ export type FlatExerciseTagsQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type FlatExerciseTagsQuery = { __typename: 'Query', flatExerciseTags: Array<{ __typename: 'ExerciseTag', id: string, name: string }> };
 
-export type ExerciseCheckFragment = { __typename: 'ExerciseCheck', id: string, type: ExerciseCheckType, createdAt: string, user: { __typename: 'User', id: string, name: string } };
+export type ExerciseCheckFragment = { __typename: 'ExerciseCheck', id: string, type: ExerciseCheckType, createdAt: string, user: { __typename: 'User', id: string, name: string }, contributors: Array<{ __typename: 'User', id: string, name: string, avatarUrl?: string | null }> };
 
 export type ExerciseCommentFragment = { __typename: 'ExerciseComment', id: string, comment: string, createdAt: string, createdBy: { __typename: 'User', id: string, name: string, avatarUrl?: string | null }, contributors: Array<{ __typename: 'User', id: string, name: string, avatarUrl?: string | null }> };
 
 export type ExerciseHistoryFragment = { __typename: 'ExerciseHistory', id: string, field: string, fieldType: ExerciseHistoryFieldType, createdAt: string, oldValue?: { __typename: 'HistoryStringValue', value: string } | { __typename: 'HistoryTagArray', tags: Array<{ __typename: 'ExerciseTag', id: string, name: string }> } | { __typename: 'HistoryUserArray', users: Array<{ __typename: 'User', id: string, name: string, avatarUrl?: string | null }> } | { __typename: 'Image', id: string, url: string } | null, newValue?: { __typename: 'HistoryStringValue', value: string } | { __typename: 'HistoryTagArray', tags: Array<{ __typename: 'ExerciseTag', id: string, name: string }> } | { __typename: 'HistoryUserArray', users: Array<{ __typename: 'User', id: string, name: string, avatarUrl?: string | null }> } | { __typename: 'Image', id: string, url: string } | null, createdBy: { __typename: 'User', id: string, name: string } };
 
-export type ExerciseListElemFragment = { __typename: 'Exercise', id: string, description: string, status: ExerciseStatus, helpingQuestions: Array<string>, solutionOptions: Array<string>, solution: string, createdAt: string, exerciseImage?: { __typename: 'Image', url: string } | null, difficulty: Array<{ __typename: 'ExerciseDifficulty', ageGroup: ExerciseAgeGroup, difficulty: number }>, tags: Array<{ __typename: 'Tag', id: string, name: string }>, checks: Array<{ __typename: 'ExerciseCheck', id: string, type: ExerciseCheckType, createdAt: string, user: { __typename: 'User', id: string, name: string } }> };
+export type ExerciseListElemFragment = { __typename: 'Exercise', id: string, description: string, status: ExerciseStatus, helpingQuestions: Array<string>, solutionOptions: Array<string>, solution: string, createdAt: string, exerciseImage?: { __typename: 'Image', url: string } | null, difficulty: Array<{ __typename: 'ExerciseDifficulty', ageGroup: ExerciseAgeGroup, difficulty: number }>, tags: Array<{ __typename: 'Tag', id: string, name: string }>, checks: Array<{ __typename: 'ExerciseCheck', id: string, type: ExerciseCheckType, createdAt: string, user: { __typename: 'User', id: string, name: string }, contributors: Array<{ __typename: 'User', id: string, name: string, avatarUrl?: string | null }> }> };
 
 export type SameLogicExerciseFragment = { __typename: 'Exercise', id: string, description: string, createdAt: string, difficulty: Array<{ __typename: 'ExerciseDifficulty', difficulty: number, ageGroup: ExerciseAgeGroup }>, exerciseImage?: { __typename: 'Image', url: string } | null, tags: Array<{ __typename: 'Tag', id: string, name: string }>, createdBy: { __typename: 'User', id: string, userName: string, avatarUrl?: string | null } };
 
@@ -820,7 +820,7 @@ export type SearchExercisesQueryVariables = Exact<{
 }>;
 
 
-export type SearchExercisesQuery = { __typename: 'Query', searchExercises: { __typename: 'ExerciseSearchResult', totalCount: number, exercises: Array<{ __typename: 'Exercise', id: string, description: string, status: ExerciseStatus, helpingQuestions: Array<string>, solutionOptions: Array<string>, solution: string, createdAt: string, exerciseImage?: { __typename: 'Image', url: string } | null, difficulty: Array<{ __typename: 'ExerciseDifficulty', ageGroup: ExerciseAgeGroup, difficulty: number }>, tags: Array<{ __typename: 'Tag', id: string, name: string }>, checks: Array<{ __typename: 'ExerciseCheck', id: string, type: ExerciseCheckType, createdAt: string, user: { __typename: 'User', id: string, name: string } }> }> } };
+export type SearchExercisesQuery = { __typename: 'Query', searchExercises: { __typename: 'ExerciseSearchResult', totalCount: number, exercises: Array<{ __typename: 'Exercise', id: string, description: string, status: ExerciseStatus, helpingQuestions: Array<string>, solutionOptions: Array<string>, solution: string, createdAt: string, exerciseImage?: { __typename: 'Image', url: string } | null, difficulty: Array<{ __typename: 'ExerciseDifficulty', ageGroup: ExerciseAgeGroup, difficulty: number }>, tags: Array<{ __typename: 'Tag', id: string, name: string }>, checks: Array<{ __typename: 'ExerciseCheck', id: string, type: ExerciseCheckType, createdAt: string, user: { __typename: 'User', id: string, name: string }, contributors: Array<{ __typename: 'User', id: string, name: string, avatarUrl?: string | null }> }> }> } };
 
 export type StatsQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -997,8 +997,11 @@ export const ExerciseCheckFragmentDoc = gql`
     id
     name
   }
+  contributors {
+    ...UserAvatar
+  }
 }
-    `;
+    ${UserAvatarFragmentDoc}`;
 export const ExerciseListElemFragmentDoc = gql`
     fragment ExerciseListElem on Exercise {
   id
