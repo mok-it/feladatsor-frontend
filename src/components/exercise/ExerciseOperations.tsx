@@ -71,7 +71,7 @@ export const ExerciseOperations: FC<{
           historyType: "comment" as const,
         })) || []),
       ],
-      "createdAt",
+      "updatedAt",
       sort,
     );
   }, [

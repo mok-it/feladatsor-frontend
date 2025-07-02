@@ -47,6 +47,7 @@ fragment ExerciseHistory on ExerciseHistory {
   }
   fieldType
   createdAt
+  updatedAt
   createdBy {
     id
     name

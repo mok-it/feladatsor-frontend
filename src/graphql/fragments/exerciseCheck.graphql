@@ -2,8 +2,12 @@ fragment ExerciseCheck on ExerciseCheck {
   id
   type
   createdAt
+  updatedAt
   user {
     id
     name
+  }
+  contributors {
+    ...UserAvatar
   }
 }

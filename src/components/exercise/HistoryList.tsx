@@ -85,6 +85,7 @@ export const HistoryList: FC<HistoryListProps> = ({
             hideHeader={hideHeader}
             users={[comment.createdBy, ...(comment.contributors || [])]}
             createdAt={comment.createdAt}
+            updatedAt={comment.updatedAt}
           >
             <Box sx={{ ml: 4, mr: 6, mt: 1 }}>
               <Typography sx={{ wordBreak: "break-all", mb: 1 }}>
@@ -108,8 +109,9 @@ export const HistoryList: FC<HistoryListProps> = ({
           <History
             key={check.id}
             hideHeader={hideHeader}
-            users={[check.user]}
+            users={[check.user, ...(check.contributors || [])]}
             createdAt={check.createdAt}
+            updatedAt={check.updatedAt}
           >
             <Stack direction="row" gap={1} sx={{ ml: 4, mr: 6, mt: 1 }}>
               <Check
@@ -136,6 +138,7 @@ export const HistoryList: FC<HistoryListProps> = ({
             hideHeader={hideHeader}
             users={[historyItem.createdBy]}
             createdAt={historyItem.createdAt}
+            updatedAt={historyItem.updatedAt}
           >
             <Stack direction="row" gap={1} sx={{ ml: 4, mr: 6, mt: 1 }}>
               <Box sx={{ wordBreak: "break-all" }}>
