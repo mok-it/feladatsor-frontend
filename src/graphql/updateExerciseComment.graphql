@@ -1,10 +1,10 @@
-mutation CreateExerciseComment(
-  $exerciseId: ID!
+mutation UpdateExerciseComment(
+  $id: ID!
   $comment: String!
   $contributors: [ID!]!
 ) {
-  createExerciseComment(
-    exerciseId: $exerciseId
+  updateExerciseComment(
+    id: $id
     comment: $comment
     contributors: $contributors
   ) {

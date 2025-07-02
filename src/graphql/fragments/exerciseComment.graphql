@@ -4,6 +4,10 @@ fragment ExerciseComment on ExerciseComment {
   createdAt
   createdBy {
     id
-    name
+    ...UserAvatar
+  }
+  contributors {
+    id
+    ...UserAvatar
   }
 }

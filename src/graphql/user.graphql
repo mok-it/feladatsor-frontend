@@ -15,6 +15,12 @@ fragment UserComment on ExerciseComment {
   }
 }
 
+fragment UserAvatar on User {
+  id
+  name
+  avatarUrl
+}
+
 query user($userId: ID!) {
   user(id: $userId) {
     id
