@@ -92,12 +92,10 @@ export const TagsPage = () => {
     name && data?.flatExerciseTags.some((t) => t.name === name);
 
   return (
-    <Box mb={16}>
-      <Stack direction={"row"} mx={2}>
-        <Typography variant="h4" mb={2} sx={{ flexGrow: 1 }}>
-          Címkék
-        </Typography>
-      </Stack>
+    <Box>
+      <Typography variant="h4" style={{ margin: "16px" }}>
+        Címkék
+      </Typography>
       <Grid2 container columns={2} spacing={2}>
         <Grid2 size={1}>
           <Card sx={{ p: 2 }}>

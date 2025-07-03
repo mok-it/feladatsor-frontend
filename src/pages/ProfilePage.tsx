@@ -87,13 +87,13 @@ export const ProfilePage = () => {
   });
 
   return (
-    <Card variant="outlined" sx={{ m: 2, padding: 2 }}>
+    <Card variant="outlined" sx={{ p: 2 }}>
       <ProfileHeader user={user?.user} />
       <ProfileStats stats={user?.user?.stats} />
       <Divider />
       <Box
         sx={{
-          padding: "1rem 2rem",
+          p: 2,
           display: "flex",
           flexDirection: { xs: "column", md: "row" },
           gap: 2,
