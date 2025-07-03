@@ -2,11 +2,12 @@ import { ExerciseOperations } from "@/components/exercise/ExerciseOperations";
 import { SameGroupExerciseCard } from "@/components/exercise/SameGroupExerciseCard";
 import ExerciseId from "@/components/ExerciseId.tsx";
 import Section from "@/components/Section";
+import { ExerciseCopyDialog } from "@/components/ExerciseCopyDialog";
 import {
   SelectExerciseQuery,
-  useCloneExerciseToNewMutation,
   useSelectExerciseQuery,
   useUpdateExerciseMutation,
+  useCloneExerciseToNewMutation,
 } from "@/generated/graphql";
 import { createExerciseInitialValue } from "@/util/const";
 import { ExerciseFieldsType } from "@/util/types";
@@ -168,7 +169,9 @@ const ExerciseDetailsForm: FC<{ updateSignal: boolean }> = ({
 
   const { enqueueSnackbar } = useSnackbar();
 
-  const [duplicateExercise] = useCloneExerciseToNewMutation({
+  const [showCopyDialog, setShowCopyDialog] = useState(false);
+  
+  const [cloneExercise] = useCloneExerciseToNewMutation({
     onCompleted: (data) => {
       if (data.cloneExerciseToNew) {
         navigate(`/exercise/${data.cloneExerciseToNew.id}`);
@@ -179,6 +182,21 @@ const ExerciseDetailsForm: FC<{ updateSignal: boolean }> = ({
       }
     },
   });
+
+
+  const handleCopyWithContributors = useCallback(
+    (contributors: string[]) => {
+      if (!id) return;
+      
+      cloneExercise({
+        variables: {
+          cloneExerciseToNewId: id,
+          contributors: contributors,
+        },
+      });
+    },
+    [id, cloneExercise]
+  );
 
   const { loading, data: fetchedExercise } = useSelectExerciseQuery({
     variables: { exerciseId: id! },
@@ -237,13 +255,7 @@ const ExerciseDetailsForm: FC<{ updateSignal: boolean }> = ({
         <ExerciseId>{id}</ExerciseId>
         <Box flexGrow={1} />
         <Button
-          onClick={() =>
-            duplicateExercise({
-              variables: {
-                cloneExerciseToNewId: id ?? "",
-              },
-            })
-          }
+          onClick={() => setShowCopyDialog(true)}
           variant="contained"
           endIcon={<ContentCopyIcon />}
         >
@@ -286,6 +298,11 @@ const ExerciseDetailsForm: FC<{ updateSignal: boolean }> = ({
         </Grid2>
         {operations}
       </Grid2>
+      <ExerciseCopyDialog
+        open={showCopyDialog}
+        onClose={() => setShowCopyDialog(false)}
+        onConfirm={handleCopyWithContributors}
+      />
     </>
   );
 };

@@ -666,6 +666,7 @@ export type ChangePermissionsMutation = { __typename: 'Mutation', changePermissi
 
 export type CloneExerciseToNewMutationVariables = Exact<{
   cloneExerciseToNewId: Scalars['ID']['input'];
+  contributors?: InputMaybe<Array<Scalars['ID']['input']> | Scalars['ID']['input']>;
 }>;
 
 
@@ -1108,8 +1109,8 @@ export type ChangePermissionsMutationHookResult = ReturnType<typeof useChangePer
 export type ChangePermissionsMutationResult = Apollo.MutationResult<ChangePermissionsMutation>;
 export type ChangePermissionsMutationOptions = Apollo.BaseMutationOptions<ChangePermissionsMutation, ChangePermissionsMutationVariables>;
 export const CloneExerciseToNewDocument = gql`
-    mutation CloneExerciseToNew($cloneExerciseToNewId: ID!) {
-  cloneExerciseToNew(id: $cloneExerciseToNewId) {
+    mutation CloneExerciseToNew($cloneExerciseToNewId: ID!, $contributors: [ID!]) {
+  cloneExerciseToNew(id: $cloneExerciseToNewId, contributors: $contributors) {
     id
   }
 }
@@ -1130,6 +1131,7 @@ export type CloneExerciseToNewMutationFn = Apollo.MutationFunction<CloneExercise
  * const [cloneExerciseToNewMutation, { data, loading, error }] = useCloneExerciseToNewMutation({
  *   variables: {
  *      cloneExerciseToNewId: // value for 'cloneExerciseToNewId'
+ *      contributors: // value for 'contributors'
  *   },
  * });
  */

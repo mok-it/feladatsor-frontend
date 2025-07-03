@@ -1,5 +1,5 @@
-mutation CloneExerciseToNew($cloneExerciseToNewId: ID!) {
-    cloneExerciseToNew(id: $cloneExerciseToNewId) {
+mutation CloneExerciseToNew($cloneExerciseToNewId: ID!, $contributors: [ID!]) {
+    cloneExerciseToNew(id: $cloneExerciseToNewId, contributors: $contributors) {
         id
     }
 }
