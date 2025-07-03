@@ -6,7 +6,7 @@
     "feladatsor-15604": {
       "hosting": {
         "prod": [
-          "feladatsor-15604"
+          "feladatsor"
         ],
         "dev": [
           "feladatsor-dev"
