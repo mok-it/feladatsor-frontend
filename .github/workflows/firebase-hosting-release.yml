@@ -13,9 +13,8 @@ jobs:
         env:
           VITE_APP_GRAPHQL_ENDPOINT: ${{ vars.VITE_APP_GRAPHQL_ENDPOINT }}
           VITE_APP_ENDPOINT: ${{ vars.VITE_APP_ENDPOINT }}
-      - uses: FirebaseExtended/action-hosting-deploy@v0
-        with:
-          repoToken: "${{ secrets.GITHUB_TOKEN }}"
-          firebaseServiceAccount: "${{ secrets.FIREBASE_SERVICE_ACCOUNT_FELADATSOR_15604 }}"
-          target: prod
-          projectId: feladatsor-15604
+      - name: Deploy to Firebase Hosting PROD
+        run: |
+          echo '${{ secrets.FIREBASE_SERVICE_ACCOUNT_FELADATSOR_15604 }}' > /tmp/firebase-service-account.json
+          export GOOGLE_APPLICATION_CREDENTIALS="/tmp/firebase-service-account.json"
+          npx firebase deploy --only hosting:prod --project feladatsor-15604
