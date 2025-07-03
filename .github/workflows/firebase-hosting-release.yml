@@ -1,0 +1,21 @@
+# Deploy to Firebase Hosting PROD on version release
+
+name: Deploy to Firebase Hosting PROD
+"on":
+  release:
+    types: [published]
+jobs:
+  build_and_deploy_prod:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: yarn build
+        env:
+          VITE_APP_GRAPHQL_ENDPOINT: ${{ vars.VITE_APP_GRAPHQL_ENDPOINT }}
+          VITE_APP_ENDPOINT: ${{ vars.VITE_APP_ENDPOINT }}
+      - uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          repoToken: "${{ secrets.GITHUB_TOKEN }}"
+          firebaseServiceAccount: "${{ secrets.FIREBASE_SERVICE_ACCOUNT_FELADATSOR_15604 }}"
+          channelId: live
+          projectId: feladatsor-15604
