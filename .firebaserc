@@ -1,5 +1,17 @@
 {
   "projects": {
     "default": "feladatsor-15604"
+  },
+  "targets": {
+    "feladatsor-15604": {
+      "hosting": {
+        "prod": [
+          "feladatsor-15604"
+        ],
+        "dev": [
+          "feladatsor-15604-dev"
+        ]
+      }
+    }
   }
 }
