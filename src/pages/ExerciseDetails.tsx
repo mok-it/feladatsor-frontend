@@ -5,9 +5,9 @@ import Section from "@/components/Section";
 import { ExerciseCopyDialog } from "@/components/ExerciseCopyDialog";
 import {
   SelectExerciseQuery,
+  useCloneExerciseToNewMutation,
   useSelectExerciseQuery,
   useUpdateExerciseMutation,
-  useCloneExerciseToNewMutation,
 } from "@/generated/graphql";
 import { createExerciseInitialValue } from "@/util/const";
 import { ExerciseFieldsType } from "@/util/types";
@@ -114,7 +114,7 @@ const ExerciseDetails: FC = () => {
           justifyContent={"center"}
           onClick={setShowConfirmDialog}
         >
-          <Card sx={{ width: 500 }}>
+          <Card sx={{ width: { xs: "90%", sm: 500 }, maxWidth: 500 }}>
             <Stack gap={2} p={2} onClick={(e) => e.stopPropagation()}>
               <Typography variant="h6" component="h2">
                 Változtatások mentése
@@ -170,7 +170,7 @@ const ExerciseDetailsForm: FC<{ updateSignal: boolean }> = ({
   const { enqueueSnackbar } = useSnackbar();
 
   const [showCopyDialog, setShowCopyDialog] = useState(false);
-  
+
   const [cloneExercise] = useCloneExerciseToNewMutation({
     onCompleted: (data) => {
       if (data.cloneExerciseToNew) {
@@ -183,11 +183,10 @@ const ExerciseDetailsForm: FC<{ updateSignal: boolean }> = ({
     },
   });
 
-
   const handleCopyWithContributors = useCallback(
     (contributors: string[]) => {
       if (!id) return;
-      
+
       cloneExercise({
         variables: {
           cloneExerciseToNewId: id,
@@ -195,7 +194,7 @@ const ExerciseDetailsForm: FC<{ updateSignal: boolean }> = ({
         },
       });
     },
-    [id, cloneExercise]
+    [id, cloneExercise],
   );
 
   const { loading, data: fetchedExercise } = useSelectExerciseQuery({
@@ -225,7 +224,7 @@ const ExerciseDetailsForm: FC<{ updateSignal: boolean }> = ({
 
   const operations = useMemo(() => {
     return (
-      <Grid2 size={{ xs: 12, lg: 5 }}>
+      <Grid2 size={{ xs: 12, md: 12, lg: 5 }}>
         <ExerciseOperations updateSignal={updateSignal} exercise={exercise} />
       </Grid2>
     );
@@ -245,30 +244,31 @@ const ExerciseDetailsForm: FC<{ updateSignal: boolean }> = ({
     <>
       <Stack
         mb={2}
-        px={{ xs: 2, md: 2 }}
-        direction={"row"}
-        gap={1}
-        alignItems={"center"}
-        flexWrap={"wrap"}
+        direction={{ xs: "column", sm: "row" }}
+        gap={2}
+        alignItems={{ xs: "stretch", sm: "center" }}
       >
-        <Typography variant="h4">Feladat</Typography>
-        <ExerciseId>{id}</ExerciseId>
-        <Box flexGrow={1} />
-        <Button
-          onClick={() => setShowCopyDialog(true)}
-          variant="contained"
-          endIcon={<ContentCopyIcon />}
-        >
-          Duplikálás
-        </Button>
-        <Button onClick={submitForm} variant="contained" endIcon={<MdSave />}>
-          Mentés
-        </Button>
+        <Stack direction="row" alignItems="center" gap={1} sx={{ flexGrow: 1 }}>
+          <Typography variant="h4">Feladat</Typography>
+          <ExerciseId>{id}</ExerciseId>
+        </Stack>
+        <Stack direction={{ xs: "column", sm: "row" }} gap={1}>
+          <Button
+            onClick={() => setShowCopyDialog(true)}
+            variant="contained"
+            endIcon={<ContentCopyIcon />}
+          >
+            Duplikálás
+          </Button>
+          <Button onClick={submitForm} variant="contained" endIcon={<MdSave />}>
+            Mentés
+          </Button>
+        </Stack>
       </Stack>
       <Grid2 container spacing={2} pb={10}>
-        <Grid2 size={{ xs: 12, lg: 7 }}>
+        <Grid2 size={{ xs: 12, md: 12, lg: 7 }}>
           <Card sx={{ borderRadius: { xs: 0, md: 1 } }}>
-            <Stack gap={2} p={2}>
+            <Stack gap={2} p={{ xs: 1, md: 2 }}>
               {exercise.alert && (
                 <Alert
                   severity={

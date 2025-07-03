@@ -7,13 +7,13 @@ import {
   Box,
   Grid2,
   useColorScheme,
-  useTheme,
   useMediaQuery,
+  useTheme,
 } from "@mui/material";
 import { lightBlue, lightGreen } from "@mui/material/colors";
 import { CategoryScale, Chart, LinearScale } from "chart.js/auto";
 import { useAtomValue } from "jotai";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { Bar } from "react-chartjs-2";
 import GitHubCalendar from "react-github-contribution-calendar";
 import { FaCheck } from "react-icons/fa";
@@ -24,7 +24,6 @@ import dayjs from "dayjs";
 export const HomePage = () => {
   const user = useAtomValue(userAtom);
   const [show, toggle] = useToggle(false);
-  const [chartKey, setChartKey] = useState(0);
 
   const { data, loading } = useStatsQuery();
   const { mode } = useColorScheme();
@@ -34,15 +33,6 @@ export const HomePage = () => {
   useEffect(() => {
     Chart.register(CategoryScale);
     Chart.register(LinearScale);
-  }, []);
-
-  useEffect(() => {
-    const handleResize = () => {
-      setChartKey((prev) => prev + 1);
-    };
-
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
   }, []);
 
   return (
@@ -117,7 +107,6 @@ export const HomePage = () => {
               {data?.globalStats?.exerciseHourlyCount && (
                 <Box sx={{ height: isMobile ? 250 : 400, width: "100%" }}>
                   <Bar
-                    key={`${isMobile ? "mobile" : "desktop"}-${chartKey}`}
                     data={{
                       labels: data.globalStats.exerciseHourlyCount.map(
                         (e) => e.hour + " óra",
