@@ -6,12 +6,14 @@ import { FaRegUser, FaUsers } from "react-icons/fa";
 import { HiOutlineHome } from "react-icons/hi";
 import { IoSearch } from "react-icons/io5";
 import {
+  MdBugReport,
   MdDashboard,
   MdOutlineCheckCircle,
   MdOutlineEdit,
   MdOutlineNewLabel,
 } from "react-icons/md";
 import { AdminPage } from "./pages/Admin.tsx";
+import { BugReport } from "./pages/BugReport.tsx";
 import { ExerciseCheckPage } from "./pages/ExerciseCheck/ExerciseCheckPage.tsx";
 import { ExerciseListPage } from "./pages/ExerciseListPage/ExerciseListPage.tsx";
 import { HomePage } from "./pages/HomePage";
@@ -61,6 +63,12 @@ export const pages: Page[] = [
     path: "/exercise-compose",
     component: ExerciseSheets,
     icon: MdDashboard,
+  },
+  {
+    name: "Hibabejelentés",
+    path: "/bug-report",
+    component: BugReport,
+    icon: MdBugReport,
   },
   {
     name: "Admin",
