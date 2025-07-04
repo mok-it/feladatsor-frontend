@@ -1,8 +1,16 @@
-import { Box, Card, Typography, useMediaQuery } from "@mui/material";
+import {
+  Box,
+  Card,
+  Typography,
+  useColorScheme,
+  useMediaQuery,
+} from "@mui/material";
 import { FC } from "react";
 
 const BugReport: FC = () => {
   const isMobile = useMediaQuery("(max-width: 900px)");
+
+  const { mode } = useColorScheme();
 
   return (
     <Box>
@@ -21,15 +29,33 @@ const BugReport: FC = () => {
             borderColor: "divider",
           }}
         >
-          <iframe
-            src="https://docs.google.com/forms/d/e/1FAIpQLSfjJKHV6kdmdgLlSrP5aUKcXAvAW_a6Ejp4DGlu5QUemSFzuw/viewform?embedded=true"
-            width="100%"
-            height="100%"
-            style={{ border: 0, margin: 0 }}
-            title="Hibabejelentés űrlap"
+          <div
+            style={{
+              filter: mode == "dark" ? "invert(1)" : "none",
+              height: "100%",
+            }}
           >
-            Betöltés...
-          </iframe>
+            <div
+              style={{
+                filter:
+                  mode == "dark"
+                    ? "hue-rotate(189.73deg) saturate(18.61%) brightness(96.86%)"
+                    : "none",
+
+                height: "100%",
+              }}
+            >
+              <iframe
+                src="https://docs.google.com/forms/d/e/1FAIpQLSfjJKHV6kdmdgLlSrP5aUKcXAvAW_a6Ejp4DGlu5QUemSFzuw/viewform?embedded=true"
+                width="100%"
+                height="100%"
+                style={{ border: 0, margin: 0 }}
+                title="Hibabejelentés űrlap"
+              >
+                Betöltés...
+              </iframe>
+            </div>
+          </div>
         </Box>
       </Card>
     </Box>

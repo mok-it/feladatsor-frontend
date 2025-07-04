@@ -44,6 +44,11 @@ export type Developer = {
   name: Scalars['String']['output'];
 };
 
+export type ExcelExportDeleteResult = {
+  __typename: 'ExcelExportDeleteResult';
+  success: Scalars['Boolean']['output'];
+};
+
 export type Exercise = {
   __typename: 'Exercise';
   alert?: Maybe<ExerciseAlert>;
@@ -284,6 +289,11 @@ export type ExerciseUpdateInput = {
 
 export type ExportResult = {
   __typename: 'ExportResult';
+  createdAt: Scalars['String']['output'];
+  exportedBy: User;
+  fileName: Scalars['String']['output'];
+  fileSize: Scalars['String']['output'];
+  id: Scalars['String']['output'];
   url: Scalars['String']['output'];
 };
 
@@ -342,6 +352,7 @@ export type Mutation = {
   createExerciseSheet: ExerciseSheet;
   createExerciseTag: ExerciseTag;
   createSameLogicExerciseGroup: SameLogicExerciseGroup;
+  deleteExcelExport: ExcelExportDeleteResult;
   deleteExerciseComment: ExerciseComment;
   deleteExerciseSheet: Scalars['Boolean']['output'];
   deleteExerciseTag: Scalars['Boolean']['output'];
@@ -401,6 +412,11 @@ export type MutationCreateExerciseTagArgs = {
 
 export type MutationCreateSameLogicExerciseGroupArgs = {
   data?: InputMaybe<SameLogicExerciseGroupInput>;
+};
+
+
+export type MutationDeleteExcelExportArgs = {
+  exportId: Scalars['String']['input'];
 };
 
 
@@ -501,6 +517,7 @@ export type Query = {
   flatExerciseTags: Array<ExerciseTag>;
   funkyPool: Array<Developer>;
   globalStats?: Maybe<GlobalStats>;
+  listExcelExports: Array<ExportResult>;
   me?: Maybe<User>;
   sameLogicExerciseGroups: Array<SameLogicExerciseGroup>;
   searchExercises: ExerciseSearchResult;

@@ -43,7 +43,9 @@ export const TalonModal: FC<{
     fetchPolicy: "cache-and-network",
   });
 
-  const fetch: (skip: number) => Promise<ExerciseListElemFragment[]> =
+  const fetch: (
+    skip: number,
+  ) => Promise<{ data: ExerciseListElemFragment[]; totalCount?: number }> =
     useCallback(
       async (skip: number) => {
         const res = await getData({
@@ -60,7 +62,10 @@ export const TalonModal: FC<{
             },
           },
         });
-        return res.data?.searchExercises.exercises || [];
+        return {
+          data: res.data?.searchExercises.exercises || [],
+          totalCount: res.data?.searchExercises.totalCount,
+        };
       },
       [
         getData,
@@ -73,7 +78,7 @@ export const TalonModal: FC<{
       ],
     );
 
-  const { data, fetchMore, hasMore, reset } =
+  const { data, fetchMore, hasMore, reset, totalCount } =
     useInfiniteLoad<ExerciseListElemFragment>({
       fetch,
       limit: 20,
@@ -139,6 +144,15 @@ export const TalonModal: FC<{
               <Stack gap={2} p={4}>
                 <Typography variant="h2">Kész feladatok</Typography>
                 {filterComponents}
+                {totalCount !== undefined && (
+                  <Typography
+                    variant="body2"
+                    color="text.secondary"
+                    sx={{ mt: 3, mb: 1, textAlign: "right" }}
+                  >
+                    {totalCount} db találat
+                  </Typography>
+                )}
               </Stack>
               <Stack
                 px={4}

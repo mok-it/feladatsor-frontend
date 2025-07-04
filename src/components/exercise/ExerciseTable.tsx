@@ -81,7 +81,6 @@ export const ExerciseTable: FC<
       <Table
         sx={{
           width: "100%",
-          mt: 4,
           overflow: "hidden",
           tableLayout: "fixed",
         }}
