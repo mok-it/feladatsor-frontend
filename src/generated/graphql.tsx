@@ -44,6 +44,11 @@ export type Developer = {
   name: Scalars['String']['output'];
 };
 
+export type ExcelExportDeleteResult = {
+  __typename: 'ExcelExportDeleteResult';
+  success: Scalars['Boolean']['output'];
+};
+
 export type Exercise = {
   __typename: 'Exercise';
   alert?: Maybe<ExerciseAlert>;
@@ -284,6 +289,11 @@ export type ExerciseUpdateInput = {
 
 export type ExportResult = {
   __typename: 'ExportResult';
+  createdAt: Scalars['String']['output'];
+  exportedBy: User;
+  fileName: Scalars['String']['output'];
+  fileSize: Scalars['String']['output'];
+  id: Scalars['String']['output'];
   url: Scalars['String']['output'];
 };
 
@@ -342,6 +352,7 @@ export type Mutation = {
   createExerciseSheet: ExerciseSheet;
   createExerciseTag: ExerciseTag;
   createSameLogicExerciseGroup: SameLogicExerciseGroup;
+  deleteExcelExport: ExcelExportDeleteResult;
   deleteExerciseComment: ExerciseComment;
   deleteExerciseSheet: Scalars['Boolean']['output'];
   deleteExerciseTag: Scalars['Boolean']['output'];
@@ -401,6 +412,11 @@ export type MutationCreateExerciseTagArgs = {
 
 export type MutationCreateSameLogicExerciseGroupArgs = {
   data?: InputMaybe<SameLogicExerciseGroupInput>;
+};
+
+
+export type MutationDeleteExcelExportArgs = {
+  exportId: Scalars['String']['input'];
 };
 
 
@@ -501,6 +517,7 @@ export type Query = {
   flatExerciseTags: Array<ExerciseTag>;
   funkyPool: Array<Developer>;
   globalStats?: Maybe<GlobalStats>;
+  listExcelExports: Array<ExportResult>;
   me?: Maybe<User>;
   sameLogicExerciseGroups: Array<SameLogicExerciseGroup>;
   searchExercises: ExerciseSearchResult;
@@ -717,6 +734,13 @@ export type CreateExerciseTagMutationVariables = Exact<{
 
 export type CreateExerciseTagMutation = { __typename: 'Mutation', createExerciseTag: { __typename: 'ExerciseTag', id: string } };
 
+export type DeleteExcelExportMutationVariables = Exact<{
+  exportId: Scalars['String']['input'];
+}>;
+
+
+export type DeleteExcelExportMutation = { __typename: 'Mutation', deleteExcelExport: { __typename: 'ExcelExportDeleteResult', success: boolean } };
+
 export type DeleteExerciseCommentMutationVariables = Exact<{
   deleteExerciseCommentId: Scalars['ID']['input'];
 }>;
@@ -774,6 +798,11 @@ export type ExerciseTagsQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type ExerciseTagsQuery = { __typename: 'Query', flatExerciseTags: Array<{ __typename: 'ExerciseTag', id: string, name: string, exerciseCount: number, children: Array<{ __typename: 'ExerciseTag', id: string }> }> };
 
+export type ExportExcelMutationVariables = Exact<{ [key: string]: never; }>;
+
+
+export type ExportExcelMutation = { __typename: 'Mutation', exportExcel?: { __typename: 'ExportResult', id: string, url: string } | null };
+
 export type FlatExerciseTagsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -793,6 +822,11 @@ export type FunkyPoolQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type FunkyPoolQuery = { __typename: 'Query', funkyPool: Array<{ __typename: 'Developer', id: string, count: number, name: string }> };
+
+export type ListExcelExportsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type ListExcelExportsQuery = { __typename: 'Query', listExcelExports: Array<{ __typename: 'ExportResult', id: string, fileName: string, fileSize: string, url: string, createdAt: string, exportedBy: { __typename: 'User', id: string, name: string, avatarUrl?: string | null } }> };
 
 export type LoginMutationVariables = Exact<{
   name: Scalars['String']['input'];
@@ -1356,6 +1390,39 @@ export function useCreateExerciseTagMutation(baseOptions?: Apollo.MutationHookOp
 export type CreateExerciseTagMutationHookResult = ReturnType<typeof useCreateExerciseTagMutation>;
 export type CreateExerciseTagMutationResult = Apollo.MutationResult<CreateExerciseTagMutation>;
 export type CreateExerciseTagMutationOptions = Apollo.BaseMutationOptions<CreateExerciseTagMutation, CreateExerciseTagMutationVariables>;
+export const DeleteExcelExportDocument = gql`
+    mutation DeleteExcelExport($exportId: String!) {
+  deleteExcelExport(exportId: $exportId) {
+    success
+  }
+}
+    `;
+export type DeleteExcelExportMutationFn = Apollo.MutationFunction<DeleteExcelExportMutation, DeleteExcelExportMutationVariables>;
+
+/**
+ * __useDeleteExcelExportMutation__
+ *
+ * To run a mutation, you first call `useDeleteExcelExportMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteExcelExportMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteExcelExportMutation, { data, loading, error }] = useDeleteExcelExportMutation({
+ *   variables: {
+ *      exportId: // value for 'exportId'
+ *   },
+ * });
+ */
+export function useDeleteExcelExportMutation(baseOptions?: Apollo.MutationHookOptions<DeleteExcelExportMutation, DeleteExcelExportMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DeleteExcelExportMutation, DeleteExcelExportMutationVariables>(DeleteExcelExportDocument, options);
+      }
+export type DeleteExcelExportMutationHookResult = ReturnType<typeof useDeleteExcelExportMutation>;
+export type DeleteExcelExportMutationResult = Apollo.MutationResult<DeleteExcelExportMutation>;
+export type DeleteExcelExportMutationOptions = Apollo.BaseMutationOptions<DeleteExcelExportMutation, DeleteExcelExportMutationVariables>;
 export const DeleteExerciseCommentDocument = gql`
     mutation DeleteExerciseComment($deleteExerciseCommentId: ID!) {
   deleteExerciseComment(id: $deleteExerciseCommentId) {
@@ -1817,6 +1884,39 @@ export type ExerciseTagsQueryHookResult = ReturnType<typeof useExerciseTagsQuery
 export type ExerciseTagsLazyQueryHookResult = ReturnType<typeof useExerciseTagsLazyQuery>;
 export type ExerciseTagsSuspenseQueryHookResult = ReturnType<typeof useExerciseTagsSuspenseQuery>;
 export type ExerciseTagsQueryResult = Apollo.QueryResult<ExerciseTagsQuery, ExerciseTagsQueryVariables>;
+export const ExportExcelDocument = gql`
+    mutation ExportExcel {
+  exportExcel {
+    id
+    url
+  }
+}
+    `;
+export type ExportExcelMutationFn = Apollo.MutationFunction<ExportExcelMutation, ExportExcelMutationVariables>;
+
+/**
+ * __useExportExcelMutation__
+ *
+ * To run a mutation, you first call `useExportExcelMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useExportExcelMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [exportExcelMutation, { data, loading, error }] = useExportExcelMutation({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useExportExcelMutation(baseOptions?: Apollo.MutationHookOptions<ExportExcelMutation, ExportExcelMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<ExportExcelMutation, ExportExcelMutationVariables>(ExportExcelDocument, options);
+      }
+export type ExportExcelMutationHookResult = ReturnType<typeof useExportExcelMutation>;
+export type ExportExcelMutationResult = Apollo.MutationResult<ExportExcelMutation>;
+export type ExportExcelMutationOptions = Apollo.BaseMutationOptions<ExportExcelMutation, ExportExcelMutationVariables>;
 export const FlatExerciseTagsDocument = gql`
     query flatExerciseTags {
   flatExerciseTags {
@@ -1898,6 +1998,54 @@ export type FunkyPoolQueryHookResult = ReturnType<typeof useFunkyPoolQuery>;
 export type FunkyPoolLazyQueryHookResult = ReturnType<typeof useFunkyPoolLazyQuery>;
 export type FunkyPoolSuspenseQueryHookResult = ReturnType<typeof useFunkyPoolSuspenseQuery>;
 export type FunkyPoolQueryResult = Apollo.QueryResult<FunkyPoolQuery, FunkyPoolQueryVariables>;
+export const ListExcelExportsDocument = gql`
+    query ListExcelExports {
+  listExcelExports {
+    id
+    fileName
+    fileSize
+    url
+    exportedBy {
+      id
+      name
+      avatarUrl
+    }
+    createdAt
+  }
+}
+    `;
+
+/**
+ * __useListExcelExportsQuery__
+ *
+ * To run a query within a React component, call `useListExcelExportsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useListExcelExportsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useListExcelExportsQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useListExcelExportsQuery(baseOptions?: Apollo.QueryHookOptions<ListExcelExportsQuery, ListExcelExportsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<ListExcelExportsQuery, ListExcelExportsQueryVariables>(ListExcelExportsDocument, options);
+      }
+export function useListExcelExportsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ListExcelExportsQuery, ListExcelExportsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<ListExcelExportsQuery, ListExcelExportsQueryVariables>(ListExcelExportsDocument, options);
+        }
+export function useListExcelExportsSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<ListExcelExportsQuery, ListExcelExportsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<ListExcelExportsQuery, ListExcelExportsQueryVariables>(ListExcelExportsDocument, options);
+        }
+export type ListExcelExportsQueryHookResult = ReturnType<typeof useListExcelExportsQuery>;
+export type ListExcelExportsLazyQueryHookResult = ReturnType<typeof useListExcelExportsLazyQuery>;
+export type ListExcelExportsSuspenseQueryHookResult = ReturnType<typeof useListExcelExportsSuspenseQuery>;
+export type ListExcelExportsQueryResult = Apollo.QueryResult<ListExcelExportsQuery, ListExcelExportsQueryVariables>;
 export const LoginDocument = gql`
     mutation login($name: String!, $password: String!) {
   login(name: $name, password: $password) {

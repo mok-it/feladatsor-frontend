@@ -1,0 +1,6 @@
+mutation ExportExcel {
+  exportExcel {
+    id
+    url
+  }
+}

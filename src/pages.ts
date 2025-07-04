@@ -12,7 +12,7 @@ import {
   MdOutlineEdit,
   MdOutlineNewLabel,
 } from "react-icons/md";
-import { AdminPage } from "./pages/Admin.tsx";
+import { AdminPage } from "./pages/AdminPage";
 import { BugReport } from "./pages/BugReport.tsx";
 import { ExerciseCheckPage } from "./pages/ExerciseCheck/ExerciseCheckPage.tsx";
 import { ExerciseListPage } from "./pages/ExerciseListPage/ExerciseListPage.tsx";

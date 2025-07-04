@@ -1,0 +1,14 @@
+query ListExcelExports {
+  listExcelExports {
+    id
+    fileName
+    fileSize
+    url
+    exportedBy {
+      id
+      name
+      avatarUrl
+    }
+    createdAt
+  }
+}

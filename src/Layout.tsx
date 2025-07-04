@@ -18,6 +18,7 @@ const Layout: FC = () => {
         sx={{
           width: { lg: `calc(100vw - ${drawerWidth}px)`, xs: "100vw" },
           py: { xs: 2 },
+          mb: 2,
           px: { xs: 1, md: 2 },
         }}
       >

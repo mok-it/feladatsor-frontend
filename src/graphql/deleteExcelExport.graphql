@@ -1,0 +1,5 @@
+mutation DeleteExcelExport($exportId: String!) {
+  deleteExcelExport(exportId: $exportId) {
+    success
+  }
+}
