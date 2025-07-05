@@ -32,8 +32,8 @@ export const ProfilePage = () => {
     useSelectUserExercisesLazyQuery();
 
   const fetchExercises = useCallback(
-    async (skip: number): Promise<UserExerciseFragment[]> => {
-      if (!userFromToken?.user?.id) return [];
+    async (skip: number): Promise<{ data: UserExerciseFragment[]; totalCount?: number }> => {
+      if (!userFromToken?.user?.id) return { data: [] };
 
       const result = await getExercises({
         variables: {
@@ -43,7 +43,7 @@ export const ProfilePage = () => {
         },
       });
 
-      return result.data?.user?.exercises || [];
+      return { data: result.data?.user?.exercises || [] };
     },
     [getExercises, userFromToken?.user?.id],
   );
@@ -61,8 +61,8 @@ export const ProfilePage = () => {
     useSelectUserCommentsLazyQuery();
 
   const fetchComments = useCallback(
-    async (skip: number): Promise<UserCommentFragment[]> => {
-      if (!userFromToken?.user?.id) return [];
+    async (skip: number): Promise<{ data: UserCommentFragment[]; totalCount?: number }> => {
+      if (!userFromToken?.user?.id) return { data: [] };
 
       const result = await getComments({
         variables: {
@@ -72,7 +72,7 @@ export const ProfilePage = () => {
         },
       });
 
-      return result.data?.user?.comments || [];
+      return { data: result.data?.user?.comments || [] };
     },
     [getComments, userFromToken?.user?.id],
   );

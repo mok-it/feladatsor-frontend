@@ -7,18 +7,23 @@ export const useInfiniteLoad = <T>({
   fetch,
   limit,
 }: {
-  fetch: (skip: number) => Promise<T[]>;
+  fetch: (skip: number) => Promise<{ data: T[]; totalCount?: number }>;
   limit: number;
 }) => {
   const [hasMore, setHasMore] = useToggle(true);
   const [loadingSkip, setLoadingSkip] = useState(-1);
   const [data, setData] = useImmer<T[]>([]);
+  const [totalCount, setTotalCount] = useState<number | undefined>(undefined);
 
   const fetchMore = useCallback(async () => {
     const skip = data.length || 0;
     if (loadingSkip >= skip) return;
     setLoadingSkip(skip);
-    const newData = (await fetch(skip)) || [];
+    const result = await fetch(skip);
+    const newData = result?.data || [];
+    if (result?.totalCount !== undefined) {
+      setTotalCount(result.totalCount);
+    }
     setData((prev) => uniqBy([...prev, ...newData], "id"));
     if (newData.length < limit) {
       setHasMore(false);
@@ -38,6 +43,7 @@ export const useInfiniteLoad = <T>({
     setData([]);
     setLoadingSkip(-1);
     setHasMore(true);
+    setTotalCount(undefined);
     reset();
   }, [setData, setHasMore, reset]);
 
@@ -46,5 +52,6 @@ export const useInfiniteLoad = <T>({
     fetchMore,
     hasMore,
     reset: manualReset,
+    totalCount,
   };
 };
