@@ -13,6 +13,7 @@ import {
   TextField,
   ToggleButton,
   ToggleButtonGroup,
+  Tooltip,
   Typography,
 } from "@mui/material";
 import { Stack } from "@mui/system";
@@ -20,6 +21,7 @@ import { FC, useState, useCallback } from "react";
 import { useToggle } from "react-use";
 import Section from "../Section";
 import { ContributorsSelector } from "../ContributorsSelector";
+import { useRoleBasedAccess } from "@/util/auth.ts";
 
 export const ExerciseChecks: FC<{
   exerciseId: string;
@@ -39,11 +41,26 @@ export const ExerciseChecks: FC<{
     setCheckModal();
   }, [setCheckModal]);
 
+  const { canCheckExercises } = useRoleBasedAccess();
+
   return (
     <>
-      <Button onClick={setCheckModal} variant="contained" color="success">
-        Ellenőrzöm
-      </Button>
+      <Tooltip 
+        title={!canCheckExercises ? "Nincs jogosultságod feladatok ellenőrzéséhez. Szükséges jogosultság: CHECK_EXERCISE" : ""}
+        arrow
+        placement="top"
+      >
+        <span>
+          <Button
+            onClick={setCheckModal}
+            variant="contained"
+            color="success"
+            disabled={!canCheckExercises}
+          >
+            Ellenőrzöm
+          </Button>
+        </span>
+      </Tooltip>
       <Modal open={checkModal} onClose={handleClose} keepMounted>
         <Stack
           position={"absolute"}

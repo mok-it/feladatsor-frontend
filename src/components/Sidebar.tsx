@@ -1,6 +1,7 @@
 import { DayNightSwitch } from "@/components/DayNightSwitch/DayNightSwitch.tsx";
 import { tokenAtom, userAtom } from "@/util/atoms";
 import { auth } from "@/util/firebase";
+import { useRoleBasedAccess } from "@/util/auth";
 import {
   alpha,
   Box,
@@ -19,7 +20,7 @@ import relativeTime from "dayjs/plugin/relativeTime";
 import { signOut as firebaseSignout } from "firebase/auth";
 import { useAtomValue, useSetAtom } from "jotai";
 import { jwtDecode } from "jwt-decode";
-import { FC, useCallback, useEffect } from "react";
+import { FC, useCallback, useEffect, useMemo } from "react";
 import { FaPersonRunning } from "react-icons/fa6";
 import { useLocation, useNavigate } from "react-router-dom";
 import { pages } from "../pages";
@@ -47,8 +48,24 @@ export const Sidebar: FC<{ open: boolean; onClose: () => void }> = ({
   const setUser = useSetAtom(userAtom);
   const token = useAtomValue(tokenAtom);
   const setToken = useSetAtom(tokenAtom);
+  const { hasRole, hasAllRoles } = useRoleBasedAccess();
 
   const { mode, setMode } = useColorScheme();
+
+  // Filter pages based on user roles
+  const visiblePages = useMemo(() => {
+    return pages.filter(page => {
+      // If no roles required, show to all authenticated users
+      if (!page.requiredRoles || page.requiredRoles.length === 0) {
+        return true;
+      }
+      
+      // Check if user has required roles
+      return page.requireAllRoles 
+        ? hasAllRoles(page.requiredRoles)
+        : hasRole(page.requiredRoles);
+    });
+  }, [hasRole, hasAllRoles]);
 
   const signOut = useCallback(() => {
     firebaseSignout(auth).then(() => {
@@ -96,7 +113,7 @@ export const Sidebar: FC<{ open: boolean; onClose: () => void }> = ({
               Feladatbeküldő
             </Typography>
             <Stack gap={1}>
-              {pages.map((page) => {
+              {visiblePages.map((page) => {
                 const active = location.pathname === page.path;
                 return (
                   <ListItem

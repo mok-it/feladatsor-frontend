@@ -21,6 +21,7 @@ import {
   Grid2,
   Modal,
   TextField,
+  Tooltip,
   Typography,
 } from "@mui/material";
 import { AlertColor } from "@mui/material/Alert/Alert";
@@ -33,6 +34,7 @@ import { useParams } from "react-router";
 import { useNavigate } from "react-router-dom";
 import { useToggle } from "react-use";
 import ExerciseFields from "./createExercise/ExerciseFields";
+import { useRoleBasedAccess } from "@/util/auth";
 
 const ExerciseDetails: FC = () => {
   const { enqueueSnackbar } = useSnackbar();
@@ -171,6 +173,8 @@ const ExerciseDetailsForm: FC<{ updateSignal: boolean }> = ({
 
   const [showCopyDialog, setShowCopyDialog] = useState(false);
 
+  const { canCloneExercises } = useRoleBasedAccess();
+
   const [cloneExercise] = useCloneExerciseToNewMutation({
     onCompleted: (data) => {
       if (data.cloneExerciseToNew) {
@@ -253,13 +257,22 @@ const ExerciseDetailsForm: FC<{ updateSignal: boolean }> = ({
           <ExerciseId>{id}</ExerciseId>
         </Stack>
         <Stack direction={{ xs: "column", sm: "row" }} gap={1}>
-          <Button
-            onClick={() => setShowCopyDialog(true)}
-            variant="contained"
-            endIcon={<ContentCopyIcon />}
+          <Tooltip 
+            title={!canCloneExercises ? "Nincs jogosultságod feladatok duplikálásához. Szükséges jogosultság: CLONE_EXERCISE" : ""}
+            arrow
+            placement="top"
           >
-            Duplikálás
-          </Button>
+            <span>
+              <Button
+                onClick={() => setShowCopyDialog(true)}
+                variant="contained"
+                endIcon={<ContentCopyIcon />}
+                disabled={!canCloneExercises}
+              >
+                Duplikálás
+              </Button>
+            </span>
+          </Tooltip>
           <Button onClick={submitForm} variant="contained" endIcon={<MdSave />}>
             Mentés
           </Button>
