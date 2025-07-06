@@ -10,6 +10,7 @@ import { pages } from "./pages";
 import ExerciseDetails from "./pages/ExerciseDetails";
 import { userAtom } from "./util/atoms";
 import { Page404 } from "@/components/404.tsx";
+import ProtectedRoute from "@/components/ProtectedRoute";
 
 function App() {
   const [user, setUser] = useAtom(userAtom);
@@ -46,11 +47,29 @@ function App() {
             <Route
               key={page.name}
               path={page.path}
-              element={<page.component />}
+              element={
+                page.requiredRoles && page.requiredRoles.length > 0 ? (
+                  <ProtectedRoute
+                    roles={page.requiredRoles}
+                    requireAll={page.requireAllRoles}
+                  >
+                    <page.component />
+                  </ProtectedRoute>
+                ) : (
+                  <page.component />
+                )
+              }
             />
           ))}
           <Route path={"/exercise/:id"} element={<ExerciseDetails />} />
-          <Route path={"/exercise-compose/:id"} element={<ComposePage />} />
+          <Route 
+            path={"/exercise-compose/:id"} 
+            element={
+              <ProtectedRoute roles={["EXERCISE_SHEET"]}>
+                <ComposePage />
+              </ProtectedRoute>
+            } 
+          />
           <Route path="*" element={<Page404 />} />
         </Route>
       </Routes>

@@ -2,6 +2,7 @@ import {
   Avatar,
   Box,
   Card,
+  Chip,
   Stack,
   Table,
   TableHead,
@@ -19,11 +20,35 @@ import { userAtom } from "@/util/atoms.ts";
 import { useAtom } from "jotai";
 import { StyledTableRow } from "@/components/StyledTableRow.tsx";
 import { StyledTableCell } from "@/components/StyledTableCell.tsx";
+import { RoleGuide } from "@/pages/AdminPage/RoleGuide.tsx";
+import { useSnackbar } from "notistack";
 
-const Roles: Role[] = ["ADMIN", "USER"];
+const Roles: Role[] = [
+  "ADMIN",
+  "USER",
+  "LIST_EXERCISES",
+  "CHECK_EXERCISE",
+  "CLONE_EXERCISE",
+  "FINALIZE_EXERCISE",
+  "EXERCISE_SHEET",
+  "PROOFREAD_EXERCISE_SHEET",
+];
 
-const capitalizeStr = (s: string) =>
-  s.charAt(0).toUpperCase() + s.slice(1).toLowerCase();
+// Role display mapping for better user experience
+const roleDisplayNames: Record<Role, string> = {
+  ADMIN: "Adminisztrátor",
+  USER: "Felhasználó",
+  LIST_EXERCISES: "Feladatok listázása",
+  CHECK_EXERCISE: "Feladat ellenőrzés",
+  CLONE_EXERCISE: "Feladat klónozás",
+  FINALIZE_EXERCISE: "Feladat véglegesítés",
+  EXERCISE_SHEET: "Feladatsor kezelés",
+  PROOFREAD_EXERCISE_SHEET: "Feladatsor lektorálás",
+};
+
+const getRoleDisplayName = (role: Role): string => {
+  return roleDisplayNames[role] || role;
+};
 
 export const UserManagement = () => {
   const { data, loading } = useUsersQuery();
@@ -35,12 +60,21 @@ export const UserManagement = () => {
     return false;
   };
 
+  const { enqueueSnackbar } = useSnackbar();
+
   return (
     <Card sx={{ mb: 3 }}>
       <Box p={2}>
-        <Typography variant="h6" sx={{ mb: 2 }}>
-          Felhasználókezelés
-        </Typography>
+        <Stack
+          direction="row"
+          alignItems="center"
+          justifyContent="space-between"
+        >
+          <Typography variant="h6" sx={{ mb: 2 }}>
+            Felhasználókezelés
+          </Typography>
+          <RoleGuide />
+        </Stack>
         {loading && <Typography>Betöltés...</Typography>}
         <Table>
           <TableHead>
@@ -69,7 +103,6 @@ export const UserManagement = () => {
                 <StyledTableCell size="small">
                   <Autocomplete
                     multiple
-                    freeSolo
                     disableCloseOnSelect
                     disableClearable
                     size="small"
@@ -77,6 +110,15 @@ export const UserManagement = () => {
                     options={Roles}
                     disabled={isMyself(user.id)}
                     defaultValue={user.roles}
+                    renderTags={(value, getTagProps) =>
+                      value.map((option, index) => (
+                        <Chip
+                          size="small"
+                          label={getRoleDisplayName(option)}
+                          {...getTagProps({ index })}
+                        />
+                      ))
+                    }
                     renderOption={(props, option, { selected }) => (
                       <li {...props}>
                         <Checkbox
@@ -84,7 +126,7 @@ export const UserManagement = () => {
                           style={{ marginRight: 8 }}
                           checked={selected}
                         />
-                        {capitalizeStr(option)}
+                        {getRoleDisplayName(option)}
                       </li>
                     )}
                     onChange={(_, value) => {
@@ -98,6 +140,12 @@ export const UserManagement = () => {
                           `Sucessfully changed permissions to user: ${user.name}, to: ${value.join()}`,
                         );
                         console.log(r);
+                        enqueueSnackbar(
+                          `Successfully changed permissions to user: ${user.name}, to: ${value}`,
+                          {
+                            variant: "success",
+                          },
+                        );
                       });
                     }}
                     renderInput={(params) => (

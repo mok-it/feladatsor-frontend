@@ -7,7 +7,7 @@ import { ExportDeleteDialog } from "./ExportDeleteDialog";
 
 export const AdminPage = () => {
   const { refetch: refetchExports } = useListExcelExportsQuery();
-  
+
   const [deleteDialog, setDeleteDialog] = useState<{
     open: boolean;
     exportId: string | null;
@@ -33,7 +33,7 @@ export const AdminPage = () => {
       </Typography>
 
       <UserManagement />
-      
+
       <DatabaseExports onDeleteExport={openDeleteDialog} />
 
       <ExportDeleteDialog

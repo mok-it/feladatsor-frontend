@@ -1,19 +1,11 @@
 import { FC } from "react";
-import {
-  Typography,
-  Select,
-  MenuItem,
-  Stack,
-} from "@mui/material";
+import { Typography, Select, MenuItem, Stack, Tooltip } from "@mui/material";
 import { IoHourglassOutline } from "react-icons/io5";
-import {
-  MdCheckCircle,
-  MdOutlineDelete,
-  MdSend,
-} from "react-icons/md";
+import { MdCheckCircle, MdOutlineDelete, MdSend } from "react-icons/md";
 import { ExerciseStatus, useUpdateExerciseMutation } from "@/generated/graphql";
 import { ExerciseStatusEnum } from "@/util/types";
 import { useSnackbar } from "notistack";
+import { useRoleBasedAccess } from "@/util/auth.ts";
 
 interface ExerciseStatusSelectorProps {
   exerciseId: string;
@@ -42,12 +34,10 @@ export const ExerciseStatusSelector: FC<ExerciseStatusSelectorProps> = ({
     });
   };
 
+  const { canFinalizeExercises } = useRoleBasedAccess();
+
   return (
-    <Stack
-      direction="row"
-      alignItems="center"
-      justifyContent="space-between"
-    >
+    <Stack direction="row" alignItems="center" justifyContent="space-between">
       <Typography variant="h5">Státusz</Typography>
       <Select
         size="small"
@@ -66,17 +56,49 @@ export const ExerciseStatusSelector: FC<ExerciseStatusSelectorProps> = ({
             Beküldve
           </Stack>
         </MenuItem>
-        <MenuItem value={ExerciseStatusEnum.APPROVED}>
-          <Stack direction="row" alignItems="center" gap={1}>
-            <MdCheckCircle color="green" />
-            Kész
-          </Stack>
+
+        <MenuItem
+          value={ExerciseStatusEnum.APPROVED}
+          disabled={!canFinalizeExercises}
+        >
+          <Tooltip
+            title={
+              !canFinalizeExercises
+                ? "Nincs jogosultságod feladatok véglegesítéséhez. Szükséges jogosultság: FINALIZE_EXERCISE"
+                : ""
+            }
+            arrow
+            placement="top"
+          >
+            <span>
+              <Stack direction="row" alignItems="center" gap={1}>
+                <MdCheckCircle color="green" />
+                Kész
+              </Stack>
+            </span>
+          </Tooltip>
         </MenuItem>
-        <MenuItem value={ExerciseStatusEnum.DELETED}>
-          <Stack direction="row" alignItems="center" gap={1}>
-            <MdOutlineDelete color="red" />
-            Törölve
-          </Stack>
+
+        <MenuItem
+          value={ExerciseStatusEnum.DELETED}
+          disabled={!canFinalizeExercises}
+        >
+          <Tooltip
+            title={
+              !canFinalizeExercises
+                ? "Nincs jogosultságod feladatok véglegesítéséhez. Szükséges jogosultság: FINALIZE_EXERCISE"
+                : ""
+            }
+            arrow
+            placement="top"
+          >
+            <span>
+              <Stack direction="row" alignItems="center" gap={1}>
+                <MdOutlineDelete color="red" />
+                Törölve
+              </Stack>
+            </span>
+          </Tooltip>
         </MenuItem>
       </Select>
     </Stack>
