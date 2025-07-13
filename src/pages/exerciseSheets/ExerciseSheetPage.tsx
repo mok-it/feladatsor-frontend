@@ -10,6 +10,8 @@ import { ExerciseView, composeStore } from "@/util/composeStore";
 import { LoadingButton } from "@mui/lab";
 import {
   Box,
+  Card,
+  Grid2,
   IconButton,
   Input,
   Tab,
@@ -27,10 +29,11 @@ import { MdDone, MdEdit } from "react-icons/md";
 import { useParams } from "react-router";
 import { useToggle } from "react-use";
 import Compose from "./Compose";
+import { SheetOperations } from "./SheetOperations";
 
 const styles = { fontWeight: 500 };
 
-const ComposePage: FC = () => {
+export const ExerciseSheetPage: FC = () => {
   const { id } = useParams();
 
   const store = useStore();
@@ -189,9 +192,18 @@ const ComposePage: FC = () => {
           </LoadingButton>
         </Stack>
       </Stack>
-      {!loading && <Compose />}
+      {!loading && data?.exerciseSheet && (
+        <Grid2 container spacing={2} pb={10}>
+          <Grid2 size={{ xs: 12, md: 12, lg: 7 }}>
+            <Card sx={{ borderRadius: { xs: 0, md: 1 } }}>
+              <Compose />
+            </Card>
+          </Grid2>
+          <Grid2 size={{ xs: 12, md: 12, lg: 5 }}>
+            <SheetOperations sheet={data?.exerciseSheet} />
+          </Grid2>
+        </Grid2>
+      )}
     </>
   );
 };
-
-export default ComposePage;

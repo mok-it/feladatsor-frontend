@@ -2,6 +2,7 @@ query exerciseSheet($exerciseSheetId: ID!) {
   exerciseSheet(id: $exerciseSheetId) {
     id
     name
+    status
     sheetItems {
       id
       ageGroup

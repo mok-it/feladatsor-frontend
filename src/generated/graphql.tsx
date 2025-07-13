@@ -229,6 +229,7 @@ export type ExerciseSheet = {
   id: Scalars['ID']['output'];
   name: Scalars['String']['output'];
   sheetItems: Array<ExerciseSheetItem>;
+  status: ExerciseSheetStatus;
   talonItems: Array<OrderedExercise>;
   updatedAt: Scalars['String']['output'];
 };
@@ -251,6 +252,12 @@ export type ExerciseSheetItemInput = {
   exercises: Array<OrderedExerciseInput>;
   level: Scalars['Int']['input'];
 };
+
+export type ExerciseSheetStatus =
+  | 'APPROVED'
+  | 'CREATED'
+  | 'DELETED'
+  | 'DRAFT';
 
 export type ExerciseStatus =
   | 'APPROVED'
@@ -621,6 +628,7 @@ export type Tag = {
 export type UpdateExerciseSheetInput = {
   name?: InputMaybe<Scalars['String']['input']>;
   sheetItems?: InputMaybe<Array<ExerciseSheetItemInput>>;
+  status?: InputMaybe<ExerciseSheetStatus>;
   talonItems?: InputMaybe<Array<OrderedExerciseInput>>;
 };
 
@@ -786,7 +794,7 @@ export type ExerciseSheetQueryVariables = Exact<{
 }>;
 
 
-export type ExerciseSheetQuery = { __typename: 'Query', exerciseSheet?: { __typename: 'ExerciseSheet', id: string, name: string, createdAt: string, updatedAt: string, sheetItems: Array<{ __typename: 'ExerciseSheetItem', id: string, ageGroup: ExerciseAgeGroup, level: number, exercises: Array<{ __typename: 'OrderedExercise', order: number, exercise: { __typename: 'Exercise', id: string, description: string, exerciseImage?: { __typename: 'Image', url: string } | null, difficulty: Array<{ __typename: 'ExerciseDifficulty', ageGroup: ExerciseAgeGroup, difficulty: number }> } }> }>, talonItems: Array<{ __typename: 'OrderedExercise', order: number, exercise: { __typename: 'Exercise', id: string, description: string, exerciseImage?: { __typename: 'Image', url: string } | null, difficulty: Array<{ __typename: 'ExerciseDifficulty', ageGroup: ExerciseAgeGroup, difficulty: number }> } }>, createdBy: { __typename: 'User', name: string } } | null };
+export type ExerciseSheetQuery = { __typename: 'Query', exerciseSheet?: { __typename: 'ExerciseSheet', id: string, name: string, status: ExerciseSheetStatus, createdAt: string, updatedAt: string, sheetItems: Array<{ __typename: 'ExerciseSheetItem', id: string, ageGroup: ExerciseAgeGroup, level: number, exercises: Array<{ __typename: 'OrderedExercise', order: number, exercise: { __typename: 'Exercise', id: string, description: string, exerciseImage?: { __typename: 'Image', url: string } | null, difficulty: Array<{ __typename: 'ExerciseDifficulty', ageGroup: ExerciseAgeGroup, difficulty: number }> } }> }>, talonItems: Array<{ __typename: 'OrderedExercise', order: number, exercise: { __typename: 'Exercise', id: string, description: string, exerciseImage?: { __typename: 'Image', url: string } | null, difficulty: Array<{ __typename: 'ExerciseDifficulty', ageGroup: ExerciseAgeGroup, difficulty: number }> } }>, createdBy: { __typename: 'User', name: string } } | null };
 
 export type ExerciseSheetsQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -1721,6 +1729,7 @@ export const ExerciseSheetDocument = gql`
   exerciseSheet(id: $exerciseSheetId) {
     id
     name
+    status
     sheetItems {
       id
       ageGroup

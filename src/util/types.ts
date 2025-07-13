@@ -28,6 +28,13 @@ export enum ExerciseStatusEnum {
   DRAFT = "DRAFT",
 }
 
+export enum ExerciseSheetStatusEnum {
+  APPROVED = "APPROVED",
+  CREATED = "CREATED",
+  DELETED = "DELETED",
+  DRAFT = "DRAFT",
+}
+
 export type ExerciseTag = {
   id: string;
   name: string;

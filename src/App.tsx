@@ -1,4 +1,6 @@
-import ComposePage from "@/pages/compose/ComposePage.tsx";
+import { Page404 } from "@/components/404.tsx";
+import ProtectedRoute from "@/components/ProtectedRoute";
+import { ExerciseSheetPage } from "@/pages/exerciseSheets/ExerciseSheetPage";
 import Login from "@/pages/Login.tsx";
 import RegisterPage from "@/pages/RegisterPage.tsx";
 import { useAtom } from "jotai";
@@ -9,8 +11,6 @@ import Layout from "./Layout";
 import { pages } from "./pages";
 import ExerciseDetails from "./pages/ExerciseDetails";
 import { userAtom } from "./util/atoms";
-import { Page404 } from "@/components/404.tsx";
-import ProtectedRoute from "@/components/ProtectedRoute";
 
 function App() {
   const [user, setUser] = useAtom(userAtom);
@@ -62,13 +62,13 @@ function App() {
             />
           ))}
           <Route path={"/exercise/:id"} element={<ExerciseDetails />} />
-          <Route 
-            path={"/exercise-compose/:id"} 
+          <Route
+            path={"/exercise-compose/:id"}
             element={
               <ProtectedRoute roles={["EXERCISE_SHEET"]}>
-                <ComposePage />
+                <ExerciseSheetPage />
               </ProtectedRoute>
-            } 
+            }
           />
           <Route path="*" element={<Page404 />} />
         </Route>
