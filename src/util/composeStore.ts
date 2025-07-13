@@ -6,7 +6,7 @@ export enum ExerciseView {
   CARD = "card",
   LIST = "list",
 }
-type ComposeView = ExerciseAgeGroup | "all";
+export type ComposeView = ExerciseAgeGroup | "all";
 type TState = {
   selectedContainer: string | null;
   selectedOrder: number | null;

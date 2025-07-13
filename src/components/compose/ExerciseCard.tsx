@@ -1,5 +1,5 @@
 import { ExerciseListElemFragment } from "@/generated/graphql";
-import { composeStore, ExerciseView } from "@/util/composeStore";
+import { composeStore } from "@/util/composeStore";
 import { COMPOSE_HEIGHT } from "@/util/const";
 import { UniqueIdentifier } from "@dnd-kit/core";
 import {
@@ -15,7 +15,6 @@ import {
 import { FC, memo, useContext, useMemo } from "react";
 import { MdEdit, MdOutlineImage } from "react-icons/md";
 import { Link } from "react-router-dom";
-import ExerciseId from "../ExerciseId.tsx";
 import { ImageViewer } from "../ImageViewer";
 import { KaTeX } from "../Katex";
 import { ContainerContext } from "./Container";
@@ -28,9 +27,8 @@ const ExerciseCardComponent: FC<{
   const containerId = useContext(ContainerContext);
   const isTalon = !containerId || containerId === "talon";
   const view = composeStore((state) => state.view);
-  const exerciseView = composeStore((state) => state.exerciseView);
   const isSingleView = view !== "all";
-  const isDetailedView = exerciseView === ExerciseView.LIST && view !== "all";
+  const isDetailedView = false && view !== "all";
 
   const difficultiesElem = useMemo(
     () =>
@@ -43,11 +41,7 @@ const ExerciseCardComponent: FC<{
   );
 
   const height =
-    exerciseView === ExerciseView.CARD
-      ? view === "all"
-        ? COMPOSE_HEIGHT.SHORT - 4
-        : COMPOSE_HEIGHT.TALL - 4
-      : "fit-content";
+    view === "all" ? COMPOSE_HEIGHT.SHORT - 2 : COMPOSE_HEIGHT.TALL - 2;
 
   return (
     <Tooltip
@@ -63,11 +57,11 @@ const ExerciseCardComponent: FC<{
           borderRadius: 1,
           padding: 1,
           paddingBottom: 1.5,
-          cursor: exerciseView === ExerciseView.CARD ? "pointer" : "default",
+          cursor: "pointer",
           userSelect: isDetailedView ? "auto" : "none",
-          borderColor: "divider",
-          borderWidth: 1,
-          borderStyle: "solid",
+          // borderColor: "divider",
+          // borderWidth: 1,
+          // borderStyle: "solid",
         }}
       >
         <Stack p={isSingleView ? 1 : 0}>
@@ -77,13 +71,9 @@ const ExerciseCardComponent: FC<{
             alignItems={"center"}
             gap={1}
           >
-            {exerciseView === ExerciseView.LIST ? (
-              <ExerciseId>{exercise.id}</ExerciseId>
-            ) : (
-              <Typography variant="caption" whiteSpace={"nowrap"}>
-                #{exercise.id}
-              </Typography>
-            )}
+            <Typography variant="caption" whiteSpace={"nowrap"}>
+              #{exercise.id}
+            </Typography>
             <Stack
               flexShrink={0}
               justifyContent={"center"}
@@ -130,18 +120,8 @@ const ExerciseCardComponent: FC<{
                   textOverflow: "ellipsis",
                   display: "-webkit-box",
                   my: 0.5,
-                  WebkitLineClamp:
-                    view === "all"
-                      ? "1"
-                      : exerciseView === ExerciseView.CARD
-                        ? "3"
-                        : "unset",
-                  maxHeight:
-                    view === "all"
-                      ? 1 * 1.3 + "rem"
-                      : exerciseView === ExerciseView.CARD
-                        ? 3 * 1.3 + "rem"
-                        : "unset",
+                  WebkitLineClamp: view === "all" ? "1" : "3",
+                  maxHeight: view === "all" ? 1 * 1.3 + "rem" : 3 * 1.3 + "rem",
                   WebkitBoxOrient: "vertical",
                 }}
               >

@@ -90,7 +90,12 @@ export const Item: FC<{
     () => (
       <Box position={"relative"}>
         {id && data?.exercise && (
-          <motion.div layout layoutId={cardId} style={{ zIndex: 100 }}>
+          <motion.div
+            layout
+            id={`${view}-${cardId}`}
+            layoutId={`${view}-${cardId}`}
+            style={{ zIndex: 100 }}
+          >
             <ExerciseCard id={id} exercise={data.exercise} />
           </motion.div>
         )}
@@ -99,26 +104,33 @@ export const Item: FC<{
         </Box>
       </Box>
     ),
-    [cardId, data?.exercise, height, id, order],
+    [cardId, data?.exercise, height, id, order, view],
   );
 
   if (loading) {
-    return <Skeleton width={"100%"} height={height} />;
+    return (
+      <Skeleton
+        width={"100%"}
+        height={height}
+        sx={{ minHeight: COMPOSE_HEIGHT.SHORT }}
+      />
+    );
   }
 
   return (
     <Box
       width={"100%"}
       height={height}
+      minHeight={COMPOSE_HEIGHT.SHORT}
       sx={{
         transition: "0.2s",
         borderRadius: 1,
         border:
           containerId === selectedContainer && order === selectedOrder
-            ? "2px solid highlight"
-            : "2px solid transparent",
+            ? "1px solid highlight"
+            : "1px solid #e0e0e0",
         ":hover": selectedContainer && {
-          border: "2px solid highlight",
+          border: "1px solid highlight",
           cursor: exerciseView === ExerciseView.CARD ? "pointer" : "default",
         },
       }}
