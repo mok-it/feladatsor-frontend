@@ -5,6 +5,7 @@ import {
 import { LoginLayout } from "@/layout/LoginLayout.tsx";
 import { tokenAtom, userAtom } from "@/util/atoms";
 import { auth, authProvider } from "@/util/firebase";
+import { LoadingButton } from "@mui/lab";
 import { Button, Divider, Stack, TextField, Typography } from "@mui/material";
 import { AuthError, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { useSetAtom } from "jotai";
@@ -116,14 +117,14 @@ const Login: FC = () => {
             type="password"
             size="small"
           />
-          <Button
+          <LoadingButton
             type="submit"
             variant="contained"
             fullWidth
-            disabled={emailAuthLoading}
+            loading={emailAuthLoading}
           >
             Bejelentkezés
-          </Button>
+          </LoadingButton>
         </Stack>
       </form>
       <Divider />
