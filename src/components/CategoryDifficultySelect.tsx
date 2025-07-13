@@ -85,7 +85,7 @@ export const ColorRadioButtons = ({
         onChange={() => propHandleChange(selectedValue === "0" ? "1" : "0")}
       />
       <Typography
-        sx={{ width: "95px" }}
+        sx={{ width: "95px", overflow: "hidden", textOverflow: "ellipsis" }}
         color={selectedValue === "0" ? "text.disabled" : undefined}
       >
         {name}
