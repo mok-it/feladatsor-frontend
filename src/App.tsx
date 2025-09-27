@@ -16,6 +16,10 @@ function App() {
   const [user, setUser] = useAtom(userAtom);
 
   useEffect(() => {
+    fetch('http://localhost:8080/graphql', { method: 'HEAD' }).catch(() => {});
+  }, []);
+
+  useEffect(() => {
     if (!user) {
       const timeout = setTimeout(() => {
         setUser({ isLoggedIn: false, user: null });
