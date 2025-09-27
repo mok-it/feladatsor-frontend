@@ -255,10 +255,21 @@ const ExerciseDetailsForm: FC<{ updateSignal: boolean }> = ({
         <Stack direction="row" alignItems="center" gap={1} sx={{ flexGrow: 1 }}>
           <Typography variant="h4">Feladat</Typography>
           <ExerciseId>{id}</ExerciseId>
+          {exercise.originalId && (
+            <>
+              <Typography variant="body2" color="text.secondary">
+                régi ID: {exercise.originalId}
+              </Typography>
+            </>
+          )}
         </Stack>
         <Stack direction={{ xs: "column", sm: "row" }} gap={1}>
-          <Tooltip 
-            title={!canCloneExercises ? "Nincs jogosultságod feladatok duplikálásához. Szükséges jogosultság: CLONE_EXERCISE" : ""}
+          <Tooltip
+            title={
+              !canCloneExercises
+                ? "Nincs jogosultságod feladatok duplikálásához. Szükséges jogosultság: CLONE_EXERCISE"
+                : ""
+            }
             arrow
             placement="top"
           >

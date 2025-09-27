@@ -36,6 +36,7 @@ query selectExercises {
 query selectExercise($exerciseId: ID!) {
   exercise(id: $exerciseId) {
     id
+    originalId
     status
     alert {
       description

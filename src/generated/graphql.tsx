@@ -64,6 +64,7 @@ export type Exercise = {
   history: Array<ExerciseHistory>;
   id: Scalars['ID']['output'];
   isCompetitionFinal?: Maybe<Scalars['Boolean']['output']>;
+  originalId?: Maybe<Scalars['String']['output']>;
   sameLogicExerciseGroup?: Maybe<SameLogicExerciseGroup>;
   solution: Scalars['String']['output'];
   solutionImage?: Maybe<Image>;
@@ -229,6 +230,7 @@ export type ExerciseSheet = {
   id: Scalars['ID']['output'];
   name: Scalars['String']['output'];
   sheetItems: Array<ExerciseSheetItem>;
+  status: ExerciseSheetStatus;
   talonItems: Array<OrderedExercise>;
   updatedAt: Scalars['String']['output'];
 };
@@ -251,6 +253,12 @@ export type ExerciseSheetItemInput = {
   exercises: Array<OrderedExerciseInput>;
   level: Scalars['Int']['input'];
 };
+
+export type ExerciseSheetStatus =
+  | 'APPROVED'
+  | 'CREATED'
+  | 'DELETED'
+  | 'DRAFT';
 
 export type ExerciseStatus =
   | 'APPROVED'
@@ -621,6 +629,7 @@ export type Tag = {
 export type UpdateExerciseSheetInput = {
   name?: InputMaybe<Scalars['String']['input']>;
   sheetItems?: InputMaybe<Array<ExerciseSheetItemInput>>;
+  status?: InputMaybe<ExerciseSheetStatus>;
   talonItems?: InputMaybe<Array<OrderedExerciseInput>>;
 };
 
@@ -772,7 +781,7 @@ export type SelectExerciseQueryVariables = Exact<{
 }>;
 
 
-export type SelectExerciseQuery = { __typename: 'Query', exercise?: { __typename: 'Exercise', id: string, status: ExerciseStatus, description: string, solutionOptions: Array<string>, solution: string, solveIdea?: string | null, source?: string | null, createdAt: string, helpingQuestions: Array<string>, alert?: { __typename: 'ExerciseAlert', description: string, severity: AlertSeverity } | null, sameLogicExerciseGroup?: { __typename: 'SameLogicExerciseGroup', exercises: Array<{ __typename: 'Exercise', id: string, description: string, createdAt: string, difficulty: Array<{ __typename: 'ExerciseDifficulty', difficulty: number, ageGroup: ExerciseAgeGroup }>, exerciseImage?: { __typename: 'Image', url: string } | null, tags: Array<{ __typename: 'Tag', id: string, name: string }>, createdBy: { __typename: 'User', id: string, userName: string, avatarUrl?: string | null } }> } | null, exerciseImage?: { __typename: 'Image', id: string, url: string } | null, solutionImage?: { __typename: 'Image', id: string, url: string } | null, createdBy: { __typename: 'User', id: string, name: string, avatarUrl?: string | null }, contributors: Array<{ __typename: 'User', id: string, name: string, avatarUrl?: string | null }>, solveIdeaImage?: { __typename: 'Image', id: string, url: string } | null, tags: Array<{ __typename: 'Tag', id: string, name: string }>, difficulty: Array<{ __typename: 'ExerciseDifficulty', ageGroup: ExerciseAgeGroup, difficulty: number }>, checks: Array<{ __typename: 'ExerciseCheck', id: string, type: ExerciseCheckType, createdAt: string, updatedAt: string, user: { __typename: 'User', id: string, name: string }, contributors: Array<{ __typename: 'User', id: string, name: string, avatarUrl?: string | null }> }> } | null };
+export type SelectExerciseQuery = { __typename: 'Query', exercise?: { __typename: 'Exercise', id: string, originalId?: string | null, status: ExerciseStatus, description: string, solutionOptions: Array<string>, solution: string, solveIdea?: string | null, source?: string | null, createdAt: string, helpingQuestions: Array<string>, alert?: { __typename: 'ExerciseAlert', description: string, severity: AlertSeverity } | null, sameLogicExerciseGroup?: { __typename: 'SameLogicExerciseGroup', exercises: Array<{ __typename: 'Exercise', id: string, description: string, createdAt: string, difficulty: Array<{ __typename: 'ExerciseDifficulty', difficulty: number, ageGroup: ExerciseAgeGroup }>, exerciseImage?: { __typename: 'Image', url: string } | null, tags: Array<{ __typename: 'Tag', id: string, name: string }>, createdBy: { __typename: 'User', id: string, userName: string, avatarUrl?: string | null } }> } | null, exerciseImage?: { __typename: 'Image', id: string, url: string } | null, solutionImage?: { __typename: 'Image', id: string, url: string } | null, createdBy: { __typename: 'User', id: string, name: string, avatarUrl?: string | null }, contributors: Array<{ __typename: 'User', id: string, name: string, avatarUrl?: string | null }>, solveIdeaImage?: { __typename: 'Image', id: string, url: string } | null, tags: Array<{ __typename: 'Tag', id: string, name: string }>, difficulty: Array<{ __typename: 'ExerciseDifficulty', ageGroup: ExerciseAgeGroup, difficulty: number }>, checks: Array<{ __typename: 'ExerciseCheck', id: string, type: ExerciseCheckType, createdAt: string, updatedAt: string, user: { __typename: 'User', id: string, name: string }, contributors: Array<{ __typename: 'User', id: string, name: string, avatarUrl?: string | null }> }> } | null };
 
 export type ExerciseHistoryByExerciseQueryVariables = Exact<{
   exerciseId: Scalars['ID']['input'];
@@ -1589,6 +1598,7 @@ export const SelectExerciseDocument = gql`
     query selectExercise($exerciseId: ID!) {
   exercise(id: $exerciseId) {
     id
+    originalId
     status
     alert {
       description
