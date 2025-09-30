@@ -1,38 +1,3 @@
-# Write your query or mutation here
-query selectExercises {
-  exercises(take: 10, skip: 0) {
-    id
-    description
-    solution
-    helpingQuestions
-    source
-    difficulty {
-      difficulty
-      ageGroup
-    }
-    history {
-      id
-      exercise {
-        id
-      }
-    }
-    checks {
-      id
-      user {
-        id
-        name
-      }
-      type
-    }
-    createdBy {
-      id
-      name
-    }
-    createdAt
-    updatedAt
-  }
-}
-
 query selectExercise($exerciseId: ID!) {
   exercise(id: $exerciseId) {
     id

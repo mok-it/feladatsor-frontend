@@ -571,6 +571,8 @@ export type QueryExerciseTagArgs = {
 
 
 export type QueryExercisesArgs = {
+  createdAtFrom?: InputMaybe<Scalars['String']['input']>;
+  createdAtTo?: InputMaybe<Scalars['String']['input']>;
   skip: Scalars['Int']['input'];
   take: Scalars['Int']['input'];
 };
@@ -771,11 +773,6 @@ export type DeleteExerciseTagMutationVariables = Exact<{
 
 export type DeleteExerciseTagMutation = { __typename: 'Mutation', deleteExerciseTag: boolean };
 
-export type SelectExercisesQueryVariables = Exact<{ [key: string]: never; }>;
-
-
-export type SelectExercisesQuery = { __typename: 'Query', exercises: Array<{ __typename: 'Exercise', id: string, description: string, solution: string, helpingQuestions: Array<string>, source?: string | null, createdAt: string, updatedAt: string, difficulty: Array<{ __typename: 'ExerciseDifficulty', difficulty: number, ageGroup: ExerciseAgeGroup }>, history: Array<{ __typename: 'ExerciseHistory', id: string, exercise: { __typename: 'Exercise', id: string } }>, checks: Array<{ __typename: 'ExerciseCheck', id: string, type: ExerciseCheckType, user: { __typename: 'User', id: string, name: string } }>, createdBy: { __typename: 'User', id: string, name: string } }> };
-
 export type SelectExerciseQueryVariables = Exact<{
   exerciseId: Scalars['ID']['input'];
 }>;
@@ -807,6 +804,16 @@ export type ExerciseTagsQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type ExerciseTagsQuery = { __typename: 'Query', flatExerciseTags: Array<{ __typename: 'ExerciseTag', id: string, name: string, exerciseCount: number, children: Array<{ __typename: 'ExerciseTag', id: string }> }> };
 
+export type SelectExercisesQueryVariables = Exact<{
+  skip: Scalars['Int']['input'];
+  take: Scalars['Int']['input'];
+  createdAtFrom?: InputMaybe<Scalars['String']['input']>;
+  createdAtTo?: InputMaybe<Scalars['String']['input']>;
+}>;
+
+
+export type SelectExercisesQuery = { __typename: 'Query', exercises: Array<{ __typename: 'Exercise', id: string, description: string, createdBy: { __typename: 'User', id: string, name: string, userName: string, avatarUrl?: string | null }, contributors: Array<{ __typename: 'User', id: string, name: string, userName: string, avatarUrl?: string | null }> }> };
+
 export type ExportExcelMutationVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -826,6 +833,8 @@ export type ExerciseHistoryFragment = { __typename: 'ExerciseHistory', id: strin
 export type ExerciseListElemFragment = { __typename: 'Exercise', id: string, description: string, status: ExerciseStatus, helpingQuestions: Array<string>, solutionOptions: Array<string>, solution: string, createdAt: string, exerciseImage?: { __typename: 'Image', url: string } | null, difficulty: Array<{ __typename: 'ExerciseDifficulty', ageGroup: ExerciseAgeGroup, difficulty: number }>, tags: Array<{ __typename: 'Tag', id: string, name: string }>, checks: Array<{ __typename: 'ExerciseCheck', id: string, type: ExerciseCheckType, createdAt: string, updatedAt: string, user: { __typename: 'User', id: string, name: string }, contributors: Array<{ __typename: 'User', id: string, name: string, avatarUrl?: string | null }> }> };
 
 export type SameLogicExerciseFragment = { __typename: 'Exercise', id: string, description: string, createdAt: string, difficulty: Array<{ __typename: 'ExerciseDifficulty', difficulty: number, ageGroup: ExerciseAgeGroup }>, exerciseImage?: { __typename: 'Image', url: string } | null, tags: Array<{ __typename: 'Tag', id: string, name: string }>, createdBy: { __typename: 'User', id: string, userName: string, avatarUrl?: string | null } };
+
+export type SimpleUserFragment = { __typename: 'User', id: string, name: string, userName: string, avatarUrl?: string | null };
 
 export type FunkyPoolQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -1095,6 +1104,14 @@ export const SameLogicExerciseFragmentDoc = gql`
     userName
     avatarUrl
   }
+}
+    `;
+export const SimpleUserFragmentDoc = gql`
+    fragment SimpleUser on User {
+  id
+  name
+  userName
+  avatarUrl
 }
     `;
 export const UserExerciseFragmentDoc = gql`
@@ -1527,73 +1544,6 @@ export function useDeleteExerciseTagMutation(baseOptions?: Apollo.MutationHookOp
 export type DeleteExerciseTagMutationHookResult = ReturnType<typeof useDeleteExerciseTagMutation>;
 export type DeleteExerciseTagMutationResult = Apollo.MutationResult<DeleteExerciseTagMutation>;
 export type DeleteExerciseTagMutationOptions = Apollo.BaseMutationOptions<DeleteExerciseTagMutation, DeleteExerciseTagMutationVariables>;
-export const SelectExercisesDocument = gql`
-    query selectExercises {
-  exercises(take: 10, skip: 0) {
-    id
-    description
-    solution
-    helpingQuestions
-    source
-    difficulty {
-      difficulty
-      ageGroup
-    }
-    history {
-      id
-      exercise {
-        id
-      }
-    }
-    checks {
-      id
-      user {
-        id
-        name
-      }
-      type
-    }
-    createdBy {
-      id
-      name
-    }
-    createdAt
-    updatedAt
-  }
-}
-    `;
-
-/**
- * __useSelectExercisesQuery__
- *
- * To run a query within a React component, call `useSelectExercisesQuery` and pass it any options that fit your needs.
- * When your component renders, `useSelectExercisesQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useSelectExercisesQuery({
- *   variables: {
- *   },
- * });
- */
-export function useSelectExercisesQuery(baseOptions?: Apollo.QueryHookOptions<SelectExercisesQuery, SelectExercisesQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<SelectExercisesQuery, SelectExercisesQueryVariables>(SelectExercisesDocument, options);
-      }
-export function useSelectExercisesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SelectExercisesQuery, SelectExercisesQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<SelectExercisesQuery, SelectExercisesQueryVariables>(SelectExercisesDocument, options);
-        }
-export function useSelectExercisesSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<SelectExercisesQuery, SelectExercisesQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useSuspenseQuery<SelectExercisesQuery, SelectExercisesQueryVariables>(SelectExercisesDocument, options);
-        }
-export type SelectExercisesQueryHookResult = ReturnType<typeof useSelectExercisesQuery>;
-export type SelectExercisesLazyQueryHookResult = ReturnType<typeof useSelectExercisesLazyQuery>;
-export type SelectExercisesSuspenseQueryHookResult = ReturnType<typeof useSelectExercisesSuspenseQuery>;
-export type SelectExercisesQueryResult = Apollo.QueryResult<SelectExercisesQuery, SelectExercisesQueryVariables>;
 export const SelectExerciseDocument = gql`
     query selectExercise($exerciseId: ID!) {
   exercise(id: $exerciseId) {
@@ -1894,6 +1844,61 @@ export type ExerciseTagsQueryHookResult = ReturnType<typeof useExerciseTagsQuery
 export type ExerciseTagsLazyQueryHookResult = ReturnType<typeof useExerciseTagsLazyQuery>;
 export type ExerciseTagsSuspenseQueryHookResult = ReturnType<typeof useExerciseTagsSuspenseQuery>;
 export type ExerciseTagsQueryResult = Apollo.QueryResult<ExerciseTagsQuery, ExerciseTagsQueryVariables>;
+export const SelectExercisesDocument = gql`
+    query selectExercises($skip: Int!, $take: Int!, $createdAtFrom: String, $createdAtTo: String) {
+  exercises(
+    skip: $skip
+    take: $take
+    createdAtFrom: $createdAtFrom
+    createdAtTo: $createdAtTo
+  ) {
+    id
+    description
+    createdBy {
+      ...SimpleUser
+    }
+    contributors {
+      ...SimpleUser
+    }
+  }
+}
+    ${SimpleUserFragmentDoc}`;
+
+/**
+ * __useSelectExercisesQuery__
+ *
+ * To run a query within a React component, call `useSelectExercisesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSelectExercisesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useSelectExercisesQuery({
+ *   variables: {
+ *      skip: // value for 'skip'
+ *      take: // value for 'take'
+ *      createdAtFrom: // value for 'createdAtFrom'
+ *      createdAtTo: // value for 'createdAtTo'
+ *   },
+ * });
+ */
+export function useSelectExercisesQuery(baseOptions: Apollo.QueryHookOptions<SelectExercisesQuery, SelectExercisesQueryVariables> & ({ variables: SelectExercisesQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<SelectExercisesQuery, SelectExercisesQueryVariables>(SelectExercisesDocument, options);
+      }
+export function useSelectExercisesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SelectExercisesQuery, SelectExercisesQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<SelectExercisesQuery, SelectExercisesQueryVariables>(SelectExercisesDocument, options);
+        }
+export function useSelectExercisesSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<SelectExercisesQuery, SelectExercisesQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<SelectExercisesQuery, SelectExercisesQueryVariables>(SelectExercisesDocument, options);
+        }
+export type SelectExercisesQueryHookResult = ReturnType<typeof useSelectExercisesQuery>;
+export type SelectExercisesLazyQueryHookResult = ReturnType<typeof useSelectExercisesLazyQuery>;
+export type SelectExercisesSuspenseQueryHookResult = ReturnType<typeof useSelectExercisesSuspenseQuery>;
+export type SelectExercisesQueryResult = Apollo.QueryResult<SelectExercisesQuery, SelectExercisesQueryVariables>;
 export const ExportExcelDocument = gql`
     mutation ExportExcel {
   exportExcel {

@@ -20,6 +20,8 @@ import { HomePage } from "./pages/HomePage";
 import { TagsPage } from "./pages/TagsPage.tsx";
 import { CreateExercise } from "./pages/createExercise/CreateExercise.tsx";
 import { Role } from "@/generated/graphql";
+import { IoMdPaper } from "react-icons/io";
+import { ReportingPage } from "@/pages/Reporting/ReportingPage.tsx";
 
 interface Page {
   name: string;
@@ -93,6 +95,13 @@ export const pages: Page[] = [
     component: AdminPage,
     icon: FaUsers,
     requiredRoles: ["ADMIN"], // ADMIN role required
+  },
+  {
+    name: "Reportok",
+    path: "/reports",
+    component: ReportingPage,
+    icon: IoMdPaper,
+    requiredRoles: ["USER"], // USER role required to access reports
   },
   {
     name: "Cimkék",
