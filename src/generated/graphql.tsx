@@ -125,12 +125,6 @@ export type ExerciseCheckRole =
   | 'LECTOR'
   | 'PROFESSIONAL';
 
-export type ExerciseCheckStatus =
-  | 'CHANGE_REQUIRED'
-  | 'GOOD'
-  | 'TO_BE_CHECKED'
-  | 'TO_DELETE';
-
 export type ExerciseCheckType =
   | 'CHANGE_REQUIRED'
   | 'GOOD'
@@ -211,7 +205,6 @@ export type ExerciseInput = {
 };
 
 export type ExerciseSearchQuery = {
-  checkStatus?: InputMaybe<ExerciseCheckStatus>;
   difficulty?: InputMaybe<Array<ExerciseDifficultyRange>>;
   excludeTags?: InputMaybe<Array<Scalars['ID']['input']>>;
   exerciseCheck?: InputMaybe<ExerciseCheckFilter>;
@@ -221,7 +214,6 @@ export type ExerciseSearchQuery = {
   orderDirection?: InputMaybe<OrderDirection>;
   queryStr?: InputMaybe<Scalars['String']['input']>;
   skip: Scalars['Int']['input'];
-  status?: InputMaybe<ExerciseStatus>;
   take: Scalars['Int']['input'];
 };
 

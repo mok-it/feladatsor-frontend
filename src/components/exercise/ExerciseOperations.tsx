@@ -1,7 +1,7 @@
 import { FC, useCallback, useEffect, useMemo, useState } from "react";
-import { Card, Divider, Typography, Stack, Box } from "@mui/material";
+import { Box, Card, Divider, Stack, Typography } from "@mui/material";
 import { useSnackbar } from "notistack";
-import { orderBy, union, uniqBy } from "lodash";
+import { orderBy, union } from "lodash";
 import dayjs from "dayjs";
 
 import {
@@ -12,34 +12,6 @@ import {
   useDeleteExerciseCommentMutation,
   useExerciseHistoryByExerciseQuery,
 } from "@/generated/graphql";
-import { userAtom } from "@/util/atoms";
-import { translateCheck, translateFieldName } from "@/util/const";
-import { ExerciseStatusEnum } from "@/util/types";
-import {
-  Button,
-  Card,
-  Divider,
-  IconButton,
-  MenuItem,
-  Select,
-  TextField,
-  Typography,
-} from "@mui/material";
-import { Box, Stack } from "@mui/system";
-import dayjs from "dayjs";
-import { motion } from "framer-motion";
-import { useAtomValue } from "jotai";
-import { orderBy, union } from "lodash";
-import { useSnackbar } from "notistack";
-import { FC, useCallback, useEffect, useMemo, useState } from "react";
-import { FaArrowRight } from "react-icons/fa6";
-import { IoHourglassOutline } from "react-icons/io5";
-import {
-  MdArrowDownward,
-  MdCheckCircle,
-  MdOutlineDelete,
-  MdSend,
-} from "react-icons/md";
 
 import { Checks } from "../Checks";
 import { AlertDialog } from "../Dialog";
@@ -58,7 +30,8 @@ export const ExerciseOperations: FC<{
   const { enqueueSnackbar } = useSnackbar();
   const [sort, setSort] = useState<"asc" | "desc">("desc");
   const [commentToDelete, setCommentToDelete] = useState<string | null>(null);
-  const [commentToEdit, setCommentToEdit] = useState<ExerciseCommentFragment | null>(null);
+  const [commentToEdit, setCommentToEdit] =
+    useState<ExerciseCommentFragment | null>(null);
   const [newChecks, setNewChecks] = useState<ExerciseCheckFragment[]>([]);
 
   const {
@@ -170,12 +143,7 @@ export const ExerciseOperations: FC<{
             <Typography component="div" sx={{ color: "text.primary", mb: 1 }}>
               {exercise.contributors.length > 0 ? "Beküldők " : "Beküldő"}
             </Typography>
-            <Stack
-              direction="row"
-              gap={1}
-              alignItems="center"
-              flexWrap="wrap"
-            >
+            <Stack direction="row" gap={1} alignItems="center" flexWrap="wrap">
               <UserItem user={exercise.createdBy} />
               {exercise.contributors.map((user) => (
                 <UserItem key={user.id} user={user} />

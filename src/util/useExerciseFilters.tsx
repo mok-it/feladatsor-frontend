@@ -83,7 +83,7 @@ export const useExerciseFilters = (props?: { checkStatus: boolean }) => {
             <Tooltip
               title={"Nincs még elfogadva, és negatív visszajelzést sem kapott"}
             >
-              <ToggleButton value={"TO_BE_CHECKED"} color="primary">
+              <ToggleButton value={"NEEDS_TO_BE_CHECKED"} color="primary">
                 Ellenőrizendő
               </ToggleButton>
             </Tooltip>
