@@ -38,6 +38,7 @@ export const ExerciseCheckPage = () => {
               orderDirection: order === "asc" ? "ASC" : "DESC",
               includeTags: exerciseQuery.includeTags,
               excludeTags: exerciseQuery.excludeTags,
+              exerciseCheck: exerciseQuery.checkStatus || undefined,
             },
           },
         });
@@ -49,9 +50,10 @@ export const ExerciseCheckPage = () => {
       [
         getData,
         difficulty,
+        exerciseQuery.searchQuery,
         exerciseQuery.includeTags,
         exerciseQuery.excludeTags,
-        exerciseQuery.searchQuery,
+        exerciseQuery.checkStatus,
         orderBy,
         order,
       ],

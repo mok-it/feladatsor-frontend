@@ -1,7 +1,7 @@
 import { FC, useCallback, useEffect, useMemo, useState } from "react";
-import { Card, Divider, Typography, Stack, Box } from "@mui/material";
+import { Box, Card, Divider, Stack, Typography } from "@mui/material";
 import { useSnackbar } from "notistack";
-import { orderBy, union, uniqBy } from "lodash";
+import { orderBy, union } from "lodash";
 import dayjs from "dayjs";
 
 import {
@@ -30,7 +30,8 @@ export const ExerciseOperations: FC<{
   const { enqueueSnackbar } = useSnackbar();
   const [sort, setSort] = useState<"asc" | "desc">("desc");
   const [commentToDelete, setCommentToDelete] = useState<string | null>(null);
-  const [commentToEdit, setCommentToEdit] = useState<ExerciseCommentFragment | null>(null);
+  const [commentToEdit, setCommentToEdit] =
+    useState<ExerciseCommentFragment | null>(null);
   const [newChecks, setNewChecks] = useState<ExerciseCheckFragment[]>([]);
 
   const {
@@ -82,11 +83,6 @@ export const ExerciseOperations: FC<{
     sort,
   ]);
 
-  const checks = uniqBy(
-    orderBy(union(exercise.checks, newChecks), "createdAt", "desc"),
-    (item) => item.user.id,
-  );
-
   const handleCommentDelete = useCallback(
     async (commentId: string) => {
       await deleteComment({
@@ -113,21 +109,21 @@ export const ExerciseOperations: FC<{
         secondaryClick={() => setCommentToDelete(null)}
         primaryClick={() => handleCommentDelete(commentToDelete!)}
       />
-      
+
       <Card sx={{ borderRadius: { xs: 0, md: 1 } }}>
         <Stack p={2} gap={2}>
           <ExerciseStatusSelector
             exerciseId={exerciseId}
             currentStatus={exercise.status}
           />
-          
+
           <Divider sx={{ mx: -2 }} />
-          
+
           <Stack direction="row" alignItems="center" gap={0.5}>
             <Typography variant="body1" mr={1}>
               Ellenőrzések
             </Typography>
-            <Checks data={checks} />
+            <Checks data={union(exercise.checks, newChecks)} />
             <Box flexGrow={1} />
             <ExerciseChecks
               exerciseId={exercise.id}
@@ -136,7 +132,7 @@ export const ExerciseOperations: FC<{
               }}
             />
           </Stack>
-          
+
           <Stack direction="row" alignItems="center" gap={0.5}>
             <Typography variant="body1" mr={1}>
               Lektorálások
@@ -147,19 +143,14 @@ export const ExerciseOperations: FC<{
             <Typography component="div" sx={{ color: "text.primary", mb: 1 }}>
               {exercise.contributors.length > 0 ? "Beküldők " : "Beküldő"}
             </Typography>
-            <Stack
-              direction="row"
-              gap={1}
-              alignItems="center"
-              flexWrap="wrap"
-            >
+            <Stack direction="row" gap={1} alignItems="center" flexWrap="wrap">
               <UserItem user={exercise.createdBy} />
               {exercise.contributors.map((user) => (
                 <UserItem key={user.id} user={user} />
               ))}
             </Stack>
           </Box>
-          
+
           <Stack
             direction="row"
             justifyContent="space-between"
@@ -172,16 +163,16 @@ export const ExerciseOperations: FC<{
               {dayjs(+exercise?.createdAt).format("YYYY. MM. DD. HH.mm")}
             </Typography>
           </Stack>
-          
+
           <Divider sx={{ mx: -2 }} />
-          
+
           <ExerciseCommentSection
             exerciseId={exerciseId}
             onCommentCreated={refetchComments}
             editComment={commentToEdit}
             onEditComment={setCommentToEdit}
           />
-          
+
           <HistoryList
             history={history}
             sort={sort}
