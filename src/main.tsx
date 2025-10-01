@@ -10,7 +10,7 @@ import { setContext } from "@apollo/client/link/context";
 import { onError } from "@apollo/client/link/error";
 import { useAtomValue } from "jotai";
 import { truncate } from "lodash";
-import { SnackbarProvider, useSnackbar, closeSnackbar } from "notistack";
+import { closeSnackbar, SnackbarProvider, useSnackbar } from "notistack";
 import React, { useMemo } from "react";
 import ReactDOM from "react-dom/client";
 import App from "./App.tsx";
@@ -30,7 +30,7 @@ const AppWithApollo = () => {
       graphQLErrors.forEach((error) => {
         enqueueSnackbar({
           variant: "error",
-          message: `[${error.message ?? "GraphQL"}] ${truncate(error.message, { length: 100 })}`,
+          message: truncate(error.message, { length: 100 }),
           autoHideDuration: 5000,
         });
       });
