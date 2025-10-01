@@ -44,9 +44,12 @@ const names: Partial<Record<keyof Exercise, string>> = {
   difficulty: "Nehézség",
   description: "Leírás",
   helpingQuestions: "Segítő kérdések",
-  exerciseImage: "Kép",
+  exerciseImage: "Feladat kép",
+  contributors: "Közreműködők",
   solution: "Megoldás",
+  solutionImage: "Megoldás kép",
   solveIdea: "Ötlet a megoldáshoz",
+  solveIdeaImage: "Ötlet kép",
   tags: "Címkék",
   status: "Státusz",
 };

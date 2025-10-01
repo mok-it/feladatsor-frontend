@@ -2,6 +2,22 @@
 
 A MÖK feladatbeküldő és feladatsor-összeállító rendszere.
 
+## Deployments
+
+### Development (DEV)
+
+A development version is automatically built and deployed from the main and is available at the following url:
+
+https://feladatsor-dev.web.app/
+
+### Production (PROD)
+
+A production version is automatically built and deployed from the main branch when a new version tag is created. It is available at the following url:
+
+https://feladatsor.web.app/
+
+The **DEV** and **PROD** builds of the app connect to different corresponding backend environments.
+
 ## Setup
 
 - Install dependencies: `yarn`

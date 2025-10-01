@@ -1,0 +1,22 @@
+query selectExercises(
+  $skip: Int!
+  $take: Int!
+  $createdAtFrom: String
+  $createdAtTo: String
+) {
+  exercises(
+    skip: $skip
+    take: $take
+    createdAtFrom: $createdAtFrom
+    createdAtTo: $createdAtTo
+  ) {
+    id
+    description
+    createdBy {
+      ...SimpleUser
+    }
+    contributors {
+      ...SimpleUser
+    }
+  }
+}

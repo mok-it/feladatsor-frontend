@@ -1,0 +1,22 @@
+# Deploy to Firebase Hosting PROD on version release
+
+name: Deploy to Firebase Hosting PROD
+"on":
+  release:
+    types: [published]
+jobs:
+  build_and_deploy_prod:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: yarn build
+        env:
+          VITE_APP_GRAPHQL_ENDPOINT: ${{ vars.VITE_APP_GRAPHQL_ENDPOINT }}
+          VITE_APP_ENDPOINT: ${{ vars.VITE_APP_ENDPOINT }}
+      - name: Install Firebase CLI
+        run: npm install -g firebase-tools
+      - name: Deploy to Firebase Hosting PROD
+        run: |
+          echo '${{ secrets.FIREBASE_SERVICE_ACCOUNT_FELADATSOR_15604 }}' > /tmp/firebase-service-account.json
+          export GOOGLE_APPLICATION_CREDENTIALS="/tmp/firebase-service-account.json"
+          firebase deploy --only hosting:prod --project feladatsor-15604

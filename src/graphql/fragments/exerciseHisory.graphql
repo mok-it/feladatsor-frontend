@@ -1,9 +1,53 @@
 fragment ExerciseHistory on ExerciseHistory {
   id
   field
-  oldValue
-  newValue
+  oldValue {
+    ... on Image {
+      id
+      url
+    }
+    ... on HistoryStringValue {
+      value
+    }
+    ... on HistoryTagArray {
+      tags {
+        id
+        name
+      }
+    }
+    ... on HistoryUserArray {
+      users {
+        id
+        name
+        avatarUrl
+      }
+    }
+  }
+  newValue {
+    ... on Image {
+      id
+      url
+    }
+    ... on HistoryStringValue {
+      value
+    }
+    ... on HistoryTagArray {
+      tags {
+        id
+        name
+      }
+    }
+    ... on HistoryUserArray {
+      users {
+        id
+        name
+        avatarUrl
+      }
+    }
+  }
+  fieldType
   createdAt
+  updatedAt
   createdBy {
     id
     name

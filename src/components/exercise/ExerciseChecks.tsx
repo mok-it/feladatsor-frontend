@@ -2,6 +2,7 @@ import {
   ExerciseCheckFragment,
   ExerciseCheckType,
   useCreateExerciseCheckMutation,
+  UsersQuery,
 } from "@/generated/graphql";
 import { translateCheck } from "@/util/const";
 import { LoadingButton } from "@mui/lab";
@@ -12,12 +13,15 @@ import {
   TextField,
   ToggleButton,
   ToggleButtonGroup,
+  Tooltip,
   Typography,
 } from "@mui/material";
 import { Stack } from "@mui/system";
-import { FC, useState } from "react";
+import { FC, useState, useCallback } from "react";
 import { useToggle } from "react-use";
 import Section from "../Section";
+import { ContributorsSelector } from "../ContributorsSelector";
+import { useRoleBasedAccess } from "@/util/auth.ts";
 
 export const ExerciseChecks: FC<{
   exerciseId: string;
@@ -28,19 +32,42 @@ export const ExerciseChecks: FC<{
   const [loadingCheck, setLoadingCheck] = useToggle(false);
   const [checkType, setCheckType] = useState<ExerciseCheckType>("GOOD");
   const [comment, setComment] = useState<string>("");
+  const [contributors, setContributors] = useState<UsersQuery["users"]>([]);
+
+  const handleClose = useCallback(() => {
+    setComment("");
+    setContributors([]);
+    setCheckType("GOOD");
+    setCheckModal();
+  }, [setCheckModal]);
+
+  const { canCheckExercises } = useRoleBasedAccess();
 
   return (
     <>
-      <Button onClick={setCheckModal} variant="contained" color="success">
-        Ellenőrzöm
-      </Button>
-      <Modal open={checkModal} onClose={setCheckModal} keepMounted>
+      <Tooltip 
+        title={!canCheckExercises ? "Nincs jogosultságod feladatok ellenőrzéséhez. Szükséges jogosultság: CHECK_EXERCISE" : ""}
+        arrow
+        placement="top"
+      >
+        <span>
+          <Button
+            onClick={setCheckModal}
+            variant="contained"
+            color="success"
+            disabled={!canCheckExercises}
+          >
+            Ellenőrzöm
+          </Button>
+        </span>
+      </Tooltip>
+      <Modal open={checkModal} onClose={handleClose} keepMounted>
         <Stack
           position={"absolute"}
           sx={{ inset: 0 }}
           alignItems={"center"}
           justifyContent={"center"}
-          onClick={setCheckModal}
+          onClick={handleClose}
         >
           <Card>
             <Stack gap={2} p={2} onClick={(e) => e.stopPropagation()}>
@@ -67,6 +94,12 @@ export const ExerciseChecks: FC<{
                   {translateCheck("GOOD")}
                 </ToggleButton>
               </ToggleButtonGroup>
+              <Section text="Közreműködők (opcionális)">
+                <ContributorsSelector
+                  selectedUsers={contributors.map((c) => c.id)}
+                  onChange={setContributors}
+                />
+              </Section>
               <Section text="Komment (opcionális)">
                 <TextField
                   fullWidth
@@ -76,7 +109,7 @@ export const ExerciseChecks: FC<{
                 />
               </Section>
               <Stack direction={"row"} justifyContent={"space-between"}>
-                <Button onClick={setCheckModal}>Mégse</Button>
+                <Button onClick={handleClose}>Mégse</Button>
                 <LoadingButton
                   variant="contained"
                   loading={loadingCheck}
@@ -88,6 +121,7 @@ export const ExerciseChecks: FC<{
                           exerciseId,
                           type: checkType,
                           comment,
+                          contributors: contributors.map((c) => c.id),
                         },
                       },
                     })
@@ -97,7 +131,7 @@ export const ExerciseChecks: FC<{
                       })
                       .finally(() => {
                         setLoadingCheck(false);
-                        setCheckModal(false);
+                        handleClose();
                       });
                   }}
                 >

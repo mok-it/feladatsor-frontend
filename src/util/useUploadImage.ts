@@ -1,11 +1,12 @@
 import { useAtomValue } from "jotai";
+import { useCallback } from "react";
 import { tokenAtom } from "./atoms";
 import { fromBase64 } from "./toBase64";
 
 export const useUploadImage = () => {
   const token = useAtomValue(tokenAtom);
 
-  return async (
+  return useCallback(async (
     base64: string | File,
   ): Promise<{ id: string; url: string }> => {
     const file = typeof base64 == "string" ? fromBase64(base64) : base64;
@@ -24,5 +25,5 @@ export const useUploadImage = () => {
     );
     const data = await res.json();
     return { id: data.id, url: data.url };
-  };
+  }, [token]);
 };

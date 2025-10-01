@@ -1,0 +1,6 @@
+fragment SimpleUser on User {
+  id
+  name
+  userName
+  avatarUrl
+}

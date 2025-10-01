@@ -6,7 +6,7 @@ import {
 } from "@/generated/graphql.tsx";
 import { useExerciseFilters } from "@/util/useExerciseFilters";
 import { useTableOrder } from "@/util/useTableOrder";
-import { Card, CardContent, CardHeader } from "@mui/material";
+import { Card, CardContent, CardHeader, Typography } from "@mui/material";
 import { useCallback, useEffect } from "react";
 
 const LIMIT = 20;
@@ -20,7 +20,9 @@ export const ExerciseListPage = () => {
     fetchPolicy: "cache-and-network",
   });
 
-  const fetch: (skip: number) => Promise<ExerciseListElemFragment[]> =
+  const fetch: (
+    skip: number,
+  ) => Promise<{ data: ExerciseListElemFragment[]; totalCount?: number }> =
     useCallback(
       async (skip: number) => {
         const res = await getData({
@@ -37,7 +39,10 @@ export const ExerciseListPage = () => {
             },
           },
         });
-        return res.data?.searchExercises.exercises || [];
+        return {
+          data: res.data?.searchExercises.exercises || [],
+          totalCount: res.data?.searchExercises.totalCount,
+        };
       },
       [
         getData,
@@ -50,7 +55,7 @@ export const ExerciseListPage = () => {
       ],
     );
 
-  const { data, fetchMore, hasMore, reset } =
+  const { data, fetchMore, hasMore, reset, totalCount } =
     useInfiniteLoad<ExerciseListElemFragment>({
       fetch,
       limit: LIMIT,
@@ -65,6 +70,15 @@ export const ExerciseListPage = () => {
       <CardHeader title="Feladatok keresése" />
       <CardContent>
         {filterComponents}
+        {totalCount !== undefined && (
+          <Typography
+            variant="body2"
+            color="text.secondary"
+            sx={{ mt: 3, mb: 1, textAlign: "right" }}
+          >
+            {totalCount} db találat
+          </Typography>
+        )}
         <ExerciseTable
           {...tableOrder}
           data={data}

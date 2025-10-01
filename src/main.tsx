@@ -10,7 +10,7 @@ import { setContext } from "@apollo/client/link/context";
 import { onError } from "@apollo/client/link/error";
 import { useAtomValue } from "jotai";
 import { truncate } from "lodash";
-import { SnackbarProvider, useSnackbar } from "notistack";
+import { SnackbarProvider, useSnackbar, closeSnackbar } from "notistack";
 import React, { useMemo } from "react";
 import ReactDOM from "react-dom/client";
 import App from "./App.tsx";
@@ -79,10 +79,25 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
       <SnackbarProvider
         maxSnack={3}
         anchorOrigin={{
-          vertical: "top",
-          horizontal: "right",
+          vertical: "bottom",
+          horizontal: "center",
         }}
         autoHideDuration={3000}
+        action={(snackbarId) => (
+          <button
+            onClick={() => closeSnackbar(snackbarId)}
+            style={{
+              background: "none",
+              border: "none",
+              color: "inherit",
+              cursor: "pointer",
+              fontSize: "16px",
+              padding: "4px 8px",
+            }}
+          >
+            ✕
+          </button>
+        )}
       >
         <AppWithApollo />
       </SnackbarProvider>
