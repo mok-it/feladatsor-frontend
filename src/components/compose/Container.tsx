@@ -19,7 +19,7 @@ const Container: FC<{
 
   return (
     <ContainerContext.Provider value={id}>
-      <Stack alignItems={"center"} gap={1} pb={4}>
+      <Stack alignItems={"center"} gap={1} pb={2}>
         {items.map(({ id, cardId }, i) => (
           <Item key={cardId} order={i} id={id} cardId={cardId} />
         ))}
