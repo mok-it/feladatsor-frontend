@@ -16,7 +16,9 @@ function App() {
   const [user, setUser] = useAtom(userAtom);
 
   useEffect(() => {
-    fetch('http://localhost:8080/graphql', { method: 'HEAD' }).catch(() => {});
+    fetch(import.meta.env.VITE_APP_GRAPHQL_ENDPOINT, { method: "HEAD" }).catch(
+      () => {},
+    );
   }, []);
 
   useEffect(() => {
@@ -66,13 +68,13 @@ function App() {
             />
           ))}
           <Route path={"/exercise/:id"} element={<ExerciseDetails />} />
-          <Route 
-            path={"/exercise-compose/:id"} 
+          <Route
+            path={"/exercise-compose/:id"}
             element={
               <ProtectedRoute roles={["EXERCISE_SHEET"]}>
                 <ComposePage />
               </ProtectedRoute>
-            } 
+            }
           />
           <Route path="*" element={<Page404 />} />
         </Route>
