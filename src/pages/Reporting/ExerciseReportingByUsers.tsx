@@ -187,10 +187,14 @@ export const ExerciseReportingByUsers = () => {
             type="date"
             value={dateRange.startDate.toISOString().split("T")[0]}
             onChange={(e) =>
-              setDateRange((prev) => ({
-                ...prev,
-                startDate: new Date(e.target.value),
-              }))
+              setDateRange((prev) => {
+                const startDate = new Date(e.target.value);
+                return {
+                  ...prev,
+                  //@ts-expect-error TS doesn't recognize isNaN for Date
+                  startDate: !isNaN(startDate) ? startDate : prev.startDate,
+                };
+              })
             }
             slotProps={{ inputLabel: { shrink: true } }}
             size="small"
@@ -200,10 +204,14 @@ export const ExerciseReportingByUsers = () => {
             type="date"
             value={dateRange.endDate.toISOString().split("T")[0]}
             onChange={(e) =>
-              setDateRange((prev) => ({
-                ...prev,
-                endDate: new Date(e.target.value),
-              }))
+              setDateRange((prev) => {
+                const endDate = new Date(e.target.value);
+                return {
+                  ...prev,
+                  //@ts-expect-error TS doesn't recognize isNaN for Date
+                  endDate: !isNaN(endDate) ? endDate : prev.endDate,
+                };
+              })
             }
             slotProps={{ inputLabel: { shrink: true } }}
             size="small"
