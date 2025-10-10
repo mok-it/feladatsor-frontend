@@ -22,8 +22,8 @@ export const difficultyItemCount: Record<number, number> = {
 
 export const ageGroupTexts: Record<ExerciseAgeGroup, string> = {
   KOALA: "Koala",
-  KISMEDVE: "Kismedve",
   MEDVEBOCS: "Medvebocs",
+  KISMEDVE: "Kismedve",
   NAGYMEDVE: "Nagymedve",
   JEGESMEDVE: "Jegesmedve",
 };
