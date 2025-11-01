@@ -12,7 +12,6 @@ const ComposeComponent: FC<{ onViewChange: (view: ComposeView) => void }> = ({
   onViewChange,
 }) => {
   const view = composeStore((state) => state.view);
-
   const containerKeys = useMemo(() => {
     const res: string[] = [];
     for (let i = 0; i < 4; i++) {
