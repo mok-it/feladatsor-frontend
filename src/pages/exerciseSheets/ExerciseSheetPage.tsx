@@ -6,18 +6,9 @@ import {
   useUpdateExerciseSheetMutation,
 } from "@/generated/graphql.tsx";
 import { composeAtom, useResetComposeAtom } from "@/util/atoms";
-import { ExerciseView, composeStore } from "@/util/composeStore";
+import { composeStore } from "@/util/composeStore";
 import { LoadingButton } from "@mui/lab";
-import {
-  Box,
-  IconButton,
-  Input,
-  Tab,
-  Tabs,
-  ToggleButton,
-  ToggleButtonGroup,
-  Typography,
-} from "@mui/material";
+import { Box, Card, Grid2, IconButton, Input, Typography } from "@mui/material";
 import { Stack } from "@mui/system";
 import { useStore } from "jotai";
 import { entries, sortBy, uniqueId } from "lodash";
@@ -27,10 +18,9 @@ import { MdDone, MdEdit } from "react-icons/md";
 import { useParams } from "react-router";
 import { useToggle } from "react-use";
 import Compose from "./Compose";
+import { SheetOperations } from "./SheetOperations";
 
-const styles = { fontWeight: 500 };
-
-const ComposePage: FC = () => {
+export const ExerciseSheetPage: FC = () => {
   const { id } = useParams();
 
   const store = useStore();
@@ -71,13 +61,9 @@ const ComposePage: FC = () => {
   });
   const [mutate, mutationState] = useUpdateExerciseSheetMutation();
 
-  const view = composeStore((state) => state.view);
-  const exerciseView = composeStore((state) => state.exerciseView);
   const name = composeStore((state) => state.name);
   const setName = composeStore((state) => state.setName);
-  const setValue = composeStore((state) => state.setValue);
   const setView = composeStore((state) => state.setView);
-  const clear = composeStore((state) => state.clear);
   const [isNameEditing, toggleNameEditing] = useToggle(false);
   const snack = useSnackbar();
 
@@ -117,51 +103,44 @@ const ComposePage: FC = () => {
 
   return (
     <>
-      {isNameEditing ? (
-        <form onSubmit={toggleNameEditing}>
-          <Stack direction={"row"} alignItems={"center"} gap={2} px={2} pt={2}>
-            <Input
-              sx={{ flexGrow: 1 }}
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-            />
+      <Stack direction="row" alignItems={"center"} mb={1}>
+        {isNameEditing ? (
+          <form onSubmit={toggleNameEditing}>
+            <Stack
+              direction={"row"}
+              alignItems={"center"}
+              gap={2}
+              px={2}
+              py={1}
+            >
+              <Input
+                sx={{ flexGrow: 1 }}
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+              />
+              <IconButton onClick={toggleNameEditing}>
+                <MdDone />
+              </IconButton>
+            </Stack>
+          </form>
+        ) : (
+          <Stack direction={"row"} alignItems={"center"} gap={2} px={2} py={1}>
+            <Typography variant="h2">{name}</Typography>
             <IconButton onClick={toggleNameEditing}>
-              <MdDone />
+              <MdEdit />
             </IconButton>
           </Stack>
-        </form>
-      ) : (
-        <Stack direction={"row"} alignItems={"center"} gap={2} px={2} pt={2}>
-          <Typography variant="h2">{name}</Typography>
-          <IconButton onClick={toggleNameEditing}>
-            <MdEdit />
-          </IconButton>
-        </Stack>
-      )}
-      <Stack direction="row" alignItems={"start"} mt={2}>
-        <Tabs
-          sx={{ mb: 2 }}
-          value={view}
-          onChange={(_, newValue) => {
-            setView(newValue);
-          }}
-        >
-          <Tab sx={styles} label={"Mind"} value={"all"} />
-          <Tab sx={styles} label={"Koala"} value={"KOALA"} />
-          <Tab sx={styles} label={"Medvebocs"} value={"MEDVEBOCS"} />
-          <Tab sx={styles} label={"Kismedve"} value={"KISMEDVE"} />
-          <Tab sx={styles} label={"Nagymedve"} value={"NAGYMEDVE"} />
-          <Tab sx={styles} label={"Jegesmedve"} value={"JEGESMEDVE"} />
-        </Tabs>
+        )}
         <Box flexGrow={1} />
-        <Stack direction={"row"} p={1} gap={2}>
-          <ToggleButtonGroup
+        <Stack direction={"row"} gap={2}>
+          {/* <ToggleButtonGroup
             value={exerciseView}
             exclusive
             onChange={(_, value) => {
               setValue({ exerciseView: value });
               clear();
             }}
+            sx={{ background: "background" }}
           >
             <ToggleButton
               size="small"
@@ -179,7 +158,7 @@ const ComposePage: FC = () => {
             >
               Lista
             </ToggleButton>
-          </ToggleButtonGroup>
+          </ToggleButtonGroup> */}
           <LoadingButton
             onClick={save}
             variant="contained"
@@ -189,9 +168,22 @@ const ComposePage: FC = () => {
           </LoadingButton>
         </Stack>
       </Stack>
-      {!loading && <Compose />}
+      {!loading && data?.exerciseSheet && (
+        <Grid2 container spacing={2} pb={10}>
+          <Grid2 size={{ xs: 12, md: 12, lg: 7 }}>
+            <Card sx={{ borderRadius: { xs: 0, md: 1 } }}>
+              <Compose
+                onViewChange={(view) => {
+                  setView(view);
+                }}
+              />
+            </Card>
+          </Grid2>
+          <Grid2 size={{ xs: 12, md: 12, lg: 5 }}>
+            <SheetOperations sheet={data?.exerciseSheet} />
+          </Grid2>
+        </Grid2>
+      )}
     </>
   );
 };
-
-export default ComposePage;
