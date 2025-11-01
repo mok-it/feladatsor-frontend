@@ -2,18 +2,20 @@ import {
   useLoginMutation,
   useLoginWithGoogleMutation,
 } from "@/generated/graphql.tsx";
+import { LoginLayout } from "@/layout/LoginLayout.tsx";
 import { tokenAtom, userAtom } from "@/util/atoms";
 import { auth, authProvider } from "@/util/firebase";
-import { Button, Divider, TextField, Typography } from "@mui/material";
+import { LoadingButton } from "@mui/lab";
+import { Button, Divider, Stack, TextField, Typography } from "@mui/material";
 import { AuthError, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { useSetAtom } from "jotai";
-import { Link, useNavigate } from "react-router-dom";
-import { FC, useCallback, useState } from "react";
+import { FC, FormEvent, useCallback, useState } from "react";
 import { FcGoogle } from "react-icons/fc";
-import { LoginLayout } from "@/layout/LoginLayout.tsx";
+import { Link, useNavigate } from "react-router-dom";
 
 const Login: FC = () => {
-  const [loading, setLoading] = useState(false);
+  const [googleAuthLoading, setGoogleAuthLoading] = useState(false);
+  const [emailAuthLoading, setEmailAuthLoading] = useState(false);
   const setUser = useSetAtom(userAtom);
   const setToken = useSetAtom(tokenAtom);
   const navigate = useNavigate();
@@ -24,30 +26,39 @@ const Login: FC = () => {
   const [ownLogin] = useLoginWithGoogleMutation();
   const [login] = useLoginMutation();
 
-  const signIn = useCallback(async () => {
-    const loginResponse = await login({
-      variables: {
-        name: username,
-        password: password,
-      },
-    });
-    if (
-      !loginResponse.errors &&
-      loginResponse.data &&
-      loginResponse.data.login
-    ) {
-      setUser({
-        isLoggedIn: true,
-        user: loginResponse.data.login.user,
-      });
-      setToken(loginResponse.data.login?.token);
-      console.log("User token:", loginResponse.data.login.token);
-      navigate("/");
-    }
-  }, [setUser, setToken, login, username, password]);
+  const signIn = useCallback(
+    async (e: FormEvent) => {
+      e.preventDefault();
+      setEmailAuthLoading(true);
+      try {
+        const loginResponse = await login({
+          variables: {
+            name: username,
+            password: password,
+          },
+        });
+        if (
+          !loginResponse.errors &&
+          loginResponse.data &&
+          loginResponse.data.login
+        ) {
+          setUser({
+            isLoggedIn: true,
+            user: loginResponse.data.login.user,
+          });
+          setToken(loginResponse.data.login?.token);
+          console.log("User token:", loginResponse.data.login.token);
+          navigate("/");
+        }
+      } finally {
+        setEmailAuthLoading(false);
+      }
+    },
+    [login, username, password, setUser, setToken, navigate],
+  );
 
   const signInWithGoogle = useCallback(async () => {
-    setLoading(true);
+    setGoogleAuthLoading(true);
     await signInWithPopup(auth, authProvider)
       .then(async (googleAuthResult) => {
         const googleToken = await googleAuthResult.user.getIdToken();
@@ -84,35 +95,44 @@ const Login: FC = () => {
           credential,
         );
       })
-      .finally(() => setLoading(false));
+      .finally(() => setGoogleAuthLoading(false));
   }, [setUser, setToken, ownLogin]);
 
   return (
-    <LoginLayout headerText="Bejelentkezés" loading={loading}>
-      <TextField
-        required
-        label="Felhasználónév"
-        onChange={(e) => setUsername(e.target.value)}
-        value={username}
-        size="small"
-      />
-      <TextField
-        required
-        label="Jelszó"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-        type="password"
-        size="small"
-      />
-      <Button variant="contained" fullWidth onClick={signIn}>
-        Bejelentkezés
-      </Button>
+    <LoginLayout headerText="Bejelentkezés" loading={googleAuthLoading}>
+      <form onSubmit={signIn}>
+        <Stack justifyContent="center" gap={2} height="100%">
+          <TextField
+            required
+            label="Felhasználónév"
+            onChange={(e) => setUsername(e.target.value)}
+            value={username}
+            size="small"
+          />
+          <TextField
+            required
+            label="Jelszó"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            type="password"
+            size="small"
+          />
+          <LoadingButton
+            type="submit"
+            variant="contained"
+            fullWidth
+            loading={emailAuthLoading}
+          >
+            Bejelentkezés
+          </LoadingButton>
+        </Stack>
+      </form>
       <Divider />
       <Button
         variant="outlined"
         onClick={signInWithGoogle}
         startIcon={<FcGoogle />}
-        disabled={loading}
+        disabled={googleAuthLoading}
         sx={{ mt: 2 }}
       >
         Google
