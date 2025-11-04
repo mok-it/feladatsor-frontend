@@ -134,7 +134,7 @@ export const AddExerciseModal: FC = () => {
               alignItems={"center"}
               p={2}
               gap={2}
-              sx={{ border: "1px solid blue", borderColor: "divider" }}
+              sx={{ border: "1px solid", borderColor: "divider" }}
             >
               <Button variant="contained" color="error" onClick={onClose}>
                 Mégse
