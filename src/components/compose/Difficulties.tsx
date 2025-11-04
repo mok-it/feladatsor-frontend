@@ -21,8 +21,7 @@ export const Difficulties: FC<{
   return (
     <Stack
       direction="row"
-      gap={0.5}
-      justifyContent={"space-evenly"}
+      justifyContent={"space-between"}
       divider={<Divider orientation="vertical" flexItem />}
     >
       {entries(ageGroupTexts).map(([group]) => {

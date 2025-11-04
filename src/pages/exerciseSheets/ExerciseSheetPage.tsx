@@ -1,4 +1,5 @@
 import { Page404 } from "@/components/404";
+import { AddExerciseModal } from "@/components/compose/AddExerciseModal";
 import {
   ExerciseAgeGroup,
   UpdateExerciseSheetInput,
@@ -101,20 +102,23 @@ export const ExerciseSheetPage: FC = () => {
     return <Page404 />;
   }
 
-  return (
+  return loading ? (
+    "Loading..."
+  ) : (
     <>
       <Stack direction="row" alignItems={"center"} mb={1}>
         {isNameEditing ? (
-          <form onSubmit={toggleNameEditing}>
+          <form onSubmit={toggleNameEditing} style={{ width: "100%" }}>
             <Stack
               direction={"row"}
               alignItems={"center"}
               gap={2}
               px={2}
               py={1}
+              sx={{ width: "100%", maxWidth: "500px" }}
             >
               <Input
-                sx={{ flexGrow: 1 }}
+                sx={{ flexGrow: 1, width: "100%" }}
                 value={name}
                 onChange={(e) => setName(e.target.value)}
               />
@@ -168,21 +172,29 @@ export const ExerciseSheetPage: FC = () => {
           </LoadingButton>
         </Stack>
       </Stack>
-      {!loading && data?.exerciseSheet && (
-        <Grid2 container spacing={2} pb={10}>
-          <Grid2 size={{ xs: 12, md: 12, lg: 7 }}>
-            <Card sx={{ borderRadius: { xs: 0, md: 1 } }}>
-              <Compose
-                onViewChange={(view) => {
-                  setView(view);
+      {data?.exerciseSheet && (
+        <>
+          <AddExerciseModal />
+          <Grid2 container spacing={2} pb={10}>
+            <Grid2 size={{ xs: 12, md: 12, lg: 7 }}>
+              <Card
+                sx={{
+                  borderRadius: { xs: 0, md: 1 },
+                  border: "1px solid #e0e0e0",
                 }}
-              />
-            </Card>
+              >
+                <Compose
+                  onViewChange={(view) => {
+                    setView(view);
+                  }}
+                />
+              </Card>
+            </Grid2>
+            <Grid2 size={{ xs: 12, md: 12, lg: 5 }}>
+              <SheetOperations sheet={data?.exerciseSheet} />
+            </Grid2>
           </Grid2>
-          <Grid2 size={{ xs: 12, md: 12, lg: 5 }}>
-            <SheetOperations sheet={data?.exerciseSheet} />
-          </Grid2>
-        </Grid2>
+        </>
       )}
     </>
   );
