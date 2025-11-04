@@ -1,22 +1,17 @@
 import ExerciseCard from "@/components/compose/ExerciseCard";
 import { useSelectExerciseQuery } from "@/generated/graphql.tsx";
-import { addExerciseModalAtom, composeAtom } from "@/util/atoms";
+import { composeAtom } from "@/util/atoms";
 import { composeStore, ExerciseView } from "@/util/composeStore";
 import { COMPOSE_HEIGHT } from "@/util/const";
 import type { UniqueIdentifier } from "@dnd-kit/core";
-import { Add, DeleteOutline } from "@mui/icons-material";
-import ContentCopy from "@mui/icons-material/ContentCopy";
-import ContentPaste from "@mui/icons-material/ContentPaste";
-import { Box, Menu, Skeleton } from "@mui/material";
-import ListItemIcon from "@mui/material/ListItemIcon";
-import ListItemText from "@mui/material/ListItemText";
-import MenuItem from "@mui/material/MenuItem";
+import { Box, Skeleton } from "@mui/material";
 import { motion } from "framer-motion";
 import { useSetAtom } from "jotai";
 import { uniqueId } from "lodash";
 import { FC, useCallback, useContext, useMemo, useRef } from "react";
 import { useToggle } from "react-use";
 import { ContainerContext } from "./Container";
+import { ItemMenu } from "./ItemMenu";
 import { Placeholder } from "./Placeholder";
 
 export const Item: FC<{
@@ -30,7 +25,7 @@ export const Item: FC<{
     },
     skip: !id,
   });
-  const containerId = useContext(ContainerContext);
+  const containerId = useContext(ContainerContext)!;
   const clear = composeStore((state) => state.clear);
   const setSelected = composeStore((state) => state.setSelected);
   const selectedContainer = composeStore((state) => state.selectedContainer);
@@ -121,14 +116,13 @@ export const Item: FC<{
   );
 
   const [open, toggle] = useToggle(false);
-  const ref = useRef<HTMLDivElement>(null);
-  const setAtom = useSetAtom(addExerciseModalAtom);
+  const anchorRef = useRef<HTMLDivElement>(null);
 
   return (
     <>
       <Box
         data-card-id={cardId}
-        ref={ref}
+        ref={anchorRef}
         width={"100%"}
         height={height}
         minHeight={COMPOSE_HEIGHT.SHORT}
@@ -150,47 +144,7 @@ export const Item: FC<{
       >
         {memoizedCard}
       </Box>
-      <Menu
-        open={open}
-        onClose={toggle}
-        anchorEl={ref.current}
-        BackdropProps={{
-          onContextMenu: (e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            toggle();
-          },
-        }}
-      >
-        <MenuItem
-          onClick={() => {
-            setAtom({ containerId: containerId!, order });
-          }}
-        >
-          <ListItemIcon>
-            <Add fontSize="small" />
-          </ListItemIcon>
-          <ListItemText>Új</ListItemText>
-        </MenuItem>
-        <MenuItem disabled={!id}>
-          <ListItemIcon>
-            <ContentCopy fontSize="small" />
-          </ListItemIcon>
-          <ListItemText>Másolás</ListItemText>
-        </MenuItem>
-        <MenuItem>
-          <ListItemIcon>
-            <ContentPaste fontSize="small" />
-          </ListItemIcon>
-          <ListItemText>Beillesztés</ListItemText>
-        </MenuItem>
-        <MenuItem disabled={!id}>
-          <ListItemIcon>
-            <DeleteOutline fontSize="small" sx={{ color: "red" }} />
-          </ListItemIcon>
-          <ListItemText sx={{ color: "red" }}>Törlés</ListItemText>
-        </MenuItem>
-      </Menu>
+      <ItemMenu {...{ id, open, toggle, order, anchorRef }} />
     </>
   );
 };

@@ -92,7 +92,7 @@ const ExerciseCardComponent: FC<{
             </Stack>
             {/* <Typography variant="caption">{id}</Typography> */}
             <Box flexGrow={1} />
-            {isSingleView && difficultiesElem}
+            {isSingleView && <Box sx={{ width: 150 }}>{difficultiesElem}</Box>}
             {isSingleView && (
               <Link to={`/exercise/${exercise.id}`}>
                 <IconButton size="small">
