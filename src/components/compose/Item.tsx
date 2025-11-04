@@ -95,7 +95,7 @@ export const Item: FC<{
           />
         ) : (
           <>
-            {!loading && id && data?.exercise && (
+            {id && data?.exercise && (
               <motion.div
                 layout
                 id={`${view}-${cardId}`}
