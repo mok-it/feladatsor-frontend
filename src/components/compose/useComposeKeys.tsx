@@ -54,11 +54,11 @@ export const useComposeKeys = () => {
     handleEnter();
   });
   useKeyPressEvent("c", (e) => {
-    if (!e.ctrlKey) return;
+    if (!e.ctrlKey && !e.metaKey) return;
     handleCopy();
   });
   useKeyPressEvent("v", (e) => {
-    if (!e.ctrlKey) return;
+    if (!e.ctrlKey && !e.metaKey) return;
     handlePaste();
   });
   useKeyPressEvent("Delete", () => {
