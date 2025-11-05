@@ -54,7 +54,6 @@ export const composeStore = create<TState & TActions>()(
       set((state) => {
         state.selectedContainer = null;
         state.selectedOrder = null;
-        state.clipboardId = null;
       });
     },
     setView: (view) => {

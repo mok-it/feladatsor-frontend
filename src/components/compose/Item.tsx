@@ -1,13 +1,10 @@
 import ExerciseCard from "@/components/compose/ExerciseCard";
 import { useSelectExerciseQuery } from "@/generated/graphql.tsx";
-import { composeAtom } from "@/util/atoms";
 import { composeStore, ExerciseView } from "@/util/composeStore";
 import { COMPOSE_HEIGHT } from "@/util/const";
 import type { UniqueIdentifier } from "@dnd-kit/core";
 import { Box, Skeleton } from "@mui/material";
 import { motion } from "framer-motion";
-import { useSetAtom } from "jotai";
-import { uniqueId } from "lodash";
 import { FC, useCallback, useContext, useMemo, useRef } from "react";
 import { useToggle } from "react-use";
 import { ContainerContext } from "./Container";
@@ -32,7 +29,6 @@ export const Item: FC<{
   const selectedOrder = composeStore((state) => state.selectedOrder);
   const exerciseView = composeStore((state) => state.exerciseView);
   const view = composeStore((state) => state.view);
-  const setItems = useSetAtom(composeAtom);
 
   const height = view === "all" ? COMPOSE_HEIGHT.SHORT : COMPOSE_HEIGHT.TALL;
   const isSelected =
@@ -45,46 +41,39 @@ export const Item: FC<{
     if (isSelected) {
       // same as selected
       clear();
-    } else if (selectedContainer && selectedOrder !== null) {
-      // something is selected
-      if (containerId === "talon") {
-        // talon is selected
-        // act like nothing was selected
-        setSelected(containerId, order);
-        return;
-      }
-      setItems((draft) => {
-        const aId = draft[selectedContainer][selectedOrder].id;
-        const aCardId = draft[selectedContainer][selectedOrder].cardId;
-        const bId = draft[containerId][order].id;
-        const bCardId = draft[containerId][order].cardId;
-        draft[containerId][order] = { id: aId, cardId: aCardId };
-        if (selectedContainer !== "talon") {
-          draft[selectedContainer][selectedOrder] = {
-            id: bId,
-            cardId: bCardId,
-          };
-        } else {
-          draft[selectedContainer][selectedOrder].cardId = uniqueId();
-        }
-      });
-      clear();
-    } else if (id) {
-      // nothing is selected
+    } else {
       setSelected(containerId, order);
     }
-  }, [
-    clear,
-    containerId,
-    exerciseView,
-    id,
-    isSelected,
-    order,
-    selectedContainer,
-    selectedOrder,
-    setItems,
-    setSelected,
-  ]);
+
+    // else if (selectedContainer && selectedOrder !== null) {
+    //   // something is selected
+    //   if (containerId === "talon") {
+    //     // talon is selected
+    //     // act like nothing was selected
+    //     setSelected(containerId, order);
+    //     return;
+    //   }
+    //   setItems((draft) => {
+    //     const aId = draft[selectedContainer][selectedOrder].id;
+    //     const aCardId = draft[selectedContainer][selectedOrder].cardId;
+    //     const bId = draft[containerId][order].id;
+    //     const bCardId = draft[containerId][order].cardId;
+    //     draft[containerId][order] = { id: aId, cardId: aCardId };
+    //     if (selectedContainer !== "talon") {
+    //       draft[selectedContainer][selectedOrder] = {
+    //         id: bId,
+    //         cardId: bCardId,
+    //       };
+    //     } else {
+    //       draft[selectedContainer][selectedOrder].cardId = uniqueId();
+    //     }
+    //   });
+    //   clear();
+    // } else {
+    //   // nothing is selected
+    //   setSelected(containerId, order);
+    // }
+  }, [clear, containerId, exerciseView, isSelected, order, setSelected]);
 
   const memoizedCard = useMemo(
     () => (
