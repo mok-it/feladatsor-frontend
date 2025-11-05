@@ -52,8 +52,8 @@ export const composeStore = create<TState & TActions>()(
     },
     clear: () => {
       set((state) => {
-        state.selectedContainer = null;
         state.selectedOrder = null;
+        state.selectedContainer = null;
       });
     },
     setView: (view) => {

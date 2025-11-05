@@ -25,6 +25,7 @@ export const ItemMenu: FC<{
   const snackbar = useSnackbar();
 
   const containerId = useContext(ContainerContext)!;
+  const clear = composeStore((state) => state.clear);
   const setModalAtom = useSetAtom(addExerciseModalAtom);
   const setItems = useSetAtom(composeAtom);
   const clipboardId = composeStore((state) => state.clipboardId);
@@ -37,12 +38,14 @@ export const ItemMenu: FC<{
     setItems((draft) => {
       draft[containerId][order].id = null;
     });
+    clear();
     snackbar.enqueueSnackbar("Törölve", { variant: "success" });
     toggle();
   };
   const handleCopy = () => {
     if (!id) return;
     setClipboard(id);
+    clear();
     snackbar.enqueueSnackbar("Vágólapra másolva", { variant: "success" });
     toggle();
   };
@@ -51,6 +54,7 @@ export const ItemMenu: FC<{
     setItems((draft) => {
       draft[containerId][order] = { id: clipboardId, cardId: uniqueId() };
     });
+    clear();
     toggle();
   };
 

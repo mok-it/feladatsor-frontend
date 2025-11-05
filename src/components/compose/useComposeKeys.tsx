@@ -12,6 +12,7 @@ export const useComposeKeys = () => {
 
   const selectedContainer = composeStore((state) => state.selectedContainer);
   const selectedOrder = composeStore((state) => state.selectedOrder);
+  const clear = composeStore((state) => state.clear);
 
   const clipboardId = composeStore((state) => state.clipboardId);
   const setClipboard = composeStore((state) => state.setClipboard);
@@ -27,6 +28,7 @@ export const useComposeKeys = () => {
     const id = items[selectedContainer][selectedOrder].id;
     if (!id) return;
     setClipboard(id);
+    clear();
     snackbar.enqueueSnackbar("Vágólapra másolva", { variant: "success" });
   };
   const handlePaste = () => {
@@ -37,12 +39,14 @@ export const useComposeKeys = () => {
         cardId: uniqueId(),
       };
     });
+    clear();
   };
   const handleDelete = () => {
     if (!selectedContainer || !isNumber(selectedOrder)) return;
     setItems((draft) => {
       draft[selectedContainer][selectedOrder].id = null;
     });
+    clear();
     snackbar.enqueueSnackbar("Törölve", { variant: "success" });
   };
 

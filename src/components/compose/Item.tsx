@@ -1,10 +1,12 @@
 import ExerciseCard from "@/components/compose/ExerciseCard";
 import { useSelectExerciseQuery } from "@/generated/graphql.tsx";
+import { composeAtom } from "@/util/atoms";
 import { composeStore, ExerciseView } from "@/util/composeStore";
 import { COMPOSE_HEIGHT } from "@/util/const";
 import type { UniqueIdentifier } from "@dnd-kit/core";
 import { Box, Skeleton } from "@mui/material";
 import { motion } from "framer-motion";
+import { useAtom } from "jotai";
 import { FC, useCallback, useContext, useMemo, useRef } from "react";
 import { useToggle } from "react-use";
 import { ContainerContext } from "./Container";
@@ -29,6 +31,7 @@ export const Item: FC<{
   const selectedOrder = composeStore((state) => state.selectedOrder);
   const exerciseView = composeStore((state) => state.exerciseView);
   const view = composeStore((state) => state.view);
+  const [items, setItems] = useAtom(composeAtom);
 
   const height = view === "all" ? COMPOSE_HEIGHT.SHORT : COMPOSE_HEIGHT.TALL;
   const isSelected =
@@ -41,39 +44,40 @@ export const Item: FC<{
     if (isSelected) {
       // same as selected
       clear();
+    } else if (
+      selectedContainer &&
+      selectedOrder !== null &&
+      items[selectedContainer][selectedOrder].id
+    ) {
+      // something is selected
+      setItems((draft) => {
+        const aId = draft[selectedContainer][selectedOrder].id;
+        const aCardId = draft[selectedContainer][selectedOrder].cardId;
+        const bId = draft[containerId][order].id;
+        const bCardId = draft[containerId][order].cardId;
+        draft[containerId][order] = { id: aId, cardId: aCardId };
+        draft[selectedContainer][selectedOrder] = {
+          id: bId,
+          cardId: bCardId,
+        };
+      });
+      setSelected(containerId, order);
     } else {
+      // nothing is selected
       setSelected(containerId, order);
     }
-
-    // else if (selectedContainer && selectedOrder !== null) {
-    //   // something is selected
-    //   if (containerId === "talon") {
-    //     // talon is selected
-    //     // act like nothing was selected
-    //     setSelected(containerId, order);
-    //     return;
-    //   }
-    //   setItems((draft) => {
-    //     const aId = draft[selectedContainer][selectedOrder].id;
-    //     const aCardId = draft[selectedContainer][selectedOrder].cardId;
-    //     const bId = draft[containerId][order].id;
-    //     const bCardId = draft[containerId][order].cardId;
-    //     draft[containerId][order] = { id: aId, cardId: aCardId };
-    //     if (selectedContainer !== "talon") {
-    //       draft[selectedContainer][selectedOrder] = {
-    //         id: bId,
-    //         cardId: bCardId,
-    //       };
-    //     } else {
-    //       draft[selectedContainer][selectedOrder].cardId = uniqueId();
-    //     }
-    //   });
-    //   clear();
-    // } else {
-    //   // nothing is selected
-    //   setSelected(containerId, order);
-    // }
-  }, [clear, containerId, exerciseView, isSelected, order, setSelected]);
+  }, [
+    clear,
+    containerId,
+    exerciseView,
+    isSelected,
+    items,
+    order,
+    selectedContainer,
+    selectedOrder,
+    setItems,
+    setSelected,
+  ]);
 
   const memoizedCard = useMemo(
     () => (
@@ -94,7 +98,10 @@ export const Item: FC<{
                 <ExerciseCard id={id} exercise={data.exercise} />
               </motion.div>
             )}
-            <Box position={"absolute"} sx={{ inset: 0, zIndex: -1 }}>
+            <Box
+              position={"absolute"}
+              sx={{ inset: 0, zIndex: -1, userSelect: "none" }}
+            >
               <Placeholder order={order} />
             </Box>
           </>
@@ -118,11 +125,9 @@ export const Item: FC<{
         sx={{
           transition: "0.2s",
           borderRadius: 1,
-          border: isSelected ? "1px solid highlight" : "1px solid #e0e0e0",
-          ":hover": {
-            border: "1px solid highlight",
-            cursor: exerciseView === ExerciseView.CARD ? "pointer" : "default",
-          },
+          border: "1px solid #e0e0e0",
+          outline: isSelected ? "2px solid highlight" : "2px solid transparent",
+          cursor: exerciseView === ExerciseView.CARD ? "pointer" : "default",
         }}
         onClick={onClick}
         onContextMenu={(e) => {
