@@ -63,6 +63,7 @@ export const ExerciseTable: FC<
     fetchMore: () => Promise<void>;
     hasMore: boolean;
     loading: boolean;
+    onRowClick?: (id: string) => void;
   }
 > = ({
   data,
@@ -73,6 +74,7 @@ export const ExerciseTable: FC<
   orderBy,
   setOrder,
   setOrderBy,
+  onRowClick,
 }) => {
   const isMobile = useMediaQuery("(max-width: 1200px)");
 
@@ -163,7 +165,9 @@ export const ExerciseTable: FC<
             }}
           >
             {(row) => {
-              return <ExerciseRow key={row.id} data={row} />;
+              return (
+                <ExerciseRow key={row.id} data={row} onClick={onRowClick} />
+              );
             }}
           </InfiniteLoad>
         </TableBody>

@@ -1,5 +1,6 @@
 import { FC, Fragment, memo, useMemo } from "react";
 
+import { useComposeKeys } from "@/components/compose/useComposeKeys";
 import { composeStore, ComposeView } from "@/util/composeStore";
 import { ageGroupTexts, levels } from "@/util/const";
 import { ChevronLeft } from "@mui/icons-material";
@@ -21,6 +22,8 @@ const ComposeComponent: FC<{ onViewChange: (view: ComposeView) => void }> = ({
     }
     return res;
   }, []);
+
+  useComposeKeys();
 
   return (
     <LayoutGroup>

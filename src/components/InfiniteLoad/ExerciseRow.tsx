@@ -1,3 +1,4 @@
+import { ExerciseStatusBadge } from "@/components/exercise/ExerciseStatusBadge.tsx";
 import { StyledTableRow } from "@/components/StyledTableRow.tsx";
 import {
   ExerciseAgeGroup,
@@ -18,9 +19,11 @@ import { useNavigate } from "react-router-dom";
 import { CategoryDifficulties } from "../CategoryDifficulties";
 import { Checks } from "../Checks";
 import { KaTeX } from "../Katex";
-import { ExerciseStatusBadge } from "@/components/exercise/ExerciseStatusBadge.tsx";
 
-const ExerciseRow: FC<{ data: ExerciseListElemFragment }> = ({ data }) => {
+const ExerciseRow: FC<{
+  data: ExerciseListElemFragment;
+  onClick?: (id: string) => void;
+}> = ({ data, onClick }) => {
   const isMobile = useMediaQuery("(max-width: 1200px)");
   const navigate = useNavigate();
   const difficulties: Record<ExerciseAgeGroup, number> = {
@@ -37,7 +40,9 @@ const ExerciseRow: FC<{ data: ExerciseListElemFragment }> = ({ data }) => {
 
   return (
     <StyledTableRow
-      onClick={() => navigate(`/exercise/${data.id}`)}
+      onClick={() =>
+        onClick ? onClick(data.id) : navigate(`/exercise/${data.id}`)
+      }
       sx={{
         cursor: "pointer",
       }}

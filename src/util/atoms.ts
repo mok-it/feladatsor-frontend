@@ -1,7 +1,7 @@
 import { User as TotalUser } from "@/generated/graphql.tsx";
 import { ageGroupTexts, difficultyItemCount } from "@/util/const";
 import { UniqueIdentifier } from "@dnd-kit/core";
-import { useSetAtom } from "jotai";
+import { atom, useSetAtom } from "jotai";
 import { atomWithImmer } from "jotai-immer";
 import { atomWithStorage, createJSONStorage } from "jotai/utils";
 import { keys, times, uniqueId } from "lodash";
@@ -50,6 +50,11 @@ export const useResetComposeAtom = () => {
   };
   return { setItems, reset };
 };
+
+export const addExerciseModalAtom = atom<{
+  containerId: string;
+  order: number;
+} | null>(null);
 
 export const createExerciseAtom = atomWithStorage<ExerciseFieldsType | null>(
   "createExercise",
