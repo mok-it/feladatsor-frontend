@@ -37,7 +37,7 @@ export const HomePage = () => {
   return (
     <Box>
       <h1 style={{ fontSize: isMobile ? "1.5rem" : "2rem" }}>
-        Szia, {user && user ? user.name : " - "}
+        Szia{user ? `, ${user.name}` : ""}
       </h1>
       {user?.email === "emerichkeen@gmail.com" && (
         <div style={{ visibility: show ? "visible" : "hidden" }}>

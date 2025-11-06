@@ -92,8 +92,7 @@ export const AuthContextProvider: FC<PropsWithChildren> = ({ children }) => {
       }
     });
     return () => unsub();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [authMethod, setAuthState]);
+  }, [authMethod, getToken, setAuthState]);
 
   const tokenExpired = useCallback(() => {
     if (authMethod === null) return;
