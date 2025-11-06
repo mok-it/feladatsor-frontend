@@ -2,7 +2,6 @@ import { ProfileStatCard } from "@/components/profile/ProfileStatCard.tsx";
 import { StatCard } from "@/components/StatCard.tsx";
 import { useStatsQuery } from "@/generated/graphql.tsx";
 import { LeaderBoardCard } from "@/pages/home/LeaderBoardCard.tsx";
-import { userAtom } from "@/util/atoms.ts";
 import {
   Box,
   Grid2,
@@ -12,17 +11,17 @@ import {
 } from "@mui/material";
 import { lightBlue, lightGreen } from "@mui/material/colors";
 import { CategoryScale, Chart, LinearScale } from "chart.js/auto";
-import { useAtomValue } from "jotai";
+import dayjs from "dayjs";
 import { useEffect } from "react";
 import { Bar } from "react-chartjs-2";
 import GitHubCalendar from "react-github-contribution-calendar";
 import { FaCheck } from "react-icons/fa";
 import { FaDiceD6 } from "react-icons/fa6";
 import { useToggle } from "react-use";
-import dayjs from "dayjs";
+import { useAuth } from "./AuthContext";
 
 export const HomePage = () => {
-  const user = useAtomValue(userAtom);
+  const { user } = useAuth();
   const [show, toggle] = useToggle(false);
 
   const { data, loading } = useStatsQuery();
@@ -38,9 +37,9 @@ export const HomePage = () => {
   return (
     <Box>
       <h1 style={{ fontSize: isMobile ? "1.5rem" : "2rem" }}>
-        Szia, {user && user.user ? user.user.name : " - "}
+        Szia, {user && user ? user.name : " - "}
       </h1>
-      {user?.user?.email === "emerichkeen@gmail.com" && (
+      {user?.email === "emerichkeen@gmail.com" && (
         <div style={{ visibility: show ? "visible" : "hidden" }}>
           <p>Ezt neked küldjük speciálba, Balázs❤️</p>
           <iframe

@@ -1,6 +1,5 @@
 import { Role } from "@/generated/graphql";
-import { userAtom } from "./atoms";
-import { useAtomValue } from "jotai";
+import { useAuth } from "@/pages/AuthContext";
 import { useMemo } from "react";
 
 /**
@@ -12,8 +11,8 @@ import { useMemo } from "react";
  * ADMIN role bypasses all other role checks
  */
 export function hasRole(userRoles: Role[], requiredRoles: Role[]): boolean {
-  if (userRoles.includes('ADMIN')) return true;
-  return requiredRoles.some(role => userRoles.includes(role));
+  if (userRoles.includes("ADMIN")) return true;
+  return requiredRoles.some((role) => userRoles.includes(role));
 }
 
 /**
@@ -21,15 +20,15 @@ export function hasRole(userRoles: Role[], requiredRoles: Role[]): boolean {
  * ADMIN role bypasses all other role checks
  */
 export function hasAllRoles(userRoles: Role[], requiredRoles: Role[]): boolean {
-  if (userRoles.includes('ADMIN')) return true;
-  return requiredRoles.every(role => userRoles.includes(role));
+  if (userRoles.includes("ADMIN")) return true;
+  return requiredRoles.every((role) => userRoles.includes(role));
 }
 
 /**
  * Check if user is admin
  */
 export function isAdmin(userRoles: Role[]): boolean {
-  return userRoles.includes('ADMIN');
+  return userRoles.includes("ADMIN");
 }
 
 /**
@@ -37,31 +36,31 @@ export function isAdmin(userRoles: Role[]): boolean {
  */
 
 export function canListExercises(userRoles: Role[]): boolean {
-  return hasRole(userRoles, ['LIST_EXERCISES']);
+  return hasRole(userRoles, ["LIST_EXERCISES"]);
 }
 
 export function canCheckExercises(userRoles: Role[]): boolean {
-  return hasRole(userRoles, ['CHECK_EXERCISE']);
+  return hasRole(userRoles, ["CHECK_EXERCISE"]);
 }
 
 export function canCloneExercises(userRoles: Role[]): boolean {
-  return hasRole(userRoles, ['CLONE_EXERCISE']);
+  return hasRole(userRoles, ["CLONE_EXERCISE"]);
 }
 
 export function canFinalizeExercises(userRoles: Role[]): boolean {
-  return hasRole(userRoles, ['FINALIZE_EXERCISE']);
+  return hasRole(userRoles, ["FINALIZE_EXERCISE"]);
 }
 
 export function canManageExerciseSheets(userRoles: Role[]): boolean {
-  return hasRole(userRoles, ['EXERCISE_SHEET']);
+  return hasRole(userRoles, ["EXERCISE_SHEET"]);
 }
 
 export function canProofreadExerciseSheets(userRoles: Role[]): boolean {
-  return hasRole(userRoles, ['PROOFREAD_EXERCISE_SHEET']);
+  return hasRole(userRoles, ["PROOFREAD_EXERCISE_SHEET"]);
 }
 
 export function canCreateExercises(userRoles: Role[]): boolean {
-  return hasRole(userRoles, ['USER']);
+  return hasRole(userRoles, ["USER"]);
 }
 
 export function canAccessAdminPanel(userRoles: Role[]): boolean {
@@ -72,12 +71,12 @@ export function canAccessAdminPanel(userRoles: Role[]): boolean {
  * React hook for role-based access control
  */
 export function useRoleBasedAccess() {
-  const userState = useAtomValue(userAtom);
+  const { user, isLoggedIn } = useAuth();
 
   const permissions = useMemo(() => {
-    const userRoles = userState?.user?.roles || [];
+    const userRoles = user?.roles || [];
     return {
-      isLoggedIn: userState?.isLoggedIn || false,
+      isLoggedIn: isLoggedIn || false,
       isAdmin: isAdmin(userRoles),
       canListExercises: canListExercises(userRoles),
       canCheckExercises: canCheckExercises(userRoles),
@@ -89,9 +88,10 @@ export function useRoleBasedAccess() {
       canAccessAdminPanel: canAccessAdminPanel(userRoles),
       userRoles,
       hasRole: (requiredRoles: Role[]) => hasRole(userRoles, requiredRoles),
-      hasAllRoles: (requiredRoles: Role[]) => hasAllRoles(userRoles, requiredRoles),
+      hasAllRoles: (requiredRoles: Role[]) =>
+        hasAllRoles(userRoles, requiredRoles),
     };
-  }, [userState?.isLoggedIn, userState?.user?.roles]);
+  }, [isLoggedIn, user?.roles]);
 
   return permissions;
 }
@@ -100,22 +100,22 @@ export function useRoleBasedAccess() {
  * React hook for checking specific roles
  */
 export function useHasRole(requiredRoles: Role[]): boolean {
-  const userState = useAtomValue(userAtom);
-  
+  const { user } = useAuth();
+
   return useMemo(() => {
-    const userRoles = userState?.user?.roles || [];
+    const userRoles = user?.roles || [];
     return hasRole(userRoles, requiredRoles);
-  }, [userState?.user?.roles, requiredRoles]);
+  }, [user?.roles, requiredRoles]);
 }
 
 /**
  * React hook for checking if user is admin
  */
 export function useIsAdmin(): boolean {
-  const userState = useAtomValue(userAtom);
-  
+  const { user } = useAuth();
+
   return useMemo(() => {
-    const userRoles = userState?.user?.roles || [];
+    const userRoles = user?.roles || [];
     return isAdmin(userRoles);
-  }, [userState?.user?.roles]);
+  }, [user?.roles]);
 }

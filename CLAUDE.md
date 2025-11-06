@@ -24,8 +24,6 @@ After modifying GraphQL files, always run `yarn codegen` to regenerate types and
 ## State Management
 
 - **Global state**: Jotai atoms in `src/util/atoms.ts`
-- **User authentication**: `userAtom` with session storage
-- **JWT tokens**: `tokenAtom` with session storage
 - **Exercise composition**: `composeAtom` with Immer for complex state updates
 - **Exercise creation**: `createExerciseAtom` with localStorage persistence
 
@@ -69,4 +67,3 @@ After modifying GraphQL files, always run `yarn codegen` to regenerate types and
 
 - JWT-based authentication with session storage
 - Unauthenticated users are redirected to login/register
-- User data is stored in `userAtom` with type safety from generated GraphQL types

@@ -1,7 +1,6 @@
 import { DayNightSwitch } from "@/components/DayNightSwitch/DayNightSwitch.tsx";
-import { tokenAtom, userAtom } from "@/util/atoms";
-import { auth } from "@/util/firebase";
 import { useRoleBasedAccess } from "@/util/auth";
+import { auth } from "@/util/firebase";
 import {
   alpha,
   Box,
@@ -17,10 +16,8 @@ import {
 } from "@mui/material";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
-import { signOut as firebaseSignout } from "firebase/auth";
-import { useAtomValue, useSetAtom } from "jotai";
-import { jwtDecode } from "jwt-decode";
-import { FC, useCallback, useEffect, useMemo } from "react";
+import { signOut } from "firebase/auth";
+import { FC, useMemo } from "react";
 import { FaPersonRunning } from "react-icons/fa6";
 import { useLocation, useNavigate } from "react-router-dom";
 import { pages } from "../pages";
@@ -45,50 +42,25 @@ export const Sidebar: FC<{ open: boolean; onClose: () => void }> = ({
   const isDesktop = useMediaQuery("(min-width:900px)");
   const navigate = useNavigate();
   const location = useLocation();
-  const setUser = useSetAtom(userAtom);
-  const token = useAtomValue(tokenAtom);
-  const setToken = useSetAtom(tokenAtom);
+
   const { hasRole, hasAllRoles } = useRoleBasedAccess();
 
   const { mode, setMode } = useColorScheme();
 
   // Filter pages based on user roles
   const visiblePages = useMemo(() => {
-    return pages.filter(page => {
+    return pages.filter((page) => {
       // If no roles required, show to all authenticated users
       if (!page.requiredRoles || page.requiredRoles.length === 0) {
         return true;
       }
-      
+
       // Check if user has required roles
-      return page.requireAllRoles 
+      return page.requireAllRoles
         ? hasAllRoles(page.requiredRoles)
         : hasRole(page.requiredRoles);
     });
   }, [hasRole, hasAllRoles]);
-
-  const signOut = useCallback(() => {
-    firebaseSignout(auth).then(() => {
-      setUser({ isLoggedIn: false, user: null });
-      setToken(null);
-    });
-  }, [setUser, setToken]);
-
-  useEffect(() => {
-    if (!token) return;
-    const decoded = jwtDecode(token);
-    if (!decoded.exp) return;
-    console.log(
-      "token exp",
-      dayjs(decoded.exp * 1000).format("YYYY-MM-DD HH:mm:ss"),
-    );
-    console.log("logging out", dayjs(decoded.exp * 1000).fromNow());
-    const timeout = setTimeout(
-      signOut,
-      dayjs(decoded.exp * 1000).diff(dayjs(), "ms"),
-    );
-    return () => clearTimeout(timeout);
-  }, [setToken, setUser, signOut, token]);
 
   return (
     <>
@@ -149,7 +121,7 @@ export const Sidebar: FC<{ open: boolean; onClose: () => void }> = ({
                 );
               })}
               <Divider />
-              <ListItemButton sx={style} onClick={signOut}>
+              <ListItemButton sx={style} onClick={() => signOut(auth)}>
                 <Stack direction="row" gap={2} alignItems="center">
                   <Typography fontSize={22} lineHeight={0}>
                     <FaPersonRunning />

@@ -1,29 +1,29 @@
-import {
-  useLoginMutation,
-  useLoginWithGoogleMutation,
-} from "@/generated/graphql.tsx";
+import { useLoginMutation } from "@/generated/graphql.tsx";
 import { LoginLayout } from "@/layout/LoginLayout.tsx";
-import { tokenAtom, userAtom } from "@/util/atoms";
 import { auth, authProvider } from "@/util/firebase";
 import { LoadingButton } from "@mui/lab";
 import { Button, Divider, Stack, TextField, Typography } from "@mui/material";
-import { AuthError, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
-import { useSetAtom } from "jotai";
+import {
+  AuthError,
+  browserLocalPersistence,
+  GoogleAuthProvider,
+  signInWithPopup,
+} from "firebase/auth";
 import { FC, FormEvent, useCallback, useState } from "react";
 import { FcGoogle } from "react-icons/fc";
 import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "./AuthContext";
 
 const Login: FC = () => {
+  const { setAuthState } = useAuth();
+
   const [googleAuthLoading, setGoogleAuthLoading] = useState(false);
   const [emailAuthLoading, setEmailAuthLoading] = useState(false);
-  const setUser = useSetAtom(userAtom);
-  const setToken = useSetAtom(tokenAtom);
   const navigate = useNavigate();
 
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
-  const [ownLogin] = useLoginWithGoogleMutation();
   const [login] = useLoginMutation();
 
   const signIn = useCallback(
@@ -42,11 +42,12 @@ const Login: FC = () => {
           loginResponse.data &&
           loginResponse.data.login
         ) {
-          setUser({
-            isLoggedIn: true,
-            user: loginResponse.data.login.user,
+          setAuthState((draft) => {
+            draft.authMethod = "password";
+            draft.isLoggedIn = true;
+            draft.user = loginResponse.data?.login?.user ?? null;
+            draft.token = loginResponse.data?.login?.token ?? null;
           });
-          setToken(loginResponse.data.login?.token);
           console.log("User token:", loginResponse.data.login.token);
           navigate("/");
         }
@@ -54,35 +55,13 @@ const Login: FC = () => {
         setEmailAuthLoading(false);
       }
     },
-    [login, username, password, setUser, setToken, navigate],
+    [login, username, password, setAuthState, navigate],
   );
 
   const signInWithGoogle = useCallback(async () => {
     setGoogleAuthLoading(true);
+    await auth.setPersistence(browserLocalPersistence);
     await signInWithPopup(auth, authProvider)
-      .then(async (googleAuthResult) => {
-        const googleToken = await googleAuthResult.user.getIdToken();
-        console.log("Google token:", googleToken);
-        const ownLoginResponse = await ownLogin({
-          variables: {
-            googleToken: googleToken,
-          },
-        });
-        if (
-          !ownLoginResponse.errors &&
-          ownLoginResponse.data?.loginWithGoogle?.user
-        ) {
-          setUser({
-            isLoggedIn: true,
-            user: ownLoginResponse.data.loginWithGoogle.user,
-          });
-          setToken(ownLoginResponse.data.loginWithGoogle.token);
-          console.log(
-            "User token:",
-            ownLoginResponse.data.loginWithGoogle.token,
-          );
-        }
-      })
       .catch((error: AuthError) => {
         const errorCode = error.code;
         const errorMessage = error.message;
@@ -96,7 +75,7 @@ const Login: FC = () => {
         );
       })
       .finally(() => setGoogleAuthLoading(false));
-  }, [setUser, setToken, ownLogin]);
+  }, []);
 
   return (
     <LoginLayout headerText="Bejelentkezés" loading={googleAuthLoading}>
