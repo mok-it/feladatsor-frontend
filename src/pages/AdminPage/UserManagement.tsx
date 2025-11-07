@@ -1,3 +1,11 @@
+import { StyledTableCell } from "@/components/StyledTableCell.tsx";
+import { StyledTableRow } from "@/components/StyledTableRow.tsx";
+import {
+  Role,
+  useChangePermissionsMutation,
+  useUsersQuery,
+} from "@/generated/graphql.tsx";
+import { RoleGuide } from "@/pages/AdminPage/RoleGuide.tsx";
 import {
   Avatar,
   Box,
@@ -8,20 +16,11 @@ import {
   TableHead,
   Typography,
 } from "@mui/material";
+import Autocomplete from "@mui/material/Autocomplete";
 import Checkbox from "@mui/material/Checkbox";
 import TextField from "@mui/material/TextField";
-import Autocomplete from "@mui/material/Autocomplete";
-import {
-  Role,
-  useChangePermissionsMutation,
-  useUsersQuery,
-} from "@/generated/graphql.tsx";
-import { userAtom } from "@/util/atoms.ts";
-import { useAtom } from "jotai";
-import { StyledTableRow } from "@/components/StyledTableRow.tsx";
-import { StyledTableCell } from "@/components/StyledTableCell.tsx";
-import { RoleGuide } from "@/pages/AdminPage/RoleGuide.tsx";
 import { useSnackbar } from "notistack";
+import { useAuth } from "../AuthContext";
 
 const Roles: Role[] = [
   "ADMIN",
@@ -51,12 +50,12 @@ const getRoleDisplayName = (role: Role): string => {
 };
 
 export const UserManagement = () => {
+  const { user } = useAuth();
   const { data, loading } = useUsersQuery();
   const [changePermissions] = useChangePermissionsMutation();
-  const [user] = useAtom(userAtom);
 
   const isMyself = (userId: string) => {
-    if (user?.user?.id) return user.user.id === userId;
+    if (user?.id) return user.id === userId;
     return false;
   };
 

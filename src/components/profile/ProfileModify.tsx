@@ -1,3 +1,5 @@
+import { useUpdateUserMutation } from "@/generated/graphql.tsx";
+import { useAuth } from "@/pages/AuthContext";
 import {
   Button,
   Dialog,
@@ -7,10 +9,7 @@ import {
   TextField,
 } from "@mui/material";
 import { Stack } from "@mui/system";
-import { useAtomValue } from "jotai/index";
-import { userAtom } from "@/util/atoms.ts";
 import { Formik, useFormikContext } from "formik";
-import { useUpdateUserMutation } from "@/generated/graphql.tsx";
 import { FC } from "react";
 
 const ProfileChangeForm: FC<{ handleClose: () => void }> = (props) => {
@@ -92,8 +91,7 @@ export const ProfileModify = (props: {
   open: boolean;
   handleClose: () => void;
 }) => {
-  //const [values, setValues] = useState({});
-  const user = useAtomValue(userAtom);
+  const { user } = useAuth();
   const [updateUser] = useUpdateUserMutation();
 
   return (
@@ -105,9 +103,9 @@ export const ProfileModify = (props: {
     >
       <Formik<ProfileModifyData>
         initialValues={{
-          name: user?.user?.name,
-          userName: user?.user?.userName,
-          email: user?.user?.email,
+          name: user?.name,
+          userName: user?.userName,
+          email: user?.email,
           password: undefined,
         }}
         onSubmit={(values) => {
