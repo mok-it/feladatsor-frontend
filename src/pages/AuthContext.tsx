@@ -5,7 +5,7 @@ import {
 import { createApolloClient } from "@/main";
 import { auth } from "@/util/firebase";
 import dayjs from "dayjs";
-import { onAuthStateChanged } from "firebase/auth";
+import { signOut as firebaseSignOut, onAuthStateChanged } from "firebase/auth";
 import { useAtom } from "jotai";
 import { withImmer } from "jotai-immer";
 import { atomWithStorage, createJSONStorage } from "jotai/utils";
@@ -30,6 +30,7 @@ type AuthContextType = {
 };
 type AuthContextActions = {
   setAuthState: Updater<AuthContextType>;
+  signOut: () => void;
 };
 
 const defaultValue: AuthContextType & AuthContextActions = {
@@ -38,6 +39,7 @@ const defaultValue: AuthContextType & AuthContextActions = {
   token: null,
   authMethod: null,
   setAuthState: () => {},
+  signOut: () => {},
 };
 
 const AuthContext = createContext<AuthContextType & AuthContextActions>(
@@ -123,8 +125,21 @@ export const AuthContextProvider: FC<PropsWithChildren> = ({ children }) => {
     return () => clearTimeout(timeout);
   }, [token, tokenExpired]);
 
+  const signOut = () => {
+    if (authMethod === "firebase") {
+      firebaseSignOut(auth);
+    } else if (authMethod === "password") {
+      setAuthState((draft) => {
+        draft.authMethod = null;
+        draft.isLoggedIn = false;
+        draft.user = null;
+        draft.token = null;
+      });
+    }
+  };
+
   return (
-    <AuthContext.Provider value={{ ...value, setAuthState }}>
+    <AuthContext.Provider value={{ ...value, setAuthState, signOut }}>
       {children}
     </AuthContext.Provider>
   );

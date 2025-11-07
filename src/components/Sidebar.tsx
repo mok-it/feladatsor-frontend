@@ -1,6 +1,6 @@
 import { DayNightSwitch } from "@/components/DayNightSwitch/DayNightSwitch.tsx";
+import { useAuth } from "@/pages/AuthContext";
 import { useRoleBasedAccess } from "@/util/auth";
-import { auth } from "@/util/firebase";
 import {
   alpha,
   Box,
@@ -16,7 +16,6 @@ import {
 } from "@mui/material";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
-import { signOut } from "firebase/auth";
 import { FC, useMemo } from "react";
 import { FaPersonRunning } from "react-icons/fa6";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -61,6 +60,8 @@ export const Sidebar: FC<{ open: boolean; onClose: () => void }> = ({
         : hasRole(page.requiredRoles);
     });
   }, [hasRole, hasAllRoles]);
+
+  const { signOut } = useAuth();
 
   return (
     <>
@@ -121,7 +122,7 @@ export const Sidebar: FC<{ open: boolean; onClose: () => void }> = ({
                 );
               })}
               <Divider />
-              <ListItemButton sx={style} onClick={() => signOut(auth)}>
+              <ListItemButton sx={style} onClick={signOut}>
                 <Stack direction="row" gap={2} alignItems="center">
                   <Typography fontSize={22} lineHeight={0}>
                     <FaPersonRunning />
