@@ -77,7 +77,9 @@ export const AuthContextProvider: FC<PropsWithChildren> = ({ children }) => {
         draft.user = ownLoginResponse.data?.loginWithGoogle?.user ?? null;
         draft.token = ownLoginResponse.data?.loginWithGoogle?.token ?? null;
       });
-      console.log("User token:", ownLoginResponse.data.loginWithGoogle?.token);
+      if (import.meta.env.DEV) {
+        console.log("User token:", ownLoginResponse.data.loginWithGoogle?.token);
+      }
     }
   }, [enqueueSnackbar, setAuthState]);
 
