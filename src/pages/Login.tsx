@@ -48,7 +48,9 @@ const Login: FC = () => {
             draft.user = loginResponse.data?.login?.user ?? null;
             draft.token = loginResponse.data?.login?.token ?? null;
           });
-          console.log("User token:", loginResponse.data.login.token);
+          if (import.meta.env.DEV) {
+            console.log("User token:", loginResponse.data.login.token);
+          }
           navigate("/");
         }
       } finally {
