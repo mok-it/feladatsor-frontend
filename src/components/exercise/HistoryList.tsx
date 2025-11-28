@@ -1,21 +1,32 @@
-import { FC, useState } from "react";
-import { Typography, Stack, IconButton, Box, Menu, MenuItem } from "@mui/material";
-import { MdArrowDownward, MdOutlineDelete, MdEdit, MdMoreVert } from "react-icons/md";
-import { FaArrowRight } from "react-icons/fa6";
-import { motion } from "framer-motion";
-import { useAtomValue } from "jotai";
 import Check from "@/components/Check";
-import { History } from "@/components/History";
 import { DiffModal } from "@/components/DiffModal";
-import { HistoryValueDisplay } from "./HistoryValueDisplay";
+import { History } from "@/components/History";
 import {
   ExerciseCheckFragment,
   ExerciseCommentFragment,
   ExerciseHistoryFragment,
   HistoryValue,
 } from "@/generated/graphql";
-import { userAtom } from "@/util/atoms";
+import { useAuth } from "@/pages/AuthContext";
 import { translateCheck, translateFieldName } from "@/util/const";
+import {
+  Box,
+  IconButton,
+  Menu,
+  MenuItem,
+  Stack,
+  Typography,
+} from "@mui/material";
+import { motion } from "framer-motion";
+import { FC, useState } from "react";
+import { FaArrowRight } from "react-icons/fa6";
+import {
+  MdArrowDownward,
+  MdEdit,
+  MdMoreVert,
+  MdOutlineDelete,
+} from "react-icons/md";
+import { HistoryValueDisplay } from "./HistoryValueDisplay";
 
 type HistoryItem =
   | (ExerciseHistoryFragment & { historyType: "history" })
@@ -39,11 +50,15 @@ export const HistoryList: FC<HistoryListProps> = ({
   onCommentEdit,
   loading = false,
 }) => {
-  const user = useAtomValue(userAtom);
+  const { user } = useAuth();
   const [menuAnchorEl, setMenuAnchorEl] = useState<HTMLElement | null>(null);
-  const [selectedComment, setSelectedComment] = useState<ExerciseCommentFragment | null>(null);
+  const [selectedComment, setSelectedComment] =
+    useState<ExerciseCommentFragment | null>(null);
 
-  const handleMenuOpen = (event: React.MouseEvent<HTMLElement>, comment: ExerciseCommentFragment) => {
+  const handleMenuOpen = (
+    event: React.MouseEvent<HTMLElement>,
+    comment: ExerciseCommentFragment,
+  ) => {
     setMenuAnchorEl(event.currentTarget);
     setSelectedComment(comment);
   };
@@ -91,7 +106,7 @@ export const HistoryList: FC<HistoryListProps> = ({
               <Typography sx={{ wordBreak: "break-all", mb: 1 }}>
                 <i>{comment.comment}</i>
               </Typography>
-              {comment.createdBy.id === user?.user?.id && (
+              {comment.createdBy.id === user?.id && (
                 <Box sx={{ position: "absolute", right: 0, top: 0 }}>
                   <IconButton onClick={(e) => handleMenuOpen(e, comment)}>
                     <MdMoreVert />
@@ -195,18 +210,18 @@ export const HistoryList: FC<HistoryListProps> = ({
       </Stack>
       {loading && <Typography>Töltés...</Typography>}
       {history.map(renderHistoryItem)}
-      
+
       <Menu
         anchorEl={menuAnchorEl}
         open={Boolean(menuAnchorEl)}
         onClose={handleMenuClose}
         anchorOrigin={{
-          vertical: 'bottom',
-          horizontal: 'right',
+          vertical: "bottom",
+          horizontal: "right",
         }}
         transformOrigin={{
-          vertical: 'top',
-          horizontal: 'right',
+          vertical: "top",
+          horizontal: "right",
         }}
       >
         <MenuItem onClick={handleEdit}>

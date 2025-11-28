@@ -3,17 +3,16 @@ import ProtectedRoute from "@/components/ProtectedRoute";
 import { ExerciseSheetPage } from "@/pages/exerciseSheets/ExerciseSheetPage";
 import Login from "@/pages/Login.tsx";
 import RegisterPage from "@/pages/RegisterPage.tsx";
-import { useAtom } from "jotai";
 import { useEffect } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import "./App.css";
 import Layout from "./Layout";
 import { pages } from "./pages";
+import { useAuth } from "./pages/AuthContext";
 import ExerciseDetails from "./pages/ExerciseDetails";
-import { userAtom } from "./util/atoms";
 
 function App() {
-  const [user, setUser] = useAtom(userAtom);
+  const { isLoggedIn } = useAuth();
 
   useEffect(() => {
     fetch(import.meta.env.VITE_APP_GRAPHQL_ENDPOINT, { method: "HEAD" }).catch(
@@ -21,20 +20,9 @@ function App() {
     );
   }, []);
 
-  useEffect(() => {
-    if (!user) {
-      const timeout = setTimeout(() => {
-        setUser({ isLoggedIn: false, user: null });
-      }, 1500);
-      return () => clearTimeout(timeout);
-    }
-  }, [setUser, user]);
+  if (isLoggedIn === null) return null;
 
-  if (!user) return null;
-
-  const isAuthenticated = user.isLoggedIn;
-
-  if (!isAuthenticated) {
+  if (isLoggedIn === false) {
     return (
       <BrowserRouter basename="/">
         <Routes>
