@@ -10,6 +10,7 @@ import { useAtom } from "jotai";
 import { withImmer } from "jotai-immer";
 import { atomWithStorage, createJSONStorage } from "jotai/utils";
 import { jwtDecode } from "jwt-decode";
+import { useSnackbar } from "notistack";
 import {
   createContext,
   FC,
@@ -55,12 +56,14 @@ const atom = withImmer(
 );
 
 export const AuthContextProvider: FC<PropsWithChildren> = ({ children }) => {
+  const { enqueueSnackbar } = useSnackbar();
+
   const [value, setAuthState] = useAtom(atom);
   const { token, authMethod } = value;
 
   const getToken = useCallback(async () => {
     const googleToken = await auth.currentUser?.getIdToken();
-    const client = createApolloClient({ errorLink: null, token: null });
+    const client = createApolloClient({ token: null, enqueueSnackbar });
     const ownLoginResponse = await client.mutate({
       mutation: LoginWithGoogleDocument,
       variables: {
@@ -76,7 +79,7 @@ export const AuthContextProvider: FC<PropsWithChildren> = ({ children }) => {
       });
       console.log("User token:", ownLoginResponse.data.loginWithGoogle?.token);
     }
-  }, [setAuthState]);
+  }, [enqueueSnackbar, setAuthState]);
 
   useEffect(() => {
     if (authMethod === "password") return;

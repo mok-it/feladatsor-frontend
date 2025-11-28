@@ -1,6 +1,5 @@
 import {
   ApolloClient,
-  ApolloLink,
   ApolloProvider,
   createHttpLink,
   from,
@@ -9,7 +8,12 @@ import {
 import { setContext } from "@apollo/client/link/context";
 import { onError } from "@apollo/client/link/error";
 import { truncate } from "lodash";
-import { closeSnackbar, SnackbarProvider, useSnackbar } from "notistack";
+import {
+  closeSnackbar,
+  EnqueueSnackbar,
+  SnackbarProvider,
+  useSnackbar,
+} from "notistack";
 import React, { useMemo } from "react";
 import ReactDOM from "react-dom/client";
 import App from "./App.tsx";
@@ -17,11 +21,11 @@ import { AuthContextProvider, useAuth } from "./pages/AuthContext.tsx";
 import { ThemeProvider } from "./theme";
 
 export const createApolloClient = ({
-  errorLink,
   token,
+  enqueueSnackbar,
 }: {
-  errorLink: ApolloLink | null;
   token: string | null;
+  enqueueSnackbar: EnqueueSnackbar;
 }) => {
   const httpLink = createHttpLink({
     uri: import.meta.env.VITE_APP_GRAPHQL_ENDPOINT,
@@ -34,17 +38,6 @@ export const createApolloClient = ({
       },
     };
   });
-  return new ApolloClient({
-    link: from([...(errorLink ? [errorLink] : []), authLink, httpLink]),
-    cache: new InMemoryCache(),
-  });
-};
-
-const AppWithApollo = () => {
-  const { token } = useAuth();
-
-  const { enqueueSnackbar } = useSnackbar();
-
   const errorLink = onError(({ graphQLErrors, networkError }) => {
     if (graphQLErrors) {
       graphQLErrors.forEach((error) => {
@@ -63,10 +56,20 @@ const AppWithApollo = () => {
       });
     }
   });
+  return new ApolloClient({
+    link: from([errorLink, authLink, httpLink]),
+    cache: new InMemoryCache(),
+  });
+};
+
+const AppWithApollo = () => {
+  const { token } = useAuth();
+
+  const { enqueueSnackbar } = useSnackbar();
 
   const client = useMemo(() => {
-    return createApolloClient({ errorLink, token });
-  }, [errorLink, token]);
+    return createApolloClient({ token, enqueueSnackbar });
+  }, [token, enqueueSnackbar]);
 
   return (
     <ApolloProvider client={client}>
