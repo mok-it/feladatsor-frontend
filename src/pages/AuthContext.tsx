@@ -78,7 +78,10 @@ export const AuthContextProvider: FC<PropsWithChildren> = ({ children }) => {
         draft.token = ownLoginResponse.data?.loginWithGoogle?.token ?? null;
       });
       if (import.meta.env.DEV) {
-        console.log("User token:", ownLoginResponse.data.loginWithGoogle?.token);
+        console.log(
+          "User token:",
+          ownLoginResponse.data.loginWithGoogle?.token,
+        );
       }
     }
   }, [enqueueSnackbar, setAuthState]);
@@ -119,10 +122,12 @@ export const AuthContextProvider: FC<PropsWithChildren> = ({ children }) => {
     if (!token) return;
     const decoded = jwtDecode(token);
     if (!decoded.exp) return;
-    console.log(
-      "token exp",
-      dayjs(decoded.exp * 1000).format("YYYY-MM-DD HH:mm:ss"),
-    );
+    if (import.meta.env.DEV) {
+      console.log(
+        "token exp",
+        dayjs(decoded.exp * 1000).format("YYYY-MM-DD HH:mm:ss"),
+      );
+    }
     const delay = dayjs(decoded.exp * 1000).diff(dayjs(), "ms");
     if (delay <= 0) {
       tokenExpired();
