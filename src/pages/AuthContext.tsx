@@ -51,7 +51,7 @@ const atom = withImmer(
   atomWithStorage<AuthContextType>(
     "auth",
     defaultValue,
-    createJSONStorage<AuthContextType>(() => localStorage),
+    createJSONStorage<AuthContextType>(() => sessionStorage),
   ),
 );
 
@@ -121,10 +121,12 @@ export const AuthContextProvider: FC<PropsWithChildren> = ({ children }) => {
       "token exp",
       dayjs(decoded.exp * 1000).format("YYYY-MM-DD HH:mm:ss"),
     );
-    const timeout = setTimeout(
-      tokenExpired,
-      dayjs(decoded.exp * 1000).diff(dayjs(), "ms"),
-    );
+    const delay = dayjs(decoded.exp * 1000).diff(dayjs(), "ms");
+    if (delay <= 0) {
+      tokenExpired();
+      return;
+    }
+    const timeout = setTimeout(tokenExpired, delay);
     return () => clearTimeout(timeout);
   }, [token, tokenExpired]);
 
