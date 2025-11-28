@@ -50,7 +50,7 @@ const atom = withImmer(
   atomWithStorage<AuthContextType>(
     "auth",
     defaultValue,
-    createJSONStorage<AuthContextType>(() => localStorage),
+    createJSONStorage<AuthContextType>(() => sessionStorage),
   ),
 );
 
