@@ -9,7 +9,7 @@ import { signOut as firebaseSignOut, onAuthStateChanged } from "firebase/auth";
 import { useAtom } from "jotai";
 import { withImmer } from "jotai-immer";
 import { atomWithStorage, createJSONStorage } from "jotai/utils";
-import { jwtDecode } from "jwt-decode";
+import { jwtDecode, JwtPayload } from "jwt-decode";
 import { useSnackbar } from "notistack";
 import {
   createContext,
@@ -120,7 +120,13 @@ export const AuthContextProvider: FC<PropsWithChildren> = ({ children }) => {
 
   useEffect(() => {
     if (!token) return;
-    const decoded = jwtDecode(token);
+    let decoded: JwtPayload;
+    try {
+      decoded = jwtDecode(token);
+    } catch (e) {
+      console.log(e);
+      return;
+    }
     if (!decoded.exp) return;
     if (import.meta.env.DEV) {
       console.log(
