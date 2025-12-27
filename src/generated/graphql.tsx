@@ -214,6 +214,7 @@ export type ExerciseSearchQuery = {
   orderDirection?: InputMaybe<OrderDirection>;
   queryStr?: InputMaybe<Scalars['String']['input']>;
   skip: Scalars['Int']['input'];
+  statuses?: InputMaybe<Array<ExerciseStatus>>;
   take: Scalars['Int']['input'];
 };
 
