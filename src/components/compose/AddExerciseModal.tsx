@@ -127,7 +127,8 @@ export const AddExerciseModal: FC = () => {
                 fetchMore={fetchMore}
                 hasMore={hasMore}
                 loading={loading}
-                onRowClick={onSelect}
+                onRowSelect={onSelect}
+                selectedId={selected?.id}
                 {...tableOrder}
               />
             </Box>
