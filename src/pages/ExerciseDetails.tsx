@@ -35,6 +35,7 @@ import { useNavigate } from "react-router-dom";
 import { useToggle } from "react-use";
 import ExerciseFields from "./createExercise/ExerciseFields";
 import { useRoleBasedAccess } from "@/util/auth";
+import { CommentSection } from "@/components/CommentSection";
 
 const ExerciseDetails: FC = () => {
   const { enqueueSnackbar } = useSnackbar();
@@ -255,6 +256,11 @@ const ExerciseDetailsForm: FC<{ updateSignal: boolean }> = ({
         <Stack direction="row" alignItems="center" gap={1} sx={{ flexGrow: 1 }}>
           <Typography variant="h4">Feladat</Typography>
           <ExerciseId>{id}</ExerciseId>
+          <CommentSection
+            targetId={id!}
+            mode="graphql-exercise"
+            exerciseId={id!}
+          />
           {exercise.originalId && (
             <>
               <Typography variant="body2" color="text.secondary">

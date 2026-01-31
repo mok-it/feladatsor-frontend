@@ -1,0 +1,5 @@
+mutation CreateExerciseSheetComment($input: CreateExerciseSheetCommentInput!) {
+  createExerciseSheetComment(input: $input) {
+    ...ExerciseSheetComment
+  }
+}

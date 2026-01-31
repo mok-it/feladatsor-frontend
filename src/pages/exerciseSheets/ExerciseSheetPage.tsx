@@ -25,7 +25,7 @@ export const ExerciseSheetPage: FC = () => {
   const { id } = useParams();
 
   const store = useStore();
-  const { reset, setItems } = useResetComposeAtom();
+  const { reset, setItems, setSheetItemIds, setSheetId } = useResetComposeAtom();
   const { data, loading } = useExerciseSheetQuery({
     variables: {
       exerciseSheetId: id ?? "",
@@ -34,6 +34,16 @@ export const ExerciseSheetPage: FC = () => {
       if (!data.exerciseSheet) return;
       setName(data.exerciseSheet?.name ?? "");
       reset();
+      setSheetId(data.exerciseSheet.id);
+      
+      setSheetItemIds((prev) => {
+        const newIds = { ...prev };
+        data.exerciseSheet?.sheetItems?.forEach((item) => {
+           newIds[`${item.ageGroup}-${item.level}`] = item.id;
+        });
+        return newIds;
+      });
+
       setItems((draft) => {
         data.exerciseSheet?.sheetItems?.forEach((item) => {
           item.exercises.forEach((exercise) => {
@@ -43,7 +53,7 @@ export const ExerciseSheetPage: FC = () => {
             }
             draft[key][exercise.order] = {
               id: exercise.exercise.id,
-              cardId: uniqueId(),
+              cardId: exercise.id || uniqueId(), // Use persistent OrderedExercise ID
             };
           });
         });

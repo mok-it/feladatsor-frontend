@@ -19,6 +19,7 @@ import ReactDOM from "react-dom/client";
 import App from "./App.tsx";
 import { AuthContextProvider, useAuth } from "./pages/AuthContext.tsx";
 import { ThemeProvider } from "./theme";
+import { CommentsProvider } from "@/context/CommentsContext";
 
 export const createApolloClient = ({
   token,
@@ -105,7 +106,9 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
         )}
       >
         <AuthContextProvider>
-          <AppWithApollo />
+          <CommentsProvider>
+            <AppWithApollo />
+          </CommentsProvider>
         </AuthContextProvider>
       </SnackbarProvider>
     </ThemeProvider>

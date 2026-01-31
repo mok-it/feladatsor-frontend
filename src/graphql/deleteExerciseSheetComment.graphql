@@ -1,0 +1,3 @@
+mutation DeleteExerciseSheetComment($id: ID!) {
+  deleteExerciseSheetComment(id: $id)
+}

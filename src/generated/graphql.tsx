@@ -441,6 +441,11 @@ export type MutationCreateExerciseSheetCommentArgs = {
   input: CreateExerciseSheetCommentInput;
 };
 
+export type MutationCreateExerciseSheetCommentArgs = {
+  input: CreateExerciseSheetCommentInput;
+};
+
+
 export type MutationCreateExerciseTagArgs = {
   name: Scalars["String"]["input"];
   parentId?: InputMaybe<Scalars["ID"]["input"]>;
@@ -466,6 +471,11 @@ export type MutationDeleteExerciseSheetCommentArgs = {
   id: Scalars["ID"]["input"];
 };
 
+export type MutationDeleteExerciseSheetCommentArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
 export type MutationDeleteExerciseTagArgs = {
   id: Scalars["ID"]["input"];
 };
@@ -487,6 +497,12 @@ export type MutationResolveExerciseSheetCommentArgs = {
   id: Scalars["ID"]["input"];
   notes?: InputMaybe<Scalars["String"]["input"]>;
 };
+
+export type MutationResolveExerciseSheetCommentArgs = {
+  id: Scalars['ID']['input'];
+  notes?: InputMaybe<Scalars['String']['input']>;
+};
+
 
 export type MutationUpdateExerciseArgs = {
   id: Scalars["ID"]["input"];
@@ -2684,6 +2700,9 @@ export const ExerciseSheetDocument = gql`
       }
       talonItems {
         order
+        comments {
+          ...ExerciseSheetComment
+        }
         exercise {
           id
           exerciseImage {

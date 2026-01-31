@@ -23,15 +23,25 @@ for (let i = 0; i < 4; i++) {
 
 export const composeAtom =
   atomWithImmer<
-    Record<string, { id: UniqueIdentifier | null; cardId: string }[]>
+    Record<
+      string,
+      { id: UniqueIdentifier | null; cardId: string }[]
+    >
   >(composeAtomDefault);
+
+export const sheetItemIdsAtom = atom<Record<string, string>>({});
+export const sheetIdAtom = atom<string | null>(null);
 
 export const useResetComposeAtom = () => {
   const setItems = useSetAtom(composeAtom);
+  const setSheetItemIds = useSetAtom(sheetItemIdsAtom);
+  const setSheetId = useSetAtom(sheetIdAtom);
   const reset = () => {
     setItems(composeAtomDefault);
+    setSheetItemIds({});
+    setSheetId(null);
   };
-  return { setItems, reset };
+  return { setItems, reset, setSheetItemIds, setSheetId };
 };
 
 export const addExerciseModalAtom = atom<{

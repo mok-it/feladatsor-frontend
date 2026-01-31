@@ -3,12 +3,22 @@ query exerciseSheet($exerciseSheetId: ID!) {
     id
     name
     status
+    comments {
+      ...ExerciseSheetComment
+    }
     sheetItems {
       id
       ageGroup
       level
+      comments {
+        ...ExerciseSheetComment
+      }
       exercises {
+        id
         order
+        comments {
+          ...ExerciseSheetComment
+        }
         exercise {
           id
           exerciseImage {
@@ -24,6 +34,9 @@ query exerciseSheet($exerciseSheetId: ID!) {
     }
     talonItems {
       order
+      comments {
+        ...ExerciseSheetComment
+      }
       exercise {
         id
         exerciseImage {
