@@ -138,7 +138,6 @@ export const ExerciseOperations: FC<{
               Lektorálások
             </Typography>
           </Stack>
-
           <Box>
             <Typography component="div" sx={{ color: "text.primary", mb: 1 }}>
               {exercise.contributors.length > 0 ? "Beküldők " : "Beküldő"}

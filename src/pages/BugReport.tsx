@@ -63,4 +63,3 @@ const BugReport: FC = () => {
 };
 
 export { BugReport };
-export default BugReport;

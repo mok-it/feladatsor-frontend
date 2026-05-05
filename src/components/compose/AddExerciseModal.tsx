@@ -4,7 +4,6 @@ import {
   useSearchExercisesLazyQuery,
 } from "@/generated/graphql.tsx";
 import { addExerciseModalAtom, composeAtom } from "@/util/atoms";
-import { ExerciseStatusEnum } from "@/util/types";
 import { useExerciseFilters } from "@/util/useExerciseFilters";
 import { useTableOrder } from "@/util/useTableOrder";
 import { LoadingButton } from "@mui/lab";
@@ -22,7 +21,9 @@ export const AddExerciseModal: FC = () => {
     setAtom(null);
   }, [setAtom]);
 
-  const { exerciseQuery, difficulty, filterComponents } = useExerciseFilters();
+  const { exerciseQuery, difficulty, filterComponents } = useExerciseFilters({
+    checkStatus: true,
+  });
   const tableOrder = useTableOrder<ExerciseListElemFragment>();
   const { orderBy, order } = tableOrder;
 
@@ -42,11 +43,11 @@ export const AddExerciseModal: FC = () => {
               take: 20,
               difficulty,
               queryStr: exerciseQuery.searchQuery,
-              orderBy: orderBy,
+              orderBy: orderBy || undefined,
               orderDirection: order === "asc" ? "ASC" : "DESC",
               includeTags: exerciseQuery.includeTags,
               excludeTags: exerciseQuery.excludeTags,
-              statuses: [ExerciseStatusEnum.APPROVED],
+              exerciseCheck: exerciseQuery.checkStatus || undefined,
             },
           },
         });
@@ -58,9 +59,10 @@ export const AddExerciseModal: FC = () => {
       [
         getData,
         difficulty,
+        exerciseQuery.searchQuery,
         exerciseQuery.includeTags,
         exerciseQuery.excludeTags,
-        exerciseQuery.searchQuery,
+        exerciseQuery.checkStatus,
         orderBy,
         order,
       ],
