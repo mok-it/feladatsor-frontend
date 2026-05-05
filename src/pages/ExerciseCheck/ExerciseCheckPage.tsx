@@ -4,6 +4,7 @@ import {
   ExerciseListElemFragment,
   useSearchExercisesLazyQuery,
 } from "@/generated/graphql.tsx";
+import { ExerciseStatusEnum } from "@/util/types";
 import { useExerciseFilters } from "@/util/useExerciseFilters";
 import { useTableOrder } from "@/util/useTableOrder";
 import { Card, CardContent, CardHeader, Typography } from "@mui/material";
@@ -39,6 +40,7 @@ export const ExerciseCheckPage = () => {
               includeTags: exerciseQuery.includeTags,
               excludeTags: exerciseQuery.excludeTags,
               exerciseCheck: exerciseQuery.checkStatus || undefined,
+              statuses: [ExerciseStatusEnum.CREATED],
             },
           },
         });

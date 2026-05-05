@@ -1,4 +1,3 @@
-import { tokenAtom } from "@/util/atoms.ts";
 import {
   ApolloClient,
   ApolloProvider,
@@ -8,23 +7,37 @@ import {
 } from "@apollo/client";
 import { setContext } from "@apollo/client/link/context";
 import { onError } from "@apollo/client/link/error";
-import { useAtomValue } from "jotai";
 import { truncate } from "lodash";
-import { closeSnackbar, SnackbarProvider, useSnackbar } from "notistack";
+import {
+  closeSnackbar,
+  EnqueueSnackbar,
+  SnackbarProvider,
+  useSnackbar,
+} from "notistack";
 import React, { useMemo } from "react";
 import ReactDOM from "react-dom/client";
 import App from "./App.tsx";
+import { AuthContextProvider, useAuth } from "./pages/AuthContext.tsx";
 import { ThemeProvider } from "./theme";
 
-// tessék bazdmeg voice komment
-// vscode extenstion required: AsyncLine
-//audio: 5NA6
-
-const AppWithApollo = () => {
-  const token = useAtomValue(tokenAtom);
-
-  const { enqueueSnackbar } = useSnackbar();
-
+export const createApolloClient = ({
+  token,
+  enqueueSnackbar,
+}: {
+  token: string | null;
+  enqueueSnackbar: EnqueueSnackbar;
+}) => {
+  const httpLink = createHttpLink({
+    uri: import.meta.env.VITE_APP_GRAPHQL_ENDPOINT,
+  });
+  const authLink = setContext((_, { headers }) => {
+    return {
+      headers: {
+        ...headers,
+        authorization: token ? `Bearer ${token}` : "",
+      },
+    };
+  });
   const errorLink = onError(({ graphQLErrors, networkError }) => {
     if (graphQLErrors) {
       graphQLErrors.forEach((error) => {
@@ -35,7 +48,6 @@ const AppWithApollo = () => {
         });
       });
     }
-
     if (networkError) {
       // handle network error
       enqueueSnackbar({
@@ -44,27 +56,20 @@ const AppWithApollo = () => {
       });
     }
   });
+  return new ApolloClient({
+    link: from([errorLink, authLink, httpLink]),
+    cache: new InMemoryCache(),
+  });
+};
+
+const AppWithApollo = () => {
+  const { token } = useAuth();
+
+  const { enqueueSnackbar } = useSnackbar();
 
   const client = useMemo(() => {
-    const httpLink = createHttpLink({
-      uri: import.meta.env.VITE_APP_GRAPHQL_ENDPOINT,
-    });
-
-    const authLink = setContext((_, { headers }) => {
-      return {
-        headers: {
-          ...headers,
-          authorization: token ? `Bearer ${token}` : "",
-        },
-      };
-    });
-    return new ApolloClient({
-      link: from([errorLink, authLink, httpLink]),
-      cache: new InMemoryCache(),
-    });
-  }, [errorLink, token]);
-
-  console.log("Graphql endpoint:", import.meta.env.VITE_APP_GRAPHQL_ENDPOINT);
+    return createApolloClient({ token, enqueueSnackbar });
+  }, [token, enqueueSnackbar]);
 
   return (
     <ApolloProvider client={client}>
@@ -99,7 +104,9 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
           </button>
         )}
       >
-        <AppWithApollo />
+        <AuthContextProvider>
+          <AppWithApollo />
+        </AuthContextProvider>
       </SnackbarProvider>
     </ThemeProvider>
   </React.StrictMode>,

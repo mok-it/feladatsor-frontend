@@ -14,7 +14,7 @@ https://feladatsor-dev.web.app/
 
 A production version is automatically built and deployed from the main branch when a new version tag is created. It is available at the following url:
 
-https://feladatsor.web.app/
+https://feladatsor.mokegyesulet.hu/
 
 The **DEV** and **PROD** builds of the app connect to different corresponding backend environments.
 

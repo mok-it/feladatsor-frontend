@@ -4,6 +4,7 @@ import {
   useSearchExercisesLazyQuery,
 } from "@/generated/graphql.tsx";
 import { addExerciseModalAtom, composeAtom } from "@/util/atoms";
+import { ExerciseStatusEnum } from "@/util/types";
 import { useExerciseFilters } from "@/util/useExerciseFilters";
 import { useTableOrder } from "@/util/useTableOrder";
 import { LoadingButton } from "@mui/lab";
@@ -129,7 +130,8 @@ export const AddExerciseModal: FC = () => {
                 fetchMore={fetchMore}
                 hasMore={hasMore}
                 loading={loading}
-                onRowClick={onSelect}
+                onRowSelect={onSelect}
+                selectedId={selected?.id}
                 {...tableOrder}
               />
             </Box>

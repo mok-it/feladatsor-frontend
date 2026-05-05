@@ -1,30 +1,29 @@
+import { useInfiniteLoad } from "@/components/InfiniteLoad/useInfiniteLoad.ts";
+import { CommentsList } from "@/components/profile/CommentsList.tsx";
+import { ExercisesList } from "@/components/profile/ExercisesList.tsx";
 import { ProfileHeader } from "@/components/profile/ProfileHeader.tsx";
 import { ProfileStats } from "@/components/profile/ProfileStats.tsx";
-import { ExercisesList } from "@/components/profile/ExercisesList.tsx";
-import { CommentsList } from "@/components/profile/CommentsList.tsx";
 import {
-  UserExerciseFragment,
   UserCommentFragment,
-  useUserQuery,
-  useSelectUserExercisesLazyQuery,
+  UserExerciseFragment,
   useSelectUserCommentsLazyQuery,
+  useSelectUserExercisesLazyQuery,
+  useUserQuery,
 } from "@/generated/graphql.tsx";
-import { useInfiniteLoad } from "@/components/InfiniteLoad/useInfiniteLoad.ts";
 import { Box, Divider } from "@mui/material";
 import Card from "@mui/material/Card";
 import { useCallback } from "react";
-import { useAtomValue } from "jotai/index";
-import { userAtom } from "@/util/atoms.ts";
+import { useAuth } from "./AuthContext";
 
 const EXERCISES_LIMIT = 10;
 const COMMENTS_LIMIT = 10;
 
 export const ProfilePage = () => {
-  const userFromToken = useAtomValue(userAtom);
+  const { user } = useAuth();
 
-  const { data: user } = useUserQuery({
+  const { data } = useUserQuery({
     variables: {
-      userId: userFromToken?.user?.id ?? "",
+      userId: user?.id ?? "",
     },
   });
 
@@ -32,12 +31,14 @@ export const ProfilePage = () => {
     useSelectUserExercisesLazyQuery();
 
   const fetchExercises = useCallback(
-    async (skip: number): Promise<{ data: UserExerciseFragment[]; totalCount?: number }> => {
-      if (!userFromToken?.user?.id) return { data: [] };
+    async (
+      skip: number,
+    ): Promise<{ data: UserExerciseFragment[]; totalCount?: number }> => {
+      if (!user?.id) return { data: [] };
 
       const result = await getExercises({
         variables: {
-          userId: userFromToken.user.id,
+          userId: user.id,
           skip,
           take: EXERCISES_LIMIT,
         },
@@ -45,7 +46,7 @@ export const ProfilePage = () => {
 
       return { data: result.data?.user?.exercises || [] };
     },
-    [getExercises, userFromToken?.user?.id],
+    [getExercises, user?.id],
   );
 
   const {
@@ -61,12 +62,14 @@ export const ProfilePage = () => {
     useSelectUserCommentsLazyQuery();
 
   const fetchComments = useCallback(
-    async (skip: number): Promise<{ data: UserCommentFragment[]; totalCount?: number }> => {
-      if (!userFromToken?.user?.id) return { data: [] };
+    async (
+      skip: number,
+    ): Promise<{ data: UserCommentFragment[]; totalCount?: number }> => {
+      if (!user?.id) return { data: [] };
 
       const result = await getComments({
         variables: {
-          userId: userFromToken.user.id,
+          userId: user.id,
           skip,
           take: COMMENTS_LIMIT,
         },
@@ -74,7 +77,7 @@ export const ProfilePage = () => {
 
       return { data: result.data?.user?.comments || [] };
     },
-    [getComments, userFromToken?.user?.id],
+    [getComments, user?.id],
   );
 
   const {
@@ -88,8 +91,8 @@ export const ProfilePage = () => {
 
   return (
     <Card variant="outlined" sx={{ p: 2 }}>
-      <ProfileHeader user={user?.user} />
-      <ProfileStats stats={user?.user?.stats} />
+      <ProfileHeader user={data?.user} />
+      <ProfileStats stats={data?.user?.stats} />
       <Divider />
       <Box
         sx={{
