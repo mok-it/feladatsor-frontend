@@ -21,7 +21,9 @@ export const AddExerciseModal: FC = () => {
     setAtom(null);
   }, [setAtom]);
 
-  const { exerciseQuery, difficulty, filterComponents } = useExerciseFilters();
+  const { exerciseQuery, difficulty, filterComponents } = useExerciseFilters({
+    checkStatus: true,
+  });
   const tableOrder = useTableOrder<ExerciseListElemFragment>();
   const { orderBy, order } = tableOrder;
 
@@ -41,10 +43,11 @@ export const AddExerciseModal: FC = () => {
               take: 20,
               difficulty,
               queryStr: exerciseQuery.searchQuery,
-              orderBy: orderBy,
+              orderBy: orderBy || undefined,
               orderDirection: order === "asc" ? "ASC" : "DESC",
               includeTags: exerciseQuery.includeTags,
               excludeTags: exerciseQuery.excludeTags,
+              exerciseCheck: exerciseQuery.checkStatus || undefined,
             },
           },
         });
@@ -56,9 +59,10 @@ export const AddExerciseModal: FC = () => {
       [
         getData,
         difficulty,
+        exerciseQuery.searchQuery,
         exerciseQuery.includeTags,
         exerciseQuery.excludeTags,
-        exerciseQuery.searchQuery,
+        exerciseQuery.checkStatus,
         orderBy,
         order,
       ],

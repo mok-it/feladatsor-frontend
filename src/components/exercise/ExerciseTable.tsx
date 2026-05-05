@@ -95,7 +95,7 @@ export const ExerciseTable: FC<
                 <Select
                   native
                   size="small"
-                  value={orderBy}
+                  value={orderBy ?? ""}
                   sx={{ mr: 1, mb: 1, bgcolor: "background.paper" }}
                   onChange={(e) => {
                     setOrderBy(
@@ -160,6 +160,8 @@ export const ExerciseTable: FC<
             hasMore={hasMore}
             isInitialLoading={loading && data.length === 0}
             isFetchingNextPage={loading}
+            asTableRows
+            colSpan={isMobile ? 1 : headCells.length}
             fetchNextPage={async () => {
               await fetchMore();
             }}

@@ -1,4 +1,4 @@
-import { Box } from "@mui/material";
+import { Box, TableCell, TableRow } from "@mui/material";
 import { ReactNode, useCallback, useEffect, useRef } from "react";
 import { useEffectOnce, useIntersection } from "react-use";
 
@@ -10,6 +10,8 @@ type Props<T> = {
   fetchNextPage: () => void;
   children: (item: T) => ReactNode;
   loadingElement?: ReactNode;
+  asTableRows?: boolean;
+  colSpan?: number;
 };
 
 export function InfiniteLoad<T>({
@@ -20,6 +22,8 @@ export function InfiniteLoad<T>({
   isInitialLoading,
   fetchNextPage,
   loadingElement,
+  asTableRows,
+  colSpan,
 }: Props<T>) {
   const intersectionRef = useRef(null);
   const intersection = useIntersection(intersectionRef, {
@@ -47,33 +51,63 @@ export function InfiniteLoad<T>({
     checkIntersection();
   }, [data.length, checkIntersection, intersection?.isIntersecting]);
 
+  const wrapContent = (content: ReactNode) => {
+    if (asTableRows) {
+      return (
+        <TableRow>
+          <TableCell colSpan={colSpan} sx={{ border: 0 }}>
+            {content}
+          </TableCell>
+        </TableRow>
+      );
+    }
+    return <Box p={2}>{content}</Box>;
+  };
+
+  const sentinel = asTableRows ? (
+    <tr ref={intersectionRef} style={{ height: 0, border: 0, padding: 0 }}>
+      <td
+        colSpan={colSpan}
+        style={{
+          height: 0,
+          border: 0,
+          padding: 0,
+          position: "relative",
+          bottom: 400,
+        }}
+      />
+    </tr>
+  ) : (
+    <Box
+      ref={intersectionRef}
+      style={{
+        position: "relative",
+        bottom: 400,
+        left: 0,
+        height: 10,
+        width: 10,
+        pointerEvents: "none",
+      }}
+    />
+  );
+
   return (
     <>
       {isInitialLoading ? (
-        <Box p={2}>Loading...</Box>
+        wrapContent("Loading...")
       ) : (
         <>
           {data.map((row, index) => {
             const isLoaderRow = index > data.length - 1;
             return !isLoaderRow && children(row as T);
           })}
-          {hasMore && (loadingElement || <Box p={2}>Loading...</Box>)}
+          {hasMore && (loadingElement || wrapContent("Loading..."))}
         </>
       )}
-      {!hasMore && !isFetchingNextPage && (
-        <Box p={2}>{data.length > 0 ? "A végére értél" : "Nincs találat"}</Box>
-      )}
-      <Box
-        ref={intersectionRef}
-        style={{
-          position: "relative",
-          bottom: 400,
-          left: 0,
-          height: 10,
-          width: 10,
-          pointerEvents: "none",
-        }}
-      ></Box>
+      {!hasMore &&
+        !isFetchingNextPage &&
+        wrapContent(data.length > 0 ? "A végére értél" : "Nincs találat")}
+      {sentinel}
     </>
   );
 }

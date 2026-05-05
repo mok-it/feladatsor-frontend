@@ -5,6 +5,7 @@ import {
   Chip,
   Stack,
   Table,
+  TableBody,
   TableHead,
   Typography,
 } from "@mui/material";
@@ -91,76 +92,78 @@ export const UserManagement = () => {
               </StyledTableCell>
             </StyledTableRow>
           </TableHead>
-          {data?.users.map((user) => {
-            return (
-              <StyledTableRow key={user.id}>
-                <StyledTableCell sx={{ minWidth: 100 }} size="small">
-                  <Stack direction="row" alignItems="center" gap={2}>
-                    <Avatar src={user.avatarUrl ?? undefined} />
-                    <Typography variant="body1">{user.name}</Typography>
-                  </Stack>
-                </StyledTableCell>
-                <StyledTableCell size="small">
-                  <Autocomplete
-                    multiple
-                    disableCloseOnSelect
-                    disableClearable
-                    size="small"
-                    sx={{ m: 1, width: "100%" }}
-                    options={Roles}
-                    disabled={isMyself(user.id)}
-                    defaultValue={user.roles}
-                    renderTags={(value, getTagProps) =>
-                      value.map((option, index) => (
-                        <Chip
-                          size="small"
-                          label={getRoleDisplayName(option)}
-                          {...getTagProps({ index })}
-                        />
-                      ))
-                    }
-                    renderOption={(props, option, { selected }) => (
-                      <li {...props}>
-                        <Checkbox
-                          size="small"
-                          style={{ marginRight: 8 }}
-                          checked={selected}
-                        />
-                        {getRoleDisplayName(option)}
-                      </li>
-                    )}
-                    onChange={(_, value) => {
-                      changePermissions({
-                        variables: {
-                          userId: user.id,
-                          permissions: value as Role[],
-                        },
-                      }).then((r) => {
-                        console.log(
-                          `Sucessfully changed permissions to user: ${user.name}, to: ${value.join()}`,
-                        );
-                        console.log(r);
-                        enqueueSnackbar(
-                          `Successfully changed permissions to user: ${user.name}, to: ${value}`,
-                          {
-                            variant: "success",
+          <TableBody>
+            {data?.users.map((user) => {
+              return (
+                <StyledTableRow key={user.id}>
+                  <StyledTableCell sx={{ minWidth: 100 }} size="small">
+                    <Stack direction="row" alignItems="center" gap={2}>
+                      <Avatar src={user.avatarUrl ?? undefined} />
+                      <Typography variant="body1">{user.name}</Typography>
+                    </Stack>
+                  </StyledTableCell>
+                  <StyledTableCell size="small">
+                    <Autocomplete
+                      multiple
+                      disableCloseOnSelect
+                      disableClearable
+                      size="small"
+                      sx={{ m: 1, width: "100%" }}
+                      options={Roles}
+                      disabled={isMyself(user.id)}
+                      defaultValue={user.roles}
+                      renderTags={(value, getTagProps) =>
+                        value.map((option, index) => (
+                          <Chip
+                            size="small"
+                            label={getRoleDisplayName(option)}
+                            {...getTagProps({ index })}
+                          />
+                        ))
+                      }
+                      renderOption={(props, option, { selected }) => (
+                        <li {...props}>
+                          <Checkbox
+                            size="small"
+                            style={{ marginRight: 8 }}
+                            checked={selected}
+                          />
+                          {getRoleDisplayName(option)}
+                        </li>
+                      )}
+                      onChange={(_, value) => {
+                        changePermissions({
+                          variables: {
+                            userId: user.id,
+                            permissions: value as Role[],
                           },
-                        );
-                      });
-                    }}
-                    renderInput={(params) => (
-                      <TextField
-                        {...params}
-                        label="Jogosultságok"
-                        size="small"
-                        placeholder="Kiválasztás"
-                      />
-                    )}
-                  />
-                </StyledTableCell>
-              </StyledTableRow>
-            );
-          })}
+                        }).then((r) => {
+                          console.log(
+                            `Sucessfully changed permissions to user: ${user.name}, to: ${value.join()}`,
+                          );
+                          console.log(r);
+                          enqueueSnackbar(
+                            `Successfully changed permissions to user: ${user.name}, to: ${value}`,
+                            {
+                              variant: "success",
+                            },
+                          );
+                        });
+                      }}
+                      renderInput={(params) => (
+                        <TextField
+                          {...params}
+                          label="Jogosultságok"
+                          size="small"
+                          placeholder="Kiválasztás"
+                        />
+                      )}
+                    />
+                  </StyledTableCell>
+                </StyledTableRow>
+              );
+            })}
+          </TableBody>
         </Table>
       </Box>
     </Card>

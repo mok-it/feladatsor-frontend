@@ -97,10 +97,11 @@ export const ExerciseSheets: FC = () => {
         </Stack>
 
         <Divider sx={{ my: 2 }} />
-        {loading ?? "Loading..."}
+        {loading && "Loading..."}
         <Grid2 container spacing={2}>
           {data?.exerciseSheets.map((sheet) => (
             <Grid2
+              key={sheet.id}
               size={{
                 xs: 12,
                 sm: 6,
@@ -108,7 +109,7 @@ export const ExerciseSheets: FC = () => {
                 lg: 3,
               }}
             >
-              <Card>
+              <Card sx={{ position: "relative" }}>
                 <CardActionArea
                   onClick={() => navigate(`/exercise-compose/${sheet.id}`)}
                 >
@@ -122,14 +123,6 @@ export const ExerciseSheets: FC = () => {
                       <Typography gutterBottom variant="h5" component="div">
                         {sheet.name}
                       </Typography>
-                      <IconButton
-                        onClick={(event) => {
-                          event.stopPropagation();
-                          setSheetToDelete(sheet.id);
-                        }}
-                      >
-                        <MdOutlineDelete color="red" />
-                      </IconButton>
                     </Stack>
                     <Typography
                       variant="body2"
@@ -146,6 +139,17 @@ export const ExerciseSheets: FC = () => {
                     </Typography>
                   </CardContent>
                 </CardActionArea>
+                <Box sx={{ position: "absolute", top: 8, right: 8 }}>
+                  <IconButton
+                    size="small"
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      setSheetToDelete(sheet.id);
+                    }}
+                  >
+                    <MdOutlineDelete color="red" />
+                  </IconButton>
+                </Box>
               </Card>
             </Grid2>
           ))}

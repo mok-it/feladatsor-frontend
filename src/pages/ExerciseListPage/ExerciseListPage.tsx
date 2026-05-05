@@ -32,7 +32,7 @@ export const ExerciseListPage = () => {
               take: LIMIT,
               difficulty,
               queryStr: exerciseQuery.searchQuery,
-              orderBy: orderBy,
+              orderBy: orderBy || undefined,
               orderDirection: order === "asc" ? "ASC" : "DESC",
               includeTags: exerciseQuery.includeTags,
               excludeTags: exerciseQuery.excludeTags,
