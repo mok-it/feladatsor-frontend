@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import {
   Box,
@@ -138,20 +138,44 @@ export const CommentPopup: React.FC<CommentPopupProps> = ({
   onClose,
 }) => {
   const [newComment, setNewComment] = useState('');
+  const [pendingScrollToLatest, setPendingScrollToLatest] = useState(false);
+  const lastCommentRef = useRef<HTMLDivElement | null>(null);
 
   const handleSend = () => {
     if (newComment.trim() && onAdd) {
+      setPendingScrollToLatest(true);
       onAdd(newComment);
       setNewComment('');
     }
   };
 
+  const stopPropagation = (event: React.SyntheticEvent) => {
+    event.stopPropagation();
+  };
+
   const handleKeyDown = (e: React.KeyboardEvent) => {
+    e.stopPropagation();
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
       handleSend();
     }
   };
+
+  useEffect(() => {
+    if (!open || !pendingScrollToLatest || comments.length === 0) return;
+
+    lastCommentRef.current?.scrollIntoView({
+      behavior: 'smooth',
+      block: 'nearest',
+    });
+    setPendingScrollToLatest(false);
+  }, [comments, open, pendingScrollToLatest]);
+
+  useEffect(() => {
+    if (!open) {
+      setPendingScrollToLatest(false);
+    }
+  }, [open]);
 
   if (!open) return null;
 
@@ -168,6 +192,9 @@ export const CommentPopup: React.FC<CommentPopupProps> = ({
       >
         <Paper
           elevation={4}
+          onClick={stopPropagation}
+          onMouseDown={stopPropagation}
+          onKeyDown={stopPropagation}
           sx={{
             width: 320,
             position: 'relative',
@@ -192,13 +219,17 @@ export const CommentPopup: React.FC<CommentPopupProps> = ({
             {/* Comments List */}
             <Box sx={{ maxHeight: 300, overflowY: 'auto' }}>
               {comments.map((comment, index) => (
-                <CommentItem
+                <Box
                   key={comment.id}
-                  comment={comment}
-                  onResolve={() => onResolve(comment.id)}
-                  onDelete={() => onDelete(comment.id)}
-                  isLast={index === comments.length - 1 && !onAdd}
-                />
+                  ref={index === comments.length - 1 ? lastCommentRef : null}
+                >
+                  <CommentItem
+                    comment={comment}
+                    onResolve={() => onResolve(comment.id)}
+                    onDelete={() => onDelete(comment.id)}
+                    isLast={index === comments.length - 1 && !onAdd}
+                  />
+                </Box>
               ))}
               {comments.length === 0 && !onAdd && (
                 <Box p={2} textAlign="center">
