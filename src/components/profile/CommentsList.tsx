@@ -42,7 +42,7 @@ export const CommentsList = ({
               <ProfileCardHeader>{comment.comment}</ProfileCardHeader>
 
               <ProfileCardMeta>
-                Exercise ID: {comment.exercise.id}
+                Feladat ID: {comment.exercise.id}
                 <br />
                 {comment.exercise.description}
                 <br />

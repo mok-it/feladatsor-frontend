@@ -174,7 +174,7 @@ export const Item: FC<{
              pointerEvents: 'auto',
           }}
         >
-             <Tooltip title="Comment on Exercise Placement">
+             <Tooltip title="Komment a feladat elhelyezéséhez">
                 <Box>
                   <CommentSection 
                      targetId={`sheet-item-${cardId}`} 

@@ -86,7 +86,7 @@ const CommentItem = ({
               {comment.user.name}
             </Typography>
             <Typography variant="caption" color="text.secondary">
-              {dayjs(comment.createdAt).format('MMM D, HH:mm')}
+              {dayjs(comment.createdAt).format('YYYY. MM. DD. HH:mm')}
             </Typography>
           </Stack>
 
@@ -101,7 +101,7 @@ const CommentItem = ({
               variant="caption"
               sx={{ display: 'block', mb: 1, color: 'success.main', fontStyle: 'italic' }}
             >
-              Resolved {dayjs(comment.resolvedAt).format('MMM D, HH:mm')}
+              Megoldva ekkor: {dayjs(comment.resolvedAt).format('YYYY. MM. DD. HH:mm')}
             </Typography>
           )}
 
@@ -114,10 +114,10 @@ const CommentItem = ({
                 onClick={onResolve}
                 sx={{ textTransform: 'none', fontSize: '0.75rem' }}
               >
-                Resolve
+                Megoldva
               </Button>
             )}
-            <IconButton size="small" onClick={onDelete} title="Delete">
+            <IconButton size="small" onClick={onDelete} title="Törlés">
               <DeleteOutlineIcon fontSize="small" />
             </IconButton>
           </Stack>
@@ -203,7 +203,7 @@ export const CommentPopup: React.FC<CommentPopupProps> = ({
               {comments.length === 0 && !onAdd && (
                 <Box p={2} textAlign="center">
                   <Typography variant="body2" color="text.secondary">
-                    No comments yet.
+                    Még nincs komment.
                   </Typography>
                 </Box>
               )}
@@ -234,7 +234,7 @@ export const CommentPopup: React.FC<CommentPopupProps> = ({
                     multiline
                     maxRows={4}
                     size="small"
-                    placeholder="Add a comment..."
+                    placeholder="Írj kommentet..."
                     value={newComment}
                     onChange={(e) => setNewComment(e.target.value)}
                     onKeyDown={handleKeyDown}
