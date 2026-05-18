@@ -14,13 +14,14 @@ import { CategoryScale, Chart, LinearScale } from "chart.js/auto";
 import dayjs from "dayjs";
 import { useEffect } from "react";
 import { Bar } from "react-chartjs-2";
-import GitHubCalendar from "react-github-contribution-calendar";
+import GitHubCalendarModule from "react-github-contribution-calendar";
 import { FaCheck } from "react-icons/fa";
 import { FaDiceD6 } from "react-icons/fa6";
 import { useToggle } from "react-use";
 import { useAuth } from "./AuthContext";
 
 export const HomePage = () => {
+  const GitHubCalendar = GitHubCalendarModule.default;
   const { user } = useAuth();
   const [show, toggle] = useToggle(false);
 
