@@ -104,7 +104,7 @@ export const pages: Page[] = [
     requiredRoles: ["USER"], // USER role required to access reports
   },
   {
-    name: "Cimkék",
+    name: "Címkék",
     path: "/tags",
     component: TagsPage,
     icon: MdOutlineNewLabel,

@@ -11,17 +11,16 @@ import {
 } from "@mui/material";
 import { lightBlue, lightGreen } from "@mui/material/colors";
 import { CategoryScale, Chart, LinearScale } from "chart.js/auto";
-import dayjs from "dayjs";
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { Bar } from "react-chartjs-2";
-import GitHubCalendarModule from "react-github-contribution-calendar";
+import { ActivityCalendar } from "react-activity-calendar";
+import "react-activity-calendar/tooltips.css";
 import { FaCheck } from "react-icons/fa";
 import { FaDiceD6 } from "react-icons/fa6";
 import { useToggle } from "react-use";
 import { useAuth } from "./AuthContext";
 
 export const HomePage = () => {
-  const GitHubCalendar = GitHubCalendarModule.default;
   const { user } = useAuth();
   const [show, toggle] = useToggle(false);
 
@@ -34,6 +33,33 @@ export const HomePage = () => {
     Chart.register(CategoryScale);
     Chart.register(LinearScale);
   }, []);
+
+  const contributionCalendarData = useMemo(() => {
+    const calendar = data?.globalStats?.contributionCalendar;
+    if (!calendar) return [];
+
+    const entriesByDate = new Map(
+      calendar.data.map((entry) => [entry.date, entry]),
+    );
+    const paddedData: Array<{ date: string; count: number; level: number }> = [];
+    const currentYear = new Date().getFullYear();
+    const current = new Date(`${currentYear}-01-01T00:00:00`);
+    const end = new Date(`${currentYear}-12-31T00:00:00`);
+
+    while (current <= end) {
+      const isoDate = current.toISOString().slice(0, 10);
+      paddedData.push(
+        entriesByDate.get(isoDate) || {
+          date: isoDate,
+          count: 0,
+          level: 0,
+        },
+      );
+      current.setDate(current.getDate() + 1);
+    }
+
+    return paddedData;
+  }, [data?.globalStats?.contributionCalendar]);
 
   return (
     <Box>
@@ -149,58 +175,82 @@ export const HomePage = () => {
           </Grid2>
           <Grid2 size={12}>
             <StatCard title="Feladatbeküldések éves eloszlása">
-              <Box sx={{ overflowX: "auto", width: "100%", maxWidth: "100%" }}>
-                <GitHubCalendar
-                  values={
-                    data?.globalStats?.contributionCalendar.data.reduce(
-                      (acc, d) => {
-                        acc[d.date] = d.count;
-                        return acc;
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "center",
+                  overflowX: "auto",
+                  width: "100%",
+                  maxWidth: "100%",
+                }}
+              >
+                <ActivityCalendar
+                  data={contributionCalendarData}
+                  colorScheme={mode === "dark" ? "dark" : "light"}
+                  weekStart={1}
+                  showWeekdayLabels
+                  blockRadius={2}
+                  blockSize={isMobile ? 10 : 12}
+                  fontSize={isMobile ? 10 : 12}
+                  labels={{
+                    months: [
+                      "Jan",
+                      "Feb",
+                      "Már",
+                      "Ápr",
+                      "Máj",
+                      "Jún",
+                      "Júl",
+                      "Aug",
+                      "Szep",
+                      "Okt",
+                      "Nov",
+                      "Dec",
+                    ],
+                    weekdays: [
+                      "Vasárnap",
+                      "Hétfő",
+                      "Kedd",
+                      "Szerda",
+                      "Csütörtök",
+                      "Péntek",
+                      "Szombat",
+                    ],
+                    totalCount: "{{count}} feladat az elmúlt évben",
+                    legend: {
+                      less: "Kevesebb",
+                      more: "Több",
+                    },
+                  }}
+                  theme={{
+                    light: [
+                      "#ebedf0",
+                      "#9be9a8",
+                      "#40c463",
+                      "#30a14e",
+                      "#216e39",
+                    ],
+                    dark: [
+                      "#161b22",
+                      "#0e4429",
+                      "#006d32",
+                      "#26a641",
+                      "#39d353",
+                    ],
+                  }}
+                  tooltips={{
+                    activity: {
+                      text: (activity) =>
+                        `${activity.date}: ${activity.count} feladat beküldve`,
+                      placement: "top",
+                      offset: 6,
+                      hoverRestMs: 300,
+                      transitionStyles: {
+                        duration: 100,
                       },
-                      {} as Record<string, number>,
-                    ) || {}
-                  }
-                  until={
-                    data?.globalStats?.contributionCalendar.toDate
-                      ? dayjs(data.globalStats.contributionCalendar.toDate)
-                          .endOf("year")
-                          .format("YYYY-MM-DD")
-                      : dayjs().endOf("year").format("YYYY-MM-DD")
-                  }
-                  weekNames={["V", "H", "K", "Sz", "Cs", "P", "Sz"]}
-                  monthNames={[
-                    "Jan",
-                    "Feb",
-                    "Már",
-                    "Ápr",
-                    "Máj",
-                    "Jún",
-                    "Júl",
-                    "Aug",
-                    "Szep",
-                    "Okt",
-                    "Nov",
-                    "Dec",
-                  ]}
-                  weekLabelAttributes={{
-                    fontSize: 9,
-                    fill: mode === "light" ? "#000" : "#fff",
+                      withArrow: true,
+                    },
                   }}
-                  monthLabelAttributes={{
-                    fontSize: 10,
-                    fill: mode === "light" ? "#000" : "#fff",
-                  }}
-                  panelAttributes={{
-                    rx: 2,
-                    ry: 2,
-                  }}
-                  panelColors={[
-                    mode === "light" ? "#ebedf0" : "#161b22",
-                    mode === "light" ? "#9be9a8" : "#0e4429",
-                    mode === "light" ? "#40c463" : "#006d32",
-                    mode === "light" ? "#30a14e" : "#26a641",
-                    mode === "light" ? "#216e39" : "#39d353",
-                  ]}
                 />
               </Box>
             </StatCard>
