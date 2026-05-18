@@ -75,6 +75,7 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
   const [createSheetComment] = useCreateExerciseSheetCommentMutation();
   const [resolveSheetComment] = useResolveExerciseSheetCommentMutation();
   const [deleteSheetComment] = useDeleteExerciseSheetCommentMutation();
+  const canResolveComments = mode === 'local-context' || mode === 'graphql-sheet';
 
 
   // --- Unified Data ---
@@ -178,8 +179,6 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
          console.error(e);
          enqueueSnackbar('Hiba a komment megoldásakor', { variant: 'error' });
        }
-    } else {
-      enqueueSnackbar('Feladatkommenteknél a "Megoldva" státusz még nem támogatott.', { variant: 'info' });
     }
   };
 
@@ -227,7 +226,7 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
         open={isOpen && activeThreadId === targetId}
         anchorPosition={anchorPosition}
         comments={comments}
-        onResolve={handleResolveComment}
+        onResolve={canResolveComments ? handleResolveComment : undefined}
         onDelete={handleDeleteComment}
         onClose={closeComments}
         onAdd={handleAddComment}

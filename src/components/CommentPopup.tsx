@@ -35,7 +35,7 @@ export interface CommentPopupProps {
   open: boolean;
   anchorPosition: { top: number; left: number };
   comments: CommentData[];
-  onResolve: (commentId: string) => void;
+  onResolve?: (commentId: string) => void;
   onDelete: (commentId: string) => void;
   onAdd?: (text: string) => void;
   currentUser?: CommentUser;
@@ -50,7 +50,7 @@ const CommentItem = ({
   isLast,
 }: {
   comment: CommentData;
-  onResolve: () => void;
+  onResolve?: () => void;
   onDelete: () => void;
   isLast: boolean;
 }) => {
@@ -107,7 +107,7 @@ const CommentItem = ({
 
           {/* Actions */}
           <Stack direction="row" justifyContent="flex-end" spacing={1}>
-            {!isResolved && (
+            {!isResolved && onResolve && (
               <Button
                 size="small"
                 startIcon={<CheckIcon />}
@@ -235,7 +235,7 @@ export const CommentPopup: React.FC<CommentPopupProps> = ({
                 >
                   <CommentItem
                     comment={comment}
-                    onResolve={() => onResolve(comment.id)}
+                    onResolve={onResolve ? () => onResolve(comment.id) : undefined}
                     onDelete={() => onDelete(comment.id)}
                     isLast={index === comments.length - 1 && !onAdd}
                   />
