@@ -6,6 +6,13 @@ export const useCommentPopup = () => {
 
   const openComments = useCallback((event: MouseEvent<HTMLElement>, threadId: string) => {
     event.stopPropagation();
+
+    if (activeThreadId === threadId && anchorPosition) {
+      setAnchorPosition(null);
+      setActiveThreadId(null);
+      return;
+    }
+
     const rect = event.currentTarget.getBoundingClientRect();
     // Position the popup to the right of the target, vertically centered or top-aligned
     setAnchorPosition({
@@ -13,7 +20,7 @@ export const useCommentPopup = () => {
       left: rect.right + window.scrollX,
     });
     setActiveThreadId(threadId);
-  }, []);
+  }, [activeThreadId, anchorPosition]);
 
   const closeComments = useCallback(() => {
     setAnchorPosition(null);

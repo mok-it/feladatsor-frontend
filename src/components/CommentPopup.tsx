@@ -138,12 +138,13 @@ export const CommentPopup: React.FC<CommentPopupProps> = ({
   onClose,
 }) => {
   const [newComment, setNewComment] = useState('');
-  const [pendingScrollToLatest, setPendingScrollToLatest] = useState(false);
+  const [pendingScrollFromCount, setPendingScrollFromCount] = useState<number | null>(null);
   const lastCommentRef = useRef<HTMLDivElement | null>(null);
+  const commentsListRef = useRef<HTMLDivElement | null>(null);
 
   const handleSend = () => {
     if (newComment.trim() && onAdd) {
-      setPendingScrollToLatest(true);
+      setPendingScrollFromCount(comments.length);
       onAdd(newComment);
       setNewComment('');
     }
@@ -162,18 +163,27 @@ export const CommentPopup: React.FC<CommentPopupProps> = ({
   };
 
   useEffect(() => {
-    if (!open || !pendingScrollToLatest || comments.length === 0) return;
+    if (!open || pendingScrollFromCount === null || comments.length <= pendingScrollFromCount) {
+      return;
+    }
 
-    lastCommentRef.current?.scrollIntoView({
-      behavior: 'smooth',
-      block: 'nearest',
+    requestAnimationFrame(() => {
+      commentsListRef.current?.scrollTo({
+        top: commentsListRef.current.scrollHeight,
+        behavior: 'smooth',
+      });
+      lastCommentRef.current?.scrollIntoView({
+        behavior: 'smooth',
+        block: 'end',
+      });
     });
-    setPendingScrollToLatest(false);
-  }, [comments, open, pendingScrollToLatest]);
+
+    setPendingScrollFromCount(null);
+  }, [comments, open, pendingScrollFromCount]);
 
   useEffect(() => {
     if (!open) {
-      setPendingScrollToLatest(false);
+      setPendingScrollFromCount(null);
     }
   }, [open]);
 
@@ -217,7 +227,7 @@ export const CommentPopup: React.FC<CommentPopupProps> = ({
         >
           <Stack spacing={0} sx={{ position: 'relative', zIndex: 1, bgcolor: 'transparent' }}>
             {/* Comments List */}
-            <Box sx={{ maxHeight: 300, overflowY: 'auto' }}>
+            <Box ref={commentsListRef} sx={{ maxHeight: 300, overflowY: 'auto' }}>
               {comments.map((comment, index) => (
                 <Box
                   key={comment.id}

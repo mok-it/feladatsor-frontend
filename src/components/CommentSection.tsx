@@ -179,7 +179,7 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
          enqueueSnackbar('Hiba a komment megoldásakor', { variant: 'error' });
        }
     } else {
-      enqueueSnackbar('Feladat kommenteknél a "Megoldva" státusz még nem támogatott.', { variant: 'info' });
+      enqueueSnackbar('Feladatkommenteknél a "Megoldva" státusz még nem támogatott.', { variant: 'info' });
     }
   };
 
