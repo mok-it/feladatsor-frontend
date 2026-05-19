@@ -1,5 +1,6 @@
 import { CategoryDifficultySelect } from "@/components/CategoryDifficultySelect.tsx";
 import { HelpingQuestions } from "@/components/HelpingQuestions/HelpingQuestions.tsx";
+import { LatexEditorField } from "@/components/LatexEditorField.tsx";
 import { Required } from "@/components/Required.tsx";
 import Section from "@/components/Section.tsx";
 import { SimpleAccordion } from "@/components/SimpleAccordion.tsx";
@@ -16,15 +17,13 @@ import {
 } from "@mui/material";
 import { useFormikContext } from "formik";
 import { sortBy } from "lodash";
-import { FC, useMemo, useState } from "react";
-import { useDebounce } from "react-use";
-import { KaTeX } from "../../components/Katex.tsx";
+import { FC, useMemo } from "react";
 import { MultiSelect } from "../../components/MultiSelect.tsx";
 import { SolutionOptions } from "@/components/SolutionOptions/SolutionOptions.tsx";
 import { ContributorsSelector } from "@/components/ContributorsSelector.tsx";
 
 const ExerciseFields: FC = () => {
-  const { values, handleChange, handleBlur, setFieldValue } =
+  const { values, handleChange, handleBlur, setFieldValue, setFieldTouched } =
     useFormikContext<ExerciseFieldsType>();
 
   const { data: tags, loading: tagsLoading } = useFlatExerciseTagsQuery();
@@ -38,75 +37,24 @@ const ExerciseFields: FC = () => {
     );
   }, [setFieldValue, values.difficulty]);
 
-  const [debouncedDescription, setDebouncedDescription] = useState("");
-  const [debouncedDescriptionSolution, setDebouncedDescriptionSolution] =
-    useState("");
-
-  useDebounce(
-    () => {
-      setDebouncedDescription(values.description);
-    },
-    500,
-    [values.description],
-  );
-
-  useDebounce(
-    () => {
-      setDebouncedDescriptionSolution(values.solution);
-    },
-    500,
-    [values.solution],
-  );
-
-  const katex = useMemo(() => {
-    return <KaTeX value={debouncedDescription} />;
-  }, [debouncedDescription]);
-
-  const katexSolution = useMemo(() => {
-    return <KaTeX value={debouncedDescriptionSolution} />;
-  }, [debouncedDescriptionSolution]);
-
   return (
     <Box>
       <Grid2 container spacing={2}>
-        <Grid2
-          size={{
-            xs: 12,
-            sm: 6,
-          }}
-        >
-          <Section
-            text={
+        <Grid2 size={{ xs: 12 }}>
+          <LatexEditorField
+            label={
               <>
                 Feladat leírása
                 <Required />
               </>
             }
-          >
-            <TextField
-              id="outlined-required"
-              name="description"
-              value={values.description}
-              onChange={handleChange}
-              onBlur={handleBlur}
-              minRows={10}
-              maxRows={13}
-              margin="none"
-              multiline
-              fullWidth
-            />
-          </Section>
-        </Grid2>
-        <Grid2
-          size={{
-            xs: 12,
-            sm: 6,
-          }}
-        >
-          <KaTeX value={"$\\LaTeX{}$ fordítás"} />
-          <Box mt={1} py={2} maxHeight={310} overflow={"auto"}>
-            {katex}
-          </Box>
+            value={values.description}
+            onChange={(v) => setFieldValue("description", v)}
+            onBlur={() => setFieldTouched("description", true)}
+            minHeight={240}
+            maxHeight={320}
+            previewMaxHeight={310}
+          />
         </Grid2>
         <Grid2
           size={{
@@ -136,43 +84,21 @@ const ExerciseFields: FC = () => {
             }}
           />
         </Grid2>
-        <Grid2
-          size={{
-            xs: 12,
-            sm: 6,
-          }}
-        >
-          <Section
-            text={
+        <Grid2 size={{ xs: 12 }}>
+          <LatexEditorField
+            label={
               <>
                 Feladat megoldása
                 <Required />
               </>
             }
-          >
-            <TextField
-              name="solution"
-              value={values.solution}
-              onChange={handleChange}
-              onBlur={handleBlur}
-              margin="none"
-              size="small"
-              multiline
-              maxRows={1}
-              fullWidth
-            />
-          </Section>
-        </Grid2>
-        <Grid2
-          size={{
-            xs: 12,
-            sm: 6,
-          }}
-        >
-          <KaTeX value={"$\\LaTeX{}$ megoldás fordítás"} />
-          <Box mt={2} maxHeight={100} overflow={"auto"}>
-            {katexSolution}
-          </Box>
+            value={values.solution}
+            onChange={(v) => setFieldValue("solution", v)}
+            onBlur={() => setFieldTouched("solution", true)}
+            minHeight={60}
+            maxHeight={120}
+            previewMaxHeight={100}
+          />
         </Grid2>
         <Grid2
           size={{
