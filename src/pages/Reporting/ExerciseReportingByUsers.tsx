@@ -168,8 +168,16 @@ export const ExerciseReportingByUsers = () => {
     variables: {
       skip: 0,
       take: 10_000,
-      createdAtFrom: dateRange.startDate.toDateString(),
-      createdAtTo: dateRange.endDate.toDateString(),
+      createdAtFrom: (() => {
+        const d = new Date(dateRange.startDate);
+        d.setHours(0, 0, 0, 0);
+        return d.toISOString();
+      })(),
+      createdAtTo: (() => {
+        const d = new Date(dateRange.endDate);
+        d.setHours(23, 59, 59, 999);
+        return d.toISOString();
+      })(),
     },
   });
 
