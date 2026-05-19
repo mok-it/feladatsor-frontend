@@ -1,7 +1,8 @@
 import { FC, Fragment, memo, useCallback, useMemo } from "react";
 
+import { CommentSection } from "@/components/CommentSection";
 import { useComposeKeys } from "@/components/compose/useComposeKeys";
-import { composeAtom } from "@/util/atoms";
+import { composeAtom, sheetIdAtom, sheetItemIdsAtom } from "@/util/atoms";
 import { composeStore, ComposeView } from "@/util/composeStore";
 import { ageGroupTexts, levels } from "@/util/const";
 import {
@@ -12,9 +13,9 @@ import {
   useSensors,
 } from "@dnd-kit/core";
 import { ChevronLeft } from "@mui/icons-material";
-import { Button, Grid2, Stack, Typography } from "@mui/material";
+import { Box, Button, Grid2, Stack, Tooltip, Typography } from "@mui/material";
 import { LayoutGroup } from "framer-motion";
-import { useSetAtom } from "jotai";
+import { useAtomValue, useSetAtom } from "jotai";
 import { keys, times, values } from "lodash";
 import Container from "../../components/compose/Container";
 
@@ -22,6 +23,8 @@ const ComposeComponent: FC<{ onViewChange: (view: ComposeView) => void }> = ({
   onViewChange,
 }) => {
   const view = composeStore((state) => state.view);
+  const sheetId = useAtomValue(sheetIdAtom);
+  const sheetItemIds = useAtomValue(sheetItemIdsAtom);
   const containerKeys = useMemo(() => {
     const res: string[] = [];
     for (let i = 0; i < 4; i++) {
@@ -105,13 +108,37 @@ const ComposeComponent: FC<{ onViewChange: (view: ComposeView) => void }> = ({
                 <Fragment key={key}>
                   {i % 5 === 0 && (
                     <Grid2 size={5}>
-                      <Typography
-                        fontSize={14}
-                        paddingLeft={1}
-                        fontWeight={"500"}
+                      <Box
+                        display="flex"
+                        alignItems="center"
+                        justifyContent="space-between"
+                        minHeight={36}
+                        pl={1}
                       >
-                        {levels[i / 5].name}
-                      </Typography>
+                        <Typography fontSize={14} fontWeight={"500"}>
+                          {levels[i / 5].name}
+                        </Typography>
+                        {view !== "all" && sheetId && (
+                          <Tooltip title="Komment a kategóriához">
+                            <Box display="flex">
+                              <CommentSection
+                                targetId={
+                                  sheetItemIds[`${view}-${i / 5}`] ||
+                                  `sheet-${sheetId}-${view}-${i / 5}`
+                                }
+                                mode={
+                                  sheetItemIds[`${view}-${i / 5}`]
+                                    ? "graphql-sheet"
+                                    : "local-context"
+                                }
+                                sheetId={sheetId}
+                                sheetCommentTarget="SheetItem"
+                                iconSize="small"
+                              />
+                            </Box>
+                          </Tooltip>
+                        )}
+                      </Box>
                     </Grid2>
                   )}
                   {view === "all" ? (
