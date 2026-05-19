@@ -5,7 +5,7 @@ import {
 import { createApolloClient } from "@/main";
 import { auth } from "@/util/firebase";
 import dayjs from "dayjs";
-import { signOut as firebaseSignOut, onAuthStateChanged } from "firebase/auth";
+import { onAuthStateChanged, signOut as firebaseSignOut } from "firebase/auth";
 import { useAtom } from "jotai";
 import { withImmer } from "jotai-immer";
 import { atomWithStorage, createJSONStorage } from "jotai/utils";
@@ -51,7 +51,7 @@ const atom = withImmer(
   atomWithStorage<AuthContextType>(
     "auth",
     defaultValue,
-    createJSONStorage<AuthContextType>(() => sessionStorage),
+    createJSONStorage<AuthContextType>(() => localStorage),
   ),
 );
 
