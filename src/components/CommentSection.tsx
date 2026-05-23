@@ -28,6 +28,30 @@ interface CommentSectionProps {
   iconSize?: "small" | "medium" | "large";
 }
 
+const toCommentTimestamp = (
+  value: number | string | Date | null | undefined,
+) => {
+  if (value === null || value === undefined) {
+    return 0;
+  }
+
+  if (typeof value === "number") {
+    return value;
+  }
+
+  if (value instanceof Date) {
+    return value.getTime();
+  }
+
+  const numericValue = Number(value);
+  if (!Number.isNaN(numericValue)) {
+    return numericValue;
+  }
+
+  const parsedValue = new Date(value);
+  return Number.isNaN(parsedValue.getTime()) ? 0 : parsedValue.getTime();
+};
+
 export const CommentSection: React.FC<CommentSectionProps> = ({
   targetId,
   mode,
@@ -72,17 +96,31 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
 
   // --- Unified Data ---
   const comments: CommentData[] = useMemo(() => {
+    const sortComments = (items: CommentData[]) =>
+      [...items].sort((a, b) => {
+        const timestampDiff =
+          toCommentTimestamp(a.createdAt) - toCommentTimestamp(b.createdAt);
+
+        if (timestampDiff !== 0) {
+          return timestampDiff;
+        }
+
+        return a.id.localeCompare(b.id);
+      });
+
     if (mode === "graphql-exercise" && exerciseData?.exercise) {
-      return exerciseData.exercise.comments.map((c) => ({
-        id: c.id,
-        text: c.comment,
-        createdAt: c.createdAt,
-        user: {
-          name: c.createdBy.name,
-          avatarUrl: c.createdBy.avatarUrl,
-        },
-        resolvedAt: null,
-      }));
+      return sortComments(
+        exerciseData.exercise.comments.map((c) => ({
+          id: c.id,
+          text: c.comment,
+          createdAt: c.createdAt,
+          user: {
+            name: c.createdBy.name,
+            avatarUrl: c.createdBy.avatarUrl,
+          },
+          resolvedAt: null,
+        })),
+      );
     } else if (mode === "graphql-sheet" && sheetData?.exerciseSheet) {
       let filtered: typeof sheetData.exerciseSheet.comments = [];
 
@@ -103,21 +141,39 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
         ];
       }
 
-      return filtered.map((c) => ({
-        id: c.id,
-        text: c.comment,
-        createdAt: c.createdAt,
-        user: {
-          name: c.user.name,
-          avatarUrl: c.user.avatarUrl,
-        },
-        resolvedAt: c.isResolved
-          ? c.resolvedAt || new Date().toISOString()
-          : null,
-      }));
+      return sortComments(
+        filtered.map((c) => ({
+          id: c.id,
+          text: c.comment,
+          createdAt: c.createdAt,
+          user: {
+            name: c.user.name,
+            avatarUrl: c.user.avatarUrl,
+          },
+          resolvedAt: c.isResolved
+            ? c.resolvedAt || new Date().toISOString()
+            : null,
+        })),
+      );
     }
     return [];
   }, [mode, targetId, exerciseData, sheetData, sheetCommentTarget]);
+
+  const unresolvedCommentCount = comments.filter(
+    (comment) => !comment.resolvedAt,
+  ).length;
+  const hasComments = comments.length > 0;
+  const hasUnresolvedComments = unresolvedCommentCount > 0;
+  const commentIconColor = hasUnresolvedComments
+    ? "primary"
+    : hasComments
+      ? "success"
+      : "default";
+  const badgeColor = hasUnresolvedComments
+    ? "secondary"
+    : hasComments
+      ? "success"
+      : "default";
 
   // --- Handlers ---
   const handleAddComment = async (text: string) => {
@@ -210,10 +266,10 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
       <IconButton
         size={iconSize}
         onClick={(e) => openComments(e, targetId)}
-        color={comments.length > 0 ? "primary" : "default"}
-        data-has-comments={comments.length > 0 ? "true" : "false"}
+        color={commentIconColor}
+        data-has-comments={hasComments ? "true" : "false"}
       >
-        <Badge badgeContent={comments.length} color="secondary">
+        <Badge badgeContent={comments.length} color={badgeColor}>
           <CommentIcon
             fontSize={iconSize === "large" ? "inherit" : undefined}
           />
