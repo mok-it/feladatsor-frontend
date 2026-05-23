@@ -39,7 +39,7 @@ export const Item: FC<{
   const view = composeStore((state) => state.view);
   const [items, setItems] = useAtom(composeAtom);
   const sheetId = useAtomValue(sheetIdAtom);
-  
+
   // Detect if item is persisted (UUID) or draft (short uniqueId)
   const isPersisted = cardId.length > 10;
 
@@ -125,6 +125,7 @@ export const Item: FC<{
         ref={setRef}
         {...attributes}
         {...listeners}
+        position="relative"
         width={"100%"}
         height={height}
         minHeight={COMPOSE_HEIGHT.SHORT}
@@ -159,7 +160,7 @@ export const Item: FC<{
         }}
       >
         {memoizedCard}
-        
+
         {/* Item/Exercise Comment (Top-Right) */}
         <Box
           className="comment-triggers"
@@ -167,27 +168,26 @@ export const Item: FC<{
           top={-15}
           right={-15}
           zIndex={110}
-          sx={{ 
-            opacity: 0, 
-            transition: 'opacity 0.2s',
+          sx={{
+            opacity: 0,
+            transition: "opacity 0.2s",
             ".MuiBox-root:hover > &": { opacity: 1 },
             '&:has(button[data-has-comments="true"])': { opacity: 1 },
-            pointerEvents: 'auto',
+            pointerEvents: "auto",
           }}
         >
-             <Tooltip title="Komment a feladat elhelyezéséhez">
-                <Box>
-                  <CommentSection 
-                     targetId={`sheet-item-${cardId}`} 
-                     mode={isPersisted ? "graphql-sheet" : "local-context"} 
-                     sheetId={sheetId || undefined}
-                     sheetCommentTarget="OrderedExercise"
-                     iconSize="small"
-                  />
-                </Box>
-             </Tooltip>
+          <Tooltip title="Komment a feladat elhelyezéséhez">
+            <Box>
+              <CommentSection
+                targetId={cardId}
+                mode={isPersisted ? "graphql-sheet" : "local-context"}
+                sheetId={sheetId || undefined}
+                sheetCommentTarget="OrderedExercise"
+                iconSize="small"
+              />
+            </Box>
+          </Tooltip>
         </Box>
-
       </Box>
       <ItemMenu {...{ id, open, toggle, order, anchorRef }} />
     </>

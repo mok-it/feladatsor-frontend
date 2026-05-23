@@ -1,31 +1,48 @@
-import { useState, useCallback, MouseEvent } from 'react';
+import { atom, useAtom } from "jotai";
+import { useCallback, MouseEvent } from "react";
+
+const commentPopupAtom = atom<{
+  anchorPosition: { top: number; left: number } | null;
+  activeThreadId: string | null;
+}>({
+  anchorPosition: null,
+  activeThreadId: null,
+});
 
 export const useCommentPopup = () => {
-  const [anchorPosition, setAnchorPosition] = useState<{ top: number; left: number } | null>(null);
-  const [activeThreadId, setActiveThreadId] = useState<string | null>(null);
+  const [{ anchorPosition, activeThreadId }, setPopupState] =
+    useAtom(commentPopupAtom);
 
-  const openComments = useCallback((event: MouseEvent<HTMLElement>, threadId: string) => {
-    event.stopPropagation();
+  const openComments = useCallback(
+    (event: MouseEvent<HTMLElement>, threadId: string) => {
+      event.stopPropagation();
 
-    if (activeThreadId === threadId && anchorPosition) {
-      setAnchorPosition(null);
-      setActiveThreadId(null);
-      return;
-    }
+      if (activeThreadId === threadId && anchorPosition) {
+        setPopupState({
+          anchorPosition: null,
+          activeThreadId: null,
+        });
+        return;
+      }
 
-    const rect = event.currentTarget.getBoundingClientRect();
-    // Position the popup to the right of the target, vertically centered or top-aligned
-    setAnchorPosition({
-      top: rect.top + window.scrollY,
-      left: rect.right + window.scrollX,
-    });
-    setActiveThreadId(threadId);
-  }, [activeThreadId, anchorPosition]);
+      const rect = event.currentTarget.getBoundingClientRect();
+      setPopupState({
+        anchorPosition: {
+          top: rect.top + window.scrollY,
+          left: rect.right + window.scrollX,
+        },
+        activeThreadId: threadId,
+      });
+    },
+    [activeThreadId, anchorPosition, setPopupState],
+  );
 
   const closeComments = useCallback(() => {
-    setAnchorPosition(null);
-    setActiveThreadId(null);
-  }, []);
+    setPopupState({
+      anchorPosition: null,
+      activeThreadId: null,
+    });
+  }, [setPopupState]);
 
   return {
     isOpen: !!anchorPosition,
