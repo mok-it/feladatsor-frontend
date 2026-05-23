@@ -33,6 +33,7 @@ query exerciseSheet($exerciseSheetId: ID!) {
       }
     }
     talonItems {
+      id
       order
       comments {
         ...ExerciseSheetComment

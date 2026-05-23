@@ -249,8 +249,13 @@ export const TalonModal: FC<{
               <Stack sx={{ flexGrow: 1, overflowY: "auto" }}>
                 <ContainerContext.Provider value={"talon"}>
                   {talon.map((t, i) => (
-                    <Box key={t.id} sx={{ pb: 2 }}>
-                      <MemoizedItem key={t.id} i={i} id={t.id!.toString()} />
+                    <Box key={t.cardId} sx={{ pb: 2 }}>
+                      <MemoizedItem
+                        key={t.cardId}
+                        cardId={t.cardId}
+                        exerciseId={t.id!.toString()}
+                        i={i}
+                      />
                     </Box>
                   ))}
                 </ContainerContext.Provider>
@@ -281,8 +286,12 @@ export const TalonModal: FC<{
   );
 };
 
-const TalonItem: FC<{ id: string; i: number }> = ({ id, i }) => {
-  return <Item cardId={id} id={id} order={i} />;
+const TalonItem: FC<{ cardId: string; exerciseId: string; i: number }> = ({
+  cardId,
+  exerciseId,
+  i,
+}) => {
+  return <Item cardId={cardId} id={exerciseId} order={i} />;
 };
 
 const MemoizedItem = memo(TalonItem);

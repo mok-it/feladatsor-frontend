@@ -1,6 +1,6 @@
 import ExerciseCard from "@/components/compose/ExerciseCard";
 import { useSelectExerciseQuery } from "@/generated/graphql.tsx";
-import { composeAtom, sheetIdAtom } from "@/util/atoms";
+import { sheetIdAtom } from "@/util/atoms";
 import { composeStore, ExerciseView } from "@/util/composeStore";
 import { COMPOSE_HEIGHT } from "@/util/const";
 import {
@@ -11,7 +11,7 @@ import {
 import { CSS } from "@dnd-kit/utilities";
 import { Box, Skeleton, Tooltip } from "@mui/material";
 import { motion } from "framer-motion";
-import { useAtom, useAtomValue } from "jotai";
+import { useAtomValue } from "jotai";
 import { FC, useCallback, useContext, useMemo, useRef } from "react";
 import { useToggle } from "react-use";
 import { ContainerContext } from "./Container";
@@ -37,7 +37,6 @@ export const Item: FC<{
   const selectedOrder = composeStore((state) => state.selectedOrder);
   const exerciseView = composeStore((state) => state.exerciseView);
   const view = composeStore((state) => state.view);
-  const [items, setItems] = useAtom(composeAtom);
   const sheetId = useAtomValue(sheetIdAtom);
 
   // Detect if item is persisted (UUID) or draft (short uniqueId)
@@ -161,33 +160,34 @@ export const Item: FC<{
       >
         {memoizedCard}
 
-        {/* Item/Exercise Comment (Top-Right) */}
-        <Box
-          className="comment-triggers"
-          position="absolute"
-          top={-15}
-          right={-15}
-          zIndex={110}
-          sx={{
-            opacity: 0,
-            transition: "opacity 0.2s",
-            ".MuiBox-root:hover > &": { opacity: 1 },
-            '&:has(button[data-has-comments="true"])': { opacity: 1 },
-            pointerEvents: "auto",
-          }}
-        >
-          <Tooltip title="Komment a feladat elhelyezéséhez">
-            <Box>
-              <CommentSection
-                targetId={cardId}
-                mode={isPersisted ? "graphql-sheet" : "local-context"}
-                sheetId={sheetId || undefined}
-                sheetCommentTarget="OrderedExercise"
-                iconSize="small"
-              />
-            </Box>
-          </Tooltip>
-        </Box>
+        {id && isPersisted && (
+          <Box
+            className="comment-triggers"
+            position="absolute"
+            top={-15}
+            right={-15}
+            zIndex={110}
+            sx={{
+              opacity: 0,
+              transition: "opacity 0.2s",
+              ".MuiBox-root:hover > &": { opacity: 1 },
+              '&:has(button[data-has-comments="true"])': { opacity: 1 },
+              pointerEvents: "auto",
+            }}
+          >
+            <Tooltip title="Komment a feladat elhelyezéséhez">
+              <Box>
+                <CommentSection
+                  targetId={cardId}
+                  mode="graphql-sheet"
+                  sheetId={sheetId || undefined}
+                  sheetCommentTarget="OrderedExercise"
+                  iconSize="small"
+                />
+              </Box>
+            </Tooltip>
+          </Box>
+        )}
       </Box>
       <ItemMenu {...{ id, open, toggle, order, anchorRef }} />
     </>
