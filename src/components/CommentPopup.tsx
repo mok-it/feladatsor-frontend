@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import {
   Box,
@@ -62,6 +62,30 @@ const formatCommentDate = (
   }
 
   return dayjs(value).format("YYYY. MM. DD. HH:mm");
+};
+
+const toCommentTimestamp = (
+  value: number | string | Date | null | undefined,
+) => {
+  if (value === null || value === undefined) {
+    return 0;
+  }
+
+  if (typeof value === "number") {
+    return value;
+  }
+
+  if (value instanceof Date) {
+    return value.getTime();
+  }
+
+  const numericValue = Number(value);
+  if (!Number.isNaN(numericValue)) {
+    return numericValue;
+  }
+
+  const parsedValue = dayjs(value);
+  return parsedValue.isValid() ? parsedValue.valueOf() : 0;
 };
 
 const CommentItem = ({
@@ -188,10 +212,24 @@ export const CommentPopup: React.FC<CommentPopupProps> = ({
   const commentInputRef = useRef<HTMLInputElement | HTMLTextAreaElement | null>(
     null,
   );
+  const sortedComments = useMemo(
+    () =>
+      [...comments].sort((a, b) => {
+        const timestampDiff =
+          toCommentTimestamp(a.createdAt) - toCommentTimestamp(b.createdAt);
+
+        if (timestampDiff !== 0) {
+          return timestampDiff;
+        }
+
+        return a.id.localeCompare(b.id);
+      }),
+    [comments],
+  );
 
   const handleSend = () => {
     if (newComment.trim() && onAdd) {
-      setPendingScrollFromCount(comments.length);
+      setPendingScrollFromCount(sortedComments.length);
       onAdd(newComment);
       setNewComment("");
     }
@@ -218,7 +256,7 @@ export const CommentPopup: React.FC<CommentPopupProps> = ({
     if (
       !open ||
       pendingScrollFromCount === null ||
-      comments.length <= pendingScrollFromCount
+      sortedComments.length <= pendingScrollFromCount
     ) {
       return;
     }
@@ -235,7 +273,7 @@ export const CommentPopup: React.FC<CommentPopupProps> = ({
     });
 
     setPendingScrollFromCount(null);
-  }, [comments, open, pendingScrollFromCount]);
+  }, [open, pendingScrollFromCount, sortedComments]);
 
   useEffect(() => {
     if (!open) {
@@ -295,10 +333,12 @@ export const CommentPopup: React.FC<CommentPopupProps> = ({
               ref={commentsListRef}
               sx={{ maxHeight: 300, overflowY: "auto" }}
             >
-              {comments.map((comment, index) => (
+              {sortedComments.map((comment, index) => (
                 <Box
                   key={comment.id}
-                  ref={index === comments.length - 1 ? lastCommentRef : null}
+                  ref={
+                    index === sortedComments.length - 1 ? lastCommentRef : null
+                  }
                 >
                   <CommentItem
                     comment={comment}
@@ -306,11 +346,11 @@ export const CommentPopup: React.FC<CommentPopupProps> = ({
                       onResolve ? () => onResolve(comment.id) : undefined
                     }
                     onDelete={() => onDelete(comment.id)}
-                    isLast={index === comments.length - 1 && !onAdd}
+                    isLast={index === sortedComments.length - 1 && !onAdd}
                   />
                 </Box>
               ))}
-              {comments.length === 0 && !onAdd && (
+              {sortedComments.length === 0 && !onAdd && (
                 <Box p={2} textAlign="center">
                   <Typography variant="body2" color="text.secondary">
                     Még nincs komment.
@@ -324,7 +364,7 @@ export const CommentPopup: React.FC<CommentPopupProps> = ({
               <Box
                 sx={{
                   p: 2,
-                  borderTop: comments.length > 0 ? "1px solid" : "none",
+                  borderTop: sortedComments.length > 0 ? "1px solid" : "none",
                   borderColor: "divider",
                   bgcolor: "background.default",
                   borderBottomLeftRadius: (theme) => theme.shape.borderRadius,
