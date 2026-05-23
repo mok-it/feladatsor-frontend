@@ -171,7 +171,8 @@ export const Item: FC<{
             opacity: 0, 
             transition: 'opacity 0.2s',
             ".MuiBox-root:hover > &": { opacity: 1 },
-             pointerEvents: 'auto',
+            '&:has(button[data-has-comments="true"])': { opacity: 1 },
+            pointerEvents: 'auto',
           }}
         >
              <Tooltip title="Komment a feladat elhelyezéséhez">

@@ -1,6 +1,6 @@
 import { CommentSection } from "@/components/CommentSection";
 import { ExerciseSheetQuery } from "@/generated/graphql";
-import { Box, Card, Stack, Tooltip, Typography } from "@mui/material";
+import { Box, Card, Stack, Tooltip } from "@mui/material";
 import { FC } from "react";
 import { SheetStatusSelector } from "./SheetStatusSelector";
 
@@ -21,8 +21,7 @@ export const SheetOperations: FC<{
             justifyContent="space-between"
             gap={2}
           >
-            <Typography variant="subtitle2">Feladatsor kommentek</Typography>
-            <Tooltip title="Komment az egész feladatsorhoz">
+            <Tooltip title="Komment a feladatsorhoz">
               <Box display="flex">
                 <CommentSection
                   targetId={sheet.id}

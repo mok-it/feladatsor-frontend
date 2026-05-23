@@ -216,6 +216,7 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
         size={iconSize}
         onClick={(e) => openComments(e, targetId)}
         color={comments.length > 0 ? 'primary' : 'default'}
+        data-has-comments={comments.length > 0 ? 'true' : 'false'}
       >
         <Badge badgeContent={comments.length} color="secondary">
           <CommentIcon fontSize={iconSize === 'large' ? 'inherit' : undefined} />
