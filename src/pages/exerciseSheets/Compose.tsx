@@ -25,6 +25,11 @@ const ComposeComponent: FC<{ onViewChange: (view: ComposeView) => void }> = ({
   const view = composeStore((state) => state.view);
   const sheetId = useAtomValue(sheetIdAtom);
   const sheetItemIds = useAtomValue(sheetItemIdsAtom);
+  const getSheetItemTarget = (ageGroup: string, level: number) =>
+    sheetItemIds[`${ageGroup}-${level}`] ||
+    `sheet-${sheetId}-${ageGroup}-${level}`;
+  const getCategoryTooltip = (ageGroup: string, level: number) =>
+    `Komment a(z) ${ageGroupTexts[ageGroup as keyof typeof ageGroupTexts]} kategória ${levels[level].name} nehézségéhez`;
   const containerKeys = useMemo(() => {
     const res: string[] = [];
     for (let i = 0; i < 4; i++) {
@@ -119,13 +124,10 @@ const ComposeComponent: FC<{ onViewChange: (view: ComposeView) => void }> = ({
                           {levels[i / 5].name}
                         </Typography>
                         {view !== "all" && sheetId && (
-                          <Tooltip title="Komment a kategóriához">
+                          <Tooltip title={getCategoryTooltip(view, i / 5)}>
                             <Box display="flex">
                               <CommentSection
-                                targetId={
-                                  sheetItemIds[`${view}-${i / 5}`] ||
-                                  `sheet-${sheetId}-${view}-${i / 5}`
-                                }
+                                targetId={getSheetItemTarget(view, i / 5)}
                                 mode={
                                   sheetItemIds[`${view}-${i / 5}`]
                                     ? "graphql-sheet"
@@ -143,7 +145,36 @@ const ComposeComponent: FC<{ onViewChange: (view: ComposeView) => void }> = ({
                   )}
                   {view === "all" ? (
                     <Grid2 size={1} component={"div"}>
-                      <Container id={key} />
+                      <Container
+                        id={key}
+                        categoryComment={
+                          sheetId ? (
+                            <Tooltip
+                              title={getCategoryTooltip(
+                                key.split("-")[0],
+                                Number(key.split("-")[1]),
+                              )}
+                            >
+                              <Box display="flex">
+                                <CommentSection
+                                  targetId={getSheetItemTarget(
+                                    key.split("-")[0],
+                                    Number(key.split("-")[1]),
+                                  )}
+                                  mode={
+                                    sheetItemIds[key]
+                                      ? "graphql-sheet"
+                                      : "local-context"
+                                  }
+                                  sheetId={sheetId}
+                                  sheetCommentTarget="SheetItem"
+                                  iconSize="small"
+                                />
+                              </Box>
+                            </Tooltip>
+                          ) : undefined
+                        }
+                      />
                     </Grid2>
                   ) : (
                     <>

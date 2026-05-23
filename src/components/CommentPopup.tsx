@@ -1,5 +1,5 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { createPortal } from 'react-dom';
+import React, { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import {
   Box,
   Paper,
@@ -11,11 +11,11 @@ import {
   ClickAwayListener,
   TextField,
   InputAdornment,
-} from '@mui/material';
-import CheckIcon from '@mui/icons-material/Check';
-import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
-import SendIcon from '@mui/icons-material/Send';
-import dayjs from 'dayjs';
+} from "@mui/material";
+import CheckIcon from "@mui/icons-material/Check";
+import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
+import SendIcon from "@mui/icons-material/Send";
+import dayjs from "dayjs";
 
 // Types
 export interface CommentUser {
@@ -43,6 +43,27 @@ export interface CommentPopupProps {
   className?: string;
 }
 
+const formatCommentDate = (
+  value: number | string | Date | null | undefined,
+) => {
+  if (value === null || value === undefined) {
+    return "";
+  }
+
+  if (typeof value === "string") {
+    const numericValue = Number(value);
+    if (!Number.isNaN(numericValue)) {
+      return dayjs(numericValue).format("YYYY. MM. DD. HH:mm");
+    }
+  }
+
+  if (typeof value === "number") {
+    return dayjs(value).format("YYYY. MM. DD. HH:mm");
+  }
+
+  return dayjs(value).format("YYYY. MM. DD. HH:mm");
+};
+
 const CommentItem = ({
   comment,
   onResolve,
@@ -60,12 +81,12 @@ const CommentItem = ({
     <Box
       sx={{
         p: 2,
-        borderBottom: isLast ? 'none' : '1px solid',
-        borderColor: 'divider',
-        bgcolor: isResolved ? 'action.hover' : 'background.paper',
+        borderBottom: isLast ? "none" : "1px solid",
+        borderColor: "divider",
+        bgcolor: isResolved ? "action.hover" : "background.paper",
         opacity: isResolved ? 0.7 : 1,
-        transition: 'all 0.2s',
-        '&:first-of-type': {
+        transition: "all 0.2s",
+        "&:first-of-type": {
           borderTopLeftRadius: (theme) => theme.shape.borderRadius,
           borderTopRightRadius: (theme) => theme.shape.borderRadius,
         },
@@ -81,17 +102,33 @@ const CommentItem = ({
           sx={{ width: 32, height: 32 }}
         />
         <Box flex={1}>
-          <Stack direction="row" justifyContent="space-between" alignItems="center">
-            <Typography variant="subtitle2" component="span" sx={{ fontWeight: 600 }}>
+          <Stack
+            direction="row"
+            justifyContent="space-between"
+            alignItems="center"
+          >
+            <Typography
+              variant="subtitle2"
+              component="span"
+              sx={{ fontWeight: 600 }}
+            >
               {comment.user.name}
             </Typography>
             <Typography variant="caption" color="text.secondary">
-              {dayjs(comment.createdAt).format('YYYY. MM. DD. HH:mm')}
+              {formatCommentDate(comment.createdAt)}
             </Typography>
           </Stack>
 
           {/* Content */}
-          <Typography variant="body2" sx={{ mt: 0.5, mb: 1, color: 'text.primary', whiteSpace: 'pre-wrap' }}>
+          <Typography
+            variant="body2"
+            sx={{
+              mt: 0.5,
+              mb: 1,
+              color: "text.primary",
+              whiteSpace: "pre-wrap",
+            }}
+          >
             {comment.text}
           </Typography>
 
@@ -99,9 +136,14 @@ const CommentItem = ({
           {isResolved && (
             <Typography
               variant="caption"
-              sx={{ display: 'block', mb: 1, color: 'success.main', fontStyle: 'italic' }}
+              sx={{
+                display: "block",
+                mb: 1,
+                color: "success.main",
+                fontStyle: "italic",
+              }}
             >
-              Megoldva ekkor: {dayjs(comment.resolvedAt).format('YYYY. MM. DD. HH:mm')}
+              Megoldva ekkor: {formatCommentDate(comment.resolvedAt)}
             </Typography>
           )}
 
@@ -112,7 +154,7 @@ const CommentItem = ({
                 size="small"
                 startIcon={<CheckIcon />}
                 onClick={onResolve}
-                sx={{ textTransform: 'none', fontSize: '0.75rem' }}
+                sx={{ textTransform: "none", fontSize: "0.75rem" }}
               >
                 Megoldva
               </Button>
@@ -137,16 +179,21 @@ export const CommentPopup: React.FC<CommentPopupProps> = ({
   currentUser,
   onClose,
 }) => {
-  const [newComment, setNewComment] = useState('');
-  const [pendingScrollFromCount, setPendingScrollFromCount] = useState<number | null>(null);
+  const [newComment, setNewComment] = useState("");
+  const [pendingScrollFromCount, setPendingScrollFromCount] = useState<
+    number | null
+  >(null);
   const lastCommentRef = useRef<HTMLDivElement | null>(null);
   const commentsListRef = useRef<HTMLDivElement | null>(null);
+  const commentInputRef = useRef<HTMLInputElement | HTMLTextAreaElement | null>(
+    null,
+  );
 
   const handleSend = () => {
     if (newComment.trim() && onAdd) {
       setPendingScrollFromCount(comments.length);
       onAdd(newComment);
-      setNewComment('');
+      setNewComment("");
     }
   };
 
@@ -156,25 +203,34 @@ export const CommentPopup: React.FC<CommentPopupProps> = ({
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     e.stopPropagation();
-    if (e.key === 'Enter' && !e.shiftKey) {
+    if (e.key === "Escape") {
+      e.preventDefault();
+      onClose?.();
+      return;
+    }
+    if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       handleSend();
     }
   };
 
   useEffect(() => {
-    if (!open || pendingScrollFromCount === null || comments.length <= pendingScrollFromCount) {
+    if (
+      !open ||
+      pendingScrollFromCount === null ||
+      comments.length <= pendingScrollFromCount
+    ) {
       return;
     }
 
     requestAnimationFrame(() => {
       commentsListRef.current?.scrollTo({
         top: commentsListRef.current.scrollHeight,
-        behavior: 'smooth',
+        behavior: "smooth",
       });
       lastCommentRef.current?.scrollIntoView({
-        behavior: 'smooth',
-        block: 'end',
+        behavior: "smooth",
+        block: "end",
       });
     });
 
@@ -184,7 +240,12 @@ export const CommentPopup: React.FC<CommentPopupProps> = ({
   useEffect(() => {
     if (!open) {
       setPendingScrollFromCount(null);
+      return;
     }
+
+    requestAnimationFrame(() => {
+      commentInputRef.current?.focus();
+    });
   }, [open]);
 
   if (!open) return null;
@@ -193,11 +254,11 @@ export const CommentPopup: React.FC<CommentPopupProps> = ({
     <ClickAwayListener onClickAway={() => onClose && onClose()}>
       <Box
         sx={{
-          position: 'absolute',
+          position: "absolute",
           top: anchorPosition.top,
           left: anchorPosition.left,
           zIndex: 1500,
-          transform: 'translateY(-20px)', 
+          transform: "translateY(-20px)",
         }}
       >
         <Paper
@@ -207,27 +268,33 @@ export const CommentPopup: React.FC<CommentPopupProps> = ({
           onKeyDown={stopPropagation}
           sx={{
             width: 320,
-            position: 'relative',
+            position: "relative",
             ml: 2,
-            overflow: 'visible',
+            overflow: "visible",
             borderRadius: 1,
-            '&::before': {
+            "&::before": {
               content: '""',
-              position: 'absolute',
+              position: "absolute",
               top: 24,
               left: -6,
               width: 12,
               height: 12,
-              bgcolor: 'background.paper',
-              transform: 'rotate(45deg)',
-              zIndex: 0, 
-              boxShadow: '-1px 1px 1px -1px rgba(0,0,0,0.2)', 
+              bgcolor: "background.paper",
+              transform: "rotate(45deg)",
+              zIndex: 0,
+              boxShadow: "-1px 1px 1px -1px rgba(0,0,0,0.2)",
             },
           }}
         >
-          <Stack spacing={0} sx={{ position: 'relative', zIndex: 1, bgcolor: 'transparent' }}>
+          <Stack
+            spacing={0}
+            sx={{ position: "relative", zIndex: 1, bgcolor: "transparent" }}
+          >
             {/* Comments List */}
-            <Box ref={commentsListRef} sx={{ maxHeight: 300, overflowY: 'auto' }}>
+            <Box
+              ref={commentsListRef}
+              sx={{ maxHeight: 300, overflowY: "auto" }}
+            >
               {comments.map((comment, index) => (
                 <Box
                   key={comment.id}
@@ -235,7 +302,9 @@ export const CommentPopup: React.FC<CommentPopupProps> = ({
                 >
                   <CommentItem
                     comment={comment}
-                    onResolve={onResolve ? () => onResolve(comment.id) : undefined}
+                    onResolve={
+                      onResolve ? () => onResolve(comment.id) : undefined
+                    }
                     onDelete={() => onDelete(comment.id)}
                     isLast={index === comments.length - 1 && !onAdd}
                   />
@@ -252,25 +321,26 @@ export const CommentPopup: React.FC<CommentPopupProps> = ({
 
             {/* Add Comment Input */}
             {onAdd && (
-              <Box 
-                sx={{ 
-                  p: 2, 
-                  borderTop: comments.length > 0 ? '1px solid' : 'none', 
-                  borderColor: 'divider',
-                  bgcolor: 'background.default',
+              <Box
+                sx={{
+                  p: 2,
+                  borderTop: comments.length > 0 ? "1px solid" : "none",
+                  borderColor: "divider",
+                  bgcolor: "background.default",
                   borderBottomLeftRadius: (theme) => theme.shape.borderRadius,
                   borderBottomRightRadius: (theme) => theme.shape.borderRadius,
                 }}
               >
                 <Stack direction="row" spacing={1.5} alignItems="flex-start">
                   {currentUser && (
-                    <Avatar 
-                      src={currentUser.avatarUrl || undefined} 
+                    <Avatar
+                      src={currentUser.avatarUrl || undefined}
                       alt={currentUser.name}
-                      sx={{ width: 32, height: 32 }} 
+                      sx={{ width: 32, height: 32 }}
                     />
                   )}
                   <TextField
+                    inputRef={commentInputRef}
                     fullWidth
                     multiline
                     maxRows={4}
@@ -280,11 +350,11 @@ export const CommentPopup: React.FC<CommentPopupProps> = ({
                     onChange={(e) => setNewComment(e.target.value)}
                     onKeyDown={handleKeyDown}
                     InputProps={{
-                      sx: { fontSize: '0.875rem' },
+                      sx: { fontSize: "0.875rem" },
                       endAdornment: (
                         <InputAdornment position="end">
-                          <IconButton 
-                            size="small" 
+                          <IconButton
+                            size="small"
                             onClick={handleSend}
                             disabled={!newComment.trim()}
                             color="primary"
@@ -292,7 +362,7 @@ export const CommentPopup: React.FC<CommentPopupProps> = ({
                             <SendIcon fontSize="small" />
                           </IconButton>
                         </InputAdornment>
-                      )
+                      ),
                     }}
                   />
                 </Stack>
@@ -302,7 +372,7 @@ export const CommentPopup: React.FC<CommentPopupProps> = ({
         </Paper>
       </Box>
     </ClickAwayListener>,
-    document.body
+    document.body,
   );
 };
 
