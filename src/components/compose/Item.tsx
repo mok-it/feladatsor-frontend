@@ -1,12 +1,15 @@
 import ExerciseCard from "@/components/compose/ExerciseCard";
 import { useSelectExerciseQuery } from "@/generated/graphql.tsx";
-import { composeAtom } from "@/util/atoms";
 import { composeStore, ExerciseView } from "@/util/composeStore";
 import { COMPOSE_HEIGHT } from "@/util/const";
-import type { UniqueIdentifier } from "@dnd-kit/core";
+import {
+  type UniqueIdentifier,
+  useDraggable,
+  useDroppable,
+} from "@dnd-kit/core";
+import { CSS } from "@dnd-kit/utilities";
 import { Box, Skeleton } from "@mui/material";
 import { motion } from "framer-motion";
-import { useAtom } from "jotai";
 import { FC, useCallback, useContext, useMemo, useRef } from "react";
 import { useToggle } from "react-use";
 import { ContainerContext } from "./Container";
@@ -31,53 +34,37 @@ export const Item: FC<{
   const selectedOrder = composeStore((state) => state.selectedOrder);
   const exerciseView = composeStore((state) => state.exerciseView);
   const view = composeStore((state) => state.view);
-  const [items, setItems] = useAtom(composeAtom);
 
   const height = view === "all" ? COMPOSE_HEIGHT.SHORT : COMPOSE_HEIGHT.TALL;
   const isSelected =
     containerId === selectedContainer && order === selectedOrder;
 
+  const dndId = `${containerId}:${order}`;
+  const {
+    setNodeRef: setDragRef,
+    attributes,
+    listeners,
+    transform,
+    isDragging,
+  } = useDraggable({
+    id: dndId,
+    data: { containerId, order },
+    disabled: !id || exerciseView !== ExerciseView.CARD,
+  });
+  const { setNodeRef: setDropRef, isOver } = useDroppable({
+    id: dndId,
+    data: { containerId, order },
+  });
+
   const onClick = useCallback(() => {
     if (exerciseView !== ExerciseView.CARD) return;
     if (!containerId) return;
-
     if (isSelected) {
-      // same as selected
       clear();
-    } else if (
-      selectedContainer &&
-      selectedOrder !== null &&
-      items[selectedContainer][selectedOrder].id
-    ) {
-      // something is selected
-      setItems((draft) => {
-        const aId = draft[selectedContainer][selectedOrder].id;
-        const aCardId = draft[selectedContainer][selectedOrder].cardId;
-        const bId = draft[containerId][order].id;
-        const bCardId = draft[containerId][order].cardId;
-        draft[containerId][order] = { id: aId, cardId: aCardId };
-        draft[selectedContainer][selectedOrder] = {
-          id: bId,
-          cardId: bCardId,
-        };
-      });
-      setSelected(containerId, order);
     } else {
-      // nothing is selected
       setSelected(containerId, order);
     }
-  }, [
-    clear,
-    containerId,
-    exerciseView,
-    isSelected,
-    items,
-    order,
-    selectedContainer,
-    selectedOrder,
-    setItems,
-    setSelected,
-  ]);
+  }, [clear, containerId, exerciseView, isSelected, order, setSelected]);
 
   const memoizedCard = useMemo(
     () => (
@@ -112,22 +99,49 @@ export const Item: FC<{
   );
 
   const [open, toggle] = useToggle(false);
-  const anchorRef = useRef<HTMLDivElement>(null);
+  const anchorRef = useRef<HTMLDivElement | null>(null);
+
+  const setRef = useCallback(
+    (node: HTMLDivElement | null) => {
+      anchorRef.current = node;
+      setDragRef(node);
+      setDropRef(node);
+    },
+    [setDragRef, setDropRef],
+  );
 
   return (
     <>
       <Box
         data-card-id={cardId}
-        ref={anchorRef}
+        ref={setRef}
+        {...attributes}
+        {...listeners}
         width={"100%"}
         height={height}
         minHeight={COMPOSE_HEIGHT.SHORT}
+        style={{
+          transform: CSS.Translate.toString(transform),
+          opacity: isDragging ? 0.4 : 1,
+          zIndex: isDragging ? 1000 : undefined,
+          touchAction: "none",
+        }}
         sx={{
-          transition: "0.2s",
+          transition: "outline 0.2s, background-color 0.2s",
           borderRadius: 1,
           border: "1px solid #e0e0e0",
-          outline: isSelected ? "2px solid highlight" : "2px solid transparent",
-          cursor: exerciseView === ExerciseView.CARD ? "pointer" : "default",
+          outline: isSelected
+            ? "2px solid highlight"
+            : isOver && !isDragging
+              ? "2px dashed #1976d2"
+              : "2px solid transparent",
+          cursor: !id
+            ? "default"
+            : exerciseView === ExerciseView.CARD
+              ? isDragging
+                ? "grabbing"
+                : "grab"
+              : "default",
         }}
         onClick={onClick}
         onContextMenu={(e) => {

@@ -15,7 +15,7 @@ import { FC, RefObject, useContext } from "react";
 import { ContainerContext } from "./Container";
 
 export const ItemMenu: FC<{
-  anchorRef: RefObject<HTMLDivElement>;
+  anchorRef: RefObject<HTMLDivElement | null>;
   id: UniqueIdentifier | null;
   order: number;
   open: boolean;
