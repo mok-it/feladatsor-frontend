@@ -17,6 +17,10 @@ import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import SendIcon from "@mui/icons-material/Send";
 import dayjs from "dayjs";
 
+const COMMENT_POPUP_WIDTH = 320;
+const COMMENT_POPUP_GAP = 16;
+const VIEWPORT_MARGIN = 8;
+
 // Types
 export interface CommentUser {
   name: string;
@@ -288,13 +292,31 @@ export const CommentPopup: React.FC<CommentPopupProps> = ({
 
   if (!open) return null;
 
+  const viewportLeft = window.scrollX;
+  const popupWidth = Math.min(
+    COMMENT_POPUP_WIDTH,
+    window.innerWidth - VIEWPORT_MARGIN * 2,
+  );
+  const popupLeft = Math.max(
+    viewportLeft + VIEWPORT_MARGIN,
+    Math.min(
+      anchorPosition.left + COMMENT_POPUP_GAP,
+      viewportLeft + window.innerWidth - popupWidth - VIEWPORT_MARGIN,
+    ),
+  );
+  const arrowLeft =
+    Math.min(
+      popupWidth,
+      Math.max(0, anchorPosition.left - popupLeft),
+    ) - 6;
+
   return createPortal(
     <ClickAwayListener onClickAway={() => onClose && onClose()}>
       <Box
         sx={{
           position: "absolute",
           top: anchorPosition.top,
-          left: anchorPosition.left,
+          left: popupLeft,
           zIndex: 1500,
           transform: "translateY(-20px)",
         }}
@@ -305,16 +327,16 @@ export const CommentPopup: React.FC<CommentPopupProps> = ({
           onMouseDown={stopPropagation}
           onKeyDown={stopPropagation}
           sx={{
-            width: 320,
+            width: COMMENT_POPUP_WIDTH,
+            maxWidth: `calc(100vw - ${VIEWPORT_MARGIN * 2}px)`,
             position: "relative",
-            ml: 2,
             overflow: "visible",
             borderRadius: 1,
             "&::before": {
               content: '""',
               position: "absolute",
               top: 24,
-              left: -6,
+              left: arrowLeft,
               width: 12,
               height: 12,
               bgcolor: "background.paper",
