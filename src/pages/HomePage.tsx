@@ -5,6 +5,7 @@ import { LeaderBoardCard } from "@/pages/home/LeaderBoardCard.tsx";
 import {
   Box,
   Grid2,
+  Typography,
   useColorScheme,
   useMediaQuery,
   useTheme,
@@ -184,74 +185,80 @@ export const HomePage = () => {
                   maxWidth: "100%",
                 }}
               >
-                <ActivityCalendar
-                  data={contributionCalendarData}
-                  colorScheme={mode === "dark" ? "dark" : "light"}
-                  weekStart={1}
-                  showWeekdayLabels
-                  blockRadius={2}
-                  blockSize={isMobile ? 10 : 12}
-                  fontSize={isMobile ? 10 : 12}
-                  labels={{
-                    months: [
-                      "Jan",
-                      "Feb",
-                      "Már",
-                      "Ápr",
-                      "Máj",
-                      "Jún",
-                      "Júl",
-                      "Aug",
-                      "Szep",
-                      "Okt",
-                      "Nov",
-                      "Dec",
-                    ],
-                    weekdays: [
-                      "Vasárnap",
-                      "Hétfő",
-                      "Kedd",
-                      "Szerda",
-                      "Csütörtök",
-                      "Péntek",
-                      "Szombat",
-                    ],
-                    totalCount: "{{count}} feladat az elmúlt évben",
-                    legend: {
-                      less: "Kevesebb",
-                      more: "Több",
-                    },
-                  }}
-                  theme={{
-                    light: [
-                      "#ebedf0",
-                      "#9be9a8",
-                      "#40c463",
-                      "#30a14e",
-                      "#216e39",
-                    ],
-                    dark: [
-                      "#161b22",
-                      "#0e4429",
-                      "#006d32",
-                      "#26a641",
-                      "#39d353",
-                    ],
-                  }}
-                  tooltips={{
-                    activity: {
-                      text: (activity) =>
-                        `${activity.date}: ${activity.count} feladat beküldve`,
-                      placement: "top",
-                      offset: 6,
-                      hoverRestMs: 300,
-                      transitionStyles: {
-                        duration: 100,
+                {contributionCalendarData.length > 0 ? (
+                  <ActivityCalendar
+                    data={contributionCalendarData}
+                    colorScheme={mode === "dark" ? "dark" : "light"}
+                    weekStart={1}
+                    showWeekdayLabels
+                    blockRadius={2}
+                    blockSize={isMobile ? 10 : 12}
+                    fontSize={isMobile ? 10 : 12}
+                    labels={{
+                      months: [
+                        "Jan",
+                        "Feb",
+                        "Már",
+                        "Ápr",
+                        "Máj",
+                        "Jún",
+                        "Júl",
+                        "Aug",
+                        "Szep",
+                        "Okt",
+                        "Nov",
+                        "Dec",
+                      ],
+                      weekdays: [
+                        "Vasárnap",
+                        "Hétfő",
+                        "Kedd",
+                        "Szerda",
+                        "Csütörtök",
+                        "Péntek",
+                        "Szombat",
+                      ],
+                      totalCount: "{{count}} feladat az elmúlt évben",
+                      legend: {
+                        less: "Kevesebb",
+                        more: "Több",
                       },
-                      withArrow: true,
-                    },
-                  }}
-                />
+                    }}
+                    theme={{
+                      light: [
+                        "#ebedf0",
+                        "#9be9a8",
+                        "#40c463",
+                        "#30a14e",
+                        "#216e39",
+                      ],
+                      dark: [
+                        "#161b22",
+                        "#0e4429",
+                        "#006d32",
+                        "#26a641",
+                        "#39d353",
+                      ],
+                    }}
+                    tooltips={{
+                      activity: {
+                        text: (activity) =>
+                          `${activity.date}: ${activity.count} feladat beküldve`,
+                        placement: "top",
+                        offset: 6,
+                        hoverRestMs: 300,
+                        transitionStyles: {
+                          duration: 100,
+                        },
+                        withArrow: true,
+                      },
+                    }}
+                  />
+                ) : (
+                  <Typography color="text.secondary">
+                    Még nincs megjeleníthető beküldési aktivitás.
+                  </Typography>
+                )}
               </Box>
             </StatCard>
           </Grid2>
