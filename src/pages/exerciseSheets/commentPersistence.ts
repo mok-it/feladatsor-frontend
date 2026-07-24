@@ -101,10 +101,6 @@ export const getSheetCommentRestoreTargets = (
   }
 
   for (const [containerKey, containerItems] of Object.entries(items)) {
-    if (containerKey === "talon") {
-      continue;
-    }
-
     const nextSheetItem = nextSheetItemsByKey.get(containerKey);
     if (!nextSheetItem) {
       continue;

@@ -556,6 +556,7 @@ export type OrderedExercise = {
 
 export type OrderedExerciseInput = {
   exerciseID: Scalars['ID']['input'];
+  id?: InputMaybe<Scalars['ID']['input']>;
   order: Scalars['Int']['input'];
 };
 
@@ -870,7 +871,7 @@ export type ExerciseSheetQueryVariables = Exact<{
 }>;
 
 
-export type ExerciseSheetQuery = { __typename: 'Query', exerciseSheet?: { __typename: 'ExerciseSheet', id: string, name: string, status: ExerciseSheetStatus, createdAt: string, updatedAt: string, comments: Array<{ __typename: 'ExerciseSheetComment', id: string, comment: string, isResolved: boolean, resolvedAt?: string | null, createdAt: string, updatedAt: string, exerciseSheetId?: string | null, exerciseSheetItemId?: string | null, exerciseOnExerciseSheetItemId?: string | null, user: { __typename: 'User', id: string, name: string, avatarUrl?: string | null } }>, sheetItems: Array<{ __typename: 'ExerciseSheetItem', id: string, ageGroup: ExerciseAgeGroup, level: number, comments: Array<{ __typename: 'ExerciseSheetComment', id: string, comment: string, isResolved: boolean, resolvedAt?: string | null, createdAt: string, updatedAt: string, exerciseSheetId?: string | null, exerciseSheetItemId?: string | null, exerciseOnExerciseSheetItemId?: string | null, user: { __typename: 'User', id: string, name: string, avatarUrl?: string | null } }>, exercises: Array<{ __typename: 'OrderedExercise', id?: string | null, order: number, comments: Array<{ __typename: 'ExerciseSheetComment', id: string, comment: string, isResolved: boolean, resolvedAt?: string | null, createdAt: string, updatedAt: string, exerciseSheetId?: string | null, exerciseSheetItemId?: string | null, exerciseOnExerciseSheetItemId?: string | null, user: { __typename: 'User', id: string, name: string, avatarUrl?: string | null } }>, exercise: { __typename: 'Exercise', id: string, description: string, exerciseImage?: { __typename: 'Image', url: string } | null, difficulty: Array<{ __typename: 'ExerciseDifficulty', ageGroup: ExerciseAgeGroup, difficulty: number }> } }> }>, talonItems: Array<{ __typename: 'OrderedExercise', id?: string | null, order: number, comments: Array<{ __typename: 'ExerciseSheetComment', id: string, comment: string, isResolved: boolean, resolvedAt?: string | null, createdAt: string, updatedAt: string, exerciseSheetId?: string | null, exerciseSheetItemId?: string | null, exerciseOnExerciseSheetItemId?: string | null, user: { __typename: 'User', id: string, name: string, avatarUrl?: string | null } }>, exercise: { __typename: 'Exercise', id: string, description: string, exerciseImage?: { __typename: 'Image', url: string } | null, difficulty: Array<{ __typename: 'ExerciseDifficulty', ageGroup: ExerciseAgeGroup, difficulty: number }> } }>, createdBy: { __typename: 'User', name: string } } | null };
+export type ExerciseSheetQuery = { __typename: 'Query', exerciseSheet?: { __typename: 'ExerciseSheet', id: string, name: string, status: ExerciseSheetStatus, createdAt: string, updatedAt: string, comments: Array<{ __typename: 'ExerciseSheetComment', id: string, comment: string, isResolved: boolean, resolvedAt?: string | null, createdAt: string, updatedAt: string, exerciseSheetId?: string | null, exerciseSheetItemId?: string | null, exerciseOnExerciseSheetItemId?: string | null, user: { __typename: 'User', id: string, name: string, avatarUrl?: string | null } }>, sheetItems: Array<{ __typename: 'ExerciseSheetItem', id: string, ageGroup: ExerciseAgeGroup, level: number, comments: Array<{ __typename: 'ExerciseSheetComment', id: string, comment: string, isResolved: boolean, resolvedAt?: string | null, createdAt: string, updatedAt: string, exerciseSheetId?: string | null, exerciseSheetItemId?: string | null, exerciseOnExerciseSheetItemId?: string | null, user: { __typename: 'User', id: string, name: string, avatarUrl?: string | null } }>, exercises: Array<{ __typename: 'OrderedExercise', id?: string | null, order: number, comments: Array<{ __typename: 'ExerciseSheetComment', id: string, comment: string, isResolved: boolean, resolvedAt?: string | null, createdAt: string, updatedAt: string, exerciseSheetId?: string | null, exerciseSheetItemId?: string | null, exerciseOnExerciseSheetItemId?: string | null, user: { __typename: 'User', id: string, name: string, avatarUrl?: string | null } }>, exercise: { __typename: 'Exercise', id: string, description: string, exerciseImage?: { __typename: 'Image', url: string } | null, difficulty: Array<{ __typename: 'ExerciseDifficulty', ageGroup: ExerciseAgeGroup, difficulty: number }> } }> }>, createdBy: { __typename: 'User', name: string } } | null };
 
 export type ExerciseSheetCommentsQueryVariables = Exact<{
   sheetId: Scalars['ID']['input'];
@@ -1895,24 +1896,6 @@ export const ExerciseSheetDocument = gql`
           }
           description
         }
-      }
-    }
-    talonItems {
-      id
-      order
-      comments {
-        ...ExerciseSheetComment
-      }
-      exercise {
-        id
-        exerciseImage {
-          url
-        }
-        difficulty {
-          ageGroup
-          difficulty
-        }
-        description
       }
     }
     createdAt

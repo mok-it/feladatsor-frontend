@@ -9,9 +9,7 @@ import { ExerciseFieldsType } from "./types";
 const composeAtomDefault: Record<
   string,
   { id: UniqueIdentifier | null; cardId: string }[]
-> = {
-  talon: [],
-};
+> = {};
 
 for (let i = 0; i < 4; i++) {
   keys(ageGroupTexts).forEach((ageGroup) => {

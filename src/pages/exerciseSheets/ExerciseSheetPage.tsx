@@ -14,7 +14,7 @@ import { LoadingButton } from "@mui/lab";
 import { Box, Card, Grid2, IconButton, Input, Typography } from "@mui/material";
 import { Stack } from "@mui/system";
 import { useStore } from "jotai";
-import { entries, sortBy, uniqueId } from "lodash";
+import { entries, uniqueId } from "lodash";
 import { useSnackbar } from "notistack";
 import { FC, useCallback } from "react";
 import { MdDone, MdEdit } from "react-icons/md";
@@ -63,15 +63,6 @@ export const ExerciseSheetPage: FC = () => {
         });
         return draft;
       });
-      setItems((draft) => {
-        draft["talon"] = [];
-        sortBy(data.exerciseSheet?.talonItems, "order")?.forEach((exercise) => {
-          draft["talon"].push({
-            id: exercise.exercise.id,
-            cardId: exercise.id || uniqueId(),
-          });
-        });
-      });
     },
   });
   const [mutate, mutationState] = useUpdateExerciseSheetMutation();
@@ -93,12 +84,12 @@ export const ExerciseSheetPage: FC = () => {
     const items = store.get(composeAtom);
     entries(items).forEach(([key, exercises]) => {
       const [ageGroup, level] = key.split("-");
-      if (ageGroup === "talon") return;
       sheetData.sheetItems?.push({
         ageGroup: ageGroup as ExerciseAgeGroup,
         level: parseInt(level, 10),
         exercises: exercises
           .map((item, i) => ({
+            id: item.cardId.length > 10 ? item.cardId : undefined,
             exerciseID: item.id ? item.id.toString() : "",
             order: i,
           }))

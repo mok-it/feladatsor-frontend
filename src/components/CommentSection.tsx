@@ -137,7 +137,7 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
             item.exercises
               .filter((exercise) => exercise.id === targetId)
               .flatMap((exercise) => exercise.comments),
-          ),
+            ),
         ];
       }
 

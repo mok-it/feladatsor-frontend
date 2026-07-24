@@ -168,7 +168,7 @@ export const Item: FC<{
             right={-15}
             zIndex={110}
             sx={{
-              opacity: 0,
+              opacity: { xs: 1, md: 0 },
               transition: "opacity 0.2s",
               ".MuiBox-root:hover > &": { opacity: 1 },
               '&:has(button[data-has-comments="true"])': { opacity: 1 },

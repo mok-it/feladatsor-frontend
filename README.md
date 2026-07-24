@@ -18,6 +18,14 @@ https://feladatsor.mokegyesulet.hu/
 
 The **DEV** and **PROD** builds of the app connect to different corresponding backend environments.
 
+## Talon status
+
+The Talon workflow is intentionally not implemented in the frontend. It made
+the exercise-sheet composition process too complicated from both a UX and a
+technical perspective. The backend retains Talon data and API support for now,
+but the frontend does not query, display, or modify it. Talon-specific comments
+are intentionally unsupported in both layers.
+
 ## Setup
 
 - Install dependencies: `yarn`

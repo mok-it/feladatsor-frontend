@@ -32,24 +32,6 @@ query exerciseSheet($exerciseSheetId: ID!) {
         }
       }
     }
-    talonItems {
-      id
-      order
-      comments {
-        ...ExerciseSheetComment
-      }
-      exercise {
-        id
-        exerciseImage {
-          url
-        }
-        difficulty {
-          ageGroup
-          difficulty
-        }
-        description
-      }
-    }
     createdAt
     updatedAt
     createdBy {
