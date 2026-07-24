@@ -163,6 +163,14 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
     (comment) => !comment.resolvedAt,
   ).length;
   const hasComments = comments.length > 0;
+  const commentButtonLabel =
+    mode === "graphql-exercise"
+      ? "Komment a feladathoz"
+      : sheetCommentTarget === "Sheet"
+        ? "Komment a feladatsorhoz"
+        : sheetCommentTarget === "SheetItem"
+          ? "Komment a kategóriához"
+          : "Komment a feladat elhelyezéséhez";
   const hasUnresolvedComments = unresolvedCommentCount > 0;
   const commentIconColor = hasUnresolvedComments
     ? "primary"
@@ -264,6 +272,7 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
   return (
     <>
       <IconButton
+        aria-label={commentButtonLabel}
         size={iconSize}
         onClick={(e) => openComments(e, targetId)}
         color={commentIconColor}

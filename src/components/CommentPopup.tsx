@@ -11,6 +11,7 @@ import {
   ClickAwayListener,
   TextField,
   InputAdornment,
+  Unstable_TrapFocus as FocusTrap,
 } from "@mui/material";
 import CheckIcon from "@mui/icons-material/Check";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
@@ -311,8 +312,9 @@ export const CommentPopup: React.FC<CommentPopupProps> = ({
     ) - 6;
 
   return createPortal(
-    <ClickAwayListener onClickAway={() => onClose && onClose()}>
+    <FocusTrap open={open}>
       <Box
+        tabIndex={-1}
         sx={{
           position: "absolute",
           top: anchorPosition.top,
@@ -321,119 +323,129 @@ export const CommentPopup: React.FC<CommentPopupProps> = ({
           transform: "translateY(-20px)",
         }}
       >
-        <Paper
-          elevation={4}
-          onClick={stopPropagation}
-          onMouseDown={stopPropagation}
-          onKeyDown={stopPropagation}
-          sx={{
-            width: COMMENT_POPUP_WIDTH,
-            maxWidth: `calc(100vw - ${VIEWPORT_MARGIN * 2}px)`,
-            position: "relative",
-            overflow: "visible",
-            borderRadius: 1,
-            "&::before": {
-              content: '""',
-              position: "absolute",
-              top: 24,
-              left: arrowLeft,
-              width: 12,
-              height: 12,
-              bgcolor: "background.paper",
-              transform: "rotate(45deg)",
-              zIndex: 0,
-              boxShadow: "-1px 1px 1px -1px rgba(0,0,0,0.2)",
-            },
-          }}
-        >
-          <Stack
-            spacing={0}
-            sx={{ position: "relative", zIndex: 1, bgcolor: "transparent" }}
+        <ClickAwayListener onClickAway={() => onClose && onClose()}>
+          <Paper
+            role="dialog"
+            aria-label="Kommentek"
+            aria-modal="false"
+            elevation={4}
+            onClick={stopPropagation}
+            onMouseDown={stopPropagation}
+            onKeyDown={stopPropagation}
+            sx={{
+              width: COMMENT_POPUP_WIDTH,
+              maxWidth: `calc(100vw - ${VIEWPORT_MARGIN * 2}px)`,
+              position: "relative",
+              overflow: "visible",
+              borderRadius: 1,
+              "&::before": {
+                content: '""',
+                position: "absolute",
+                top: 24,
+                left: arrowLeft,
+                width: 12,
+                height: 12,
+                bgcolor: "background.paper",
+                transform: "rotate(45deg)",
+                zIndex: 0,
+                boxShadow: "-1px 1px 1px -1px rgba(0,0,0,0.2)",
+              },
+            }}
           >
-            {/* Comments List */}
-            <Box
-              ref={commentsListRef}
-              sx={{ maxHeight: 300, overflowY: "auto" }}
+            <Stack
+              spacing={0}
+              sx={{ position: "relative", zIndex: 1, bgcolor: "transparent" }}
             >
-              {sortedComments.map((comment, index) => (
-                <Box
-                  key={comment.id}
-                  ref={
-                    index === sortedComments.length - 1 ? lastCommentRef : null
-                  }
-                >
-                  <CommentItem
-                    comment={comment}
-                    onResolve={
-                      onResolve ? () => onResolve(comment.id) : undefined
+              {/* Comments List */}
+              <Box
+                ref={commentsListRef}
+                sx={{ maxHeight: 300, overflowY: "auto" }}
+              >
+                {sortedComments.map((comment, index) => (
+                  <Box
+                    key={comment.id}
+                    ref={
+                      index === sortedComments.length - 1
+                        ? lastCommentRef
+                        : null
                     }
-                    onDelete={() => onDelete(comment.id)}
-                    isLast={index === sortedComments.length - 1 && !onAdd}
-                  />
-                </Box>
-              ))}
-              {sortedComments.length === 0 && !onAdd && (
-                <Box p={2} textAlign="center">
-                  <Typography variant="body2" color="text.secondary">
-                    Még nincs komment.
-                  </Typography>
+                  >
+                    <CommentItem
+                      comment={comment}
+                      onResolve={
+                        onResolve ? () => onResolve(comment.id) : undefined
+                      }
+                      onDelete={() => onDelete(comment.id)}
+                      isLast={index === sortedComments.length - 1 && !onAdd}
+                    />
+                  </Box>
+                ))}
+                {sortedComments.length === 0 && !onAdd && (
+                  <Box p={2} textAlign="center">
+                    <Typography variant="body2" color="text.secondary">
+                      Még nincs komment.
+                    </Typography>
+                  </Box>
+                )}
+              </Box>
+
+              {/* Add Comment Input */}
+              {onAdd && (
+                <Box
+                  sx={{
+                    p: 2,
+                    borderTop:
+                      sortedComments.length > 0 ? "1px solid" : "none",
+                    borderColor: "divider",
+                    bgcolor: "background.default",
+                    borderBottomLeftRadius: (theme) => theme.shape.borderRadius,
+                    borderBottomRightRadius: (theme) =>
+                      theme.shape.borderRadius,
+                  }}
+                >
+                  <Stack direction="row" spacing={1.5} alignItems="flex-start">
+                    {currentUser && (
+                      <Avatar
+                        src={currentUser.avatarUrl || undefined}
+                        alt={currentUser.name}
+                        sx={{ width: 32, height: 32 }}
+                      />
+                    )}
+                    <TextField
+                      inputRef={commentInputRef}
+                      fullWidth
+                      multiline
+                      maxRows={4}
+                      size="small"
+                      placeholder="Írj kommentet..."
+                      value={newComment}
+                      onChange={(e) => setNewComment(e.target.value)}
+                      onKeyDown={handleKeyDown}
+                      InputProps={{
+                        sx: { fontSize: "0.875rem" },
+                        endAdornment: (
+                          <InputAdornment position="end">
+                            <IconButton
+                              aria-label="Komment elküldése"
+                              size="small"
+                              onClick={handleSend}
+                              disabled={!newComment.trim()}
+                              color="primary"
+                            >
+                              <SendIcon fontSize="small" />
+                            </IconButton>
+                          </InputAdornment>
+                        ),
+                      }}
+                    />
+                  </Stack>
                 </Box>
               )}
-            </Box>
-
-            {/* Add Comment Input */}
-            {onAdd && (
-              <Box
-                sx={{
-                  p: 2,
-                  borderTop: sortedComments.length > 0 ? "1px solid" : "none",
-                  borderColor: "divider",
-                  bgcolor: "background.default",
-                  borderBottomLeftRadius: (theme) => theme.shape.borderRadius,
-                  borderBottomRightRadius: (theme) => theme.shape.borderRadius,
-                }}
-              >
-                <Stack direction="row" spacing={1.5} alignItems="flex-start">
-                  {currentUser && (
-                    <Avatar
-                      src={currentUser.avatarUrl || undefined}
-                      alt={currentUser.name}
-                      sx={{ width: 32, height: 32 }}
-                    />
-                  )}
-                  <TextField
-                    inputRef={commentInputRef}
-                    fullWidth
-                    multiline
-                    maxRows={4}
-                    size="small"
-                    placeholder="Írj kommentet..."
-                    value={newComment}
-                    onChange={(e) => setNewComment(e.target.value)}
-                    onKeyDown={handleKeyDown}
-                    InputProps={{
-                      sx: { fontSize: "0.875rem" },
-                      endAdornment: (
-                        <InputAdornment position="end">
-                          <IconButton
-                            size="small"
-                            onClick={handleSend}
-                            disabled={!newComment.trim()}
-                            color="primary"
-                          >
-                            <SendIcon fontSize="small" />
-                          </IconButton>
-                        </InputAdornment>
-                      ),
-                    }}
-                  />
-                </Stack>
-              </Box>
-            )}
-          </Stack>
-        </Paper>
+            </Stack>
+          </Paper>
+        </ClickAwayListener>
       </Box>
-    </ClickAwayListener>,
+    </FocusTrap>,
     document.body,
   );
 };
