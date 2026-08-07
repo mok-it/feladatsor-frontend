@@ -131,7 +131,7 @@ const CommentItem = ({
           alt={comment.user.name}
           sx={{ width: 32, height: 32 }}
         />
-        <Box flex={1}>
+        <Box flex={1} minWidth={0}>
           <Stack
             direction="row"
             justifyContent="space-between"
@@ -157,6 +157,7 @@ const CommentItem = ({
               mb: 1,
               color: "text.primary",
               whiteSpace: "pre-wrap",
+              overflowWrap: "anywhere",
             }}
           >
             {comment.text}
@@ -362,7 +363,7 @@ export const CommentPopup: React.FC<CommentPopupProps> = ({
               {/* Comments List */}
               <Box
                 ref={commentsListRef}
-                sx={{ maxHeight: 300, overflowY: "auto" }}
+                sx={{ maxHeight: 300, overflowX: "hidden", overflowY: "auto" }}
               >
                 {sortedComments.map((comment, index) => (
                   <Box
