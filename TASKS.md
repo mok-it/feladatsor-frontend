@@ -40,9 +40,10 @@ Feladatonként hány segítő kérdés, illetve hány (rósszz) válaszopció va
 - [X] Profil oldal
   - Kérdés: Mit rakjunk ide, mi az ami fontos, vagy funky infó lehet
   - Válasz: User statisztikákat, a saját feladataival kapcsolatban
-- [X] Talon-ok kezelése 
-  - Kérdés: Feladatsoronként, emberenként, globálisan kezeljük? 
-  - Válasz: A talonok feladatsoronként kezelődnek. 
+- [X] Talonok kezelése
+  - A frontendből egyelőre eltávolítva: a feladatsor-összeállítás folyamatát UX
+    és technikai szempontból is túl bonyolulttá tette. Az ehhez tartozó backendes funkcionalitás
+    átmenetileg megmarad.
 
 - [X] Profil módosítás, profilkép feltöltés
 - [X] Feladat képre kattintás esetén nyíljon meg nagyban

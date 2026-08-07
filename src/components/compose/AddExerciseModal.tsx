@@ -39,8 +39,8 @@ export const AddExerciseModal: FC = () => {
         const res = await getData({
           variables: {
             query: {
-              skip,
               take: 20,
+              skip,
               difficulty,
               queryStr: exerciseQuery.searchQuery,
               orderBy: orderBy || undefined,

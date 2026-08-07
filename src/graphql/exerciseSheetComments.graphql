@@ -1,0 +1,5 @@
+query ExerciseSheetComments($sheetId: ID!) {
+  exerciseSheetComments(sheetId: $sheetId) {
+    ...ExerciseSheetComment
+  }
+}

@@ -7,12 +7,12 @@ import { Grid, IconButton } from "@mui/material";
 import Avatar from "@mui/material/Avatar";
 import Badge from "@mui/material/Badge";
 import Typography from "@mui/material/Typography";
+import { useTheme } from "@mui/material/styles";
 import { Stack } from "@mui/system";
 import { useSnackbar } from "notistack";
 import { useCallback, useEffect, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import { IoCameraOutline, IoClose } from "react-icons/io5";
-import { grey } from "@/theme/palette.ts";
 
 interface ProfileHeaderProps {
   user:
@@ -25,6 +25,7 @@ interface ProfileHeaderProps {
 }
 
 export const ProfileHeader = ({ user }: ProfileHeaderProps) => {
+  const theme = useTheme();
   const [profileModifyModalOpen, setProfileModifyModalOpen] = useState(false);
   const [deleteAvatarDialogOpen, setDeleteAvatarDialogOpen] = useState(false);
   const { enqueueSnackbar } = useSnackbar();
@@ -118,8 +119,13 @@ export const ProfileHeader = ({ user }: ProfileHeaderProps) => {
             badgeContent={
               <IoCameraOutline
                 style={{
-                  border: "5px solid white",
-                  backgroundColor: grey[200],
+                  border: `5px solid ${theme.palette.background.paper}`,
+                  backgroundColor: theme.palette.mode === "light"
+                    ? theme.palette.grey[200]
+                    : theme.palette.grey[700],
+                  color: theme.palette.mode === "light"
+                    ? theme.palette.text.primary
+                    : theme.palette.common.white,
                   borderRadius: "50%",
                   padding: ".2rem",
                   width: 35,

@@ -52,5 +52,14 @@ query selectExercise($exerciseId: ID!) {
     checks {
       ...ExerciseCheck
     }
+    comments {
+      id
+      comment
+      createdAt
+      createdBy {
+        name
+        avatarUrl
+      }
+    }
   }
 }

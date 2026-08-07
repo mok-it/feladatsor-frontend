@@ -250,7 +250,7 @@ export const ExerciseReportingByUsers = () => {
               <TableRow>
                 <TableCell>Felhasználó</TableCell>
                 <TableCell align="right">
-                  Összes feladat amin dolgozott
+                  Összes feladat, amin dolgozott
                 </TableCell>
                 <TableCell align="right">Teljesen ő csinálta</TableCell>
                 <TableCell align="right">Másokkal közösen</TableCell>

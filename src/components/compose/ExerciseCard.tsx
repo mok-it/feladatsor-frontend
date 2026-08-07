@@ -25,19 +25,19 @@ const ExerciseCardComponent: FC<{
   exercise: ExerciseListElemFragment;
 }> = ({ exercise }) => {
   const containerId = useContext(ContainerContext);
-  const isTalon = !containerId || containerId === "talon";
+  const isSearchResult = !containerId;
   const view = composeStore((state) => state.view);
   const isSingleView = view !== "all";
   const isDetailedView = false && view !== "all";
 
   const difficultiesElem = useMemo(
     () =>
-      isTalon ? (
+      isSearchResult ? (
         <Difficulties exercise={exercise} />
       ) : (
         <DifficultiesWithWarnings exercise={exercise} />
       ),
-    [exercise, isTalon],
+    [exercise, isSearchResult],
   );
 
   const height =

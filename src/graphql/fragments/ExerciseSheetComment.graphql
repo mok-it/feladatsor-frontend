@@ -1,0 +1,17 @@
+fragment ExerciseSheetComment on ExerciseSheetComment {
+  id
+  comment
+  user {
+    id
+    name
+    avatarUrl
+  }
+  isResolved
+  resolvedAt
+  createdAt
+  updatedAt
+  
+  exerciseSheetId
+  exerciseSheetItemId
+  exerciseOnExerciseSheetItemId
+}

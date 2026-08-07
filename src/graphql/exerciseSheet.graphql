@@ -3,12 +3,22 @@ query exerciseSheet($exerciseSheetId: ID!) {
     id
     name
     status
+    comments {
+      ...ExerciseSheetComment
+    }
     sheetItems {
       id
       ageGroup
       level
+      comments {
+        ...ExerciseSheetComment
+      }
       exercises {
+        id
         order
+        comments {
+          ...ExerciseSheetComment
+        }
         exercise {
           id
           exerciseImage {
@@ -20,20 +30,6 @@ query exerciseSheet($exerciseSheetId: ID!) {
           }
           description
         }
-      }
-    }
-    talonItems {
-      order
-      exercise {
-        id
-        exerciseImage {
-          url
-        }
-        difficulty {
-          ageGroup
-          difficulty
-        }
-        description
       }
     }
     createdAt

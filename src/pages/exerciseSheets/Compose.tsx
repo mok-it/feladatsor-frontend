@@ -1,7 +1,8 @@
 import { FC, Fragment, memo, useCallback, useMemo } from "react";
 
+import { CommentSection } from "@/components/CommentSection";
 import { useComposeKeys } from "@/components/compose/useComposeKeys";
-import { composeAtom } from "@/util/atoms";
+import { composeAtom, sheetIdAtom, sheetItemIdsAtom } from "@/util/atoms";
 import { composeStore, ComposeView } from "@/util/composeStore";
 import { ageGroupTexts, levels } from "@/util/const";
 import {
@@ -12,9 +13,9 @@ import {
   useSensors,
 } from "@dnd-kit/core";
 import { ChevronLeft } from "@mui/icons-material";
-import { Button, Grid2, Stack, Typography } from "@mui/material";
+import { Box, Button, Grid2, Stack, Tooltip, Typography } from "@mui/material";
 import { LayoutGroup } from "framer-motion";
-import { useSetAtom } from "jotai";
+import { useAtomValue, useSetAtom } from "jotai";
 import { keys, times, values } from "lodash";
 import Container from "../../components/compose/Container";
 
@@ -22,6 +23,10 @@ const ComposeComponent: FC<{ onViewChange: (view: ComposeView) => void }> = ({
   onViewChange,
 }) => {
   const view = composeStore((state) => state.view);
+  const sheetId = useAtomValue(sheetIdAtom);
+  const sheetItemIds = useAtomValue(sheetItemIdsAtom);
+  const getCategoryTooltip = (ageGroup: string, level: number) =>
+    `Komment a(z) ${ageGroupTexts[ageGroup as keyof typeof ageGroupTexts]} kategória ${levels[level].name} nehézségéhez`;
   const containerKeys = useMemo(() => {
     const res: string[] = [];
     for (let i = 0; i < 4; i++) {
@@ -105,18 +110,59 @@ const ComposeComponent: FC<{ onViewChange: (view: ComposeView) => void }> = ({
                 <Fragment key={key}>
                   {i % 5 === 0 && (
                     <Grid2 size={5}>
-                      <Typography
-                        fontSize={14}
-                        paddingLeft={1}
-                        fontWeight={"500"}
+                      <Box
+                        display="flex"
+                        alignItems="center"
+                        justifyContent="space-between"
+                        minHeight={36}
+                        pl={1}
                       >
-                        {levels[i / 5].name}
-                      </Typography>
+                        <Typography fontSize={14} fontWeight={"500"}>
+                          {levels[i / 5].name}
+                        </Typography>
+                        {view !== "all" &&
+                          sheetId &&
+                          sheetItemIds[`${view}-${i / 5}`] && (
+                            <Tooltip title={getCategoryTooltip(view, i / 5)}>
+                              <Box display="flex">
+                                <CommentSection
+                                  targetId={sheetItemIds[`${view}-${i / 5}`]}
+                                  mode="graphql-sheet"
+                                  sheetId={sheetId}
+                                  sheetCommentTarget="SheetItem"
+                                  iconSize="small"
+                                />
+                              </Box>
+                            </Tooltip>
+                          )}
+                      </Box>
                     </Grid2>
                   )}
                   {view === "all" ? (
                     <Grid2 size={1} component={"div"}>
-                      <Container id={key} />
+                      <Container
+                        id={key}
+                        categoryComment={
+                          sheetId && sheetItemIds[key] ? (
+                            <Tooltip
+                              title={getCategoryTooltip(
+                                key.split("-")[0],
+                                Number(key.split("-")[1]),
+                              )}
+                            >
+                              <Box display="flex">
+                                <CommentSection
+                                  targetId={sheetItemIds[key]}
+                                  mode="graphql-sheet"
+                                  sheetId={sheetId}
+                                  sheetCommentTarget="SheetItem"
+                                  iconSize="small"
+                                />
+                              </Box>
+                            </Tooltip>
+                          ) : undefined
+                        }
+                      />
                     </Grid2>
                   ) : (
                     <>

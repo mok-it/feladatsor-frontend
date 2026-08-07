@@ -1,0 +1,5 @@
+mutation ResolveExerciseSheetComment($id: ID!, $notes: String) {
+  resolveExerciseSheetComment(id: $id, notes: $notes) {
+    ...ExerciseSheetComment
+  }
+}

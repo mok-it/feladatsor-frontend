@@ -3,7 +3,9 @@ import { AddExerciseModal } from "@/components/compose/AddExerciseModal";
 import {
   ExerciseAgeGroup,
   UpdateExerciseSheetInput,
+  useCreateExerciseSheetCommentMutation,
   useExerciseSheetQuery,
+  useResolveExerciseSheetCommentMutation,
   useUpdateExerciseSheetMutation,
 } from "@/generated/graphql.tsx";
 import { composeAtom, useResetComposeAtom } from "@/util/atoms";
@@ -12,12 +14,13 @@ import { LoadingButton } from "@mui/lab";
 import { Box, Card, Grid2, IconButton, Input, Typography } from "@mui/material";
 import { Stack } from "@mui/system";
 import { useStore } from "jotai";
-import { entries, sortBy, uniqueId } from "lodash";
+import { entries, uniqueId } from "lodash";
 import { useSnackbar } from "notistack";
 import { FC, useCallback } from "react";
 import { MdDone, MdEdit } from "react-icons/md";
 import { useParams } from "react-router";
 import { useToggle } from "react-use";
+import { getSheetCommentRestoreTargets } from "./commentPersistence";
 import Compose from "./Compose";
 import { SheetOperations } from "./SheetOperations";
 
@@ -25,8 +28,9 @@ export const ExerciseSheetPage: FC = () => {
   const { id } = useParams();
 
   const store = useStore();
-  const { reset, setItems } = useResetComposeAtom();
-  const { data, loading } = useExerciseSheetQuery({
+  const { reset, setItems, setSheetItemIds, setSheetId } =
+    useResetComposeAtom();
+  const { data, loading, refetch } = useExerciseSheetQuery({
     variables: {
       exerciseSheetId: id ?? "",
     },
@@ -34,6 +38,16 @@ export const ExerciseSheetPage: FC = () => {
       if (!data.exerciseSheet) return;
       setName(data.exerciseSheet?.name ?? "");
       reset();
+      setSheetId(data.exerciseSheet.id);
+
+      setSheetItemIds((prev) => {
+        const newIds = { ...prev };
+        data.exerciseSheet?.sheetItems?.forEach((item) => {
+          newIds[`${item.ageGroup}-${item.level}`] = item.id;
+        });
+        return newIds;
+      });
+
       setItems((draft) => {
         data.exerciseSheet?.sheetItems?.forEach((item) => {
           item.exercises.forEach((exercise) => {
@@ -43,24 +57,17 @@ export const ExerciseSheetPage: FC = () => {
             }
             draft[key][exercise.order] = {
               id: exercise.exercise.id,
-              cardId: uniqueId(),
+              cardId: exercise.id || uniqueId(), // Use persistent OrderedExercise ID
             };
           });
         });
         return draft;
       });
-      setItems((draft) => {
-        draft["talon"] = [];
-        sortBy(data.exerciseSheet?.talonItems, "order")?.forEach((exercise) => {
-          draft["talon"].push({
-            id: exercise.exercise.id,
-            cardId: uniqueId(),
-          });
-        });
-      });
     },
   });
   const [mutate, mutationState] = useUpdateExerciseSheetMutation();
+  const [createSheetComment] = useCreateExerciseSheetCommentMutation();
+  const [resolveSheetComment] = useResolveExerciseSheetCommentMutation();
 
   const name = composeStore((state) => state.name);
   const setName = composeStore((state) => state.setName);
@@ -69,19 +76,20 @@ export const ExerciseSheetPage: FC = () => {
   const snack = useSnackbar();
 
   const save = useCallback(async () => {
-    const data: UpdateExerciseSheetInput = {
+    const previousSheet = data?.exerciseSheet;
+    const sheetData: UpdateExerciseSheetInput = {
       name,
       sheetItems: [],
     };
     const items = store.get(composeAtom);
     entries(items).forEach(([key, exercises]) => {
       const [ageGroup, level] = key.split("-");
-      if (ageGroup === "talon") return;
-      data.sheetItems?.push({
+      sheetData.sheetItems?.push({
         ageGroup: ageGroup as ExerciseAgeGroup,
-        level: parseInt(level),
+        level: parseInt(level, 10),
         exercises: exercises
           .map((item, i) => ({
+            id: item.cardId.length > 10 ? item.cardId : undefined,
             exerciseID: item.id ? item.id.toString() : "",
             order: i,
           }))
@@ -91,12 +99,87 @@ export const ExerciseSheetPage: FC = () => {
     await mutate({
       variables: {
         updateExerciseSheetId: id!,
-        sheetData: data,
+        sheetData,
       },
     });
+    const refreshedSheet = (await refetch()).data.exerciseSheet;
+    const { targets, skippedCommentCount } = getSheetCommentRestoreTargets(
+      previousSheet,
+      refreshedSheet,
+      items,
+    );
+
+    let restoredCommentCount = 0;
+    let failedCommentRestoreCount = 0;
+
+    for (const target of targets) {
+      try {
+        const result = await createSheetComment({
+          variables: {
+            input: {
+              comment: target.comment.comment,
+              exerciseSheetItemId:
+                target.targetType === "SheetItem" ? target.targetId : undefined,
+              exerciseOnExerciseSheetItemId:
+                target.targetType === "OrderedExercise"
+                  ? target.targetId
+                  : undefined,
+            },
+          },
+        });
+
+        restoredCommentCount += 1;
+
+        if (
+          target.comment.isResolved &&
+          result.data?.createExerciseSheetComment.id
+        ) {
+          await resolveSheetComment({
+            variables: { id: result.data.createExerciseSheetComment.id },
+          });
+        }
+      } catch (error) {
+        failedCommentRestoreCount += 1;
+        console.error("Failed to restore sheet comment", error);
+      }
+    }
+
+    if (restoredCommentCount > 0) {
+      await refetch();
+    }
+
     snack.enqueueSnackbar("Mentve", { variant: "success" });
+    if (restoredCommentCount > 0) {
+      snack.enqueueSnackbar(
+        `${restoredCommentCount} komment visszaallitva mentes utan`,
+        { variant: "info" },
+      );
+    }
+    if (skippedCommentCount > 0) {
+      snack.enqueueSnackbar(
+        `${skippedCommentCount} kommentet nem sikerult automatikusan visszaallitani`,
+        { variant: "warning" },
+      );
+    }
+    if (failedCommentRestoreCount > 0) {
+      snack.enqueueSnackbar(
+        `${failedCommentRestoreCount} komment visszaallitasa hibara futott`,
+        { variant: "warning" },
+      );
+    }
     toggleNameEditing(false);
-  }, [id, mutate, name, snack, store, toggleNameEditing]);
+  }, [
+    createSheetComment,
+    data?.exerciseSheet,
+    id,
+    mutate,
+    name,
+    refetch,
+    resolveSheetComment,
+    snack,
+    store,
+    toggleNameEditing,
+  ]);
 
   if (data && !data.exerciseSheet) {
     return <Page404 />;
