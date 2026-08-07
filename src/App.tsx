@@ -3,6 +3,7 @@ import ProtectedRoute from "@/components/ProtectedRoute";
 import { ExerciseSheetPage } from "@/pages/exerciseSheets/ExerciseSheetPage";
 import Login from "@/pages/Login.tsx";
 import RegisterPage from "@/pages/RegisterPage.tsx";
+import { useEffect } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import "./App.css";
 import Layout from "./Layout";
@@ -12,6 +13,12 @@ import ExerciseDetails from "./pages/ExerciseDetails";
 
 function App() {
   const { isLoggedIn } = useAuth();
+
+  useEffect(() => {
+    fetch(import.meta.env.VITE_APP_GRAPHQL_ENDPOINT, { method: "HEAD" }).catch(
+      () => {},
+    );
+  }, []);
 
   if (isLoggedIn === null) return null;
 
