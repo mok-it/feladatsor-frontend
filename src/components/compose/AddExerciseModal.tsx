@@ -41,6 +41,7 @@ export const AddExerciseModal: FC = () => {
             query: {
               take: 20,
               skip,
+              difficulty,
               queryStr: exerciseQuery.searchQuery,
               orderBy: orderBy || undefined,
               orderDirection: order === "asc" ? "ASC" : "DESC",
