@@ -33,6 +33,7 @@ export interface CommentData {
   user: CommentUser;
   text: string;
   createdAt: number | string | Date;
+  isResolved: boolean;
   resolvedAt?: number | string | Date | null;
 }
 
@@ -104,7 +105,7 @@ const CommentItem = ({
   onDelete: () => void;
   isLast: boolean;
 }) => {
-  const isResolved = !!comment.resolvedAt;
+  const isResolved = comment.isResolved;
 
   return (
     <Box
@@ -172,7 +173,9 @@ const CommentItem = ({
                 fontStyle: "italic",
               }}
             >
-              Megoldva ekkor: {formatCommentDate(comment.resolvedAt)}
+              {comment.resolvedAt
+                ? `Megoldva ekkor: ${formatCommentDate(comment.resolvedAt)}`
+                : "Megoldva"}
             </Typography>
           )}
 

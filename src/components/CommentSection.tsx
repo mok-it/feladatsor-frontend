@@ -118,6 +118,7 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
             name: c.createdBy.name,
             avatarUrl: c.createdBy.avatarUrl,
           },
+          isResolved: false,
           resolvedAt: null,
         })),
       );
@@ -150,9 +151,8 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
             name: c.user.name,
             avatarUrl: c.user.avatarUrl,
           },
-          resolvedAt: c.isResolved
-            ? c.resolvedAt || new Date().toISOString()
-            : null,
+          isResolved: c.isResolved,
+          resolvedAt: c.resolvedAt,
         })),
       );
     }
@@ -160,7 +160,7 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
   }, [mode, targetId, exerciseData, sheetData, sheetCommentTarget]);
 
   const unresolvedCommentCount = comments.filter(
-    (comment) => !comment.resolvedAt,
+    (comment) => !comment.isResolved,
   ).length;
   const hasComments = comments.length > 0;
   const commentButtonLabel =
