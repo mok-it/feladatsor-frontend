@@ -10,6 +10,7 @@ import {
 } from "@dnd-kit/core";
 import { CSS } from "@dnd-kit/utilities";
 import { Box, Skeleton, Tooltip } from "@mui/material";
+import { alpha } from "@mui/material/styles";
 import { motion } from "framer-motion";
 import { useAtomValue } from "jotai";
 import { FC, useCallback, useContext, useMemo, useRef } from "react";
@@ -135,7 +136,7 @@ export const Item: FC<{
           touchAction: "none",
         }}
         sx={{
-          transition: "outline 0.2s, background-color 0.2s",
+          transition: "outline 0.2s, box-shadow 0.2s, background-color 0.2s",
           borderRadius: 1,
           border: "1px solid #e0e0e0",
           outline: isSelected
@@ -150,6 +151,11 @@ export const Item: FC<{
                 ? "grabbing"
                 : "grab"
               : "default",
+          '&[data-jump-highlighted="true"]': {
+            outline: (theme) => `3px solid ${theme.palette.primary.main}`,
+            boxShadow: (theme) =>
+              `0 0 0 6px ${alpha(theme.palette.primary.main, 0.3)}`,
+          },
         }}
         onClick={onClick}
         onContextMenu={(e) => {
