@@ -28,6 +28,14 @@ export const ageGroupTexts: Record<ExerciseAgeGroup, string> = {
   JEGESMEDVE: "Jegesmedve",
 };
 
+export const ageGroupGradeRanges: Record<ExerciseAgeGroup, string> = {
+  KOALA: "3-4",
+  MEDVEBOCS: "5-6",
+  KISMEDVE: "7-8",
+  NAGYMEDVE: "9-10",
+  JEGESMEDVE: "11-12",
+};
+
 export const translateCheck = (type: ExerciseCheckType) => {
   switch (type) {
     case "GOOD":
