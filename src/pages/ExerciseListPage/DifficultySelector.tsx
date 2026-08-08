@@ -1,6 +1,7 @@
-import { ExerciseAgeGroup } from "@/generated/graphql.tsx";
+import type { ExerciseAgeGroup } from "@/generated/graphql.tsx";
 import { ageGroupTexts } from "@/util/const";
 import { Slider, Stack, Switch, Typography } from "@mui/material";
+import { useEffect, useState } from "react";
 
 export const DifficultySelector = (props: {
   ageGroup: ExerciseAgeGroup;
@@ -9,6 +10,12 @@ export const DifficultySelector = (props: {
   isEnabled: boolean;
   setIsEnabled: (isEnabled: boolean) => void;
 }) => {
+  const [sliderValue, setSliderValue] = useState(props.difficulty);
+
+  useEffect(() => {
+    setSliderValue(props.difficulty);
+  }, [props.difficulty]);
+
   return (
     <Stack direction={"row"} alignItems={"center"} pr={4}>
       <Stack
@@ -37,8 +44,11 @@ export const DifficultySelector = (props: {
       <Slider
         disabled={!props.isEnabled}
         name="Nehézség"
-        value={props.difficulty}
-        onChange={(_, value) => props.setDifficulty(value as [number, number])}
+        value={sliderValue}
+        onChange={(_, value) => setSliderValue(value as [number, number])}
+        onChangeCommitted={(_, value) =>
+          props.setDifficulty(value as [number, number])
+        }
         step={1}
         min={0}
         max={4}

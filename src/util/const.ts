@@ -1,10 +1,10 @@
-import {
+import type {
   Exercise,
   ExerciseAgeGroup,
   ExerciseCheckType,
   ExerciseStatus,
 } from "@/generated/graphql";
-import { ExerciseFieldsType, ExerciseQuery } from "./types";
+import type { ExerciseFieldsType, ExerciseQuery } from "./types";
 
 export const levels: { [key in number]: { name: string } } = {
   0: { name: "Zöld" },

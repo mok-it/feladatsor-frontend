@@ -241,7 +241,7 @@ const TagLabel: FC<{
         </form>
       ) : (
         <Stack direction={"row"} alignItems={"center"} gap={1}>
-          <Link to={`/list-exercises?tag=${tag.id}`}>
+          <Link to={`/list-exercises?includeTag=${tag.id}`}>
             <Chip
               sx={{ cursor: "pointer" }}
               label={`${tag.name} ${tag.exerciseCount ? `(${tag.exerciseCount} db)` : ""}`}

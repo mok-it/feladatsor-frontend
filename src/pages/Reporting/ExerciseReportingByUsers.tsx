@@ -18,8 +18,18 @@ import {
   Typography,
 } from "@mui/material";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo } from "react";
 import { useSelectExercisesQuery } from "@/generated/graphql.tsx";
+import { useSearchParams } from "react-router-dom";
+import {
+  formatLocalDate,
+  getQuickReportDateRange,
+  parseLocalDate,
+  parseReportDateRange,
+  type QuickDateRange,
+  type ReportDateRange,
+  writeReportDateRange,
+} from "./reportDateParams";
 
 interface UserExerciseStats {
   userId: string;
@@ -30,49 +40,6 @@ interface UserExerciseStats {
   collaborativeExercises: number;
   score: number;
 }
-
-interface DateRange {
-  startDate: Date;
-  endDate: Date;
-}
-
-type QuickDateRange =
-  | "today"
-  | "yesterday"
-  | "last3days"
-  | "lastWeek"
-  | "lastMonth";
-
-const getQuickDateRange = (range: QuickDateRange): DateRange => {
-  const today = new Date();
-  const endDate = new Date();
-  let startDate = new Date();
-
-  switch (range) {
-    case "today":
-      startDate = new Date(today);
-      break;
-    case "yesterday":
-      startDate = new Date(today);
-      startDate.setDate(today.getDate() - 1);
-      endDate.setDate(today.getDate() - 1);
-      break;
-    case "last3days":
-      startDate = new Date(today);
-      startDate.setDate(today.getDate() - 3);
-      break;
-    case "lastWeek":
-      startDate = new Date(today);
-      startDate.setDate(today.getDate() - 7);
-      break;
-    case "lastMonth":
-      startDate = new Date(today);
-      startDate.setMonth(today.getMonth() - 1);
-      break;
-  }
-
-  return { startDate, endDate };
-};
 
 const calculateUserStats = (
   exercises: Array<{
@@ -155,14 +122,27 @@ const calculateUserStats = (
 };
 
 export const ExerciseReportingByUsers = () => {
-  const [dateRange, setDateRange] = useState<DateRange>({
-    startDate: new Date(new Date().setMonth(new Date().getMonth() - 1)),
-    endDate: new Date(),
-  });
+  const [searchParams, setSearchParams] = useSearchParams();
+  const dateRange = useMemo(
+    () => parseReportDateRange(searchParams),
+    [searchParams],
+  );
 
-  const handleQuickDateRange = useCallback((range: QuickDateRange) => {
-    setDateRange(getQuickDateRange(range));
-  }, []);
+  const setDateRange = useCallback(
+    (range: ReportDateRange) => {
+      const nextParams = new URLSearchParams(searchParams);
+      writeReportDateRange(nextParams, range);
+      setSearchParams(nextParams);
+    },
+    [searchParams, setSearchParams],
+  );
+
+  const handleQuickDateRange = useCallback(
+    (range: QuickDateRange) => {
+      setDateRange(getQuickReportDateRange(range));
+    },
+    [setDateRange],
+  );
 
   const { data, loading } = useSelectExercisesQuery({
     variables: {
@@ -193,34 +173,32 @@ export const ExerciseReportingByUsers = () => {
           <TextField
             label="Kezdő dátum"
             type="date"
-            value={dateRange.startDate.toISOString().split("T")[0]}
-            onChange={(e) =>
-              setDateRange((prev) => {
-                const startDate = new Date(e.target.value);
-                return {
-                  ...prev,
-                  //@ts-expect-error TS doesn't recognize isNaN for Date
-                  startDate: !isNaN(startDate) ? startDate : prev.startDate,
-                };
-              })
-            }
+            value={formatLocalDate(dateRange.startDate)}
+            onChange={(event) => {
+              const startDate = parseLocalDate(event.target.value);
+              if (!startDate) return;
+              setDateRange({
+                startDate,
+                endDate:
+                  startDate > dateRange.endDate ? startDate : dateRange.endDate,
+              });
+            }}
             slotProps={{ inputLabel: { shrink: true } }}
             size="small"
           />
           <TextField
             label="Vége dátum"
             type="date"
-            value={dateRange.endDate.toISOString().split("T")[0]}
-            onChange={(e) =>
-              setDateRange((prev) => {
-                const endDate = new Date(e.target.value);
-                return {
-                  ...prev,
-                  //@ts-expect-error TS doesn't recognize isNaN for Date
-                  endDate: !isNaN(endDate) ? endDate : prev.endDate,
-                };
-              })
-            }
+            value={formatLocalDate(dateRange.endDate)}
+            onChange={(event) => {
+              const endDate = parseLocalDate(event.target.value);
+              if (!endDate) return;
+              setDateRange({
+                startDate:
+                  endDate < dateRange.startDate ? endDate : dateRange.startDate,
+                endDate,
+              });
+            }}
             slotProps={{ inputLabel: { shrink: true } }}
             size="small"
           />

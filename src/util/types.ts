@@ -1,7 +1,7 @@
-import {
+import type {
   Exercise,
   ExerciseAgeGroup,
-  ExerciseCheckType,
+  ExerciseCheckFilter,
 } from "@/generated/graphql";
 
 declare global {
@@ -55,7 +55,7 @@ export type ExerciseQuery = {
   isFinal: boolean;
   includeTags: string[];
   excludeTags: string[];
-  checkStatus?: ExerciseCheckType | "";
+  checkStatus?: ExerciseCheckFilter | "";
   approveCount?: number;
 };
 

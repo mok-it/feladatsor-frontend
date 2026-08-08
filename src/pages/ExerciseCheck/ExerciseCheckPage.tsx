@@ -5,6 +5,7 @@ import {
   useSearchExercisesLazyQuery,
 } from "@/generated/graphql.tsx";
 import { ExerciseStatusEnum } from "@/util/types";
+import { exerciseSortKeys } from "@/util/exerciseSearchParams";
 import { useExerciseFilters } from "@/util/useExerciseFilters";
 import { useTableOrder } from "@/util/useTableOrder";
 import { Card, CardContent, CardHeader, Typography } from "@mui/material";
@@ -15,8 +16,12 @@ const LIMIT = 20;
 export const ExerciseCheckPage = () => {
   const { exerciseQuery, difficulty, filterComponents } = useExerciseFilters({
     checkStatus: true,
+    persistInUrl: true,
   });
-  const tableOrder = useTableOrder<ExerciseListElemFragment>();
+  const tableOrder = useTableOrder<ExerciseListElemFragment>({
+    persistInUrl: true,
+    allowedOrderBy: exerciseSortKeys,
+  });
   const { orderBy, order } = tableOrder;
 
   const [getData, { loading }] = useSearchExercisesLazyQuery({

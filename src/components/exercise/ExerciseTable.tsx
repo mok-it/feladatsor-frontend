@@ -74,8 +74,7 @@ export const ExerciseTable: FC<
   order,
   orderBy,
   selectedId,
-  setOrder,
-  setOrderBy,
+  setSorting,
   onRowSelect,
 }) => {
   const isMobile = useMediaQuery("(max-width: 1200px)");
@@ -100,10 +99,10 @@ export const ExerciseTable: FC<
                   value={orderBy ?? ""}
                   sx={{ mr: 1, mb: 1, bgcolor: "background.paper" }}
                   onChange={(e) => {
-                    setOrderBy(
+                    setSorting(
                       e.target.value as keyof ExerciseListElemFragment,
+                      "asc",
                     );
-                    setOrder("asc");
                   }}
                 >
                   {headCells
@@ -120,7 +119,7 @@ export const ExerciseTable: FC<
                   value={order}
                   sx={{ mr: 1, mb: 1, bgcolor: "background.paper" }}
                   onChange={() => {
-                    setOrder(order === "asc" ? "desc" : "asc");
+                    setSorting(orderBy, order === "asc" ? "desc" : "asc");
                   }}
                 >
                   <option value="asc">Növekvő</option>
@@ -143,8 +142,12 @@ export const ExerciseTable: FC<
                       active={orderBy === headCell.id}
                       direction={orderBy === headCell.id ? order : "asc"}
                       onClick={() => {
-                        setOrderBy(headCell.id);
-                        setOrder(order === "asc" ? "desc" : "asc");
+                        setSorting(
+                          headCell.id,
+                          orderBy === headCell.id && order === "asc"
+                            ? "desc"
+                            : "asc",
+                        );
                       }}
                     >
                       {headCell.label}
