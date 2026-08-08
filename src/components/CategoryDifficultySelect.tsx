@@ -1,8 +1,9 @@
 import {
+  ExerciseAgeGroup,
   ExerciseDifficultyInput,
-  useSelectExerciseAgeGroupsQuery,
 } from "@/generated/graphql.tsx";
-import { Alert, Box, Grid, Skeleton, Switch, Typography } from "@mui/material";
+import { ageGroupGradeRanges, ageGroupTexts } from "@/util/const";
+import { Box, Grid, Switch, Typography } from "@mui/material";
 import Radio from "@mui/material/Radio";
 import { blueGrey, brown } from "@mui/material/colors";
 import { ChangeEvent, FC } from "react";
@@ -20,22 +21,6 @@ export const CategoryDifficultySelect: FC<{
   difficulty: ExerciseDifficultyInput[];
   onChange: (value: ExerciseDifficultyInput[]) => void;
 }> = ({ difficulty, onChange }) => {
-  const { data, loading, error } = useSelectExerciseAgeGroupsQuery();
-
-  if (loading && !data) {
-    return <Skeleton variant="rounded" height={184} />;
-  }
-
-  if (error || !data) {
-    return (
-      <Alert severity="warning">A korcsoportok nem tölthetők be.</Alert>
-    );
-  }
-
-  const ageGroups = [...data.exerciseAgeGroups].sort(
-    (left, right) => left.order - right.order,
-  );
-
   return (
     <Grid container gap={3}>
       <Grid item xs={12}>
@@ -47,40 +32,44 @@ export const CategoryDifficultySelect: FC<{
             </Typography>
           ))}
         </Box>
-        {ageGroups.map(({ ageGroup, name, gradeRange }) => (
-          <ColorRadioButtons
-            key={ageGroup}
-            name={`${name} (${gradeRange})`}
-            handleChange={(value) => {
-              if (!difficulty.find((v) => v.ageGroup === ageGroup)) {
-                onChange([
-                  ...difficulty,
-                  {
-                    ageGroup,
-                    difficulty: parseInt(value),
-                  },
-                ]);
-                return;
-              }
-              const newValues = difficulty.map((v) => {
-                if (v.ageGroup === ageGroup) {
-                  return {
-                    ...v,
-                    difficulty: parseInt(value),
-                  };
+        {Object.entries(ageGroupTexts).map(([ageGroupKey, name]) => {
+          const ageGroup = ageGroupKey as ExerciseAgeGroup;
+
+          return (
+            <ColorRadioButtons
+              key={ageGroup}
+              name={`${name} (${ageGroupGradeRanges[ageGroup]})`}
+              handleChange={(value) => {
+                if (!difficulty.find((v) => v.ageGroup === ageGroup)) {
+                  onChange([
+                    ...difficulty,
+                    {
+                      ageGroup,
+                      difficulty: parseInt(value),
+                    },
+                  ]);
+                  return;
                 }
-                return v;
-              });
-              console.log({ newValues });
-              onChange(newValues);
-            }}
-            selectedValue={
-              difficulty
-                .find((value) => value.ageGroup === ageGroup)
-                ?.difficulty.toString() ?? "0"
-            }
-          />
-        ))}
+                const newValues = difficulty.map((v) => {
+                  if (v.ageGroup === ageGroup) {
+                    return {
+                      ...v,
+                      difficulty: parseInt(value),
+                    };
+                  }
+                  return v;
+                });
+                console.log({ newValues });
+                onChange(newValues);
+              }}
+              selectedValue={
+                difficulty
+                  .find((value) => value.ageGroup === ageGroup)
+                  ?.difficulty.toString() ?? "0"
+              }
+            />
+          );
+        })}
       </Grid>
     </Grid>
   );
