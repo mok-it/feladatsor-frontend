@@ -1,0 +1,8 @@
+query selectExerciseAgeGroups {
+  exerciseAgeGroups {
+    ageGroup
+    name
+    gradeRange
+    order
+  }
+}

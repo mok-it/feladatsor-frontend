@@ -92,6 +92,14 @@ export type ExerciseAgeGroup =
   | 'MEDVEBOCS'
   | 'NAGYMEDVE';
 
+export type ExerciseAgeGroupMetadata = {
+  __typename: 'ExerciseAgeGroupMetadata';
+  ageGroup: ExerciseAgeGroup;
+  gradeRange: Scalars['String']['output'];
+  name: Scalars['String']['output'];
+  order: Scalars['Int']['output'];
+};
+
 export type ExerciseAlert = {
   __typename: 'ExerciseAlert';
   description: Scalars['String']['output'];
@@ -564,6 +572,7 @@ export type Query = {
   __typename: 'Query';
   commentsByExercise: Array<ExerciseComment>;
   exercise?: Maybe<Exercise>;
+  exerciseAgeGroups: Array<ExerciseAgeGroupMetadata>;
   exerciseComment?: Maybe<ExerciseComment>;
   exerciseHistoryByExercise: Array<ExerciseHistory>;
   exerciseHistoryByField: Array<ExerciseHistory>;
@@ -858,6 +867,11 @@ export type SelectExerciseQueryVariables = Exact<{
 
 
 export type SelectExerciseQuery = { __typename: 'Query', exercise?: { __typename: 'Exercise', id: string, originalId?: string | null, status: ExerciseStatus, description: string, solutionOptions: Array<string>, solution: string, solveIdea?: string | null, source?: string | null, createdAt: string, helpingQuestions: Array<string>, alert?: { __typename: 'ExerciseAlert', description: string, severity: AlertSeverity } | null, sameLogicExerciseGroup?: { __typename: 'SameLogicExerciseGroup', exercises: Array<{ __typename: 'Exercise', id: string, description: string, createdAt: string, difficulty: Array<{ __typename: 'ExerciseDifficulty', difficulty: number, ageGroup: ExerciseAgeGroup }>, exerciseImage?: { __typename: 'Image', url: string } | null, tags: Array<{ __typename: 'Tag', id: string, name: string }>, createdBy: { __typename: 'User', id: string, userName: string, avatarUrl?: string | null } }> } | null, exerciseImage?: { __typename: 'Image', id: string, url: string } | null, solutionImage?: { __typename: 'Image', id: string, url: string } | null, createdBy: { __typename: 'User', id: string, name: string, avatarUrl?: string | null }, contributors: Array<{ __typename: 'User', id: string, name: string, avatarUrl?: string | null }>, solveIdeaImage?: { __typename: 'Image', id: string, url: string } | null, tags: Array<{ __typename: 'Tag', id: string, name: string }>, difficulty: Array<{ __typename: 'ExerciseDifficulty', ageGroup: ExerciseAgeGroup, difficulty: number }>, checks: Array<{ __typename: 'ExerciseCheck', id: string, type: ExerciseCheckType, createdAt: string, updatedAt: string, user: { __typename: 'User', id: string, name: string }, contributors: Array<{ __typename: 'User', id: string, name: string, avatarUrl?: string | null }> }>, comments: Array<{ __typename: 'ExerciseComment', id: string, comment: string, createdAt: string, createdBy: { __typename: 'User', name: string, avatarUrl?: string | null } }> } | null };
+
+export type SelectExerciseAgeGroupsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type SelectExerciseAgeGroupsQuery = { __typename: 'Query', exerciseAgeGroups: Array<{ __typename: 'ExerciseAgeGroupMetadata', ageGroup: ExerciseAgeGroup, name: string, gradeRange: string, order: number }> };
 
 export type ExerciseHistoryByExerciseQueryVariables = Exact<{
   exerciseId: Scalars['ID']['input'];
@@ -1823,6 +1837,48 @@ export type SelectExerciseQueryHookResult = ReturnType<typeof useSelectExerciseQ
 export type SelectExerciseLazyQueryHookResult = ReturnType<typeof useSelectExerciseLazyQuery>;
 export type SelectExerciseSuspenseQueryHookResult = ReturnType<typeof useSelectExerciseSuspenseQuery>;
 export type SelectExerciseQueryResult = Apollo.QueryResult<SelectExerciseQuery, SelectExerciseQueryVariables>;
+export const SelectExerciseAgeGroupsDocument = gql`
+    query selectExerciseAgeGroups {
+  exerciseAgeGroups {
+    ageGroup
+    name
+    gradeRange
+    order
+  }
+}
+    `;
+
+/**
+ * __useSelectExerciseAgeGroupsQuery__
+ *
+ * To run a query within a React component, call `useSelectExerciseAgeGroupsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSelectExerciseAgeGroupsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useSelectExerciseAgeGroupsQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useSelectExerciseAgeGroupsQuery(baseOptions?: Apollo.QueryHookOptions<SelectExerciseAgeGroupsQuery, SelectExerciseAgeGroupsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<SelectExerciseAgeGroupsQuery, SelectExerciseAgeGroupsQueryVariables>(SelectExerciseAgeGroupsDocument, options);
+      }
+export function useSelectExerciseAgeGroupsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SelectExerciseAgeGroupsQuery, SelectExerciseAgeGroupsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<SelectExerciseAgeGroupsQuery, SelectExerciseAgeGroupsQueryVariables>(SelectExerciseAgeGroupsDocument, options);
+        }
+export function useSelectExerciseAgeGroupsSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<SelectExerciseAgeGroupsQuery, SelectExerciseAgeGroupsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<SelectExerciseAgeGroupsQuery, SelectExerciseAgeGroupsQueryVariables>(SelectExerciseAgeGroupsDocument, options);
+        }
+export type SelectExerciseAgeGroupsQueryHookResult = ReturnType<typeof useSelectExerciseAgeGroupsQuery>;
+export type SelectExerciseAgeGroupsLazyQueryHookResult = ReturnType<typeof useSelectExerciseAgeGroupsLazyQuery>;
+export type SelectExerciseAgeGroupsSuspenseQueryHookResult = ReturnType<typeof useSelectExerciseAgeGroupsSuspenseQuery>;
+export type SelectExerciseAgeGroupsQueryResult = Apollo.QueryResult<SelectExerciseAgeGroupsQuery, SelectExerciseAgeGroupsQueryVariables>;
 export const ExerciseHistoryByExerciseDocument = gql`
     query ExerciseHistoryByExercise($exerciseId: ID!) {
   exerciseHistoryByExercise(id: $exerciseId) {
