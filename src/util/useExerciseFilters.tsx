@@ -14,22 +14,68 @@ import {
   Tooltip,
   useMediaQuery,
 } from "@mui/material";
+import { produce } from "immer";
 import { entries } from "lodash";
-import { useMemo } from "react";
+import { useCallback, useMemo } from "react";
 import { IoSearch } from "react-icons/io5";
-import { useSearchParam } from "react-use";
-import { useImmer } from "use-immer";
-import { searchDefaultValues, translateCheck } from "./const";
+import { useSearchParams } from "react-router-dom";
+import { useImmer, type Updater } from "use-immer";
+import { translateCheck } from "./const";
+import {
+  createDefaultExerciseQuery,
+  parseExerciseFilters,
+  writeExerciseFilters,
+} from "./exerciseSearchParams";
 import { ExerciseQuery } from "./types";
 
-export const useExerciseFilters = (props?: { checkStatus: boolean }) => {
+export const useExerciseFilters = (props?: {
+  checkStatus?: boolean;
+  persistInUrl?: boolean;
+}) => {
   const isMobile = useMediaQuery("(max-width: 900px)");
-  const paramTag = useSearchParam("tag");
-  const [exerciseQuery, setExerciseQuery] = useImmer<ExerciseQuery>({
-    ...searchDefaultValues,
-    ...(paramTag ? { includeTags: [paramTag] } : {}),
-    ...(props?.checkStatus ? { checkStatus: "" } : {}),
-  });
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [localExerciseQuery, setLocalExerciseQuery] = useImmer<ExerciseQuery>(
+    () => createDefaultExerciseQuery(props?.checkStatus),
+  );
+
+  const urlExerciseQuery = useMemo(
+    () => parseExerciseFilters(searchParams, props?.checkStatus),
+    [props?.checkStatus, searchParams],
+  );
+  const exerciseQuery = props?.persistInUrl
+    ? urlExerciseQuery
+    : localExerciseQuery;
+
+  const updateUrlExerciseQuery = useCallback(
+    (update: Parameters<Updater<ExerciseQuery>>[0], replace: boolean) => {
+      const nextQuery =
+        typeof update === "function" ? produce(exerciseQuery, update) : update;
+      const nextParams = new URLSearchParams(searchParams);
+      writeExerciseFilters(nextParams, nextQuery, props?.checkStatus);
+      setSearchParams(nextParams, { replace });
+    },
+    [exerciseQuery, props?.checkStatus, searchParams, setSearchParams],
+  );
+  const setUrlExerciseQuery = useCallback<Updater<ExerciseQuery>>(
+    (update) => updateUrlExerciseQuery(update, false),
+    [updateUrlExerciseQuery],
+  );
+  const setExerciseQuery = props?.persistInUrl
+    ? setUrlExerciseQuery
+    : setLocalExerciseQuery;
+  const setSearchQuery = useCallback(
+    (searchQuery: string) => {
+      const update = (draft: ExerciseQuery) => {
+        draft.searchQuery = searchQuery;
+      };
+      if (props?.persistInUrl) {
+        updateUrlExerciseQuery(update, true);
+      } else {
+        setLocalExerciseQuery(update);
+      }
+    },
+    [props?.persistInUrl, setLocalExerciseQuery, updateUrlExerciseQuery],
+  );
   const { data: tags } = useFlatExerciseTagsQuery();
 
   const difficulty = useMemo(() => {
@@ -49,9 +95,7 @@ export const useExerciseFilters = (props?: { checkStatus: boolean }) => {
       <Stack gap={1}>
         <TextField
           onChange={(event) => {
-            setExerciseQuery((draft) => {
-              draft.searchQuery = event.target.value;
-            });
+            setSearchQuery(event.target.value);
           }}
           label="Keresés"
           value={exerciseQuery.searchQuery}
@@ -73,7 +117,7 @@ export const useExerciseFilters = (props?: { checkStatus: boolean }) => {
             orientation={isMobile ? "vertical" : "horizontal"}
             onChange={(_, value) => {
               setExerciseQuery((draft) => {
-                draft.checkStatus = value;
+                draft.checkStatus = value ?? "";
               });
             }}
           >
@@ -112,7 +156,6 @@ export const useExerciseFilters = (props?: { checkStatus: boolean }) => {
             </Tooltip>
           </ToggleButtonGroup>
         )}
-        {exerciseQuery.searchQuery}
         <SimpleAccordion summary="Nehézség szűrő">
           <DifficultySelectorList
             difficulties={exerciseQuery.difficulty}
@@ -121,7 +164,7 @@ export const useExerciseFilters = (props?: { checkStatus: boolean }) => {
         </SimpleAccordion>
         <SimpleAccordion
           summary="Címke szűrő"
-          defaultExpanded={paramTag !== null}
+          defaultExpanded={exerciseQuery.includeTags.length > 0}
         >
           {tags && (
             <TagSelector
@@ -141,9 +184,9 @@ export const useExerciseFilters = (props?: { checkStatus: boolean }) => {
     exerciseQuery.includeTags,
     exerciseQuery.searchQuery,
     isMobile,
-    paramTag,
     props?.checkStatus,
     setExerciseQuery,
+    setSearchQuery,
     tags,
   ]);
 
