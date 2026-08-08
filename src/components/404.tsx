@@ -5,13 +5,70 @@ import {
 } from "@/generated/graphql";
 import { Box, LinearProgress, Stack, Typography } from "@mui/material";
 import { useSnackbar } from "notistack";
-import { FC, useState } from "react";
+import { FC, useEffect, useRef, useState } from "react";
 import DinoGame from "react-chrome-dino-ts";
 import "react-chrome-dino-ts/index.css";
+
+type DinoRunner = {
+  audioContext: AudioContext | null;
+  play: () => void;
+  resizeTimerId_: ReturnType<typeof setInterval> | null;
+  stop: () => void;
+  stopListening: () => void;
+};
+
+type DinoRunnerConstructor = {
+  instance_?: DinoRunner | null;
+};
+
+const getDinoRunner = () =>
+  (window as Window & { Runner?: DinoRunnerConstructor }).Runner;
+
+const cleanupDinoRunner = (runner: DinoRunner | null | undefined) => {
+  if (!runner) {
+    return;
+  }
+
+  runner.stop();
+  runner.stopListening();
+
+  // The package registers bound focus handlers that cannot be removed.
+  // Prevent them from restarting this unmounted runner.
+  runner.play = () => undefined;
+
+  if (runner.resizeTimerId_) {
+    clearInterval(runner.resizeTimerId_);
+  }
+
+  const { audioContext } = runner;
+  if (audioContext && audioContext.state !== "closed") {
+    void audioContext.close();
+  }
+
+  const Runner = getDinoRunner();
+  if (Runner?.instance_ === runner) {
+    Runner.instance_ = null;
+  }
+};
 
 export const Page404: FC = () => {
   const [choice, setChoice] = useState<string | null>(null);
   const [voted, setVoted] = useState(false);
+  const cleanupTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    if (cleanupTimer.current) {
+      clearTimeout(cleanupTimer.current);
+      cleanupTimer.current = null;
+    }
+
+    return () => {
+      // Deferring lets React Strict Mode's immediate effect replay cancel the
+      // cleanup while still cleaning up after an actual navigation.
+      const runner = getDinoRunner()?.instance_;
+      cleanupTimer.current = setTimeout(() => cleanupDinoRunner(runner));
+    };
+  }, []);
 
   const { data } = useFunkyPoolQuery();
   const [mutate] = useVoteOnDeveloperMutation({
