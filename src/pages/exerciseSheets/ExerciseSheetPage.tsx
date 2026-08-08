@@ -220,32 +220,6 @@ export const ExerciseSheetPage: FC = () => {
         )}
         <Box flexGrow={1} />
         <Stack direction={"row"} gap={2}>
-          {/* <ToggleButtonGroup
-            value={exerciseView}
-            exclusive
-            onChange={(_, value) => {
-              setValue({ exerciseView: value });
-              clear();
-            }}
-            sx={{ background: "background" }}
-          >
-            <ToggleButton
-              size="small"
-              sx={{ px: 2 }}
-              value={ExerciseView.CARD}
-              selected={exerciseView === ExerciseView.CARD}
-            >
-              Kártya
-            </ToggleButton>
-            <ToggleButton
-              size="small"
-              sx={{ px: 2 }}
-              value={ExerciseView.LIST}
-              selected={exerciseView === ExerciseView.LIST}
-            >
-              Lista
-            </ToggleButton>
-          </ToggleButtonGroup> */}
           <LoadingButton
             onClick={save}
             variant="contained"

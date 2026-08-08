@@ -2,6 +2,7 @@ import { CommentSection } from "@/components/CommentSection";
 import { ExerciseSheetQuery } from "@/generated/graphql";
 import { Box, Card, Stack, Tooltip } from "@mui/material";
 import { FC } from "react";
+import { ExerciseSheetList } from "./ExerciseSheetList";
 import { SheetStatusSelector } from "./SheetStatusSelector";
 
 export const SheetOperations: FC<{
@@ -10,7 +11,7 @@ export const SheetOperations: FC<{
   sheet = sheet!;
 
   return (
-    <>
+    <Stack gap={2}>
       <Card
         sx={{ borderRadius: { xs: 0, md: 1 }, border: "1px solid #e0e0e0" }}
       >
@@ -39,6 +40,14 @@ export const SheetOperations: FC<{
           />
         </Stack>
       </Card>
-    </>
+      <Card
+        sx={{
+          borderRadius: { xs: 0, md: 1 },
+          border: "1px solid #e0e0e0",
+        }}
+      >
+        <ExerciseSheetList />
+      </Card>
+    </Stack>
   );
 };
