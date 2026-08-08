@@ -1,69 +1,37 @@
 import {
+  ExerciseAgeGroup,
   ExerciseDifficultyInput,
-  useSelectExerciseAgeGroupsQuery,
 } from "@/generated/graphql.tsx";
-import { Alert, Box, Grid, Skeleton, Switch, Typography } from "@mui/material";
+import { ageGroupTexts } from "@/util/const";
+import { Grid, Stack, Switch, Typography } from "@mui/material";
 import Radio from "@mui/material/Radio";
 import { blueGrey, brown } from "@mui/material/colors";
 import { ChangeEvent, FC } from "react";
-
-const difficultyValues = [1, 2, 3, 4] as const;
-
-const difficultyGridSx = {
-  display: "grid",
-  gridTemplateColumns: "40px minmax(128px, 1fr) repeat(4, 36px)",
-  alignItems: "center",
-  maxWidth: 420,
-};
 
 export const CategoryDifficultySelect: FC<{
   difficulty: ExerciseDifficultyInput[];
   onChange: (value: ExerciseDifficultyInput[]) => void;
 }> = ({ difficulty, onChange }) => {
-  const { data, loading, error } = useSelectExerciseAgeGroupsQuery();
-
-  if (loading && !data) {
-    return <Skeleton variant="rounded" height={184} />;
-  }
-
-  if (error || !data) {
-    return (
-      <Alert severity="warning">A korcsoportok nem tölthetők be.</Alert>
-    );
-  }
-
-  const ageGroups = [...data.exerciseAgeGroups].sort(
-    (left, right) => left.order - right.order,
-  );
-
   return (
     <Grid container gap={3}>
       <Grid item xs={12}>
-        <Box sx={difficultyGridSx} aria-hidden="true">
-          <Box sx={{ gridColumn: "1 / 3" }} />
-          {difficultyValues.map((value) => (
-            <Typography key={value} align="center" fontWeight={700}>
-              {value}
-            </Typography>
-          ))}
-        </Box>
-        {ageGroups.map(({ ageGroup, name, gradeRange }) => (
+        {Object.entries(ageGroupTexts).map(([ageGroupKey, ageGroup], index) => (
           <ColorRadioButtons
-            key={ageGroup}
-            name={`${name} (${gradeRange})`}
+            key={index}
+            name={ageGroup}
             handleChange={(value) => {
-              if (!difficulty.find((v) => v.ageGroup === ageGroup)) {
+              if (!difficulty.find((v) => v.ageGroup === ageGroupKey)) {
                 onChange([
                   ...difficulty,
                   {
-                    ageGroup,
+                    ageGroup: ageGroupKey as ExerciseAgeGroup,
                     difficulty: parseInt(value),
                   },
                 ]);
                 return;
               }
               const newValues = difficulty.map((v) => {
-                if (v.ageGroup === ageGroup) {
+                if (v.ageGroup === ageGroupKey) {
                   return {
                     ...v,
                     difficulty: parseInt(value),
@@ -76,7 +44,7 @@ export const CategoryDifficultySelect: FC<{
             }}
             selectedValue={
               difficulty
-                .find((value) => value.ageGroup === ageGroup)
+                .find((value) => value.ageGroup === ageGroupKey)
                 ?.difficulty.toString() ?? "0"
             }
           />
@@ -107,34 +75,25 @@ export const ColorRadioButtons = ({
       handleChange(e);
     },
     value: item,
-    inputProps: { "aria-label": `${name}, ${item}-es nehézség` },
+    inputProps: { "aria-label": item },
   });
 
   return (
-    <Box sx={difficultyGridSx}>
+    <Stack direction={"row"} alignItems="center">
       <Switch
-        size="small"
         checked={selectedValue !== "0"}
         onChange={() => propHandleChange(selectedValue === "0" ? "1" : "0")}
-        inputProps={{ "aria-label": `${name} bekapcsolása` }}
       />
       <Typography
-        sx={{ whiteSpace: "nowrap", fontSize: { xs: "0.875rem", sm: "1rem" } }}
+        sx={{ width: "95px", overflow: "hidden", textOverflow: "ellipsis" }}
         color={selectedValue === "0" ? "text.disabled" : undefined}
       >
         {name}
       </Typography>
-      <Radio
-        {...controlProps("1")}
-        color="success"
-        size="small"
-        sx={{ p: 1 }}
-      />
+      <Radio {...controlProps("1")} color="success" />
       <Radio
         {...controlProps("2")}
-        size="small"
         sx={{
-          p: 1,
           color: brown[800],
           "&.Mui-checked": {
             color: brown[600],
@@ -143,21 +102,14 @@ export const ColorRadioButtons = ({
       />
       <Radio
         {...controlProps("3")}
-        size="small"
         sx={{
-          p: 1,
           color: blueGrey[800],
           "&.Mui-checked": {
             color: blueGrey[600],
           },
         }}
       />
-      <Radio
-        {...controlProps("4")}
-        color="warning"
-        size="small"
-        sx={{ p: 1 }}
-      />
-    </Box>
+      <Radio {...controlProps("4")} color="warning" />
+    </Stack>
   );
 };
